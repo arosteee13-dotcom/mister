@@ -145,6 +145,14 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .lrow.sel{border-color:var(--accent);background:var(--surface2)}
 .lrow .chev{flex:none;color:var(--muted)}
 .lrow.cco{padding:9px 14px;height:42px;margin-bottom:8px;width:100%}
+.lrow.compcard{cursor:default}
+.lrow.compcard.sel{border-color:var(--accent);background:var(--surface2)}
+.cc-name-btn{display:flex;align-items:center;gap:14px;flex:1;min-width:0;background:none;border:0;padding:0;text-align:left;color:inherit;font:inherit;cursor:pointer}
+.cc-view-btn{display:flex;align-items:center;gap:6px;flex:none;height:32px;padding:0 10px;border-radius:9px;background:var(--surface2);color:var(--text);border:1px solid var(--line2);font:500 12.5px var(--ui);cursor:pointer;transition:border-color .2s,background .2s}
+.cc-view-btn:hover,.cc-view-btn:active{border-color:var(--accent-line);background:var(--surface)}
+.cc-view-btn svg{flex:none;color:var(--muted)}
+.lrow .fl.ico{display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.lrow .fl.ico svg{width:20px;height:20px}
 .lrow.cco .fl{font-size:16px}
   .lrow.cco .lt b{font:600 12px var(--display)}
 .divctl{position:absolute;left:16px;right:120px;top:10px;z-index:6;display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding-right:22px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
@@ -603,6 +611,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .tbl tr.me td{background:var(--accent-soft)}
 .tbl tr.me td:first-child{border-radius:10px 0 0 10px}.tbl tr.me td:last-child{border-radius:0 10px 10px 0}
 .ns{display:none}
+.ucltbl .nl{display:none}.ucltbl .ns{display:inline}
 @media(max-width:520px){.nl{display:none}.ns{display:inline}}
 .seg{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
 .seg button{flex:none;padding:8px 15px;border-radius:999px;background:rgba(220,240,228,.05);border:1px solid var(--line);font-size:13.5px;color:var(--muted);transition:all .2s}
@@ -959,7 +968,7 @@ const GERMANY=P(`7.2,53.3 7.2,53.6 8,53.7 8.6,53.9 8.9,54 9,54.3 8.6,54.9 9.4,54
 const FRANCE=P(`2.3,51.05 4.2,50.3 6,49.5 7.6,49 7.6,47.6 6.8,46 7,45 7.6,44 7.6,43.7 6.5,43.1 4.9,43.3 4.6,43.4 3,42.5 1.8,42.5 -1.4,43 -1.5,44 -1.2,45 -1.8,46.2 -2.2,47.2 -4.3,47.9 -4.8,48.4 -4.5,48.7 -1.6,49.7 0.1,49.5 1.6,50.9`);
 const LAND=[EURASIA,NAMER,SAMER,AFRICA,AUS,...ISLANDS,SICILY,SARDINIA,MALLORCA];
 const PLAYABLE=['ES','EN','IT','DE','FR'];
-const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}'};
+const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}',NL:'\u{1F1F3}\u{1F1F1}',AT:'\u{1F1E6}\u{1F1F9}',UA:'\u{1F1FA}\u{1F1E6}',NO:'\u{1F1F3}\u{1F1F4}',BE:'\u{1F1E7}\u{1F1EA}',SK:'\u{1F1F8}\u{1F1F0}',GR:'\u{1F1EC}\u{1F1F7}'};
 const CANARIAS={center:[-15.8,28.45],to:[-7.75,34.85],f:.6,ex:1.15,frame:[-9.65,34.12,-5.85,35.6],minLat:33.85,label:'Canarias',polys:[
  P(`-16.92,28.33 -16.7,28 -16.35,28 -16.12,28.35 -16.4,28.6 -16.85,28.55`),P(`-15.83,28.05 -15.6,28.18 -15.38,28 -15.42,27.8 -15.7,27.75 -15.8,27.85`),
  P(`-17.95,28.6 -17.8,28.85 -17.72,28.6 -17.85,28.45 -18,28.5`),P(`-17.35,28.1 -17.15,28.2 -17.1,28.05 -17.25,27.98`),P(`-18.15,27.75 -17.95,27.85 -17.85,27.7 -18.05,27.65`),
@@ -1134,7 +1143,7 @@ const LEGACY=[K2('DES','Defensor Sporting','Defensor','Montevideo','UY','#8b1a1a
  K2('BOT','Botafogo','Botafogo','Río de Janeiro','BR','#1a1a1a','#f4f4f4',74),K2('STA','UE Sant Andreu','Sant Andreu','Barcelona','ES','#f2d31b','#d4192b',47),
  K2('STV','Sint-Truidense VV','Sint-Truiden','Sint-Truiden','BE','#f2d31b','#1c3f94',62),K2('PUE','Puebla','Puebla','Puebla','MX','#1c3f94','#f4f4f4',60),
  K2('ACA','Académica','Académica','Coímbra','PT','#1a1a1a','#f4f4f4',58),
- K2('FCP','FC Porto','Porto','Oporto','PT','#0a3a8a','#f4f4f4',84),
+ K2('FCP','FC Porto','Porto','Oporto','PT','#0a3a8a','#f4f4f4',84),K2('BRU','Club Brugge','Brugge','Brujas','BE','#0033a0','#f4f4f4',76),K2('BDG','FK Bodø/Glimt','Bodø/Glimt','Bodø','NO','#f8b334','#1a1a1a',68),K2('SBAH','Sabah FK','Sabah','Bakú','AZ','#0a3a8a','#f4f4f4',52),K2('SVB','Slovan Bratislava','Slovan','Bratislava','SK','#0a5aa8','#f4f4f4',62),K2('AEKA','AEK Athens','AEK','Atenas','GR','#f4f4f4','#1a1a1a',64),
  K2('MOT','Motherwell','Motherwell','Motherwell','SC','#f2d31b','#8b1a1a',58),K2('DUN','Dundee','Dundee','Dundee','SC','#1c3f94','#f4f4f4',57),
  K2('STG','Stevenage','Stevenage','Stevenage','EN','#d4192b','#f4f4f4',52),
  K2('VIT','Vitória Guimarães','Vitória SC','Guimarães','PT','#f4f4f4','#1a1a1a',62),K2('RAN','Rangers','Rangers','Glasgow','SC','#1c3f94','#f4f4f4',68),
@@ -1400,7 +1409,8 @@ const CLUB_LOGO={
   RUD:'https://cdn.resfu.com/img_data/equipos/13124.png?size=120x&lossy=1',VIS:'https://cdn.resfu.com/img_data/equipos/2964.png?size=120x&lossy=1',TRT:'https://cdn.resfu.com/img_data/equipos/10715.png?size=120x&lossy=1',ATA2:'https://cdn.resfu.com/img_data/equipos/159558.png?size=120x&lossy=1',FOG:'https://cdn.resfu.com/img_data/equipos/50325.png?size=120x&lossy=1',GIU:'https://cdn.resfu.com/img_data/equipos/1237.png?size=120x&lossy=1',POT:'https://cdn.resfu.com/img_data/equipos/66540.png?size=120x&lossy=1',TER:'https://cdn.resfu.com/img_data/equipos/2868.png?size=120x&lossy=1',TAU:'https://cdn.resfu.com/img_data/escudos/medium/147945.jpg',UPM:'https://cdn.resfu.com/img_data/equipos/143808.png?size=120x&lossy=1',JUN:'https://cdn.resfu.com/img_data/equipos/112343.png?size=120x&lossy=1',LAT:'https://cdn.resfu.com/img_data/equipos/6390.png?size=120x&lossy=1',OHL:'https://cdn.resfu.com/img_data/equipos/5801.png?size=120x&lossy=1',PES:'https://cdn.resfu.com/img_data/equipos/1956.png?size=120x&lossy=1',BARL:'https://cdn.resfu.com/img_data/equipos/2401.png?size=120x&lossy=1',
   SVO:'https://cdn.resfu.com/img_data/equipos/2821.png?size=120x&lossy=1',ARZ:'https://cdn.resfu.com/img_data/equipos/24959.png?size=120x&lossy=1',RNN:'https://cdn.resfu.com/img_data/equipos/2315.png?size=120x&lossy=1',SOR:'https://cdn.resfu.com/img_data/equipos/2366.png?size=120x&lossy=1',CMP:'https://cdn.resfu.com/img_data/equipos/6513.png?size=120x&lossy=1',PAR2:'https://cdn.resfu.com/img_data/equipos/167424.png?size=120x&lossy=1',DSZ:'https://cdn.resfu.com/img_data/equipos/138543.png?size=120x&lossy=1',RAD:'https://cdn.resfu.com/img_data/equipos/13504.png?size=120x&lossy=1',PIC:'https://cdn.resfu.com/img_data/equipos/66539.png?size=120x&lossy=1',RGR:'https://cdn.resfu.com/img_data/equipos/2146.png?size=120x&lossy=1',FOR:'https://cdn.resfu.com/img_data/equipos/6897.png?size=120x&lossy=1',OST:'https://cdn.resfu.com/img_data/equipos/10743.png?size=120x&lossy=1',LCO:'https://cdn.resfu.com/img_data/equipos/618.png?size=120x&lossy=1',SST:'https://cdn.resfu.com/img_data/equipos/10744.png?size=120x&lossy=1',ALCI:'https://cdn.resfu.com/img_data/equipos/55642.png?size=120x&lossy=1',
   MONO:'https://cdn.resfu.com/img_data/equipos/10750.png?size=120x&lossy=1',FIO2:'https://cdn.resfu.com/img_data/equipos/164530.png?size=120x&lossy=1',MIF:'https://cdn.resfu.com/img_data/equipos/163909.png?size=120x&lossy=1',T20:'https://cdn.resfu.com/img_data/equipos/164543.png?size=120x&lossy=1',RAV:'https://cdn.resfu.com/img_data/equipos/2075.png?size=120x&lossy=1',TRP:'https://cdn.resfu.com/img_data/equipos/6389.png?size=120x&lossy=1',GBC:'https://cdn.resfu.com/img_data/equipos/1213.png?size=120x&lossy=1',VOJ:'https://cdn.resfu.com/img_data/equipos/13483.png?size=120x&lossy=1',MAR:'https://cdn.resfu.com/img_data/equipos/1653.png?size=120x&lossy=1',SJK:'https://cdn.resfu.com/img_data/equipos/12598.png?size=120x&lossy=1',LAZ2:'https://cdn.resfu.com/img_data/equipos/164546.png?size=120x&lossy=1',VAR:'https://cdn.resfu.com/img_data/equipos/66506.png?size=120x&lossy=1',BOL2:'https://cdn.resfu.com/img_data/equipos/164532.png?size=120x&lossy=1',FOV:'https://cdn.resfu.com/img_data/equipos/143825.png?size=120x&lossy=1',
-  ANG:'https://cdn.resfu.com/img_data/equipos/224.png?size=120x&lossy=1',LEM:'https://cdn.resfu.com/img_data/equipos/1528.png?size=120x&lossy=1',PFC:'https://cdn.resfu.com/img_data/equipos/1925.png?size=120x&lossy=1'
+  ANG:'https://cdn.resfu.com/img_data/equipos/224.png?size=120x&lossy=1',LEM:'https://cdn.resfu.com/img_data/equipos/1528.png?size=120x&lossy=1',PFC:'https://cdn.resfu.com/img_data/equipos/1925.png?size=120x&lossy=1',
+  AEKA:'https://cdn.resfu.com/img_data/equipos/77.png?size=120x&lossy=1',BDG:'https://cdn.resfu.com/img_data/equipos/1144.png?size=120x&lossy=1',SBAH:'https://cdn.resfu.com/img_data/equipos/104344.png?size=120x&lossy=1',SVB:'https://cdn.resfu.com/img_data/equipos/10010.png?size=120x&lossy=1',BRU:'https://cdn.resfu.com/img_data/equipos/6200.png?size=120x&lossy=1'
 };
 Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
 /* ciudades reales (lon,lat); o = desplazamiento en px del grupo de escudos para evitar solapes */
@@ -1470,7 +1480,7 @@ Object.assign(NAMES,{
   TR:{f:['Emre','Burak','Mert','Kerem','Oğuz','Yusuf','Enes','Berkay','Cem','Serkan','Ozan','Tolga','Barış','Onur','Furkan','Ege','Deniz','Arda','Hakan','Uğur'],l:['Yılmaz','Kaya','Demir','Çelik','Şahin','Aydın','Öztürk','Arslan','Doğan','Kılıç','Aslan','Çetin','Koç','Kurt','Özkan','Polat','Erdoğan','Güneş','Aksoy','Bulut']},
   HR:{f:['Luka','Ivan','Marko','Josip','Ante','Mateo','Tomislav','Nikola','Filip','Petar','Domagoj','Kristijan'],l:['Horvat','Kovačić','Marić','Perić','Novak','Vuković','Babić','Jurić','Radić','Knežević','Pavlović','Tomić','Barišić']}
 });
-const NATNAME={ES:'España',EN:'Inglaterra',IT:'Italia',DE:'Alemania',FR:'Francia',PT:'Portugal',BR:'Brasil',AR:'Argentina',LT:'Lituania',MD:'Moldavia',SR:'Surinam',TD:'Chad',LU:'Luxemburgo',FO:'Islas Feroe',CY:'Chipre',EC:'Ecuador',BG:'Bulgaria',CH:'Suiza',CL:'Chile',CZ:'República Checa',DZ:'Argelia',TR:'Turquía',CG:'Congo',AZ:'Azerbaiyán'};
+const NATNAME={ES:'España',EN:'Inglaterra',IT:'Italia',DE:'Alemania',FR:'Francia',PT:'Portugal',BR:'Brasil',AR:'Argentina',LT:'Lituania',MD:'Moldavia',SR:'Surinam',TD:'Chad',LU:'Luxemburgo',FO:'Islas Feroe',CY:'Chipre',EC:'Ecuador',BG:'Bulgaria',CH:'Suiza',CL:'Chile',CZ:'República Checa',DZ:'Argelia',TR:'Turquía',CG:'Congo',AZ:'Azerbaiyán',NL:'Países Bajos',AT:'Austria',UA:'Ucrania',NO:'Noruega',BE:'Bélgica',SK:'Eslovaquia',GR:'Grecia'};
 const STADIUM={
  RMA:'Santiago Bernabéu',ATM:'Riyadh Air Metropolitano',RAY:'Estadio de Vallecas',GET:'Coliseum',FCB:'Spotify Camp Nou',ESP:'RCDE Stadium',SEV:'Ramón Sánchez-Pizjuán',BET:'Estadio Olímpico de la Cartuja',
  VAL:'Mestalla',LEV:'Ciutat de València',ELC:'Martínez Valero',VIL:'Estadio de la Cerámica',ATH:'San Mamés',RSO:'Reale Arena',ALA:'Mendizorroza',OSA:'El Sadar',
@@ -6597,7 +6607,7 @@ function deleteSlot(n){Store.del('mister.slot.'+n);Store.del('mister.meta.'+n)}
 
 /* ===================== mundo: otras ligas y torneos ===================== */
 const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia'};
-const CUP_W6=[4,7,10,13,16,19],UCL_W=[8,12,15,18];
+const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,22,25],UCL_KO_W=[28,31,34,37,39];
 const GROUPS=[{id:'EU',name:'Europa',comps:['UCL']},{id:'ES',name:'España',comps:['ES1','ES2','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']}];
 const LCNAME={EN:'EFL Cup'};
 const SC_TEAMS={ES:4};
@@ -6786,6 +6796,111 @@ function liteRound(L,r){
 /* ---- copas y torneo europeo (eliminatoria a partido único) ---- */
 const roundName=(c,prelim)=>prelim?'Ronda previa':({2:'Final',4:'Semifinales',8:'Cuartos de final',16:'Octavos de final',32:'Dieciseisavos de final',64:'Treintaidosavos de final'}[c]||('Ronda de '+c));
 function pairUp(list){const t=[];for(let i=0;i+1<list.length;i+=2)t.push({h:list[i],a:list[i+1]});return t}
+/* ---- Champions League: fase de liga única (36 equipos, 4 bombos de 9, 8 rivales distintos cada uno) ---- */
+function uclPots(ids){
+  const sorted=ids.slice().sort((a,b)=>repOf(b)-repOf(a));
+  while(sorted.length%4)sorted.push(null);   /* si faltan equipos para llegar a múltiplo de 4, se rellena con un hueco fantasma */
+  const per=sorted.length/4;
+  return[0,1,2,3].map(i=>sorted.slice(i*per,i*per+per));
+}
+function uclGraphEdges(ids){
+  const pots=uclPots(ids),per=pots[0].length,edges=[],seen=new Set();
+  const add=(a,b)=>{if(!a||!b||a===b)return;const k=a<b?a+'|'+b:b+'|'+a;if(seen.has(k))return;seen.add(k);edges.push([a,b])};
+  pots.forEach(pot=>{for(let i=0;i<per;i++)add(pot[i],pot[(i+1)%per])});   /* 2 rivales del propio bombo */
+  for(let p1=0;p1<4;p1++)for(let p2=p1+1;p2<4;p2++){                       /* 2 rivales de cada uno de los otros 3 bombos */
+    const A=pots[p1],B=pots[p2];
+    for(let i=0;i<per;i++){add(A[i],B[i]);add(A[i],B[(i+3)%per])}
+  }
+  return edges;
+}
+/* reparte los enfrentamientos en jornadas donde nadie repite rival ni juega dos veces la misma jornada:
+   cada ronda se completa emparejando primero al equipo con menos rivales disponibles (para no dejar huecos imposibles) */
+function uclPickRoundMatching(edges,r){
+  const adj=new Map();
+  edges.forEach(([a,b],idx)=>{(adj.get(a)||adj.set(a,new Set()).get(a)).add(idx);(adj.get(b)||adj.set(b,new Set()).get(b)).add(idx)});
+  const usedEdge=new Array(edges.length).fill(false),matched=new Set(),round=[];
+  while(true){
+    let bestV=null,bestDeg=Infinity;
+    for(const[v,set]of adj){
+      if(matched.has(v))continue;
+      let deg=0;for(const idx of set)if(!usedEdge[idx]){const[a,b]=edges[idx];if(!matched.has(a)&&!matched.has(b))deg++}
+      if(deg===0)continue;
+      if(deg<bestDeg){bestDeg=deg;bestV=v;if(deg===1)break}
+    }
+    if(bestV===null)break;
+    const cands=[];for(const idx of adj.get(bestV))if(!usedEdge[idx]){const[a,b]=edges[idx];if(!matched.has(a)&&!matched.has(b))cands.push(idx)}
+    const idx=cands[Math.floor(r()*cands.length)];
+    usedEdge[idx]=true;const[a,b]=edges[idx];matched.add(a);matched.add(b);round.push(edges[idx]);
+  }
+  return{round,remaining:edges.filter((e,idx)=>!usedEdge[idx])};
+}
+function uclScheduleRounds(edges,seedStr,roundsCount){
+  let best=null;
+  for(let attempt=0;attempt<250;attempt++){
+    const r=rng(hashStr(seedStr+'|sch'+attempt));
+    let pool=shuffle(edges.slice(),r);const rounds=[];
+    for(let rd=0;rd<roundsCount;rd++){const{round,remaining}=uclPickRoundMatching(pool,r);rounds.push(round);pool=remaining}
+    if(!pool.length)return rounds;
+    if(!best||pool.length<best.left)best={rounds,left:pool.length};
+  }
+  return best.rounds;   /* caso extremo: algún cruce muy puntual se queda sin jugar esa temporada, en vez de romper el reparto */
+}
+function uclLeagueFixtures(ids){
+  const seedStr='ucl_league|'+state.seed+'|'+state.season;
+  const edges=uclGraphEdges(ids),r=rng(hashStr(seedStr+'|ha'));
+  const oriented=edges.map(([a,b])=>r()<.5?{h:a,a:b}:{h:b,a});
+  let rounds=uclScheduleRounds(oriented.map(m=>[m.h,m.a]),seedStr,UCL_LEAGUE_W.length);
+  if(!rounds)rounds=[oriented];   /* caso extremo, no debería darse: todo en una jornada en vez de fallar */
+  const byPair=new Map(oriented.map(m=>[m.h+'|'+m.a,m]));
+  return rounds.map(rd=>rd.map(([a,b])=>{const key1=a+'|'+b,key2=b+'|'+a;return byPair.get(key1)||byPair.get(key2)||{h:a,a:b}}));
+}
+function cupInitUCL(ids){
+  const seeds=ids.slice().sort((a,b)=>virt(b).ovr-virt(a).ovr||cname(a).localeCompare(cname(b)));
+  const fx=uclLeagueFixtures(seeds);
+  const rounds=[
+    {n:'Dieciseisavos de final',w:UCL_KO_W[0],ties:null,done:false},
+    {n:'Octavos de final',w:UCL_KO_W[1],ties:null,done:false},
+    {n:'Cuartos de final',w:UCL_KO_W[2],ties:null,done:false},
+    {n:'Semifinales',w:UCL_KO_W[3],ties:null,done:false},
+    {n:'Final',w:UCL_KO_W[4],ties:null,done:false}
+  ];
+  return{key:'UCL',name:'Champions League',ids:seeds,bye:[],rounds,champ:null,sc:{},
+    league:{ids:seeds,tb:emptyTable(seeds),fx,weeks:UCL_LEAGUE_W.slice(0,fx.length),done:false}};
+}
+/* simula un partido de la fase de liga (sin penaltis: los empates suman punto para cada uno, como una liga normal) */
+function simLeagueTie(t,cup){
+  const me=state.club,mine=t.h===me||t.a===me;
+  let sh=virt(t.h),sa=virt(t.a),T=null;
+  if(mine&&state.teams[me]){T=state.teams[me];const S=strength(T);if(t.h===me)sh=S;else sa=S}
+  t.hg=rollGoals(xgAny(sh,sa,1));t.ag=rollGoals(xgAny(sa,sh,-1));
+  const gmH={},gmA={};
+  for(let i=0;i<t.hg;i++)goalFor(t,cup,t.h,'h',T,gmH);
+  for(let i=0;i<t.ag;i++)goalFor(t,cup,t.a,'a',T,gmA);
+  liteExtras(cup.sc,t.h,gmH,t.hg,t.ag,t.h===me);liteExtras(cup.sc,t.a,gmA,t.ag,t.hg,t.a===me);
+  if(t.sc)t.sc.sort((a,b)=>a.min-b.min);
+  tallyIn(cup.league.tb,t.h,t.hg,t.ag);tallyIn(cup.league.tb,t.a,t.ag,t.hg);
+}
+/* termina la fase de liga: 1º-8º pasan directos a octavos, 9º-24º juegan los dieciseisavos, el resto queda eliminado */
+function finishUclLeague(cup){
+  cup.league.done=true;
+  const st=sortTable(cup.league.tb);
+  cup._seed={};st.forEach((r,i)=>{cup._seed[r.id]=i+1});
+  cup.bye=st.slice(0,8).map(r=>r.id);
+  const mid=st.slice(8,24).map(r=>r.id),n2=mid.length;
+  cup.rounds[0].ties=mid.length?Array.from({length:Math.floor(n2/2)},(_,i)=>({h:mid[i],a:mid[n2-1-i]})):[];
+  news(`Termina la fase de liga de la ${cup.name}: los 8 primeros pasan directos a octavos, del 9º al 24º juegan los dieciseisavos y el resto queda eliminado.`);
+}
+/* siguiente ronda del cuadro eliminatorio: en la Champions, los dieciseisavos y octavos salen de la fase de liga
+   (reclasificando cabezas de serie), el resto de rondas se sortea igual que en cualquier otra copa */
+function computeNextTies(cup,ri){
+  if(cup.key==='UCL'&&ri===1){
+    const prevW=cup.rounds[0].ties.map(t=>t.w),teams=cup.bye.concat(prevW).sort((a,b)=>cup._seed[a]-cup._seed[b]),n2=teams.length;
+    return Array.from({length:Math.floor(n2/2)},(_,i)=>({h:teams[i],a:teams[n2-1-i]}));
+  }
+  const prev=cup.rounds[ri-1];let teams=prev.ties.map(t=>t.w);
+  if(ri===1&&cup.bye.length)teams=teams.concat(cup.bye);
+  return pairUp(shuffle(teams,rng(hashStr(cup.key+'|'+state.seed+'|'+state.season+'|r'+ri))));
+}
 function cupInit(key,name,ids,weeksOverride){
   const seeds=ids.slice().sort((a,b)=>virt(b).ovr-virt(a).ovr||cname(a).localeCompare(cname(b)));
   const n=seeds.length;let S=1;while(S<n)S*=2;
@@ -6793,7 +6908,7 @@ function cupInit(key,name,ids,weeksOverride){
   const r=rng(hashStr(key+'|'+state.seed+'|'+state.season));
   const counts=[];if(byes>0)counts.push(play.length);
   for(let t=byes>0?S/2:S;t>=2;t/=2)counts.push(t);
-  const baseWeeks=weeksOverride||(key==='UCL'?UCL_W:CUP_W6);
+  const baseWeeks=weeksOverride||CUP_W6;
   const weeks=baseWeeks.slice(baseWeeks.length-counts.length);
   const rounds=counts.map((c,i)=>({n:roundName(c,byes>0&&i===0),w:weeks[i],ties:null,done:false}));
   rounds[0].ties=pairUp(shuffle((byes>0?play:seeds).slice(),r));
@@ -6804,12 +6919,16 @@ function userCupTie(r){
   if(!state||state.phase!=='play'||!state.cups)return null;
   for(const k in state.cups){
     const cup=state.cups[k];
+    if(cup.league&&!cup.league.done){
+      for(let ri=0;ri<cup.league.weeks.length;ri++){
+        if(cup.league.weeks[ri]!==r)continue;
+        const t=cup.league.fx[ri].find(x=>(x.h===state.club||x.a===state.club)&&x.hg===undefined);
+        if(t)return{cup,ri,t,league:true};
+      }
+    }
     for(let ri=0;ri<cup.rounds.length;ri++){
       const R=cup.rounds[ri];if(R.w!==r||R.done)continue;
-      if(!R.ties&&ri>0&&cup.rounds[ri-1].done){
-        let teams=cup.rounds[ri-1].ties.map(t=>t.w);if(ri===1&&cup.bye.length)teams=teams.concat(cup.bye);
-        R.ties=pairUp(shuffle(teams,rng(hashStr(cup.key+'|'+state.seed+'|'+state.season+'|r'+ri))));
-      }
+      if(!R.ties&&ri>0&&cup.rounds[ri-1].done)R.ties=computeNextTies(cup,ri);
       const t=R.ties&&R.ties.find(x=>x.h===state.club||x.a===state.club);
       if(t&&t.hg===undefined)return{cup,ri,t};
     }
@@ -6831,7 +6950,12 @@ function cupWear(t,store){
 function playCupStage(){
   const ct=userCupTie(state.week);if(!ct)return null;
   const t=me(),hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id)),mine=[];
-  playCupRound(ct.cup,ct.ri).forEach(x=>mine.push({cup:ct.cup,ri:ct.ri,t:x}));
+  if(ct.league){
+    simLeagueTie(ct.t,ct.cup);
+    mine.push({cup:ct.cup,ri:ct.ri,t:ct.t,league:true});
+  }else{
+    playCupRound(ct.cup,ct.ri).forEach(x=>mine.push({cup:ct.cup,ri:ct.ri,t:x}));
+  }
   cupWear(t,ct.cup.sc);
   t.players.forEach(p=>{if(p.inj>0&&!hadInj.has(p.id))news(`${p.n} se ha lesionado en la copa y es baja ${p.inj} jornada${p.inj>1?'s':''}.`)});
   mine.forEach(x=>news(cupNews(x)));
@@ -6868,11 +6992,7 @@ function simTie(t,cup,neutral,ri){
 }
 function playCupRound(cup,ri){
   const R=cup.rounds[ri],out=[];
-  if(!R.ties){
-    const prev=cup.rounds[ri-1];let teams=prev.ties.map(t=>t.w);
-    if(ri===1&&cup.bye.length)teams=teams.concat(cup.bye);
-    R.ties=pairUp(shuffle(teams,rng(hashStr(cup.key+'|'+state.seed+'|'+state.season+'|r'+ri))));
-  }
+  if(!R.ties)R.ties=computeNextTies(cup,ri);
   const last=ri===cup.rounds.length-1;
   R.ties.forEach(t=>{if(t.hg!==undefined)return;simTie(t,cup,last,ri);if(t.h===state.club||t.a===state.club)out.push(t)});
   R.done=true;if(last)cup.champ=R.ties[0].w;
@@ -6883,6 +7003,10 @@ function advanceWorld(r){
   for(const k in state.others){const L=state.others[k];if(L.fx.length>r&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   for(const k in state.cups){
     const cup=state.cups[k];
+    if(cup.league&&!cup.league.done){
+      cup.league.weeks.forEach((w,ri)=>{if(w===r)cup.league.fx[ri].forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup)})});
+      if(cup.league.weeks[cup.league.weeks.length-1]===r)finishUclLeague(cup);
+    }
     cup.rounds.forEach((R,ri)=>{if(R.w===r&&!R.done)playCupRound(cup,ri).forEach(t=>mine.push({cup,ri,t}))});
   }
   return mine;
@@ -6909,9 +7033,17 @@ function recordHonors(){
 }
 function finishAll(){
   for(const k in state.others){const L=state.others[k];for(let r=0;r<L.fx.length;r++)if(L.fx[r][0].hg===undefined)liteRound(L,r)}
-  for(const k in state.cups){const cup=state.cups[k];cup.rounds.forEach((R,ri)=>{if(!R.done)playCupRound(cup,ri)})}
+  for(const k in state.cups){
+    const cup=state.cups[k];
+    if(cup.league&&!cup.league.done){
+      cup.league.fx.forEach(rd=>rd.forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup)}));
+      finishUclLeague(cup);
+    }
+    cup.rounds.forEach((R,ri)=>{if(!R.done)playCupRound(cup,ri)});
+  }
   recordHonors();
 }
+const FIXED_UCL_S1=['AEKA','ARS','AVL','ATM','BVB','BAY','BRU','COM','FCB','FEN','FEY','BDG','GAL','INT','LAS','LEN','LIL','LIV','MCI','MUN','NAP','FCP','PSG','PSV','RBL','BET','RMA','ROM','SBAH','SHK','SLA','SVB','SPTL','VFB','VIK','VIL'];
 function initWorld(){
   state.lk=userKey();state.others={};state.cups={};
   PLAYABLE.forEach(co=>[1,2].forEach(d=>{
@@ -6941,8 +7073,8 @@ function initWorld(){
     if(CLUBBY[state.club]&&CLUBBY[state.club].co==='EN'&&!ids.includes(state.club))ids.push(state.club);
     state.cups.ENLC=cupInit('ENLC','EFL Cup',ids,CUP_W6.map(w=>w-2));
   }
-  const q=state.qual&&state.qual.length===16?state.qual:PLAYABLE.flatMap(co=>leagueClubs(co,1).sort((a,b)=>repOf(b.id)-repOf(a.id)).slice(0,4).map(c=>c.id));
-  state.cups.UCL=cupInit('UCL','Champions League',q);
+  const q=state.qual&&state.qual.length?state.qual:FIXED_UCL_S1.filter(id=>CLUBBY[id]);
+  state.cups.UCL=cupInitUCL(q);
 }
 function ensureWorld(){
   if(state.others&&state.cups)return;
@@ -6961,7 +7093,10 @@ function leagueScorers(key){
 function qualifiers(){
   const out=[];
   PLAYABLE.forEach(co=>{const L=leagueData(co+'1');out.push(...sortTable(L.tb).slice(0,4).map(r=>r.id))});
-  return out;
+  /* los clubes de ligas que el juego no simula (Turquía, Países Bajos, Portugal, Ucrania...) no tienen clasificación
+     que consultar: siguen en la Champions la temporada siguiente tal cual, en vez de recalcularse */
+  const carry=(state.qual||[]).filter(id=>{const c=CLUBBY[id];return c&&!PLAYABLE.includes(c.co)});
+  return[...out,...carry];
 }
 function champsLine(){
   const parts=PLAYABLE.map(co=>{const top=sortTable(leagueData(co+'1').tb)[0];return FLAG[co]+' '+cname(top.id)});
@@ -6971,6 +7106,14 @@ function champsLine(){
 /* estado del club del usuario en una copa */
 function myCupStatus(cup){
   const me=state.club;if(!cup.ids.includes(me))return null;
+  if(cup.league&&!cup.league.done){
+    for(let ri=0;ri<cup.league.fx.length;ri++){
+      const t=cup.league.fx[ri].find(x=>x.h===me||x.a===me);
+      if(t&&t.hg===undefined)return{next:{n:'Fase de liga',w:cup.league.weeks[ri]},tie:t};
+    }
+    return{next:{n:'Fase de liga',w:cup.league.weeks[cup.league.weeks.length-1]},pending:true};
+  }
+  if(cup._seed&&cup._seed[me]>24)return{out:{n:'la fase de liga'}};
   for(let i=0;i<cup.rounds.length;i++){
     const R=cup.rounds[i];
     if(!R.ties)return{next:R,pending:true};
@@ -6983,7 +7126,12 @@ function myCupStatus(cup){
 }
 const cupStatusText=s=>!s?'':s.champ?'Campeón':s.out?'Eliminado en '+s.out.n.toLowerCase():'Próxima: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1);
 function cupNews(x){
-  const t=x.t,R=x.cup.rounds[x.ri],won=t.w===state.club,fin=x.ri===x.cup.rounds.length-1;
+  const t=x.t;
+  if(x.league){
+    const res=`${cname(t.h)} ${t.hg}-${t.ag} ${cname(t.a)}`;
+    return `${x.cup.name}, fase de liga (jornada ${x.ri+1}): ${res}.`;
+  }
+  const R=x.cup.rounds[x.ri],won=t.w===state.club,fin=x.ri===x.cup.rounds.length-1;
   const res=`${cname(t.h)} ${t.hg}-${t.ag} ${cname(t.a)}${t.pen?' ('+t.pen[0]+'-'+t.pen[1]+' pen.)':''}`;
   return `${x.cup.name}, ${R.n.toLowerCase()}: ${res}. ${won?(fin?'¡Sois campeones!':'Pasáis de ronda.'):'Quedáis eliminados.'}`;
 }
@@ -7026,16 +7174,53 @@ function ccoListHTML(){
   <div class="res-scroll" id="cco-list" style="margin-top:14px;padding-top:2px">${ccoRowsHTML()}</div>
   <div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`;
 }
+function ccRowsHTML(grp){
+  return grp.comps.map(k=>{
+    const isCupK=isCup(k);
+    return`<button class="lrow cco${k===ui.cc?' sel':''}" data-act="cc2" data-k="${k}"><span class="fl ico">${isCupK?ICO_CUP:ICO_TROPHY}</span><span class="lt"><b>${esc(compName(k))}</b></span>${isMine(k)?'<i class="dot" title="Tu club juega aquí"></i>':''}</button>`;
+  }).join('');
+}
+function ccListHTML(){
+  const grp=GROUPS.find(g=>g.id===ui.cco)||GROUPS[0];
+  return`<h3>Competiciones de ${esc(grp.name)}</h3>
+  <div class="res-scroll" style="margin-top:10px">${ccRowsHTML(grp)}</div>
+  <div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`;
+}
+function ccViewOpts(key){
+  const cup=isCup(key);
+  if(key==='UCL')return[['lg','Clasificación'],['ko','Eliminatorias'],['cal','Calendario'],['stats','Estadísticas']];
+  return[['table',cup?'Cuadro':'Clasificación'],['cal','Calendario'],['stats','Estadísticas']];
+}
+function ccViewSheetHTML(key){
+  const opts=ccViewOpts(key);
+  const rows=opts.map(([v,l])=>`<button class="lrow cco${ui.ct===v?' sel':''}" data-act="ccview2" data-k="${v}"><span class="lt"><b>${esc(l)}</b></span></button>`).join('');
+  return`<h3>${esc(compName(key))}</h3>
+  <div class="res-scroll" style="margin-top:10px">${rows}</div>
+  <div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`;
+}
 function viewComps(){
   if(!ui.cc||!ui.cco){ui.cc=userKey();ui.cco=state.country}
-  if(!ui.ct)ui.ct='table';
+  migrateUclIfNeeded();
   const key=ui.cc,cup=isCup(key),grp=GROUPS.find(g=>g.id===ui.cco)||GROUPS[0];
+  const opts=ccViewOpts(key);
+  if(!opts.some(([v])=>v===ui.ct))ui.ct=opts[0][0];   /* si vienes de otra competición, se ajusta la vista a las pestañas válidas de esta */
   const grpStat=grp.id==='EU'?'':(()=>{const v=divAvgOvr(grp.id,1);return`<span class="lstat"><small class="lrep">${starsFracHTML(v)} ${v}</small></span>`})();
-  const sel=`<button class="lrow cco" data-act="cco-pick" style="width:100%;margin-bottom:8px"><span class="fl">${groupFlag(grp.id)}</span><span class="lt"><b>${esc(grp.name)}</b></span>${grpStat}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-  <div class="seg">${grp.comps.map(k=>`<button class="${k===key?'on':''}" data-act="cc" data-k="${k}">${esc(compName(k))}${isMine(k)?'<i class="dot" title="Tu club juega aquí"></i>':''}</button>`).join('')}</div>`;
-  const tabs=`<div class="subtabs">${[['table',cup?'Cuadro':'Clasificación'],['cal','Calendario'],['stats','Estadísticas']].map(([k,l])=>`<button class="${ui.ct===k?'on':''}" data-act="ct" data-k="${k}">${l}</button>`).join('')}</div>`;
-  const body=cup?(ui.ct==='cal'?cupCal(key):ui.ct==='stats'?cupStats(key):cupBracket(key)):(ui.ct==='cal'?leagueCal(key):ui.ct==='stats'?leagueStats(key):leagueTable(key));
-  return`<div class="sec-h"><h2>${esc(compName(key))}</h2><span>Temporada ${state.season}</span></div>${sel}${tabs}${body}`;
+  const sel=`<button class="lrow cco" data-act="cco-pick" style="width:100%;margin-bottom:8px"><span class="fl">${groupFlag(grp.id)}</span><span class="lt"><b>${esc(grp.name)}</b></span>${grpStat}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
+  const ctLbl=(opts.find(([v])=>v===ui.ct)||opts[0])[1];
+  const compCard=`<div class="lrow cco compcard sel"><button class="cc-name-btn" data-act="cc-pick"><span class="fl ico">${cup?ICO_CUP:ICO_TROPHY}</span><span class="lt"><b>${esc(compName(key))}</b>${isMine(key)?'<i class="dot" title="Tu club juega aquí"></i>':''}</span></button><button class="cc-view-btn" data-act="ccview-pick"><span>${esc(ctLbl)}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>`;
+  let body;
+  if(key==='UCL'){
+    const done=state.cups.UCL.league.done;
+    body=ui.ct==='ko'?(done?cupBracket(key):'<div class="card"><p class="muted-s">El cuadro de eliminatorias se sortea al terminar la fase de liga.</p></div>')
+      :ui.ct==='cal'?(done?cupCal(key):uclLeagueCalHTML())
+      :ui.ct==='stats'?(done?cupStats(key):uclLeagueStatsHTML())
+      :uclLeagueTableHTML();
+  }else if(cup){
+    body=ui.ct==='cal'?cupCal(key):ui.ct==='stats'?cupStats(key):cupBracket(key);
+  }else{
+    body=ui.ct==='cal'?leagueCal(key):ui.ct==='stats'?leagueStats(key):leagueTable(key);
+  }
+  return`<div class="sec-h"><h2>${esc(compName(key))}</h2><span>Temporada ${state.season}</span></div>${sel}${compCard}${body}`;
 }
 function zoneColor(key,pos,total){
   const d=String(key).slice(-1);
@@ -7186,6 +7371,55 @@ function cupStats(key){
   ${bestAttDef(Object.values(tm))}
   ${tile('Mayor goleada',line(big.m),'',1)}${tile('Partido con más goles',line(hi.m),hi.tt+' goles',1)}</div></div>
   ${playerStatCards(Object.values(cup.sc),key)}`;
+}
+/* ---- vistas de la fase de liga de la Champions (antes de pasar al cuadro eliminatorio) ---- */
+/* abreviatura de 3 letras mayúsculas para la tabla de la Champions */
+function short3(c){
+  const s=c.short||'';
+  if(/^[A-Z]{3}$/.test(s))return s;
+  const stop=new Set(['de','del','la','le','das','des','do','da','of','and','the','fc','cf','ac','sc','ss','as','ud','cd','nk','fk','sk','cc','sa','kv','pfc','us','to','el','st','ae']);
+  const words=c.name.split(/[\s'-]+/).filter(w=>w.length>1&&!stop.has(w.toLowerCase()));
+  if(/^olympique/i.test(c.name)&&words.length>1)return words[words.length-1].slice(0,3).toUpperCase();
+  const init=words.map(w=>w[0].toUpperCase()).join('');
+  if(init.length>=3)return init.slice(0,3);
+  return c.name.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,3).toUpperCase().padEnd(3,'X');
+}
+function uclLeagueTableHTML(){
+  const cup=state.cups.UCL,st=sortTable(cup.league.tb);
+  const rows=st.map((r,i)=>{
+    const c=CLUBBY[r.id],dg=r.gf-r.ga,pos=i+1,z=pos<=8?'#4caf50':pos<=24?'#29b6f6':'#e53935';
+    return`<tr class="${r.id===state.club?'me':''}"><td class="pos" style="--zc:${z}"><i></i><span>${pos}</span></td><td class="tm"><button class="tmbtn" data-act="club-view" data-club="${r.id}">${crestHTML(c,24)}<span class="nl">${esc(c.name)}</span><span class="ns">${esc(short3(c))}</span></button></td><td class="pts">${r.pts}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${dg>0?'+':''}${dg}</td></tr>`;
+  }).join('');
+  const legend=`<div class="legend2"><b>LEYENDA</b><div class="lg-grid"><span><i style="background:#4caf50"></i>Directos a octavos (1º-8º)</span><span><i style="background:#29b6f6"></i>Dieciseisavos (9º-24º)</span><span><i style="background:#e53935"></i>Eliminados</span></div></div>`;
+  return`<div class="card"><div class="tblwrap"><table class="tbl ucltbl"><thead><tr><th>#</th><th>Club</th><th>Pts</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th></tr></thead><tbody>${rows}</tbody></table></div>${legend}</div>`;
+}
+function uclLeagueRv(){
+  const cup=state.cups.UCL,total=cup.league.fx.length,played=cup.league.fx.filter(rd=>rd[0].hg!==undefined).length;
+  ui.rvs=ui.rvs||{};
+  return ui.rvs.UCL_L==null?clamp(played-1,0,total-1):ui.rvs.UCL_L;
+}
+function uclLeagueCalHTML(){
+  const cup=state.cups.UCL,total=cup.league.fx.length,rv=uclLeagueRv(),round=cup.league.fx[rv];
+  const rows=round.map(m=>{
+    const d=m.hg!==undefined,mine=m.h===state.club||m.a===state.club;
+    return`<div class="res ${mine?'mine':''}">${teamCell(m.h,d&&m.hg>m.ag?'win':d&&m.hg<m.ag?'los':'',false)}<b>${d?m.hg+' - '+m.ag:'vs'}</b>${teamCell(m.a,d&&m.ag>m.hg?'win':d&&m.ag<m.hg?'los':'',true)}</div>`;
+  }).join('');
+  return`<div class="card"><div class="rnav"><button class="btn ghost sm" data-act="uclrv" data-d="-1" ${rv<=0?'disabled':''}>Anterior</button><b>Jornada ${rv+1} de ${total}</b><button class="btn ghost sm" data-act="uclrv" data-d="1" ${rv>=total-1?'disabled':''}>Siguiente</button></div>${rows}</div>`;
+}
+function uclLeagueStatsHTML(){
+  const cup=state.cups.UCL;let n=0,big=null,hi=null;
+  cup.league.fx.forEach(rd=>rd.forEach(m=>{
+    if(m.hg===undefined)return;n++;
+    const d=Math.abs(m.hg-m.ag),t=m.hg+m.ag;
+    if(!big||d>big.d||(d===big.d&&t>big.t))big={m,d,t};
+    if(!hi||t>hi.t)hi={m,t};
+  }));
+  if(!n)return'<div class="card"><p class="muted-s">Todavía no se ha jugado ningún partido en la fase de liga.</p></div>';
+  const st=sortTable(cup.league.tb).filter(r=>r.p>0),line=m=>`${teamLink(m.h)} ${m.hg}-${m.ag} ${teamLink(m.a)}`;
+  return`<div class="card"><div class="statgrid">
+  ${bestAttDef(st)}
+  ${tile('Mayor goleada',line(big.m),'',1)}${tile('Partido con más goles',line(hi.m),hi.t+' goles',1)}</div></div>
+  ${playerStatCards(Object.values(cup.sc),'UCL')}`;
 }
 
 /* ===================== UI base ===================== */
@@ -7446,7 +7680,7 @@ function xiAvgOvr(t){const ids=bestXI(t,t.formation),m=new Map(t.players.map(p=>
 const xIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 function cardHTML(id){
   const c=CLUBBY[id],t=previewTeam(id),top=[...t.players].sort((a,b)=>b.ovr-a.ovr).slice(0,3),rep=xiAvgOvr(t),fl=facLevels(id);
-  return`<div class="cc-head">${crestHTML(c,54)}<div><h3>${esc(c.name)}</h3><div class="muted-s">${esc(c.city)}, ${COUNTRIES[c.co].name}</div><div class="cc-row"><span class="cc-div">${FLAG[c.co]} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="card-close" aria-label="Cerrar">${xIcon}</button></div>
+  return`<div class="cc-head">${crestHTML(c,54)}<div><h3>${esc(c.name)}</h3><div class="muted-s">${esc(c.city)}, ${esc((COUNTRIES[c.co]&&COUNTRIES[c.co].name)||NATNAME[c.co]||c.co)}</div><div class="cc-row"><span class="cc-div">${FLAG[c.co]} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="card-close" aria-label="Cerrar">${xIcon}</button></div>
   <div class="defs sm"><div><i>Estadio</i><b>${esc(stadiumOf(id))}</b></div><div><i>Presupuesto</i><b>${fmtM(budgetFor(c))}</b></div><div><i>Reputación</i><b><span class="cc-stars">${starsValTxt(rep)}</span> ${rep}</b></div><div><i>Instalaciones de entrenamiento</i><b>Nivel ${fl.train}</b></div><div><i>Academia de juveniles</i><b>Nivel ${fl.acad}</b></div></div>
   <div class="cc-players">${top.map(p=>`<button class="cc-p" data-act="pl" data-id="${p.id}" data-club="${id}"><b>${esc(shortName(p.n))}</b><span>${ppOf(p)[0]} <em style="font-style:normal;font-weight:700;color:${ratingColor(p.ovr)}">${p.ovr}</em></span></button>`).join('')}</div>
   <div class="cc-btns"><button class="btn ghost" data-act="cv-open">Ver más información</button><button class="btn primary" data-act="take">Tomar Control del Club</button></div>`;
@@ -7766,7 +8000,7 @@ function clubViewHTML(id){
   if(!top.some(([k])=>k===ui.cvTab))ui.cvTab='squad';
   const topSeg=`<div class="seg" style="margin-top:14px">${top.map(([k,l])=>`<button class="${ui.cvTab===k?'on':''}" data-act="cv-tab" data-k="${k}">${l}</button>`).join('')}</div>`;
   const content=ui.cvTab==='info'?infoBody:ui.cvTab==='palmares'?palBody:`${subSeg}${squadBody}`;
-  return`<div class="cv-scroll"><div class="cv-top">${crestHTML(c,64)}<div class="grow"><h2>${esc(c.name)}</h2><div class="muted-s">${esc(c.city)}, ${COUNTRIES[c.co].name}</div><div class="cc-row"><span class="cc-div">${FLAG[c.co]} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="cv-close" aria-label="Cerrar">${xIcon}</button></div>
+  return`<div class="cv-scroll"><div class="cv-top">${crestHTML(c,64)}<div class="grow"><h2>${esc(c.name)}</h2><div class="muted-s">${esc(c.city)}, ${esc((COUNTRIES[c.co]&&COUNTRIES[c.co].name)||NATNAME[c.co]||c.co)}</div><div class="cc-row"><span class="cc-div">${FLAG[c.co]} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="cv-close" aria-label="Cerrar">${xIcon}</button></div>
   ${topSeg}${content}</div>
   ${state?'':`<div class="cv-foot"><button class="btn primary" data-act="take">Tomar Control del Club</button></div>`}`;
 }
@@ -8037,7 +8271,14 @@ function takeControl(){
 }
 
 /* ===================== panel del manager ===================== */
-function enterGame(){ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';renderGame();go('game')}
+/* partidas guardadas antes de que la Champions tuviera fase de liga: si el objeto de la copa es del formato antiguo
+   (sin cup.league), se reconstruye con el nuevo formato manteniendo los mismos equipos clasificados */
+function migrateUclIfNeeded(){
+  if(state&&state.cups&&state.cups.UCL&&!state.cups.UCL.league&&Array.isArray(state.cups.UCL.ids)&&state.cups.UCL.ids.length){
+    state.cups.UCL=cupInitUCL(state.cups.UCL.ids.filter(id=>CLUBBY[id]));
+  }
+}
+function enterGame(){ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';migrateUclIfNeeded();renderGame();go('game')}
 function renderGame(){
   const c=CLUBBY[state.club],t=me();
   $('#g-crest').innerHTML=crestHTML(c,38);$('#g-club').textContent=c.name;
@@ -8082,7 +8323,7 @@ home(){
   const line=row.p===0?`Arranca la temporada ${state.season}. Objetivo de la directiva: <b>${objective(state.club)}</b>.`:`Vas <b>${pos}º</b> con <b>${row.pts} puntos</b> tras ${row.p} jornada${row.p>1?'s':''}. Objetivo de la directiva: <b>${objective(state.club)}</b>.`;
   let next;const ct=state.phase==='play'?userCupTie(state.week):null,pt=state.phase==='end'?userPoTie():null;
   if(ct){
-    const tt=ct.t,homeC=tt.h===state.club,oidC=homeC?tt.a:tt.h,ocC=CLUBBY[oidC],RC=ct.cup.rounds[ct.ri],ovC=Math.round(virt(oidC).ovr),pwC=Math.round(s.ovr/(s.ovr+ovC)*100);
+    const tt=ct.t,homeC=tt.h===state.club,oidC=homeC?tt.a:tt.h,ocC=CLUBBY[oidC],RC=ct.league?{n:'Fase de liga · Jornada '+(ct.ri+1)}:ct.cup.rounds[ct.ri],ovC=Math.round(virt(oidC).ovr),pwC=Math.round(s.ovr/(s.ovr+ovC)*100);
     next=`<div class="card next"><div class="card-h"><h3>${esc(ct.cup.name)}</h3><span>${esc(RC.n)}</span></div>
     <div class="vs"><button class="tm" data-act="club-view" data-club="${c.id}">${crestHTML(c,52)}<span>${esc(c.name)}</span></button><div class="mid">${homeC?'en casa':'fuera'}</div><button class="tm" data-act="club-view" data-club="${oidC}">${crestHTML(ocC,52)}<span>${esc(ocC.name)}</span></button></div>
     <div class="cmp"><span>GRL del once titular: ${Math.round(s.ovr)} frente a ${ovC}. Esta semana juegas primero la copa y después la liga.</span><div class="bar"><i style="width:${pwC}%"></i><i style="width:${100-pwC}%"></i></div>${inj?`<span class="bad">Tienes ${inj} lesionado${inj>1?'s':''} en la plantilla.</span>`:''}</div>
@@ -8258,7 +8499,14 @@ const H={
   'slot-load'(t){
     const n=+t.dataset.n,s=readSlot(n);
     if(!s){toast('No se pudo leer esa partida');renderSlots();return}
-    state=s;state.slot=n;ensureState();enterGame();
+    try{
+      state=s;state.slot=n;migrateUclIfNeeded();ensureState();enterGame();
+    }catch(e){
+      console.error('Error al cargar la partida',e);
+      state=null;
+      toast('No se pudo cargar la partida (error interno). La partida guardada no se ha borrado.');
+      renderSlots();
+    }
   },
   async 'slot-del'(t){
     const n=+t.dataset.n;
@@ -8440,11 +8688,16 @@ const H={
   'mkt-page'(t){if(!ui.mkt||typeof ui.mkt!=='object')ui.mkt=mktDefault();ui.mkt.page=Math.max(0,ui.mkt.page+(+t.dataset.d));renderGame()},
   cco(t){ui.cco=t.dataset.k;const g=GROUPS.find(x=>x.id===ui.cco);ui.cc=g.comps.includes(userKey())?userKey():g.comps[0];renderGame()},
   'cco-pick'(){ui.ccoQ='';openSheet(ccoListHTML())},
+  'cc-pick'(){openSheet(ccListHTML())},
+  cc2(t){ui.cc=t.dataset.k;ui.ct='table';closeSheet();renderGame()},
+  'ccview-pick'(){openSheet(ccViewSheetHTML(ui.cc))},
+  ccview2(t){ui.ct=t.dataset.k;closeSheet();renderGame()},
   cco2(t){ui.cco=t.dataset.k;const g=GROUPS.find(x=>x.id===ui.cco);ui.cc=g.comps.includes(userKey())?userKey():g.comps[0];closeSheet();renderGame()},
   cc(t){ui.cc=t.dataset.k;renderGame()},
   ct(t){ui.ct=t.dataset.k;renderGame()},
   ptop(t){openTop10(t.dataset.k,t.dataset.s)},
   crv(t){const L=leagueData(ui.cc),total=L.fx.length;ui.rvs=ui.rvs||{};ui.rvs[ui.cc]=clamp(leagueRv(ui.cc)+(+t.dataset.d),0,total-1);renderGame()},
+  uclrv(t){const total=state.cups.UCL.league.fx.length;ui.rvs=ui.rvs||{};ui.rvs.UCL_L=clamp(uclLeagueRv()+(+t.dataset.d),0,total-1);renderGame()},
   menu(){openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
   'save-now'(){saveGame();closeSheet();toast('Partida guardada')},
   exit(){saveGame();closeSheet();state=null;resetDivs();go('title')},
@@ -8458,7 +8711,8 @@ function bindEvents(){
     if(t&&t.dataset&&t.dataset.ccoq!==undefined){ui.ccoQ=t.value;const r=document.getElementById('cco-list');if(r)r.innerHTML=ccoRowsHTML();return}
     if(t&&t.dataset&&t.dataset.lsl&&ui.pm){const id=t.dataset.lsl,v=+t.value,f=pmFind();(ui.pm.ls=ui.pm.ls||{})[id]=v;const l=document.getElementById('lo-l-'+id),h=document.getElementById('lo-t-'+id);if(l&&f)l.textContent=lsText(f.p,v);if(h)h.textContent=(100-v)+'%';return}
     if(t&&t.dataset&&t.dataset.rng&&ui.pm){ui.pm[t.dataset.rng]=+t.value;updateNegLabels()}});
-  document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.mkt&&ui.mkt&&typeof ui.mkt==='object'){ui.mkt[t.dataset.mkt]=t.value;ui.mkt.page=0;if(t.dataset.mkt==='country'){ui.mkt.league='ALL';ui.mkt.team='ALL'}if(t.dataset.mkt==='league')ui.mkt.team='ALL';renderGame();refreshMktSheet()}});
+  document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.mkt&&ui.mkt&&typeof ui.mkt==='object'){ui.mkt[t.dataset.mkt]=t.value;ui.mkt.page=0;if(t.dataset.mkt==='country'){ui.mkt.league='ALL';ui.mkt.team='ALL'}if(t.dataset.mkt==='league')ui.mkt.team='ALL';renderGame();refreshMktSheet()}
+    if(t&&t.dataset&&t.dataset.ccview){ui.cc=t.dataset.ccview;ui.ct=t.value;renderGame()}});
   window.addEventListener('resize',()=>{if(ui.level===2)layoutPins()});
   document.addEventListener('click',e=>{
     const t=e.target.closest&&e.target.closest('[data-act]');
