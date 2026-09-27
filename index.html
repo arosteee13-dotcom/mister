@@ -5062,7 +5062,7 @@ function simMatch(m){
 }
 function finance(round){
   const t=me(),wk=wageBill()/1000,home=round.some(m=>m.h===state.club);
-  const inc=wk*1.12+(home?.5+repOf(state.club)*.01:0);
+  const inc=wk*1.06+(home?.5+repOf(state.club)*.01:0);
   t.budget=Math.round((t.budget+inc-wk)*10)/10;
   state.fin={inc:Math.round(inc*10)/10,exp:Math.round(wk*10)/10};
 }
@@ -5535,7 +5535,7 @@ function trainBonus(id,a,r){
   const fb=(trainLevel(id)-1)/14;
   return a<=24?Math.floor(r()*(1+fb*2)):a<=29?(r()<fb*.5?1:0):(a>=31&&r()<fb*.35?1:0);
 }
-const facCost=L=>r1(1.2+L*L*.09),facWeeks=L=>6+Math.round(L/2);
+const facCost=L=>r1(3+L*L*.35),facWeeks=L=>10+Math.round(L);
 function initFacilities(){state.fac=facLevels(state.club);state.works=[];state.academy=[];state.acadIn=ACAD_EVERY}
 function startWork(k){
   const L=state.fac[k],t=me();
