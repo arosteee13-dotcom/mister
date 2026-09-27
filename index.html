@@ -7050,15 +7050,18 @@ function zoneColor(key,pos,total){
   }
   if(d==='2'){
     if(pos<=2)return'#66bb6a';
-    if(total===20)return pos<=8?'#26a69a':'#9e9e9e';
-    if(total===18)return pos===3?'#26a69a':'#9e9e9e';
-    return pos<=6?'#26a69a':'#9e9e9e';
+    if(total===20){if(pos<=8)return'#26a69a';return pos<=15?'#9e9e9e':(pos<=17?'#ef9a9a':'#e53935')}
+    if(total===18){if(pos===3)return'#26a69a';return pos<=15?'#9e9e9e':(pos===16?'#ef9a9a':'#e53935')}
+    if(total===22){if(pos<=6)return'#26a69a';return pos<=18?'#9e9e9e':'#e53935'}
+    if(total===24){if(pos<=6)return'#26a69a';return pos<=21?'#9e9e9e':'#e53935'}
+    if(pos<=6)return'#26a69a';
+    return pos<=total-3?'#9e9e9e':'#e53935';
   }
   return null;
 }
 const ZONES_D1=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#26a69a','Previa de Champions'],['#29b6f6','Europa League'],['#90a4ae','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_D1_18=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#26a69a','Previa de Champions'],['#29b6f6','Europa League'],['#90a4ae','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
-const ZONES_D2=[['#66bb6a','Ascenso'],['#26a69a','Playoff Ascenso'],['#9e9e9e','Mitad de tabla']];
+const ZONES_D2=[['#66bb6a','Ascenso'],['#26a69a','Playoff Ascenso'],['#9e9e9e','Mitad de tabla'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_D2_18=ZONES_D2,ZONES_D2_20=ZONES_D2;
 function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2';let ep=0;
