@@ -7353,11 +7353,11 @@ function simTieLeg(t,cup,leg){
   if(mine&&state.teams[me]){T=state.teams[me];const S=strength(T);if(home===me)sh=S;else sa=S}
   const L={hg:rollGoals(xgAny(sh,sa,1)),ag:rollGoals(xgAny(sa,sh,-1))};
   t.l=t.l||[];t.l[leg]=L;
-  const gmH={},gmA={};
+  const gmH={},gmA={},n0=(t.sc||[]).length;
   for(let i=0;i<L.hg;i++)goalFor(t,cup,home,'h',T,gmH);
   for(let i=0;i<L.ag;i++)goalFor(t,cup,away,'a',T,gmA);
   liteExtras(cup.sc,home,gmH,L.hg,L.ag,home===me);liteExtras(cup.sc,away,gmA,L.ag,L.hg,away===me);
-  if(t.sc)t.sc.sort((a,b)=>a.min-b.min);
+  if(t.sc){L.sc=t.sc.slice(n0).sort((a,b)=>a.min-b.min);t.sc.sort((a,b)=>a.min-b.min)}
 }
 /* resuelve una eliminatoria a doble partido por el resultado global; empate global = penaltis (sin gol de visitante) */
 function resolveTie(t,cup){
@@ -9048,6 +9048,13 @@ market(){
 }};
 
 /* ===================== hojas: resultado y fin de temporada ===================== */
+/* qué viene después de un partido de copa: puede haber OTRO partido de copa la misma semana (p. ej. Supercopa + Champions) */
+function nextGameTxt(){
+  const n=userCupTie(state.week);
+  if(n)return`Esta semana aún te toca otro partido de copa: ${n.cup.name}${n.league?' (fase de liga)':', '+n.cup.rounds[n.ri].n.toLowerCase()}. Es un partido distinto. Revisa tu once antes de jugarlo.`;
+  if(state.phase==='end'||state.week>=state.fixtures.length)return'La liga ya ha terminado.';
+  return'Ahora toca el partido de liga de esta jornada. Revisa tu once antes de jugarlo.';
+}
 function cupSheet(res){
   const x=res.cups.find(y=>y.t.h===state.club||y.t.a===state.club)||res.cups[0];if(!x)return;
   if(x.league){
@@ -9063,23 +9070,36 @@ function cupSheet(res){
     <div class="verdict ${gf>ga?'w':gf<ga?'l':''}">${txt}</div>
     <div class="scorers"><div>${sc('h')}</div><div class="r">${sc('a')}</div></div>
     ${posTxt?`<p style="text-align:center;margin-top:6px">${posTxt}</p>`:''}
-    <p class="muted-s" style="text-align:center;margin-top:8px">${state.phase==='end'||state.week>=state.fixtures.length?'La liga ya ha terminado.':'Ahora toca el partido de liga de esta jornada. Revisa tu once antes de jugarlo.'}</p></div>
+    <p class="muted-s" style="text-align:center;margin-top:8px">${nextGameTxt()}</p></div>
     <div class="res-scroll">${othersL?`<div class="subh">Resto de la jornada</div>${othersL}`:''}</div>
     <div class="row-btns"><button class="btn primary" data-act="round-ok">Continuar</button></div>`);
     return;
   }
-  const t=x.t,R=x.cup.rounds[x.ri],home=t.h===state.club,hc=CLUBBY[t.h],ac=CLUBBY[t.a],won=t.w===state.club,fin=x.ri===x.cup.rounds.length-1;
-  const gf=home?t.hg:t.ag,ga=home?t.ag:t.hg,txt=gf>ga?'Victoria':gf<ga?'Derrota':won?'Victoria en los penaltis':'Derrota en los penaltis';
-  const sc=side=>(t.sc||[]).filter(z=>z.s===side).map(z=>`${esc(z.n)} ${z.min}'`).join('<br>')||'&nbsp;';
-  const others=R.ties.filter(o=>o!==t).map(o=>`<div class="res">${teamCell(o.h,'',false)}<b>${o.hg} - ${o.ag}</b>${teamCell(o.a,'',true)}</div>${o.pen?`<div class="pen">Penaltis ${o.pen[0]}-${o.pen[1]}</div>`:''}`).join('');
-  openSheet(`<div class="res-top"><p class="muted-s" style="text-align:center">${esc(x.cup.name)}, ${esc(R.n.toLowerCase())}</p>
-  <div class="score"><div class="tm">${crestHTML(hc,52)}<span>${esc(hc.name)}</span></div><div class="sc">${t.hg} - ${t.ag}</div><div class="tm">${crestHTML(ac,52)}<span>${esc(ac.name)}</span></div></div>
-  <div class="verdict ${won?'w':'l'}">${txt}</div>
+  const t=x.t,R=x.cup.rounds[x.ri],won=t.w===state.club,fin=x.ri===x.cup.rounds.length-1;
+  /* eliminatoria a doble partido (Europa: dieciseisavos a semifinales): se muestra el resultado de ESE partido, no el global */
+  const two=typeof R.w2==='number'&&R.w2>R.w,leg=two?(x.leg||0):null;
+  const L=two?((t.l&&t.l[leg])||{hg:0,ag:0,sc:[]}):{hg:t.hg,ag:t.ag,sc:t.sc};
+  const home=two?(leg===0?t.h:t.a):t.h,away=two?(leg===0?t.a:t.h):t.a,hc=CLUBBY[home],ac=CLUBBY[away];
+  const mh=home===state.club,gf=mh?L.hg:L.ag,ga=mh?L.ag:L.hg;
+  const rw=gf>ga?'Victoria':gf<ga?'Derrota':'Empate';
+  const txt=two&&leg===0?rw+' en la ida':(t.pen?(won?'Victoria en los penaltis':'Derrota en los penaltis'):(two?rw:(gf>ga?'Victoria':'Derrota')));
+  const cls=two&&leg===0?(gf>ga?'w':gf<ga?'l':''):(won?'w':'l');
+  const sc=side=>(L.sc||[]).filter(z=>z.s===side).map(z=>`${esc(z.n)} ${z.min}'`).join('<br>')||'&nbsp;';
+  const others=R.ties.filter(o=>o!==t).map(o=>{
+    if(two){const l=o.l&&o.l[leg];if(!l)return'';const h=leg===0?o.h:o.a,a=leg===0?o.a:o.h;
+      return`<div class="res">${teamCell(h,'',false)}<b>${l.hg} - ${l.ag}</b>${teamCell(a,'',true)}</div>${leg===1&&o.hg!==undefined?`<div class="pen">Global ${o.hg}-${o.ag}${o.pen?', penaltis '+o.pen[0]+'-'+o.pen[1]:''}</div>`:''}`}
+    if(o.hg===undefined)return'';
+    return`<div class="res">${teamCell(o.h,'',false)}<b>${o.hg} - ${o.ag}</b>${teamCell(o.a,'',true)}</div>${o.pen?`<div class="pen">Penaltis ${o.pen[0]}-${o.pen[1]}</div>`:''}`}).join('');
+  const globalTxt=two&&leg===1?`<p style="text-align:center;margin-top:6px"><b>Global ${esc(cname(t.h))} ${t.hg} - ${t.ag} ${esc(cname(t.a))}</b>${t.pen?`, penaltis ${t.pen[0]}-${t.pen[1]}`:''}</p>`:(!two&&t.pen?`<div class="pen">Penaltis ${t.pen[0]}-${t.pen[1]}</div>`:'');
+  const endTxt=two&&leg===0?`Ida disputada: la eliminatoria se decide en la vuelta (semana ${R.w2+1}).`:(won?(fin?'¡Sois campeones!':'Pasáis de ronda.'):'Quedáis eliminados.');
+  openSheet(`<div class="res-top"><p class="muted-s" style="text-align:center">${esc(x.cup.name)}, ${esc(R.n.toLowerCase())}${two?(leg===0?', ida':', vuelta'):''}</p>
+  <div class="score"><div class="tm">${crestHTML(hc,52)}<span>${esc(hc.name)}</span></div><div class="sc">${L.hg} - ${L.ag}</div><div class="tm">${crestHTML(ac,52)}<span>${esc(ac.name)}</span></div></div>
+  <div class="verdict ${cls}">${txt}</div>
   <div class="scorers"><div>${sc('h')}</div><div class="r">${sc('a')}</div></div>
-  ${t.pen?`<div class="pen">Penaltis ${t.pen[0]}-${t.pen[1]}</div>`:''}
-  <p style="text-align:center;margin-top:6px">${won?(fin?'¡Sois campeones!':'Pasáis de ronda.'):'Quedáis eliminados.'}</p>
-  <p class="muted-s" style="text-align:center;margin-top:8px">${state.phase==='end'||state.week>=state.fixtures.length?'La liga ya ha terminado.':'Ahora toca el partido de liga de esta jornada. Revisa tu once antes de jugarlo.'}</p></div>
-  <div class="res-scroll">${others?`<div class="subh">Resto de la eliminatoria</div>${others}`:''}</div>
+  ${globalTxt}
+  <p style="text-align:center;margin-top:6px">${endTxt}</p>
+  <p class="muted-s" style="text-align:center;margin-top:8px">${nextGameTxt()}</p></div>
+  <div class="res-scroll">${others?`<div class="subh">${two&&leg===0?'Resto de partidos de ida':'Resto de la eliminatoria'}</div>${others}`:''}</div>
   <div class="row-btns"><button class="btn primary" data-act="round-ok">Continuar</button></div>`);
 }
 function roundSheet(res){
