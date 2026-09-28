@@ -8979,7 +8979,7 @@ squad(){
     return`<div class="sec-h"><h2>Plantilla</h2><span>Cedidos</span></div>${seg}${vseg}${loanView(lo,li,ui.sqv==='stats')}`;
   }
   const S=squadObj(ui.sq),c=CLUBBY[S.id],list=[...S.players].sort(byPos),st=ui.sqv==='stats',xi=new Set(me().lineup);
-  const avg=Math.round(list.reduce((a,p)=>a+p.ovr,0)/list.length),age=(list.reduce((a,p)=>a+p.age,0)/list.length).toFixed(1);
+  const avg=list.length?Math.round(list.reduce((a,p)=>a+p.ovr,0)/list.length):'-',age=list.length?(list.reduce((a,p)=>a+p.age,0)/list.length).toFixed(1):'-';   /* filial vacío (modo real, sin plantilla real): sin jugadores no hay media */
   const rows=st
     ? list.map(p=>`<button class="prow-b sts" data-act="pl" data-id="${p.id}" data-club="${S.id}">${posChip(p)}<span class="pname">${esc(p.n)}<small>${p.age} años ${roleChip(p.role||roleIn(p,S.players))}${tagsHTML(p)}</small></span><span>${p.ap||0}</span><span${p.pos==='GK'?' title="Goles encajados"':''}>${p.pos==='GK'?`${p.ge||0}<em class="ge">e</em>`:(p.g||0)}</span><span>${p.as||0}</span><span>${p.yc||0}</span><span>${p.rc||0}</span><span>${ratOf(p)}</span></button>`).join('')
     : `<div class="pcs">${list.map(p=>playerCard(p,S.id,{starter:S.mine&&xi.has(p.id),tags:true})).join('')}</div>`;
@@ -8987,7 +8987,8 @@ squad(){
   const vseg=`<div class="seg">${[['info','Información'],['stats','Estadísticas']].map(([k,l])=>`<button class="${ui.sqv===k?'on':''}" data-act="sqv" data-v="${k}">${l}</button>`).join('')}</div>`;
   const th=st?'<div class="prow-b sts th"><span></span><span>Jugador</span><span>PJ</span><span title="Goles (porteros: goles encajados)">G</span><span>A</span><span>TA</span><span>TR</span><span>Nota</span></div>':'';
   const note=fi?'<p class="hint">Primer equipo y filial están vinculados: sus jugadores se suben y se bajan desde la ficha (Acciones), pero no se compran ni se venden entre ellos.</p>':'';
-  const body=st?`<div class="card list">${th}${rows}</div>`:rows;
+  const empty=list.length?'':`<p class="hint" style="margin:10px 0">${esc(c.name)} no tiene jugadores todavía${S.mine?'':': este club no cuenta con plantilla real de filial'}. Puedes bajar jugadores del primer equipo desde su ficha (Acciones).</p>`;
+  const body=list.length?(st?`<div class="card list">${th}${rows}</div>`:rows):empty;
   return`<div class="sec-h"><h2>Plantilla</h2><span>GRL medio ${avg}, edad media ${age}</span></div>${seg}${head}${vseg}${body}${note}<p class="hint">Toca un jugador para ver su ficha.</p>`;
 },
 tactics(){
