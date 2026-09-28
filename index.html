@@ -9551,7 +9551,8 @@ const H={
   'wb-back'(){offersSheet()},
   'wb-apply'(t){
     const id=t.dataset.id,c=CLUBBY[id],mr=mgrRating(),diff=repOf(id)-mr;
-    const chance=clamp(1-(diff-4)/22,.03,.92);
+    /* un club de tu nivel o por debajo casi nunca te dice que no; solo hay que ganarse a los que están por encima */
+    const chance=diff<=0?.99:clamp(1-diff/16,.03,.9);
     if(Math.random()<chance){switchClub(id);renderGame();toast(`${c?c.name:id} acepta tu solicitud. ¡Eres su nuevo entrenador!`);afterOffers()}
     else{toast(`${c?c.name:id} rechaza tu solicitud: buscan un entrenador con más palmarés.`)}
   },
