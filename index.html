@@ -5681,7 +5681,8 @@ function newGame(slot,clubId){
   });
   const ids=Object.keys(teams);
   state={v:1,slot,created:Date.now(),saved:Date.now(),seed,mode:ui.gmode||'fict',country:co,div:club.div,club:clubId,season:1,week:0,phase:'play',teams,
-    fixtures:makeFixtures(ids,rng(seed^0x9e37)),table:emptyTable(ids),news:[],market:[],fin:null,loans:[],loansOut:[]};
+    fixtures:makeFixtures(ids,rng(seed^0x9e37)),table:emptyTable(ids),news:[],market:[],fin:null,loans:[],loansOut:[],
+    mgrStints:[{club:clubId,from:1}],mgrLog:[],jobOffers:[]};
   news(`La directiva de ${club.name} te presenta como nuevo míster. Objetivo: ${objective(clubId)}.`);
   initWorld();initFam();initFacilities();
   invalidateSquads();applyInitialLoans();aiMarket('start');   /* primero las cesiones reales: así los cedidos no se venden ni se duplican */
@@ -5964,6 +5965,107 @@ function clubCareerStats(p,clubId){
   });
   if(p.ap){ap+=p.ap;g+=p.g||0;ge+=p.ge||0;sv+=p.sv||0;as+=p.as||0;yc+=p.yc||0;rc+=p.rc||0;rtSum+=p.rt||0;rtN+=p.ap;seasons++}
   return{ap,g,ge,sv,as,yc,rc,seasons,rt:rtN?+(rtSum/rtN).toFixed(2):null};
+}
+/* ===================== carrera de entrenador: ofertas de otros clubes, ligas del mundo y perfil ===================== */
+/* nivel del entrenador a partir de su palmares (no del club que dirige ahora mismo): decide que ofertas puede recibir */
+function mgrRating(){
+  let pts=repOf(state.club)*.6;
+  (state.mgrLog||[]).forEach(e=>{
+    pts+={league:9,d2:5,cup:4,sc:2,ucl:16,uel:8,ecl:5,sce:3,ifc:6,lc:2,promo:6}[e.k]||0;
+  });
+  return clamp(Math.round(pts),20,99);
+}
+/* genera entre 1 y 3 ofertas para ser entrenador de otro club, mas probables cuanto mas cerca esta su reputacion
+   de tu nivel actual (mgrRating); un club muy por encima de tu palmares casi nunca llama a tu puerta */
+function genJobOffers(){
+  const mr=mgrRating(),mine=state.club,famId=state.fam&&state.fam.id;
+  const cand=CLUBS.filter(c=>c.id!==mine&&c.id!==famId&&!isB(c.id)&&PLAYABLE.includes(c.co));
+  const r=rng(hashStr('jobs'+state.seed+'_'+state.season));
+  let ws=cand.map(c=>{const diff=repOf(c.id)-mr;return Math.exp(-Math.abs(diff)/9)*(diff>6?.25:1)});
+  const n=Math.min(cand.length,1+Math.floor(r()*3));
+  const picked=[],pool=cand.slice();
+  for(let i=0;i<n&&pool.length;i++){
+    const tot=ws.reduce((a,b)=>a+b,0);if(tot<=0)break;
+    let x=r()*tot,j=0;while(j<ws.length-1&&x>ws[j]){x-=ws[j];j++}
+    picked.push(pool[j].id);pool.splice(j,1);ws.splice(j,1);
+  }
+  state.jobOffers=picked;
+}
+/* fichas por otro club sin dejar la partida: se cierra tu etapa actual, se abre una nueva y se reconstruye
+   la liga/copas alrededor del club nuevo, igual que hace newGame pero conservando temporada y palmares */
+function switchClub(newId){
+  const club=CLUBBY[newId],co=club.co,seed=state.seed;
+  state.mgrStints=state.mgrStints||[{club:state.club,from:1}];
+  const cur=state.mgrStints[state.mgrStints.length-1];if(cur&&cur.to==null)cur.to=state.season;
+  BENCH_N=benchLimit(newId);
+  resetDivs();
+  const teams={};
+  leagueClubs(co,club.div).forEach(c=>{
+    const t={players:genSquad(c,seed),budget:budgetFor(c),formation:FORM_MAIN[c.id]||'4-3-3',lineup:[]};
+    t.lineup=bestXI(t);if(c.id===newId)t.bench=autoBench(t);teams[c.id]=t;
+  });
+  const ids=Object.keys(teams);
+  state.country=co;state.div=club.div;state.club=newId;state.teams=teams;
+  state.fixtures=makeFixtures(ids,rng(seed^0x9e37^state.season));state.table=emptyTable(ids);
+  state.market=[];state.loans=[];state.loansOut=[];state.jobOffers=[];
+  state.mgrStints.push({club:newId,from:state.season});
+  initWorld();initFam();initFacilities();
+  invalidateSquads();applyInitialLoans();aiMarket('start');
+  state.market=genMarket();
+  { const m=me();m.lineup=bestXIOpt(m,m.formation);m.bench=autoBench(m); }
+  news(`Fichas por ${club.name} como su nuevo entrenador. Objetivo: ${objective(newId)}.`);
+  saveGame();
+}
+/* tras resolver las ofertas de la pretemporada, sigue el flujo normal (el pop-up de retiros, si toca) */
+function afterOffers(){
+  closeSheet();
+  if(state.retiredNow&&state.retiredNow.length)setTimeout(()=>retiredSheet(state.retiredNow),350);
+}
+function offersSheet(){
+  const list=state.jobOffers||[];
+  if(!list.length){afterOffers();return}
+  const row=id=>{
+    const c=CLUBBY[id];if(!c)return'';
+    return`<div class="hcard now"><div class="hcard-h">${crestHTML(c,32)}<b>${esc(c.name)}</b><span class="nw">${starsFracHTML(repOf(id))} ${repOf(id)}</span></div>
+    <p class="muted-s" style="margin-top:6px">${esc(c.city)}, ${esc(divName(c.co,c.div))}. Quieren que seas su nuevo entrenador.</p>
+    <div class="row-btns" style="margin-top:10px"><button class="btn ghost sm" data-act="offer-reject" data-id="${id}">Rechazar</button><button class="btn primary sm" data-act="offer-accept" data-id="${id}">Aceptar</button></div></div>`;
+  };
+  openSheet(`<div class="res-top"><h3>Ofertas para ser su entrenador</h3><p style="margin-bottom:8px">${list.length===1?'Un club quiere':list.length+' clubes quieren'} contar contigo esta pretemporada.</p></div>
+  <div class="res-scroll"><div class="hcards">${list.map(row).join('')}</div></div>
+  <div class="row-btns"><button class="btn ghost" data-act="offers-world">Ver ligas del mundo</button><button class="btn primary" data-act="offers-close">Seguir en mi club</button></div>`);
+}
+/* buscador de ligas del mundo: pais -> clubes con su reputacion, con opcion de solicitar ser su entrenador */
+function worldBrowserSheet(co){
+  if(!co){
+    const rows=PLAYABLE.map(cc=>{
+      const best=CLUBS.filter(c=>c.co===cc).sort((a,b)=>repOf(b.id)-repOf(a.id))[0];
+      return`<button class="mrow" data-act="wb-country" data-co="${cc}" style="grid-template-columns:28px 1fr auto;width:100%;text-align:left">${FLAG[cc]||''}<span class="pname">${esc((COUNTRIES[cc]&&COUNTRIES[cc].name)||NATNAME[cc]||cc)}</span><span class="muted-s">${best?starsFracHTML(repOf(best.id)):''}</span></button>`;
+    }).join('');
+    openSheet(`<div class="res-top"><h3>Ligas del mundo</h3><p class="muted-s" style="margin-bottom:6px">Elige un país para ver sus clubes y su reputación.</p></div><div class="res-scroll">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="wb-back">Volver a las ofertas</button></div>`);
+    return;
+  }
+  const clubs=CLUBS.filter(c=>c.co===co).sort((a,b)=>a.div-b.div||repOf(b.id)-repOf(a.id));
+  const rows=clubs.map(c=>{
+    const mine=c.id===state.club,fam=state.fam&&state.fam.id===c.id,canApply=!mine&&!fam&&!isB(c.id);
+    return`<div class="mrow" style="grid-template-columns:26px 1fr auto">${crestHTML(c,26)}<span class="pname">${esc(c.name)}<small>${esc(divName(c.co,c.div))}</small><small>${starsFracHTML(repOf(c.id))} ${repOf(c.id)}</small></span>${mine?'<span class="muted-s">Tu club</span>':canApply?`<button class="btn ghost sm" data-act="wb-apply" data-id="${c.id}">Solicitar</button>`:''}</div>`;
+  }).join('');
+  openSheet(`<div class="res-top"><h3>${FLAG[co]||''} ${esc((COUNTRIES[co]&&COUNTRIES[co].name)||NATNAME[co]||co)}</h3></div><div class="res-scroll">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="wb-list">Otro país</button><button class="btn primary" data-act="wb-back">Volver a las ofertas</button></div>`);
+}
+/* perfil de entrenador: clubes dirigidos y palmares completo de la partida */
+function mgrProfileSheet(){
+  const stints=state.mgrStints||[];
+  const rows=stints.map(s=>{
+    const c=CLUBBY[s.club],span=s.to?`Temporadas ${s.from}-${s.to}`:`Desde la temporada ${s.from}`;
+    return`<div class="mrow" style="grid-template-columns:26px 1fr auto">${c?crestHTML(c,26):''}<span class="pname">${c?esc(c.name):s.club}<small>${span}</small></span></div>`;
+  }).join('');
+  const log=state.mgrLog||[],cnt=k=>log.filter(e=>e.k===k).length;
+  const statItem=(lbl,val)=>val?`<div><small>${lbl}</small><b>${val}</b></div>`:'';
+  const stats=[statItem('Ligas',cnt('league')),statItem('Ascensos liga',cnt('d2')),statItem('Copas',cnt('cup')),statItem('Supercopas',cnt('sc')),
+    statItem('Champions',cnt('ucl')),statItem('Europa League',cnt('uel')),statItem('Conference',cnt('ecl')),statItem('Ascensos (playoff)',cnt('promo'))].join('');
+  openSheet(`<h3>Perfil de entrenador</h3><p class="muted-s" style="margin-bottom:10px">Tu carrera como míster.</p>
+  <div class="subh">Clubes dirigidos</div><div style="margin-bottom:12px">${rows||'<p class="muted-s">Sin datos.</p>'}</div>
+  <div class="subh">Palmarés</div>${stats?`<div class="hcard-stats" style="border:0;padding:0;margin-top:6px">${stats}</div>`:'<p class="muted-s">Todavía sin títulos.</p>'}
+  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`);
 }
 /* pop-up de jugadores de tu club que se retiran al empezar la temporada (36 años o más), con su ficha completa en el club */
 function retiredSheet(list){
@@ -7183,6 +7285,7 @@ function evolveReputations(){
     const cur=repOf(id),next=clamp(cur+delta,20,99);
     if(next!==cur){state.rep[id]=next;state.repDelta[id]=next-cur}
   });
+  if(results[state.club]&&results[state.club].promoted){state.mgrLog=state.mgrLog||[];state.mgrLog.push({s:state.season,club:state.club,k:'promo'});}
 }
 function liteRound(L,r){
   L.fx[r].forEach(m=>{
@@ -7507,6 +7610,7 @@ function recordHonors(final){
   if(state.cups&&state.cups.SCE&&state.cups.SCE.champ)add(state.cups.SCE.champ,'sce','SCE');
   if(state.cups&&state.cups.IFC&&state.cups.IFC.champ)add(state.cups.IFC.champ,'ifc','IFC');
   mine.forEach(k=>news(`Añades un título a tu palmarés: ${trophyName(CLUBBY[state.club],k)}.`));
+  if(mine.length){state.mgrLog=state.mgrLog||[];mine.forEach(k=>state.mgrLog.push({s:state.season,club:state.club,k}));}
 }
 function finishAll(){
   for(const k in state.others){const L=state.others[k];for(let r=0;r<L.fx.length;r++)if(L.fx[r][0].hg===undefined)liteRound(L,r)}
@@ -9346,7 +9450,8 @@ const H={
     closeSheet();newSeason();ui.rv=null;ui.cc=null;ui.cco=null;renderGame();
     const d=state.repDelta&&state.repDelta[state.club];
     toast('Nueva temporada: '+state.season+(d?` · Reputación ${repOf(state.club)-d}→${repOf(state.club)} (${d>0?'+':''}${d})`:''));
-    if(state.retiredNow&&state.retiredNow.length)setTimeout(()=>retiredSheet(state.retiredNow),350);
+    genJobOffers();
+    setTimeout(offersSheet,350);
   },
   'formation-menu'(){ui.styleOpen=false;openSheet(formSheetHTML())},
   'style-open'(){ui.styleOpen=false;ui.sy=null;openSheet(styleSheetHTML())},
@@ -9432,10 +9537,24 @@ const H={
   ptop(t){openTop10(t.dataset.k,t.dataset.s)},
   crv(t){const L=leagueData(ui.cc),total=L.fx.length;ui.rvs=ui.rvs||{};ui.rvs[ui.cc]=clamp(leagueRv(ui.cc)+(+t.dataset.d),0,total-1);renderGame()},
   uclrv(t){const key=t.dataset.k,total=state.cups[key].league.fx.length;ui.rvs=ui.rvs||{};ui.rvs[key+'_L']=clamp(uclLeagueRv(key)+(+t.dataset.d),0,total-1);renderGame()},
-  menu(){openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
+  menu(){openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="mgr-profile">Perfil de entrenador</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
+  'mgr-profile'(){mgrProfileSheet()},
   'save-now'(){saveGame();closeSheet();toast('Partida guardada')},
   exit(){saveGame();closeSheet();state=null;resetDivs();go('title')},
   'sheet-close'(){closeSheet()},
+  'offer-accept'(t){const id=t.dataset.id,c=CLUBBY[id];switchClub(id);renderGame();toast(`Fichas por ${c?c.name:id}`);afterOffers()},
+  'offer-reject'(t){const id=t.dataset.id;state.jobOffers=(state.jobOffers||[]).filter(x=>x!==id);offersSheet()},
+  'offers-close'(){afterOffers()},
+  'offers-world'(){worldBrowserSheet()},
+  'wb-list'(){worldBrowserSheet()},
+  'wb-country'(t){worldBrowserSheet(t.dataset.co)},
+  'wb-back'(){offersSheet()},
+  'wb-apply'(t){
+    const id=t.dataset.id,c=CLUBBY[id],mr=mgrRating(),diff=repOf(id)-mr;
+    const chance=clamp(1-(diff-4)/22,.03,.92);
+    if(Math.random()<chance){switchClub(id);renderGame();toast(`${c?c.name:id} acepta tu solicitud. ¡Eres su nuevo entrenador!`);afterOffers()}
+    else{toast(`${c?c.name:id} rechaza tu solicitud: buscan un entrenador con más palmarés.`)}
+  },
   'cf-yes'(){const f=ui.cf;ui.cf=null;$('#sheet').classList.remove('open');if(f)f(true)},
   'cf-no'(){closeSheet()}
 };
