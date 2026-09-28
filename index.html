@@ -6804,7 +6804,7 @@ function deleteSlot(n){Store.del('mister.slot.'+n);Store.del('mister.meta.'+n)}
 
 /* ===================== mundo: otras ligas y torneos ===================== */
 const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia'};
-const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,31,34,37,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
+const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
 const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']}];
 const LCNAME={EN:'EFL Cup'};
 const SC_TEAMS={ES:4};
@@ -7062,13 +7062,9 @@ function uclLeagueFixtures(ids,key,roundsCount){
 function cupInitLeaguePhase(key,name,ids,leagueWeeks,koWeeks){
   const seeds=ids.slice().sort((a,b)=>virt(b).ovr-virt(a).ovr||cname(a).localeCompare(cname(b)));
   const fx=uclLeagueFixtures(seeds,key,leagueWeeks.length);
-  const rounds=[
-    {n:'Dieciseisavos de final',w:koWeeks[0],ties:null,done:false},
-    {n:'Octavos de final',w:koWeeks[1],ties:null,done:false},
-    {n:'Cuartos de final',w:koWeeks[2],ties:null,done:false},
-    {n:'Semifinales',w:koWeeks[3],ties:null,done:false},
-    {n:'Final',w:koWeeks[4],ties:null,done:false}
-  ];
+  const koN=['Dieciseisavos de final','Octavos de final','Cuartos de final','Semifinales'];
+  const rounds=koN.map((n,i)=>({n,w:koWeeks[i*2],w2:koWeeks[i*2+1],ties:null,done:false}));
+  rounds.push({n:'Final',w:koWeeks[koWeeks.length-1],ties:null,done:false});
   return{key,name,ids:seeds,bye:[],rounds,champ:null,sc:{},
     league:{ids:seeds,tb:emptyTable(seeds),fx,weeks:leagueWeeks.slice(0,fx.length),done:false}};
 }
@@ -7136,10 +7132,15 @@ function userCupTie(r){
       }
     }
     for(let ri=0;ri<cup.rounds.length;ri++){
-      const R=cup.rounds[ri];if(R.w!==r||R.done)continue;
+      const R=cup.rounds[ri];if(R.done)continue;
+      const two=typeof R.w2==='number'&&R.w2>R.w;
+      if(R.w!==r&&(!two||R.w2!==r))continue;
       if(!R.ties&&ri>0&&cup.rounds[ri-1].done)R.ties=cup._nextTies?cup._nextTies(cup,ri):computeNextTies(cup,ri);
       const t=R.ties&&R.ties.find(x=>x.h===state.club||x.a===state.club);
-      if(t&&t.hg===undefined)return{cup,ri,t};
+      if(!t)continue;
+      if(!two){if(t.hg===undefined)return{cup,ri,t}}
+      else if(R.w===r&&!(t.l&&t.l[0]))return{cup,ri,t,leg:0};
+      else if(R.w2===r&&(t.l&&t.l[0])&&!t.l[1])return{cup,ri,t,leg:1};
     }
   }
   return null;
@@ -7164,7 +7165,7 @@ function afterLeague(){
     if(userCupTie(w))return;
     let maxW=-1;
     for(const k in state.cups){const c=state.cups[k];
-      c.rounds.forEach(R=>{if(!R.done&&typeof R.w==='number')maxW=Math.max(maxW,R.w)});
+      c.rounds.forEach(R=>{if(!R.done){if(typeof R.w==='number')maxW=Math.max(maxW,R.w);if(typeof R.w2==='number')maxW=Math.max(maxW,R.w2)}});
       if(c.league&&!c.league.done)c.league.weeks.forEach(x=>{maxW=Math.max(maxW,x)});
     }
     if(w>maxW){state.phase='end';finishAll();setupPlayoffs();return}
@@ -7180,7 +7181,7 @@ function playCupStage(){
     ct.cup.league.fx[ct.ri].forEach(o=>{if(o!==ct.t&&o.hg===undefined)simLeagueTie(o,ct.cup)});   /* el resto de la jornada se juega a la vez */
     mine.push({cup:ct.cup,ri:ct.ri,t:ct.t,league:true});
   }else{
-    playCupRound(ct.cup,ct.ri).forEach(x=>mine.push({cup:ct.cup,ri:ct.ri,t:x}));
+    playCupRound(ct.cup,ct.ri,ct.leg).forEach(x=>mine.push({cup:ct.cup,ri:ct.ri,t:x,leg:ct.leg}));
   }
   cupWear(t,ct.cup.sc);
   t.players.forEach(p=>{if(p.inj>0&&!hadInj.has(p.id))news(`${p.n} se ha lesionado en la copa y es baja ${p.inj} jornada${p.inj>1?'s':''}.`)});
@@ -7219,12 +7220,46 @@ function simTie(t,cup,neutral,ri){
     t.pen=wh?[k+1,k]:[k,k+1];t.w=wh?t.h:t.a;
   }else t.w=t.hg>t.ag?t.h:t.a;
 }
-function playCupRound(cup,ri){
+/* un partido de una eliminatoria a doble partido (leg 0 = ida en casa de h, leg 1 = vuelta en casa de a) */
+function simTieLeg(t,cup,leg){
+  const me=state.club,mine=t.h===me||t.a===me;
+  const home=leg===0?t.h:t.a,away=leg===0?t.a:t.h;
+  let sh=virt(home),sa=virt(away),T=null;
+  if(mine&&state.teams[me]){T=state.teams[me];const S=strength(T);if(home===me)sh=S;else sa=S}
+  const L={hg:rollGoals(xgAny(sh,sa,1)),ag:rollGoals(xgAny(sa,sh,-1))};
+  t.l=t.l||[];t.l[leg]=L;
+  const gmH={},gmA={};
+  for(let i=0;i<L.hg;i++)goalFor(t,cup,home,'h',T,gmH);
+  for(let i=0;i<L.ag;i++)goalFor(t,cup,away,'a',T,gmA);
+  liteExtras(cup.sc,home,gmH,L.hg,L.ag,home===me);liteExtras(cup.sc,away,gmA,L.ag,L.hg,away===me);
+  if(t.sc)t.sc.sort((a,b)=>a.min-b.min);
+}
+/* resuelve una eliminatoria a doble partido por el resultado global; empate global = penaltis (sin gol de visitante) */
+function resolveTie(t,cup){
+  const a=t.l[0].hg+t.l[1].ag,b=t.l[0].ag+t.l[1].hg;
+  t.hg=a;t.ag=b;
+  if(a===b){
+    const sh=virt(t.h),sa=virt(t.a);
+    const wh=Math.random()<.5+(sh.ovr-sa.ovr)*.004,k=3+Math.floor(Math.random()*3);
+    t.pen=wh?[k+1,k]:[k,k+1];t.w=wh?t.h:t.a;
+  }else t.w=a>b?t.h:t.a;
+}
+function playCupRound(cup,ri,leg){
   const R=cup.rounds[ri],out=[];
   if(!R.ties)R.ties=cup._nextTies?cup._nextTies(cup,ri):computeNextTies(cup,ri);
   const last=ri===cup.rounds.length-1;
-  R.ties.forEach(t=>{if(t.hg!==undefined)return;simTie(t,cup,last,ri);if(t.h===state.club||t.a===state.club)out.push(t)});
-  R.done=true;if(last){cup.champ=R.ties[0].w;recordHonors(false)}
+  const two=typeof R.w2==='number'&&R.w2>R.w;
+  R.ties.forEach(t=>{
+    if(t.w!==undefined)return;
+    if(two){
+      if((leg==null||leg===0)&&!(t.l&&t.l[0])){simTieLeg(t,cup,0);if(t.h===state.club||t.a===state.club)out.push(t)}
+      if((leg==null||leg===1)&&(t.l&&t.l[0])&&!t.l[1]){simTieLeg(t,cup,1);resolveTie(t,cup);if(t.h===state.club||t.a===state.club)out.push(t)}
+    }else{
+      if(t.hg!==undefined)return;simTie(t,cup,last,ri);if(t.h===state.club||t.a===state.club)out.push(t);
+    }
+  });
+  if(!two||leg==null||leg===1)R.done=true;
+  if(last&&R.done){cup.champ=R.ties[0].w;recordHonors(false)}
   return out;
 }
 function advanceWorld(r){
@@ -7236,7 +7271,11 @@ function advanceWorld(r){
       cup.league.weeks.forEach((w,ri)=>{if(w===r)cup.league.fx[ri].forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup)})});
       if(cup.league.weeks[cup.league.weeks.length-1]===r)finishUclLeague(cup);
     }
-    cup.rounds.forEach((R,ri)=>{if(R.w===r&&!R.done)playCupRound(cup,ri).forEach(t=>mine.push({cup,ri,t}))});
+    cup.rounds.forEach((R,ri)=>{
+      if(R.done)return;
+      if(R.w===r)playCupRound(cup,ri,0).forEach(t=>mine.push({cup,ri,t}));
+      else if(typeof R.w2==='number'&&R.w2===r)playCupRound(cup,ri,1).forEach(t=>mine.push({cup,ri,t}));
+    });
   }
   return mine;
 }
@@ -7323,7 +7362,10 @@ function cupInitIFC(uefa){
    y una ronda de play-off; los últimos 4 supervivientes son los que entran en la fase de liga */
 function euroQualSimTie(t){
   const sh=virt(t.h),sa=virt(t.a);
-  t.hg=rollGoals(xgAny(sh,sa,1));t.ag=rollGoals(xgAny(sa,sh,-1));
+  const l1={hg:rollGoals(xgAny(sh,sa,1)),ag:rollGoals(xgAny(sa,sh,-1))};
+  const l2={hg:rollGoals(xgAny(sa,sh,1)),ag:rollGoals(xgAny(sh,sa,-1))};
+  t.l=[l1,l2];
+  t.hg=l1.hg+l2.ag;t.ag=l1.ag+l2.hg;
   if(t.hg===t.ag){const wh=Math.random()<.5+(sh.ovr-sa.ovr)*.004;t.w=wh?t.h:t.a}else t.w=t.hg>t.ag?t.h:t.a;
 }
 function runQualifying(key,ids){
@@ -7444,23 +7486,36 @@ function myCupStatus(cup){
   if(cup._seed&&cup._seed[me]>24)return{out:{n:'la fase de liga'}};
   for(let i=0;i<cup.rounds.length;i++){
     const R=cup.rounds[i];
-    if(!R.ties)return{next:R,pending:true};
+    if(!R.ties)return{next:{n:R.n,w:R.w},pending:true};
     const t=R.ties.find(x=>x.h===me||x.a===me);
-    if(t){if(t.hg===undefined)return{next:R,tie:t};if(t.w!==me)return{out:R};continue}
+    if(t){
+      const two=typeof R.w2==='number'&&R.w2>R.w;
+      if(two){
+        if(!(t.l&&t.l[0]))return{next:{n:R.n,w:R.w},leg:0,tie:t};
+        if(!t.l[1])return{next:{n:R.n,w:R.w2},leg:1,tie:t};
+      }else if(t.hg===undefined)return{next:{n:R.n,w:R.w},tie:t};
+      if(t.w!==me)return{out:R};
+      continue;
+    }
     if(i===0&&cup.bye.includes(me))continue;
     return{out:cup.rounds[Math.max(0,i-1)]};
   }
   return cup.champ===me?{champ:true}:{out:cup.rounds[cup.rounds.length-1]};
 }
-const cupStatusText=s=>!s?'':s.champ?'Campeón':s.out?'Eliminado en '+s.out.n.toLowerCase():'Próxima: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1);
+const cupStatusText=s=>!s?'':s.champ?'Campeón':s.out?'Eliminado en '+s.out.n.toLowerCase():s.leg===1?'Vuelta: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1):s.leg===0?'Ida: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1):'Próxima: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1);
 function cupNews(x){
   const t=x.t;
   if(x.league){
     const res=`${cname(t.h)} ${t.hg}-${t.ag} ${cname(t.a)}`;
     return `${x.cup.name}, fase de liga (jornada ${x.ri+1}): ${res}.`;
   }
-  const R=x.cup.rounds[x.ri],won=t.w===state.club,fin=x.ri===x.cup.rounds.length-1;
-  const res=`${cname(t.h)} ${t.hg}-${t.ag} ${cname(t.a)}${t.pen?' ('+t.pen[0]+'-'+t.pen[1]+' pen.)':''}`;
+  const R=x.cup.rounds[x.ri],two=typeof R.w2==='number'&&R.w2>R.w;
+  if(two&&x.leg===0){
+    const res=`${cname(t.h)} ${t.l[0].hg}-${t.l[0].ag} ${cname(t.a)}`;
+    return `${x.cup.name}, ${R.n.toLowerCase()} (ida): ${res}.`;
+  }
+  const won=t.w===state.club,fin=x.ri===x.cup.rounds.length-1;
+  const res=two?`${cname(t.h)} ${t.l[0].hg}-${t.l[0].ag} / ${t.l[1].hg}-${t.l[1].ag} (${t.hg}-${t.ag})${t.pen?' ('+t.pen[0]+'-'+t.pen[1]+' pen.)':''}`:`${cname(t.h)} ${t.hg}-${t.ag} ${cname(t.a)}${t.pen?' ('+t.pen[0]+'-'+t.pen[1]+' pen.)':''}`;
   return `${x.cup.name}, ${R.n.toLowerCase()}: ${res}. ${won?(fin?'¡Sois campeones!':'Pasáis de ronda.'):'Quedáis eliminados.'}`;
 }
 
@@ -7733,7 +7788,11 @@ function leagueStats(key){
 }
 function tieRow(t){
   const d=t.hg!==undefined,mine=t.h===state.club||t.a===state.club;
-  return`<div class="res ${mine?'mine':''}">${teamCell(t.h,d&&t.w===t.h?'win':d?'los':'',false)}<b>${d?t.hg+' - '+t.ag:'vs'}</b>${teamCell(t.a,d&&t.w===t.a?'win':d?'los':'',true)}</div>${t.pen?`<div class="pen">Penaltis ${t.pen[0]}-${t.pen[1]}</div>`:''}`;
+  let res='vs';
+  if(t.l&&t.l.length){
+    res=t.l.map(L=>L?`${L.hg}-${L.ag}`:'vs').join(' / ')+(d?` <small>(${t.hg}-${t.ag})</small>`:'');
+  }else if(d)res=t.hg+' - '+t.ag;
+  return`<div class="res ${mine?'mine':''}">${teamCell(t.h,d&&t.w===t.h?'win':d?'los':'',false)}<b>${res}</b>${teamCell(t.a,d&&t.w===t.a?'win':d?'los':'',true)}</div>${t.pen?`<div class="pen">Penaltis ${t.pen[0]}-${t.pen[1]}</div>`:''}`;
 }
 function cupCal(key){
   const cup=state.cups[key],s=myCupStatus(cup),f=cup.rounds.findIndex(R=>!R.done);
@@ -7741,7 +7800,8 @@ function cupCal(key){
   const rows=cup.rounds.map((R,i)=>{
     const t=R.ties&&R.ties.find(x=>x.h===state.club||x.a===state.club);
     const chip=R.done?'<span class="chip-s">Jugada</span>':i===f?'<span class="chip-s on">Próxima</span>':'<span class="chip-s">Pendiente</span>';
-    return`<div class="rd"><div class="rd-h"><b>${esc(R.n)}</b>${chip}</div><p class="muted-s">Semana ${R.w+1}${R.ties?', '+R.ties.length+' eliminatoria'+(R.ties.length>1?'s':''):''}</p>${t?tieRow(t):''}</div>`;
+    const wk=(typeof R.w2==='number'&&R.w2>R.w)?`Semana ${R.w+1} y ${R.w2+1}`:`Semana ${R.w+1}`;
+    return`<div class="rd"><div class="rd-h"><b>${esc(R.n)}</b>${chip}</div><p class="muted-s">${wk}${R.ties?', '+R.ties.length+' eliminatoria'+(R.ties.length>1?'s':''):''}</p>${t?tieRow(t):''}</div>`;
   }).join('');
   return`<div class="card">${mineTxt}${rows}</div>`;
 }
@@ -8648,7 +8708,7 @@ function cupBracket(key){
   const champ=cup.champ?`<div class="champ"><small>Campeón</small><div><button class="champbtn" data-act="club-view" data-club="${cup.champ}">${crestHTML(CLUBBY[cup.champ],40)}<b>${esc(cname(cup.champ))}</b></button></div></div>`:'';
   const btns=`<div class="seg rounds">${cup.rounds.map((x,i)=>`<button class="${i===sel?'on':''}" data-act="crd" data-i="${i}">${shortRound(x.n)}${i===cur&&!cup.champ?'<i class="dot"></i>':''}</button>`).join('')}</div>`;
   const extra=sel===1&&cup.bye.length?`<p class="muted-s" style="margin-bottom:8px">Entran directamente: ${cup.bye.length>6?cup.bye.length+' clubes cabezas de serie':cup.bye.map(x=>esc(cname(x))).join(', ')}.</p>`:'';
-  const status=R.done?'Ronda jugada':R.ties?'Se juega en la semana '+(R.w+1):'Sorteo pendiente';
+  const status=R.done?'Ronda jugada':R.ties?(typeof R.w2==='number'&&R.w2>R.w?'Se juega en las semanas '+(R.w+1)+' y '+(R.w2+1):'Se juega en la semana '+(R.w+1)):'Sorteo pendiente';
   return`${champ}${btns}<div class="card"><div class="card-h"><h3>${esc(R.n)}</h3><span>${status}</span></div>${extra}${R.ties?R.ties.map(tieRow).join(''):'<p class="muted-s">El sorteo se hace al terminar la ronda anterior.</p>'}</div>`;
 }
 
