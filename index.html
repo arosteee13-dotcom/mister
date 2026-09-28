@@ -551,7 +551,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 @media(min-width:900px){.gshell{grid-template-columns:104px 1fr;grid-template-rows:1fr}.gnav{grid-column:1;grid-row:1;flex-direction:column;justify-content:flex-start;gap:6px;border-top:0;border-right:1px solid var(--line);padding:24px 10px}.gmain{grid-column:2;grid-row:1}}
 .hero{border-radius:28px;padding:22px;background:radial-gradient(90% 120% at 100% 0%,rgba(159,230,189,.13),transparent 60%),linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--line2)}
 .hero-top{display:flex;align-items:center;gap:16px}
-.hero h2{font:700 26px/1.1 var(--display);letter-spacing:-.025em}
+.hero h2{font:700 20px/1.1 var(--display);letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hero .sub{color:var(--muted);font-size:14px;margin-top:3px}
 .hero-line{margin-top:16px;font-size:16px;line-height:1.5}
 .hero-line b{font-weight:600;color:var(--accent)}
@@ -7789,11 +7789,13 @@ function myCupStatus(cup){
     return{next:{n:'Fase de liga',w:cup.league.weeks[cup.league.weeks.length-1]},pending:true};
   }
   if(cup._seed&&cup._seed[me]>24)return{out:{n:'la fase de liga'}};
+  let np=null;
   for(let i=0;i<cup.rounds.length;i++){
     const R=cup.rounds[i];
-    if(!R.ties)return{next:{n:R.n,w:R.w},pending:true};
+    if(!R.ties)return np?{np:np}:{next:{n:R.n,w:R.w},pending:true};
     const t=R.ties.find(x=>x.h===me||x.a===me);
     if(t){
+      np=null;
       const two=typeof R.w2==='number'&&R.w2>R.w;
       if(two){
         if(!(t.l&&t.l[0]))return{next:{n:R.n,w:R.w},leg:0,tie:t};
@@ -7803,11 +7805,12 @@ function myCupStatus(cup){
       continue;
     }
     if(i===0&&cup.bye.includes(me))continue;
-    return{out:cup.rounds[Math.max(0,i-1)]};
+    np=np||R;
   }
+  if(np)return{np:np};
   return cup.champ===me?{champ:true}:{out:cup.rounds[cup.rounds.length-1]};
 }
-const cupStatusText=s=>!s?'':s.champ?'Campeón':s.out?'Eliminado en '+s.out.n.toLowerCase():s.leg===1?'Vuelta: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1):s.leg===0?'Ida: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1):'Próxima: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1);
+const cupStatusText=s=>!s?'':s.champ?'Campeón':s.out?'Eliminado en '+s.out.n.toLowerCase():s.np?'No participa en '+s.np.n.toLowerCase():s.leg===1?'Vuelta: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1):s.leg===0?'Ida: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1):'Próxima: '+s.next.n.toLowerCase()+', semana '+(s.next.w+1);
 function cupNews(x){
   const t=x.t;
   if(x.league){
@@ -9129,7 +9132,7 @@ home(){
   }else if(state.phase==='play'){
     const m=state.fixtures[state.week].find(m=>m.h===state.club||m.a===state.club),home=m.h===state.club,oid=home?m.a:m.h,oc=CLUBBY[oid],os=strength(state.teams[oid]);
     const pw=Math.round(s.ovr/(s.ovr+os.ovr)*100);
-    next=`<div class="card next"><div class="card-h"><h3>Próximo partido</h3><span>Jornada ${state.week+1} de ${total}</span></div>
+    next=`<div class="card next"><div class="card-h"><h3>${esc(divName(state.country,state.div))}</h3><span>Jornada ${state.week+1} de ${total}</span></div>
     <div class="vs"><button class="tm" data-act="club-view" data-club="${c.id}">${crestHTML(c,52)}<span>${esc(c.name)}</span></button><div class="mid">${home?'en casa':'fuera'}</div><button class="tm" data-act="club-view" data-club="${oid}">${crestHTML(oc,52)}<span>${esc(oc.name)}</span></button></div>
     <div class="cmp"><span>GRL del once titular: ${Math.round(s.ovr)} frente a ${Math.round(os.ovr)}${state.cupWeek===state.week?'. Ya has jugado el partido de copa de esta semana':''}</span><div class="bar"><i style="width:${pw}%"></i><i style="width:${100-pw}%"></i></div>${inj?`<span class="bad">Tienes ${inj} lesionado${inj>1?'s':''} en la plantilla.</span>`:''}</div>
     <button class="btn primary" data-act="play">Jugar jornada</button></div>`;
