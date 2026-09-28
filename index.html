@@ -5909,12 +5909,16 @@ function newSeason(){
   state.loanRev=[];
   (state.loansOut||[]).forEach(l=>{const p=l.p;state.loanRev.push({id:p.id,to:l.to,role:l.role,ap:(p.st&&p.st[l.to])||0,rt:(p.ap||0)?(p.rt||0)/p.ap:0,ovr:p.ovr});if(state.teams[l.to]){const T=state.teams[l.to];T.players=T.players.filter(x=>x.id!==p.id)}p._loanSeason=true;delete p.loanIn;loanReturn(l,p.age+1).arr.push(p)});state.loansOut=[];
   invalidateSquads();
+  const retired=[];
   for(const id in state.teams){
     const T=state.teams[id],club=CLUBBY[id],used=new Set(T.players.map(p=>p.n)),fil=isB(id);
     T.players=T.players.map(p=>{
       p.age++;const a=p.age,old=p.ovr,inNet=p.o0!=null?p.ovr-p.o0:0;
       const d=0;   /* el crecimiento ya ocurrió durante la temporada */
       if(fil&&a>23)return null;   /* los filiales venden a los jugadores en cuanto superan los 23 años */
+      if(!fil&&p.age>=36&&id===state.club){
+        retired.push(Object.assign({},p,{cs:clubCareerStats(p,id)}));return null;
+      }
       if(!fil&&p.age>=36&&id!==state.club)return mkPlayer(r,`${id}y${state.season}_${Math.floor(r()*1e6)}`,p.pos,clamp(Math.round(repOf(id)-14+r()*8),40,80),17+Math.floor(r()*3),club.co,used,id);
       (p.hist=p.hist||[]).push({s:state.season,ap:p.ap,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'',yc:p.yc||0,rc:p.rc||0,tm:teamStats(p),loan:!!p._loanSeason});delete p._loanSeason;const base=p.o0!=null?p.o0:old;shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
       /* revisión anual del potencial: los ojeadores ajustan su estimación según el rendimiento real frente a un techo oculto (potReal), fijado al nacer con más varianza que el POT visible */
@@ -5946,7 +5950,44 @@ function newSeason(){
   news(`Empieza la temporada ${state.season}. Los jugadores han cambiado con el tiempo.`);
   loanInterest();
   { const m=me();m.lineup=bestXIOpt(m,m.formation);m.bench=autoBench(m); }   /* al empezar la temporada, tu mejor once por posiciones y cansancio */
+  state.retiredNow=retired;
   saveGame();
+}
+/* estadísticas de un jugador SOLO con este club, sumando todas las temporadas de su historial (p.hist, ya
+   desglosado por club en tm) más la temporada en curso (que aún no se ha volcado al historial en este punto) */
+function clubCareerStats(p,clubId){
+  let ap=0,g=0,ge=0,sv=0,as=0,yc=0,rc=0,rtSum=0,rtN=0,seasons=0;
+  (p.hist||[]).forEach(h=>{
+    const t=(h.tm||[]).find(x=>x.id===clubId);if(!t)return;
+    ap+=t.ap||0;g+=t.g||0;ge+=t.ge||0;sv+=t.sv||0;as+=t.as||0;yc+=t.yc||0;rc+=t.rc||0;seasons++;
+    if(t.rt!=null&&t.ap){rtSum+=t.rt*t.ap;rtN+=t.ap}
+  });
+  if(p.ap){ap+=p.ap;g+=p.g||0;ge+=p.ge||0;sv+=p.sv||0;as+=p.as||0;yc+=p.yc||0;rc+=p.rc||0;rtSum+=p.rt||0;rtN+=p.ap;seasons++}
+  return{ap,g,ge,sv,as,yc,rc,seasons,rt:rtN?+(rtSum/rtN).toFixed(2):null};
+}
+/* pop-up de jugadores de tu club que se retiran al empezar la temporada (36 años o más), con su ficha completa en el club */
+function retiredSheet(list){
+  if(!list||!list.length)return;
+  const statItem=(lbl,val)=>`<div><small>${lbl}</small><b>${val}</b></div>`;
+  const card=p=>{
+    const gk=p.pos==='GK',cs=p.cs,perMatch=cs.ap?((gk?cs.ge:cs.g)/cs.ap).toFixed(2):'—';
+    const nat=natOf(p,state.club),pot=Math.max(p.pot||p.ovr,p.ovr);
+    const head=`<div class="pcard" style="cursor:default">
+      <div class="pc-av"><div class="pc-photo">${avatarHTML(p)}</div></div>
+      <div class="pc-main"><div class="pc-name">${esc(p.n)}</div>
+        <div class="pc-meta"><span class="pc-age">${p.age}a.</span><span class="pc-pos main">${ppOf(p)[0]}</span></div>
+        <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${fmtW(p.wage)}</span></div></div>
+      <div class="pc-right">
+        <div class="pc-num"><div><b style="color:${ratingColor(p.ovr)}">${p.ovr}</b><small>GRL</small></div><div><b style="color:${ratingColor(pot)}">${pot}</b><small>POT</small></div></div>
+        <div class="pc-role"><span class="role r6">Se retira</span></div>
+        <div class="pc-nat">${FLAG[nat]||''} <span>${esc(NATNAME[nat]||'')}</span></div></div>
+    </div>`;
+    const stats=[statItem('Temp.',cs.seasons),statItem('PJ',cs.ap),statItem(gk?'GE':'G',gk?cs.ge:cs.g),statItem(gk?'PAR':'A',gk?cs.sv:cs.as),
+      statItem(gk?'GE/PJ':'G/PJ',perMatch),...(gk?[statItem('%PAR',svPct(cs.sv,cs.ge))]:[]),statItem('Nota media',cs.rt!=null?String(cs.rt).replace('.',','):'—'),
+      statItem('TA',cs.yc),statItem('TR',cs.rc)].join('');
+    return`<div class="hcard now" style="padding:0;overflow:hidden">${head}<div class="hcard-stats" style="margin:0;padding:12px 16px;border-top:1px solid var(--line)">${stats}</div></div>`;
+  };
+  openSheet(`<div class="res-top"><h3>Retiros en tu plantilla</h3><p style="margin-bottom:8px">${list.length===1?'Un jugador cuelga':list.length+' jugadores cuelgan'} las botas esta pretemporada. Estas son sus cifras totales con tu club.</p></div><div class="res-scroll"><div class="hcards">${list.map(card).join('')}</div></div><div class="row-btns"><button class="btn primary" data-act="sheet-close">Vale</button></div>`);
 }
 function buyPlayer(id){
   const t=me(),i=state.market.findIndex(p=>p.id===id);if(i<0)return'No disponible';
@@ -9305,6 +9346,7 @@ const H={
     closeSheet();newSeason();ui.rv=null;ui.cc=null;ui.cco=null;renderGame();
     const d=state.repDelta&&state.repDelta[state.club];
     toast('Nueva temporada: '+state.season+(d?` · Reputación ${repOf(state.club)-d}→${repOf(state.club)} (${d>0?'+':''}${d})`:''));
+    if(state.retiredNow&&state.retiredNow.length)setTimeout(()=>retiredSheet(state.retiredNow),350);
   },
   'formation-menu'(){ui.styleOpen=false;openSheet(formSheetHTML())},
   'style-open'(){ui.styleOpen=false;ui.sy=null;openSheet(styleSheetHTML())},
