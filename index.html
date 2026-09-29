@@ -93,6 +93,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 #L0.scroll{scrollbar-width:none}#L0.scroll::-webkit-scrollbar{display:none}
 .mapbox{position:relative;flex:none;margin:auto;width:calc(min(100cqw - 32px,(100cqh - 12px - var(--pt,0px))*var(--ar))*var(--z,1));aspect-ratio:var(--ar)}
 #L2{--pt:58px;padding-top:64px}
+#s-map.grp #L2{--pt:98px;padding-top:104px}
 .mapbox svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .d-land{stroke:#26362f;fill:none;stroke-linecap:round}
 .d-hot{stroke:var(--accent);fill:none;stroke-linecap:round;opacity:.92;transition:stroke .3s}
@@ -129,7 +130,8 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 #s-map[data-view="list"] #L0,#s-map[data-view="list"] #L1,#s-map[data-view="list"] #L2,#s-map[data-view="list"] .maphint,#s-map[data-view="list"] .zoomctl{display:none}
 #s-map:not([data-view="list"]) .listview{display:none}
 .listview{position:absolute;inset:0;z-index:3;overflow:auto;padding:14px 18px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;background:var(--bg)}
-#s-map[data-level="2"] .listview{padding-top:68px}
+#s-map[data-level="2"] .listview{padding-top:78px}
+#s-map[data-view="list"][data-level="2"].grp .listview{padding-top:141px}
 @keyframes lvFwd{from{opacity:0;transform:translateX(34px)}to{opacity:1;transform:none}}
 @keyframes lvBack{from{opacity:0;transform:translateX(-34px)}to{opacity:1;transform:none}}
 @keyframes lvRow{from{opacity:0;transform:translateY(8px)}to{opacity:var(--o,1);transform:none}}
@@ -148,6 +150,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .lrow .fl{font-size:28px;flex:none}
 .lrow .fl-img{width:42px;height:auto;border-radius:5px;flex:none;box-shadow:0 0 0 1px var(--line2)}
 .lrow .lt{flex:1;min-width:0}
+.lrow .lt b,.lrow .lt small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lrow .lstat{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
 .lrow .lstat b{font:600 14px var(--display)}
 .lrow .lstat .lrep{color:var(--muted);font-size:12px;white-space:nowrap}
@@ -168,6 +171,9 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .lrow.cco .fl{font-size:16px}
   .lrow.cco .lt b{font:600 12px var(--display)}
 .divctl{position:absolute;left:16px;right:120px;top:10px;z-index:6;display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding-right:22px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
+.divctl2{top:60px}
+#s-map[data-view="list"] .divctl2{top:64px}
+.divctl:empty{display:none}
 .divctl::-webkit-scrollbar{display:none}
 .divbtn{flex:none;height:42px;padding:0 16px;border-radius:14px;background:rgba(220,240,228,.05);border:1px solid var(--line);font-size:13.5px;font-weight:500;color:var(--muted);white-space:nowrap;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background .25s,color .25s,border-color .25s,transform .2s var(--ease)}
 .divbtn:hover{background:rgba(220,240,228,.1);color:var(--text)}
@@ -642,6 +648,10 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .news small{color:var(--dim);font-size:12.5px;padding-top:1px}
 .sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:2px 2px 0}
 .sec-h h2{font:700 24px var(--display);letter-spacing:-.025em}
+.sec-h h2 .grp-s{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0;margin-top:2px}
+.grp-sel{display:flex;gap:8px;margin:8px 2px 0;flex-wrap:wrap}
+.grp-sel-btn{height:34px;padding:0 14px;border-radius:11px;background:rgba(220,240,228,.05);border:1px solid var(--line);font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.grp-sel-btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .sec-h span{font-size:13px;color:var(--muted)}
 .list{padding:6px 8px}
 .prow{border-bottom:1px solid var(--line)}
@@ -951,6 +961,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
       <div class="maphint" id="maphint">Toca Europa para elegir un país</div>
       <div class="listview" id="listview"></div>
       <div class="divctl" id="divctl" role="group" aria-label="Filtrar por división"></div>
+      <div class="divctl divctl2" id="divctl2" role="group" aria-label="Filtrar por grupo"></div>
       <div class="zoomctl">
         <button class="icon-btn" data-act="zoom" data-d="1" aria-label="Acercar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
         <button class="icon-btn" data-act="zoom" data-d="-1" aria-label="Alejar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
@@ -1006,6 +1017,22 @@ const Store={mem:{},warned:false,
   get(k){let v=null;try{v=localStorage.getItem(k)}catch(e){}return v!==null?v:(this.mem[k]!==undefined?this.mem[k]:null)},
   set(k,v){try{localStorage.setItem(k,v);delete this.mem[k];return true}catch(e){this.mem[k]=v;return false}},
   del(k){try{localStorage.removeItem(k)}catch(e){}delete this.mem[k]}};
+/* almacenamiento durable en IndexedDB (cuota de cientos de MB): las partidas largas no dependen del límite
+   de ~5 MB de localStorage. Se escribe SIEMPRE aquí (además de en localStorage, que actúa de caché rápida). */
+const IDB={db:null,ok:false,q:Promise.resolve(),
+  open(){
+    try{
+      if(typeof window==='undefined'||!('indexedDB' in window))return;
+      const r=indexedDB.open('mister',1);
+      r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv')};
+      r.onsuccess=()=>{IDB.db=r.result;IDB.ok=true;if(typeof reconcileSlots==='function')reconcileSlots()};
+      r.onerror=()=>{};
+    }catch(e){}
+  },
+  put(k,v){if(!IDB.ok)return;IDB.q=IDB.q.then(()=>new Promise(res=>{try{const tx=IDB.db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=res;tx.onerror=res}catch(e){res()}}))},
+  get(k){if(!IDB.ok)return Promise.resolve(null);return IDB.q.then(()=>new Promise(res=>{try{const tx=IDB.db.transaction('kv','readonly'),g=tx.objectStore('kv').get(k);g.onsuccess=()=>res(g.result||null);g.onerror=()=>res(null)}catch(e){res(null)}}))},
+  del(k){if(!IDB.ok)return;IDB.q=IDB.q.then(()=>new Promise(res=>{try{const tx=IDB.db.transaction('kv','readwrite');tx.objectStore('kv').delete(k);tx.oncomplete=res;tx.onerror=res}catch(e){res()}}))}
+};
 
 /* ===================== geografía (lon,lat) ===================== */
 const P=s=>s.trim().split(/\s+/).map(q=>q.split(',').map(Number));
@@ -1084,7 +1111,7 @@ const COUNTRIES={
    HU:{name:'Hungría',league:'NB I',divs:['NB I'],pin:[19.0,47.5],polys:[]},
    SA:{name:'Arabia Saudí',league:'Saudi Pro League',divs:['Saudi Pro League'],pin:[45.0,23.9],polys:[]}
 };
-function divName(co,d){const C=COUNTRIES[co];if(d===2)return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
+function divName(co,d){const C=COUNTRIES[co];const grp=DIV_GROUPS[co];if(grp){const s=grp.subs.find(x=>x[0]===d);if(s)return grp.label+' ('+s[1]+')'}if(d===2)return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
 function leagueClubs(co,d){return CLUBS.filter(c=>c.co===co&&c.div===(d||1))}
 const LOCKED=[];
 
@@ -1195,29 +1222,29 @@ const CLUBS=[ K('AUX','AJ Auxerre','Auxerre','Auxerre','FR','#1c3f94','#f4f4f4',
  K('OLY','Olympiacos','OLY','El Pireo','GR','#c8102e','#f4f4f4',76),K('EXC','Excelsior','EXC','Róterdam','NL','#e01e13','#1a1a1a',54),
  K('FTC','Ferencvárosi','FTC','Budapest','HU','#0a8a4a','#f4f4f4',68),K('NUC','CF La Nucía','NUC','La Nucía','ES','#0a3a8a','#f4f4f4',44,3),
  K('KAL','Kalamata FC','KAL','Kalamata','GR','#1a1a1a','#f4f4f4',48),
- K('LOG','UD Logroñés','LOG','Logroño','ES','#d0103a','#f4f4f4',44,3),
+ K('LOG','UD Logroñés','LOG','Logroño','ES','#d0103a','#f4f4f4',44,5),
  K('HAJ','Hajduk Split','HAJ','Split','HR','#f4f4f4','#1c5aa6',68),
- K('CUL','Cultural Leonesa','CUL','León','ES','#f4f4f4','#c8102e',45,3),
+ K('CUL','Cultural Leonesa','CUL','León','ES','#f4f4f4','#c8102e',45,5),
  K('BY2','Bayern München II','Bayern II','Múnich','DE','#dc052d','#0066b2',52,3),K('H96B','Hannover 96 II','Hannover 96 II','Hannover','DE','#0a8a4a','#1a1a1a',50,3),
  K('MRE','CE Manresa','Manresa','Manresa','ES','#f4f4f4','#c8102e',42,3),
  K('JAJ','Jong Ajax','Jong Ajax','Ámsterdam','NL','#f4f4f4','#c8102e',56,3),
  K('ITT','Al-Ittihad','Al-Ittihad','Yeda','SA','#f2d31b','#1a1a1a',72),
  K('NAC','NAC Breda','NAC Breda','Breda','NL','#f2d31b','#1a1a1a',58,2),
- K('AMM','Atlético Madrileño','AMM','Madrid','ES','#c8102e','#f4f4f4',44,3),
- K('BIL','Bilbao Athletic','BIL','Bilbao','ES','#d4192b','#f4f4f4',48,3),
+ K('AMM','Atlético Madrileño','AMM','Madrid','ES','#c8102e','#f4f4f4',44,6),
+ K('BIL','Bilbao Athletic','BIL','Bilbao','ES','#d4192b','#f4f4f4',48,5),
  K('DAB','Deportivo Alavés B','DAB','Vitoria','ES','#1c5aa6','#f4f4f4',44,3),
  K('ILI','Elche Ilicitano','ILI','Elche','ES','#0a7a3d','#f4f4f4',44,3),
  K('ESB','Espanyol B','ESB','Barcelona','ES','#1c5aa6','#f4f4f4',44,3),
  K('GTB','Getafe B','GTB','Getafe','ES','#1c5aa6','#f4f4f4',44,3),
- K('UNI','Unionistas CF','Unionistas','Salamanca','ES','#1a1a1a','#f4f4f4',46,3),
- K('RUS','Real Unión Club','Real Unión','Irún','ES','#1a1a1a','#f4f4f4',46,3),
- K('CCS','C.C. San Sebastián','CC San Sebastián','San Sebastián','ES','#1c3f94','#f4f4f4',38,3),K('GETX','Arenas Club de Getxo','Arenas de Getxo','Getxo','ES','#d4192b','#f4f4f4',48,3),K('BETD','Real Betis Deportivo','Betis Dep','Sevilla','ES','#0a7a3d','#f4f4f4',44,3),K('SEVB','Sevilla Atlético','Sevilla Atl','Sevilla','ES','#d4192b','#f4f4f4',44,3),K('GIRB','Girona B','Girona B','Girona','ES','#d4192b','#f4f4f4',44,3),K('REC','Recreativo','Recreativo','Huelva','ES','#1c3f94','#f4f4f4',44,3),K('LEGB','Leganés B','Leganés B','Leganés','ES','#1c9c4a','#f4f4f4',44,3),K('MLLB','Mallorca B','Mallorca B','Palma','ES','#c8102e','#1a1a1a',44,3),K('VILB','Villarreal B','Villarreal B','Villarreal','ES','#f2d31b','#0b3c8c',44,3),K('OVIB','Real Oviedo B','Oviedo B','Oviedo','ES','#1e5bb8','#f4f4f4',44,3),K('TENB','Tenerife B','Tenerife B','Santa Cruz de Tenerife','ES','#1c5aa6','#f4f4f4',44,3),K('RMAB','Real Madrid Aficionados','RM Aficionados','Madrid','ES','#f4f4f4','#c9a45c',44,3),
-K('AVS','Academico Viseu','Académico Viseu','Viseu','PT','#f4f4f4','#1a1a1a',54,1),K('ARO','Arouca','Arouca','Arouca','PT','#f2d31b','#1a1a1a',54,1),K('CPA','Casa Pia AC','CPA','Lisboa','PT','#0a3a8a','#f4f4f4',52,1),K('ETD','Estrela da Amadora','AMD','Amadora','PT','#d4192b','#f4f4f6',44,1),K('ALV','FC Alverca','Alverca','Alverca do Ribatejo','PT','#d4192b','#f4f4f4',52,1),K('GIL','Gil Vicente FC','Gil Vicente','Barcelos','PT','#d4192b','#f4f4f4',52,1),K('MAR','CS Marítimo','Marítimo','Funchal','PT','#f4f4f4','#d4192b',48,1),K('CDN','CD Nacional','Nacional','Funchal','PT','#d4192b','#1a1a1a',48,1),K('FCP','FC Porto','Porto','Oporto','PT','#0a3a8a','#f4f4f4',84,1),K('SPB','Sporting de Braga','SPB','Braga','PT','#a3122a','#f4f4f4',66,1),K('SPTL','Sporting CP','Sporting','Lisboa','PT','#0a8a4a','#f4f4f4',74,1),K('VIT','Vitória Guimarães','Vitória SC','Guimarães','PT','#f4f4f4','#1a1a1a',62,1),K('SCL','CD Santa Clara','Santa Clara','Ponta Delgada','PT','#f2d31b','#0a3a8a',50,1),K2('SCLB','CD Santa Clara II','Santa Clara II','Ponta Delgada','PT','#f2d31b','#0a3a8a',45),K('ESTP','Estoril Praia','Estoril','Estoril','PT','#f4f4f4','#1a1a1a',50,1),K('FAM','FC Famalicão','Famalicão','Vila Nova de Famalicão','PT','#f4f4f4','#0a3a8a',52,1),K('MOR','Moreirense FC','Moreirense','Moreira de Cónegos','PT','#0a8a3d','#f4f4f4',48,1),K('RAVE','Rio Ave FC','Rio Ave','Vila do Conde','PT','#0a3a8a','#f4f4f4',48,1),K('ADO','ADO Den Haag','Den Haag','La Haya','NL','#1c8f3f','#f2d31b',56,1),K('AZA','AZ Alkmaar','AZ','Alkmaar','NL','#d4192b','#f4f4f4',62,1),K('GRN','FC Groningen','Groningen','Groninga','NL','#f4f4f4','#1a3a8a',56,1),K('HFE','SC Heerenveen','Heerenveen','Heerenveen','NL','#1c3f94','#f4f4f4',52,1),K('NEC','NEC Nijmegen','NEC','Nimega','NL','#d4192b','#1a1a1a',62,1),K('PEC','PEC Zwolle','PEC','Zwolle','NL','#1c3f94','#f4f4f4',56,1),K('PSV','PSV Eindhoven','PSV','Eindhoven','NL','#d4192b','#f4f4f4',76,1),K('SPR','Sparta Rotterdam','Sparta','Róterdam','NL','#f4f4f4','#d4192b',56,1),K('TWE','FC Twente','Twente','Enschede','NL','#d4192b','#f4f4f4',64,1),K('UTR','FC Utrecht','Utrecht','Utrecht','NL','#d4192b','#f4f4f4',64,1),K('WIL','Willem II','Willem II','Tilburgo','NL','#d4192b','#f4f4f4',50,1),K('CMB','SC Cambuur','Cambuur','Leeuwarden','NL','#f4c620','#0a3a8a',48,1),K('FSI','Fortuna Sittard','Fortuna','Sittard','NL','#f2d31b','#1a1a1a',48,1),K('GAE','Go Ahead Eagles','Go Ahead Eagles','Deventer','NL','#d4192b','#f2d31b',52,1),K('TEL','SC Telstar','Telstar','Velsen-Zuid','NL','#1a1a1a','#f2d31b',44,1),K('ANT','Royal Antwerp','Antwerp','Amberes','BE','#0a3a8a','#d4192b',60,1),K('BRU','Club Brugge','Brugge','Brujas','BE','#0033a0','#f4f4f4',76,1),K('CBR','Cercle Brugge','Cercle Brugge','Brujas','BE','#00653a','#1a1a1a',50,1),K('CHL','Royal Charleroi SC','Charleroi','Charleroi','BE','#000000','#f4f4f4',45,1),K('GNT','KAA Gent','Gent','Gante','BE','#1c3f94','#f4f4f4',62,1),K('KVK','KV Kortrijk','Kortrijk','Kortrijk','BE','#d4192b','#f4f4f4',48,1),K('MEC','KV Mechelen','Mechelen','Mechelen','BE','#d4192b','#f2d31b',50,1),K('WES','KVC Westerlo','Westerlo','Westerlo','BE','#1c3f94','#f2d31b',58,1),K('LOM','Lommel SK','Lommel','Lommel','BE','#0a8a4a','#f4f4f4',48,1),K('OHL','OH Leuven','OH Leuven','Lovaina','BE','#f4f4f4','#1a1a1a',56,1),K('RLL','RAAL La Louviere','La Louviere','La Louvière','BE','#1a1a1a','#f4f4f4',52,1),K('STV','Sint-Truidense VV','Sint-Truiden','Sint-Truiden','BE','#f2d31b','#1c3f94',52,1),K('SKB','SK Beveren','Beveren','Beveren','BE','#f2d045','#1c3f94',48,1),K('SLG','Standard de Liège','Standard Liège','Lieja','BE','#d4192b','#f4f4f4',56,1),K('USG','Union Saint-Gilloise','Union SG','Bruselas','BE','#f2d31b','#1c3f94',66,1),K('ZUL','Zulte Waregem','Zulte','Waregem','BE','#d4192b','#f4f4f4',54,1),K('AUL','Austria Lustenau','Lustenau','Lustenau','AT','#f4f4f4','#1c3f94',50,1),K('AWI','Austria Wien','Austria Viena','Viena','AT','#7b2d8b','#f4f4f4',58,1),K('GAK','Grazer AK','Grazer AK','Graz','AT','#000000','#f4f4f4',48,1),K('LAS','LASK','LASK','Linz','AT','#1a1a1a','#f4f4f4',64,1),K('RWI','Rapid Wien','Rapid Viena','Viena','AT','#0a8a4a','#f4f4f4',60,1),K('RBS','RB Salzburg','Salzburgo','Salzburgo','AT','#d4192b','#f4f4f4',72,1),K('ALT','SCR Altach','Altach','Altach','AT','#d4192b','#f4f4f4',48,1),K('STU','Sturm Graz','Sturm Graz','Graz','AT','#1a1a1a','#f4f4f4',64,1),K('RIE','SV Ried','Ried','Ried','AT','#1c3f94','#f2d31b',48,1),K('HAR','TSV Hartberg','Hartberg','Hartberg','AT','#1c3f94','#f4f4f4',50,1),K('WAC','Wolfsberger AC','Wolfsberger','Wolfsberg','AT','#f4f4f4','#0a6a3a',56,1),K('TIR','WSG Tirol','WSG Tirol','Wattens','AT','#d4192b','#f4f4f4',48,1),];
+ K('UNI','Unionistas CF','Unionistas','Salamanca','ES','#1a1a1a','#f4f4f4',46,5),
+ K('RUS','Real Unión Club','Real Unión','Irún','ES','#1a1a1a','#f4f4f4',46,5),
+ K('CCS','C.C. San Sebastián','CC San Sebastián','San Sebastián','ES','#1c3f94','#f4f4f4',38,3),K('GETX','Arenas Club de Getxo','Arenas de Getxo','Getxo','ES','#d4192b','#f4f4f4',48,5),K('BETD','Real Betis Deportivo','Betis Dep','Sevilla','ES','#0a7a3d','#f4f4f4',44,3),K('SEVB','Sevilla Atlético','Sevilla Atl','Sevilla','ES','#d4192b','#f4f4f4',44,3),K('GIRB','Girona B','Girona B','Girona','ES','#d4192b','#f4f4f4',44,3),K('REC','Recreativo','Recreativo','Huelva','ES','#1c3f94','#f4f4f4',44,3),K('LEGB','Leganés B','Leganés B','Leganés','ES','#1c9c4a','#f4f4f4',44,3),K('MLLB','Mallorca B','Mallorca B','Palma','ES','#c8102e','#1a1a1a',44,3),K('VILB','Villarreal B','Villarreal B','Villarreal','ES','#f2d31b','#0b3c8c',44,6),K('OVIB','Real Oviedo B','Oviedo B','Oviedo','ES','#1e5bb8','#f4f4f4',44,3),K('TENB','Tenerife B','Tenerife B','Santa Cruz de Tenerife','ES','#1c5aa6','#f4f4f4',44,3),K('RMAB','Real Madrid Aficionados','RM Aficionados','Madrid','ES','#f4f4f4','#c9a45c',44,3),
+K('AVS','Academico Viseu','Académico Viseu','Viseu','PT','#f4f4f4','#1a1a1a',54,1),K('ARO','Arouca','Arouca','Arouca','PT','#f2d31b','#1a1a1a',54,1),K('CPA','Casa Pia AC','CPA','Lisboa','PT','#0a3a8a','#f4f4f4',52,1),K('ETD','Estrela da Amadora','AMD','Amadora','PT','#d4192b','#f4f4f6',44,1),K('ALV','FC Alverca','Alverca','Alverca do Ribatejo','PT','#d4192b','#f4f4f4',52,1),K('GIL','Gil Vicente FC','Gil Vicente','Barcelos','PT','#d4192b','#f4f4f4',52,1),K('MAR','CS Marítimo','Marítimo','Funchal','PT','#f4f4f4','#d4192b',48,1),K('CDN','CD Nacional','Nacional','Funchal','PT','#d4192b','#1a1a1a',48,1),K('FCP','FC Porto','Porto','Oporto','PT','#0a3a8a','#f4f4f4',84,1),K('SPB','Sporting de Braga','SPB','Braga','PT','#a3122a','#f4f4f4',66,1),K('SPTL','Sporting CP','Sporting','Lisboa','PT','#0a8a4a','#f4f4f4',74,1),K('VIT','Vitória Guimarães','Vitória SC','Guimarães','PT','#f4f4f4','#1a1a1a',62,1),K('SCL','CD Santa Clara','Santa Clara','Ponta Delgada','PT','#f2d31b','#0a3a8a',50,1),K2('SCLB','CD Santa Clara II','Santa Clara II','Ponta Delgada','PT','#f2d31b','#0a3a8a',45),K('ESTP','Estoril Praia','Estoril','Estoril','PT','#f4f4f4','#1a1a1a',50,1),K('FAM','FC Famalicão','Famalicão','Vila Nova de Famalicão','PT','#f4f4f4','#0a3a8a',52,1),K('MOR','Moreirense FC','Moreirense','Moreira de Cónegos','PT','#0a8a3d','#f4f4f4',48,1),K('RAVE','Rio Ave FC','Rio Ave','Vila do Conde','PT','#0a3a8a','#f4f4f4',48,1),K('ADO','ADO Den Haag','Den Haag','La Haya','NL','#1c8f3f','#f2d31b',56,1),K('AZA','AZ Alkmaar','AZ','Alkmaar','NL','#d4192b','#f4f4f4',62,1),K('GRN','FC Groningen','Groningen','Groninga','NL','#f4f4f4','#1a3a8a',56,1),K('HFE','SC Heerenveen','Heerenveen','Heerenveen','NL','#1c3f94','#f4f4f4',52,1),K('NEC','NEC Nijmegen','NEC','Nimega','NL','#d4192b','#1a1a1a',62,1),K('PEC','PEC Zwolle','PEC','Zwolle','NL','#1c3f94','#f4f4f4',56,1),K('PSV','PSV Eindhoven','PSV','Eindhoven','NL','#d4192b','#f4f4f4',76,1),K('SPR','Sparta Rotterdam','Sparta','Róterdam','NL','#f4f4f4','#d4192b',56,1),K('TWE','FC Twente','Twente','Enschede','NL','#d4192b','#f4f4f4',64,1),K('UTR','FC Utrecht','Utrecht','Utrecht','NL','#d4192b','#f4f4f4',64,1),K('WIL','Willem II','Willem II','Tilburgo','NL','#d4192b','#f4f4f4',50,1),K('CMB','SC Cambuur','Cambuur','Leeuwarden','NL','#f4c620','#0a3a8a',48,1),K('FSI','Fortuna Sittard','Fortuna','Sittard','NL','#f2d31b','#1a1a1a',48,1),K('GAE','Go Ahead Eagles','Go Ahead Eagles','Deventer','NL','#d4192b','#f2d31b',52,1),K('TEL','SC Telstar','Telstar','Velsen-Zuid','NL','#1a1a1a','#f2d31b',44,1),K('ANT','Royal Antwerp','Antwerp','Amberes','BE','#0a3a8a','#d4192b',60,1),K('BRU','Club Brugge','Brugge','Brujas','BE','#0033a0','#f4f4f4',76,1),K('CBR','Cercle Brugge','Cercle Brugge','Brujas','BE','#00653a','#1a1a1a',50,1),K('CHL','Royal Charleroi SC','Charleroi','Charleroi','BE','#000000','#f4f4f4',45,1),K('GNT','KAA Gent','Gent','Gante','BE','#1c3f94','#f4f4f4',62,1),K('KVK','KV Kortrijk','Kortrijk','Kortrijk','BE','#d4192b','#f4f4f4',48,1),K('MEC','KV Mechelen','Mechelen','Mechelen','BE','#d4192b','#f2d31b',50,1),K('WES','KVC Westerlo','Westerlo','Westerlo','BE','#1c3f94','#f2d31b',58,1),K('LOM','Lommel SK','Lommel','Lommel','BE','#0a8a4a','#f4f4f4',48,1),K('OHL','OH Leuven','OH Leuven','Lovaina','BE','#f4f4f4','#1a1a1a',56,1),K('RLL','RAAL La Louviere','La Louviere','La Louvière','BE','#1a1a1a','#f4f4f4',52,1),K('STV','Sint-Truidense VV','Sint-Truiden','Sint-Truiden','BE','#f2d31b','#1c3f94',52,1),K('SKB','SK Beveren','Beveren','Beveren','BE','#f2d045','#1c3f94',48,1),K('SLG','Standard de Liège','Standard Liège','Lieja','BE','#d4192b','#f4f4f4',56,1),K('USG','Union Saint-Gilloise','Union SG','Bruselas','BE','#f2d31b','#1c3f94',66,1),K('ZUL','Zulte Waregem','Zulte','Waregem','BE','#d4192b','#f4f4f4',54,1),K('AUL','Austria Lustenau','Lustenau','Lustenau','AT','#f4f4f4','#1c3f94',50,1),K('AWI','Austria Wien','Austria Viena','Viena','AT','#7b2d8b','#f4f4f4',58,1),K('GAK','Grazer AK','Grazer AK','Graz','AT','#000000','#f4f4f4',48,1),K('LAS','LASK','LASK','Linz','AT','#1a1a1a','#f4f4f4',64,1),K('RWI','Rapid Wien','Rapid Viena','Viena','AT','#0a8a4a','#f4f4f4',60,1),K('RBS','RB Salzburg','Salzburgo','Salzburgo','AT','#d4192b','#f4f4f4',72,1),K('ALT','SCR Altach','Altach','Altach','AT','#d4192b','#f4f4f4',48,1),K('STU','Sturm Graz','Sturm Graz','Graz','AT','#1a1a1a','#f4f4f4',64,1),K('RIE','SV Ried','Ried','Ried','AT','#1c3f94','#f2d31b',48,1),K('HAR','TSV Hartberg','Hartberg','Hartberg','AT','#1c3f94','#f4f4f4',50,1),K('WAC','Wolfsberger AC','Wolfsberger','Wolfsberg','AT','#f4f4f4','#0a6a3a',56,1),K('TIR','WSG Tirol','WSG Tirol','Wattens','AT','#d4192b','#f4f4f4',48,1),K('MER','AD Mérida','Mérida','Mérida','ES','#f4f4f4','#1a1a1a',46,5),K('MERB','AD Mérida Promesas','Promesas','Mérida','ES','#f4f4f4','#1a1a1a',40,3),K('FER','Racing Ferrol','Racing Ferrol','Ferrol','ES','#0a8a4a','#f4f4f4',48,5),K('PON','Ponferradina','Ponferradina','Ponferrada','ES','#f4f4f6','#0b3c8c',48,5),K('ZAM','Zamora CF','Zamora','Zamora','ES','#f2d31b','#1a1a1a',44,5),K('LUG','CD Lugo','Lugo','Lugo','ES','#f2d31b','#8b1a1a',44,5),K('CRI','CD Coria','Coria','Coria','ES','#0a7a3d','#f4f4f4',42,5),K('EXT','CD Extremadura','Extremadura','Almendralejo','ES','#0a3a8a','#f4f4f4',44,5),K('OUR','UD Ourense','Ourense','Ourense','ES','#e01a1a','#1a2a5a',42,5),K('PONV','Pontevedra CF','Pontevedra','Pontevedra','ES','#f4f4f4','#1c3f94',44,5),K('MIR','Mirandés','Mirandés','Miranda de Ebro','ES','#c8102e','#1a1a1a',46,5),K('BARA','Barakaldo CF','Barakaldo','Barakaldo','ES','#f4f4f4','#1a1a1a',44,5),K('CACE','CP Cacereño','Cacereño','Cáceres','ES','#f4f4f4','#1a1a1a',42,5),K('FAB','Deportivo Fabril','Fabril','A Coruña','ES','#f4f4f4','#1a3a8a',44,5),K('AVIL','Real Avilés Industrial','Avilés','Avilés','ES','#f4f4f4','#1a1a1a',42,5),K('ZAR','Real Zaragoza','Zaragoza','Zaragoza','ES','#f4f4f6','#1a3a8a',58,6),K('HUE','Huesca','Huesca','Huesca','ES','#1c3f94','#c8102e',53,6),K('CTG','FC Cartagena','Cartagena','Cartagena','ES','#1a1a1a','#f4f4f4',49,6),K('AGU','Águilas FC','Águilas','Águilas','ES','#1c3f94','#f4f4f4',44,6),K('IBI','UD Ibiza','Ibiza','Ibiza','ES','#f4f4f6','#1a1a1a',50,6),K('RMJ','Rayo Majadahonda','Rayo Majad.','Majadahonda','ES','#1c5aa6','#f4f4f4',44,6),K('ALC','Alcorcón','Alcorcón','Alcorcón','ES','#f2d31b','#1a1a1a',48,6),K('STA','UE Sant Andreu','Sant Andreu','Barcelona','ES','#f2d31b','#d4192b',44,6),K('RMU','Real Murcia','Murcia','Murcia','ES','#d4192b','#f4f4f4',48,6),K('HER','Hércules','Hércules','Alicante','ES','#f4f4f4','#1c3f94',48,6),K('ALG','Algeciras CF','Algeciras','Algeciras','ES','#1a1a1a','#f4f4f4',42,6),K('ANQ','Antequera CF','Antequera','Antequera','ES','#1c3f94','#f4f4f4',40,6),K('TRL','CD Teruel','Teruel','Teruel','ES','#f2d31b','#1a1a1a',40,6),K('EUR','CE Europa','Europa','Barcelona','ES','#f4f4f4','#0a3a8a',42,6),K('NAS','Gimnàstic Tarragona','Nàstic','Tarragona','ES','#d4192b','#f4f4f4',44,6),K('TRM','Juventud Torremolinos','J. Torremolinos','Torremolinos','ES','#1c3f94','#f4f4f4',40,6),K('JAE','Real Jaén','Real Jaén','Jaén','ES','#1a1a1a','#f4f4f4',42,6),K('RMC','RM Castilla','Castilla','Madrid','ES','#f4f4f4','#1a1a1a',44,6),];
 const LEGACY=[K2('DES','Defensor Sporting','Defensor','Montevideo','UY','#8b1a1a','#1a1a1a',52),K2('LDQ','Liga de Quito','LDU Quito','Quito','EC','#f2d31b','#8b1a1a',55),
- K2('ZAR','Real Zaragoza','ZAR','Zaragoza','ES','#f4f4f6','#1a3a8a',58),K2('HUE','Huesca','HUE','Huesca','ES','#1c3f94','#c8102e',53),
+ 
  K2('WMA','SV Waldhof Mannheim','Waldhof','Mannheim','DE','#1c3f94','#f4f4f4',50),K2('SCM','SC Preußen Münster','Preußen','Münster','DE','#1a1a1a','#f4f4f4',50),
- K2('MIR','Mirandés','MIR','Miranda de Ebro','ES','#c8102e','#1a1a1a',50),K2('CTG','Cartagena','CTG','Cartagena','ES','#1a1a1a','#f4f4f4',51),
- K2('FER','Racing de Ferrol','FER','Ferrol','ES','#0a8a4a','#f4f4f4',51),K2('PON','Ponferradina','PON','Ponferrada','ES','#f4f4f6','#0b3c8c',51),
+ 
+ 
  K2('LEI','Leicester City','LEI','Leicester','EN','#1e5bb8','#f4f4f4',68),
  K2('SPE','Spezia','SPE','La Spezia','IT','#f4f4f6','#1a1a1a',57),K2('BRI','Bari','BRI','Bari','IT','#f4f4f6','#d4192b',58),
  K2('BRS','Brescia','BRE','Brescia','IT','#1c3f94','#f4f4f4',56),K2('REG','Reggiana','REG','Reggio Emilia','IT','#8b1a1a','#f4f4f4',55),
@@ -1226,17 +1253,17 @@ const LEGACY=[K2('DES','Defensor Sporting','Defensor','Montevideo','UY','#8b1a1a
  K2('RIV','River Plate','RIV','Buenos Aires','AR','#e3001d','#f4f4f4',80),K2('PGE','Panetolikos','PGE','Agrinio','GR','#1c6b3d','#f4f4f4',50),
  K2('SHK','Shakhtar Donetsk','SHK','Donetsk','UA','#f4841c','#1a1a1a',77),K2('INU','Inter U23','INU','Milán','IT','#1c3f94','#1a1a1a',48),
  K2('TIG','Tigre','TIG','Victoria','AR','#0a3a8a','#f4f4f4',58),K2('RIZ','Çaykur Rizespor','RIZ','Rize','TR','#0a7a3d','#f4f4f4',56),
- K2('AGU','Águilas FC','AGU','Águilas','ES','#1c3f94','#f4f4f4',48),K2('HOU','Houston Dynamo','HOU','Houston','US','#f4841c','#1a1a1a',63),
- K2('IBI','UD Ibiza','IBI','Ibiza','ES','#f4f4f6','#1a1a1a',54),K2('ZAM','Zamora CF','ZAM','Zamora','ES','#f2d31b','#1a1a1a',47),
- K2('RMJ','Rayo Majadahonda','Rayo Majad.','Majadahonda','ES','#1c5aa6','#f4f4f4',45),K2('LUG','CD Lugo','LUG','Lugo','ES','#f2d31b','#8b1a1a',45),
- K2('ALC','Alcorcón','ALC','Alcorcón','ES','#f2d31b','#1a1a1a',48),K2('MUA','Muaither SC','Muaither','Al Rayyan','QA','#0a7a3d','#f4f4f4',40),
+ K2('HOU','Houston Dynamo','HOU','Houston','US','#f4841c','#1a1a1a',63),
+ 
+ 
+ K2('MUA','Muaither SC','Muaither','Al Rayyan','QA','#0a7a3d','#f4f4f4',40),
  K2('JUT','Jong Utrecht','Jong Utrecht','Utrecht','NL','#f2d31b','#c8102e',42),
- K2('CZO','Cerezo Osaka','Cerezo','Osaka','JP','#e5007f','#0a2a5a',62),K2('CRI','CD Coria','Coria','Coria','ES','#0a7a3d','#f4f4f4',45),
- K2('IBE','FC Iberia 1999','Iberia','Tbilisi','GE','#c8102e','#f4f4f4',50),K2('EXT','CD Extremadura','Extremadura','Almendralejo','ES','#0a3a8a','#f4f4f4',46),
- K2('BOT','Botafogo','Botafogo','Río de Janeiro','BR','#1a1a1a','#f4f4f4',74),K2('STA','UE Sant Andreu','Sant Andreu','Barcelona','ES','#f2d31b','#d4192b',47),
+ K2('CZO','Cerezo Osaka','Cerezo','Osaka','JP','#e5007f','#0a2a5a',62),
+ K2('IBE','FC Iberia 1999','Iberia','Tbilisi','GE','#c8102e','#f4f4f4',50),
+ K2('BOT','Botafogo','Botafogo','Río de Janeiro','BR','#1a1a1a','#f4f4f4',74),
  K2('PUE','Puebla','Puebla','Puebla','MX','#1c3f94','#f4f4f4',60),
  K2('ACA','Académica','Académica','Coímbra','PT','#1a1a1a','#f4f4f4',58),
- K2('BDG','FK Bodø/Glimt','Bodø/Glimt','Bodø','NO','#f8b334','#1a1a1a',68),K2('SBAH','Sabah FK','Sabah','Bakú','AZ','#0a3a8a','#f4f4f4',52),K2('SVB','Slovan Bratislava','Slovan','Bratislava','SK','#0a5aa8','#f4f4f4',62),K2('AEKA','AEK Athens','AEK','Atenas','GR','#f4f4f4','#1a1a1a',64),K2('ARAT','Ararat-Armenia','Ararat','Ereván','AM','#d4192b','#f4f4f4',44),K2('ATB','Atert Bissen','Atert','Bissen','LU','#1c8f3f','#f4f4f4',34),K2('BBL','Borac Banja Luka','Borac','Banja Luka','BA','#d4192b','#1a1a1a',44),K2('DRI','FC Drita','Drita','Gjilan','XK','#1c3f94','#f4f4f4',40),K2('FLO','FC Flora','Flora','Tallin','EE','#1c8f3f','#f4f4f4',42),K2('VRD','FK Vardar','Vardar','Skopie','MK','#d4192b','#f4f4f4',42),K2('FLR','Floriana FC','Floriana','Floriana','MT','#1c3f94','#f4f4f4',36),K2('GYO','Győri ETO','Győr','Győr','HU','#1c8f3f','#f4f4f4',48),K2('ICE','Inter Escaldes','Escaldes','Escaldes-Engordany','AD','#f2d31b','#1c3f94',32),K2('KAI','Kairat Almaty','Kairat','Almaty','KZ','#f2d31b','#1a8a3a',56),K2('KZA','Kauno Žalgiris','Žalgiris','Kaunas','LT','#1c3f94','#f4f4f4',40),K2('EGN','KF Egnatia','Egnatia','Rrogozhinë','AL','#d4192b','#1a1a1a',40),K2('KLA','KÍ Klaksvík','KÍ','Klaksvík','FO','#1c3f94','#f4f4f4',38),K2('KUP','KuPS Kuopio','KuPS','Kuopio','FI','#1a1a1a','#f2d31b',48),K2('LAR','Larne','Larne','Larne','NIR','#1c3f94','#f4f4f4',40),K2('LRI','Lincoln Red Imps','Red Imps','Gibraltar','GI','#d4192b','#f4f4f4',36),K2('MVIT','Maxline Vitebsk','Vitebsk','Vitebsk','BY','#1c3f94','#d4192b',38),K2('PET','Petrocub Hîncești','Petrocub','Hîncești','MD','#1c8f3f','#f4f4f4',44),K2('RIG','Riga FC','Riga','Riga','LV','#1a1a1a','#f2d31b',48),K2('SHR','Shamrock Rovers','Shamrock','Dublín','IE','#1c8f3f','#f4f4f4',50),K2('SUT','Sutjeska','Sutjeska','Nikšić','ME','#d4192b','#f4f4f4',40),K2('TNS','The New Saints','TNS','Oswestry','WAL','#1c3f94','#f4f4f4',44),K2('TRF','Tre Fiori','Tre Fiori','Fiorentino','SM','#1c3f94','#f4f4f4',30),K2('UCR','Universitatea Craiova','U. Craiova','Craiova','RO','#f2d31b','#1c3f94',56),K2('VRE','Víkingur Reykjavík','Víkingur','Reikiavik','IS','#1c3f94','#f4f4f4',42),K2('AAR','AGF Aarhus','AGF','Aarhus','DK','#f4f4f4','#1a1a1a',50),K2('CSKS','CSKA Sofia','CSKA Sofia','Sofía','BG','#d4192b','#1a1a1a',48),K2('LECP','Lech Poznań','Lech','Poznań','PL','#1c3f94','#f4f4f4',54),K2('LIS','Lillestrom SK','Lillestrom','Lillestrøm','NO','#1c3f94','#f4f4f4',48),K2('MJA','Mjällby AIF','Mjällby','Hällevik','SE','#f2d31b','#1c8f3f',48),K2('THU','Thun','Thun','Thun','CH','#d4192b','#1a1a1a',46),K2('TRAB','Trabzonspor','Trabzonspor','Trebisonda','TR','#7fb3e0','#8b1a1a',62),K2('VPL','Viktoria Plzeň','Plzeň','Plzeň','CZ','#1c3f94','#d4192b',56),K2('CLJ','NK Celje','Celje','Celje','SI','#f2d31b','#1a1a1a',48),K2('DZG','Dinamo Zagreb','Dinamo Zagreb','Zagreb','HR','#1c3f94','#f4f4f4',66),K2('TRZ','Torreense','Torreense','Torres Vedras','PT','#1c3f94','#f4f4f4',36),K2('BOA','Boavista FC','Boavista','Oporto','PT','#000000','#ffffff',58),K2('BEL','Os Belenenses','Belenenses','Lisboa','PT','#0052a5','#ffffff',55),K2('VSE','Vitória Setúbal','V. Setúbal','Setúbal','PT','#00843d','#ffffff',52),K2('DAV','Desportivo Aves','Desp. Aves','Vila das Aves','PT','#0a3a8a','#ffffff',48),K2('BMR','Beira-Mar','Beira-Mar','Aveiro','PT','#ffcc00','#000000',50),K2('LEIX','Leixões SC','Leixões','Matosinhos','PT','#ffffff','#0a3a8a',50),K2('WIE','Wieczysta Kraków','Wieczysta','Cracovia','PL','#ffffff','#d81e05',45),K2('AMR','Amarante FC','Amarante','Amarante','PT','#004c9b','#ffffff',44),K2('SCV','SC Covilhã','Covilhã','Covilhã','PT','#00843d','#ffffff',46),K2('OUR','UD Ourense','Ourense','Ourense','ES','#e01a1a','#1a2a5a',42),K2('GENC','Gençlerbirliği SK','Gençlerbirliği','Ankara','TR','#d41b1b','#1a1a1a',58),K2('ALI','Al-Ittihad','Al-Ittihad','Jeddah','SA','#ffcc00','#000000',80),K2('CEA','Ceará SC','Ceará','Fortaleza','BR','#000000','#ffffff',52),K2('PTZ','Partizan Belgrado','Partizan','Belgrado','RS','#000000','#ffffff',62),K2('FEI','CD Feirense','Feirense','Santa Maria da Feira','PT','#ffffff','#004c9b',48),K2('AVA','Avaí FC','Avaí','Florianópolis','BR','#004c9b','#ffffff',50),K2('PTM','Portimonense','Portimonense','Portimão','PT','#000000','#ffffff',48),K2('FEL','Felgueiras 1932','Felgueiras','Felgueiras','PT','#00a651','#ffffff',46),
+ K2('BDG','FK Bodø/Glimt','Bodø/Glimt','Bodø','NO','#f8b334','#1a1a1a',68),K2('SBAH','Sabah FK','Sabah','Bakú','AZ','#0a3a8a','#f4f4f4',52),K2('SVB','Slovan Bratislava','Slovan','Bratislava','SK','#0a5aa8','#f4f4f4',62),K2('AEKA','AEK Athens','AEK','Atenas','GR','#f4f4f4','#1a1a1a',64),K2('ARAT','Ararat-Armenia','Ararat','Ereván','AM','#d4192b','#f4f4f4',44),K2('ATB','Atert Bissen','Atert','Bissen','LU','#1c8f3f','#f4f4f4',34),K2('BBL','Borac Banja Luka','Borac','Banja Luka','BA','#d4192b','#1a1a1a',44),K2('DRI','FC Drita','Drita','Gjilan','XK','#1c3f94','#f4f4f4',40),K2('FLO','FC Flora','Flora','Tallin','EE','#1c8f3f','#f4f4f4',42),K2('VRD','FK Vardar','Vardar','Skopie','MK','#d4192b','#f4f4f4',42),K2('FLR','Floriana FC','Floriana','Floriana','MT','#1c3f94','#f4f4f4',36),K2('GYO','Győri ETO','Győr','Győr','HU','#1c8f3f','#f4f4f4',48),K2('ICE','Inter Escaldes','Escaldes','Escaldes-Engordany','AD','#f2d31b','#1c3f94',32),K2('KAI','Kairat Almaty','Kairat','Almaty','KZ','#f2d31b','#1a8a3a',56),K2('KZA','Kauno Žalgiris','Žalgiris','Kaunas','LT','#1c3f94','#f4f4f4',40),K2('EGN','KF Egnatia','Egnatia','Rrogozhinë','AL','#d4192b','#1a1a1a',40),K2('KLA','KÍ Klaksvík','KÍ','Klaksvík','FO','#1c3f94','#f4f4f4',38),K2('KUP','KuPS Kuopio','KuPS','Kuopio','FI','#1a1a1a','#f2d31b',48),K2('LAR','Larne','Larne','Larne','NIR','#1c3f94','#f4f4f4',40),K2('LRI','Lincoln Red Imps','Red Imps','Gibraltar','GI','#d4192b','#f4f4f4',36),K2('MVIT','Maxline Vitebsk','Vitebsk','Vitebsk','BY','#1c3f94','#d4192b',38),K2('PET','Petrocub Hîncești','Petrocub','Hîncești','MD','#1c8f3f','#f4f4f4',44),K2('RIG','Riga FC','Riga','Riga','LV','#1a1a1a','#f2d31b',48),K2('SHR','Shamrock Rovers','Shamrock','Dublín','IE','#1c8f3f','#f4f4f4',50),K2('SUT','Sutjeska','Sutjeska','Nikšić','ME','#d4192b','#f4f4f4',40),K2('TNS','The New Saints','TNS','Oswestry','WAL','#1c3f94','#f4f4f4',44),K2('TRF','Tre Fiori','Tre Fiori','Fiorentino','SM','#1c3f94','#f4f4f4',30),K2('UCR','Universitatea Craiova','U. Craiova','Craiova','RO','#f2d31b','#1c3f94',56),K2('VRE','Víkingur Reykjavík','Víkingur','Reikiavik','IS','#1c3f94','#f4f4f4',42),K2('AAR','AGF Aarhus','AGF','Aarhus','DK','#f4f4f4','#1a1a1a',50),K2('CSKS','CSKA Sofia','CSKA Sofia','Sofía','BG','#d4192b','#1a1a1a',48),K2('LECP','Lech Poznań','Lech','Poznań','PL','#1c3f94','#f4f4f4',54),K2('LIS','Lillestrom SK','Lillestrom','Lillestrøm','NO','#1c3f94','#f4f4f4',48),K2('MJA','Mjällby AIF','Mjällby','Hällevik','SE','#f2d31b','#1c8f3f',48),K2('THU','Thun','Thun','Thun','CH','#d4192b','#1a1a1a',46),K2('TRAB','Trabzonspor','Trabzonspor','Trebisonda','TR','#7fb3e0','#8b1a1a',62),K2('VPL','Viktoria Plzeň','Plzeň','Plzeň','CZ','#1c3f94','#d4192b',56),K2('CLJ','NK Celje','Celje','Celje','SI','#f2d31b','#1a1a1a',48),K2('DZG','Dinamo Zagreb','Dinamo Zagreb','Zagreb','HR','#1c3f94','#f4f4f4',66),K2('TRZ','Torreense','Torreense','Torres Vedras','PT','#1c3f94','#f4f4f4',36),K2('BOA','Boavista FC','Boavista','Oporto','PT','#000000','#ffffff',58),K2('BEL','Os Belenenses','Belenenses','Lisboa','PT','#0052a5','#ffffff',55),K2('VSE','Vitória Setúbal','V. Setúbal','Setúbal','PT','#00843d','#ffffff',52),K2('DAV','Desportivo Aves','Desp. Aves','Vila das Aves','PT','#0a3a8a','#ffffff',48),K2('BMR','Beira-Mar','Beira-Mar','Aveiro','PT','#ffcc00','#000000',50),K2('LEIX','Leixões SC','Leixões','Matosinhos','PT','#ffffff','#0a3a8a',50),K2('WIE','Wieczysta Kraków','Wieczysta','Cracovia','PL','#ffffff','#d81e05',45),K2('AMR','Amarante FC','Amarante','Amarante','PT','#004c9b','#ffffff',44),K2('SCV','SC Covilhã','Covilhã','Covilhã','PT','#00843d','#ffffff',46),K2('GENC','Gençlerbirliği SK','Gençlerbirliği','Ankara','TR','#d41b1b','#1a1a1a',58),K2('ALI','Al-Ittihad','Al-Ittihad','Jeddah','SA','#ffcc00','#000000',80),K2('CEA','Ceará SC','Ceará','Fortaleza','BR','#000000','#ffffff',52),K2('PTZ','Partizan Belgrado','Partizan','Belgrado','RS','#000000','#ffffff',62),K2('FEI','CD Feirense','Feirense','Santa Maria da Feira','PT','#ffffff','#004c9b',48),K2('AVA','Avaí FC','Avaí','Florianópolis','BR','#004c9b','#ffffff',50),K2('PTM','Portimonense','Portimonense','Portimão','PT','#000000','#ffffff',48),K2('FEL','Felgueiras 1932','Felgueiras','Felgueiras','PT','#00a651','#ffffff',46),
  K2('MOT','Motherwell','Motherwell','Motherwell','SC','#f2d31b','#8b1a1a',58),K2('DUN','Dundee','Dundee','Dundee','SC','#1c3f94','#f4f4f4',57),
  K2('STG','Stevenage','Stevenage','Stevenage','EN','#d4192b','#f4f4f4',52),
  K2('RAN','Rangers','Rangers','Glasgow','SC','#1c3f94','#f4f4f4',68),
@@ -1296,7 +1323,7 @@ const LEGACY=[K2('DES','Defensor Sporting','Defensor','Montevideo','UY','#8b1a1a
  K2('MGB','Magdeburg','Magdeburg','Magdeburgo','DE','#1c3f94','#f4f4f4',56),
  K2('PAOK','PAOK','PAOK','Salónica','GR','#1a1a1a','#f4f4f4',66),K2('NSH','Nashville SC','Nashville','Nashville','US','#f2d31b','#1c3f94',58),K2('RIJ','HNK Rijeka','Rijeka','Rijeka','HR','#f4f4f4','#1c3f94',60),K2('WIS','Wisla Kraków','Wisła','Cracovia','PL','#d4192b','#1c3f94',58),K2('RWE','Rot-Weiss Essen','RW Essen','Essen','DE','#d4192b','#f4f4f4',52),K2('SGS','SG Sonnenhof Großaspach','Sonnenhof','Aspach','DE','#d4192b','#f4f4f4',48),K2('ETR','Eintracht Trier','Trier','Trier','DE','#005194','#FFD64A',45),K2('HAV','TSV Havelse','Havelse','Havelse','DE','#E2001A','#f4f4f4',50),K2('MEP','SV Meppen','Meppen','Meppen','DE','#1c3f94','#f2d31b',52),K2('FWK','Würzburger Kickers','Würzburg','Würzburg','DE','#d4192b','#f4f4f4',52),K2('LEP','Lech Poznań','Lech','Poznań','PL','#004b92','#f4f4f4',64),
  K2('JAH','Jahn Regensburg','Regensburg','Ratisbona','DE','#d4192b','#f4f4f4',52),
- K2('AMD','Amedspor','Amedspor','Diyarbakır','TR','#d4192b','#1c8f3f',54),K2('IBFK','İstanbul Başakşehir','Başakşehir','Estambul','TR','#1a2a5e','#f47b20',60),K2('RAN','Rangers','Rangers','Glasgow','SC','#1c3f94','#f4f4f4',66),K2('SER','Servette','Servette','Ginebra','CH','#8b1a1a','#f4f4f4',52),K2('LUM','Lumezzane','Lumezzane','Lumezzane','IT','#1c3f94','#f4f4f4',48),K2('PER','Perugia','Perugia','Perugia','IT','#d4192b','#f4f4f4',54),K2('CTN','Catania','Catania','Catania','IT','#d4192b','#1c3f94',50),K2('PIA','Pianese','Pianese','Piancastagnaio','IT','#1c3f94','#f4f4f4',42),K2('COS','Cosenza','Cosenza','Cosenza','IT','#d4192b','#1c3f94',52),K2('BRL','Barletta','Barletta','Barletta','IT','#d4192b','#f4f4f4',42),K2('CRU','Cruzeiro','Cruzeiro','Belo Horizonte','BR','#1c3f94','#f4f4f4',64),K2('VADO','Vado FC','Vado','Vado Ligure','IT','#d4192b','#f4f4f4',42),K2('VOL','Volos NFC','Volos','Volos','GR','#d4192b','#1c3f94',54),K2('ARGJ','Argentinos Juniors','Argentinos','Buenos Aires','AR','#d4192b','#f4f4f4',58),K2('BARI','SSC Bari','Bari','Bari','IT','#f4f4f4','#d4192b',54),K2('VRS','AS Varese 1910','Varese','Varese','IT','#d4192b','#f4f4f4',48),K2('SPL','SPAL','SPAL','Ferrara','IT','#1c3f94','#f4f4f4',48),K2('CPI','AC Carpi','Carpi','Carpi','IT','#f4f4f4','#1c3f94',44),K2('CHV','Chievo Verona','Chievo','Verona','IT','#f2d31b','#1c3f94',46),K2('SIE','Siena FC','Siena','Siena','IT','#1a1a1a','#f4f4f4',46),K2('TERN','Ternana Calcio','Ternana','Terni','IT','#d4192b','#0a8a4a',46),K2('MESN','ACR Messina','Messina','Mesina','IT','#d4192b','#f2d31b',46),K2('TRI','US Triestina','Triestina','Trieste','IT','#d4192b','#f4f4f4',46),K2('RMU','Real Murcia','Murcia','Murcia','ES','#d4192b','#f4f4f4',50),K2('ACOY','CD Alcoyano','Alcoyano','Alcoy','ES','#1c3f94','#f4f4f4',48),K2('MER','Mérida CP','Mérida','Mérida','ES','#f4f4f4','#1a1a1a',46),K2('XER','Xerez CD','Xerez','Jerez','ES','#1c3f94','#f4f4f4',48),K2('NUM','CD Numancia','Numancia','Soria','ES','#d4192b','#f4f4f4',48),K2('LLE','UE Lleida','Lleida','Lérida','ES','#1c3f94','#f4f4f4',46),K2('RBUR','Real Burgos CF','Real Burgos','Burgos','ES','#f4f4f4','#1c3f94',46),K2('CDM','CD Málaga','CD Málaga','Málaga','ES','#1c3f94','#f4f4f4',46),K2('ADA','AD Almería','AD Almería','Almería','ES','#d4192b','#f4f4f4',44),K2('PONV','Pontevedra CF','Pontevedra','Pontevedra','ES','#f4f4f4','#1c3f94',46),K2('BURY','Bury FC','Bury','Bury','EN','#f4f4f4','#1c3f94',44),K2('WAN','The Wanderers FC','Wanderers','Londres','EN','#f4f4f4','#1a1a1a',40),K2('OET','Old Etonians','Old Etonians','Eton','EN','#1c3f94','#f4f4f4',40),K2('WIM','Wimbledon FC','Wimbledon','Londres','EN','#1c3f94','#f4f4f4',42),K2('BOLY','Blackburn Olympic','Blackburn Olympic','Blackburn','EN','#1c3f94','#f4f4f4',40),K2('OCAR','Old Carthusians','Old Carthusians','Godalming','EN','#1c3f94','#f4f4f4',40),K2('CLR','Clapham Rovers','Clapham Rovers','Londres','EN','#d4192b','#f4f4f4',40),K2('ROE','Royal Engineers','Royal Engineers','Chatham','EN','#f4f4f4','#1c3f94',40),K2('OXU','Oxford University','Oxford University','Oxford','EN','#1c3f94','#f4f4f4',40),K2('SWI','Swindon Town','Swindon','Swindon','EN','#d4192b','#f4f4f4',46),K2('M60','TSV 1860 München','1860 München','Múnich','DE','#1c3f94','#f4f4f4',54),K2('DRSC','Dresdner SC','Dresdner SC','Dresde','DE','#1c3f94','#f4f4f4',50),K2('UER','KFC Uerdingen 05','Uerdingen','Krefeld','DE','#d4192b','#f4f4f4',50),K2('KOF','Kickers Offenbach','Offenbach','Offenbach','DE','#d4192b','#f4f4f4',52),K2('SWE','Schwarz-Weiss Essen','Schwarz-Weiss Essen','Essen','DE','#1a1a1a','#f4f4f4',48),K2('FIV','First Vienna FC','First Vienna','Viena','DE','#1c3f94','#f4f4f4',46),K2('VFL','VfB Leipzig','VfB Leipzig','Leipzig','DE','#f4f4f4','#1c3f94',48),K2('FCI','FC Ingolstadt 04','Ingolstadt','Ingolstadt','DE','#d4192b','#f4f4f4',48),K2('HRO','Hansa Rostock','Hansa','Rostock','DE','#1c3f94','#f4f4f4',50),K2('SKI','Stuttgarter Kickers','Stuttgarter K','Stuttgart','DE','#1c3f94','#f4f4f4',46),K2('HOM','FC 08 Homburg','Homburg','Homburgo','DE','#1c3f94','#f4f4f4',46),K2('TEB','Tennis Borussia Berlin','Tennis Borussia','Berlín','DE','#f4f4f4','#1c3f94',44),K2('NAN','FC Nantes','Nantes','Nantes','FR','#f2d31b','#0a8a4a',60),K2('BOR','Girondins Bordeaux','Bordeaux','Burdeos','FR','#1c3f94','#f4f4f4',58),K2('REI','Stade de Reims','Reims','Reims','FR','#d4192b','#f4f4f4',56),K2('SET','FC Sète 34','Sète','Sète','FR','#1c3f94','#f4f4f4',46),K2('SOC','FC Sochaux-Montbéliard','Sochaux','Montbéliard','FR','#f2d31b','#1c3f94',48),K2('MPL','Montpellier HSC','Montpellier','Montpellier','FR','#1c5aa6','#f4f4f4',58),K2('ROU','RC Roubaix','Roubaix','Roubaix','FR','#f4f4f4','#1a1a1a',44),K2('RCF','RC France','RC France','París','FR','#1c3f94','#f4f4f4',44),K2('OLL','Olympique Lillois','Olympique Lillois','Lille','FR','#f4f4f4','#1a1a1a',44),K2('IFK','IFK Göteborg','Göteborg','Gotemburgo','SE','#1c3f94','#f4f4f4',56),K2('CSKA','CSKA Moskva','CSKA','Moscú','RU','#d4192b','#1c3f94',60),K2('LUGN','FC Lugano','Lugano','Lugano','CH','#1a1a1a','#f4f4f4',60),K2('HEA','Heart of Midlothian','Hearts','Edimburgo','SC','#8b1a8b','#f4f4f4',62),K2('JAB','FK Jablonec','Jablonec','Jablonec nad Nisou','CZ','#1c3f94','#f2d31b',56),K2('NSJ','FC Nordsjaelland','Nordsjaelland','Farum','DK','#d4192b','#f4f4f4',58),K2('BRN','SK Brann','Brann','Bergen','NO','#d4192b','#f4f4f4',58),K2('DNC','Dinamo City','Dinamo City','Tirana','AL','#1c3f94','#f4f4f4',50),K2('HTA','Hapoel Tel Aviv','Hapoel TA','Tel Aviv','IL','#d4192b','#f4f4f4',56),K2('ITU','Inter Turku','Inter Turku','Turku','FI','#1c3f94','#f4f4f4',50),K2('MTA','Maccabi Tel Aviv','Maccabi TA','Tel Aviv','IL','#f2d31b','#1c3f94',58),K2('QAR','Qarabağ FK','Qarabağ','Bakú','AZ','#1a1a1a','#f4f4f4',56),K2('HIL','Al Hilal SFC','Al Hilal','Riad','SA','#1c3f94','#f4f4f4',68),K2('AHL','Al Ahly SC','Al Ahly','El Cairo','EG','#d4192b','#f4f4f4',66),K2('PAC','CF Pachuca','Pachuca','Pachuca','MX','#1c3f94','#f4f4f4',60),K2('FLA','CR Flamengo','Flamengo','Río de Janeiro','BR','#d4192b','#1a1a1a',72),K2('AUC','Auckland City FC','Auckland City','Auckland','NZ','#1c3f94','#f4f4f4',52),K2('AMS','Amiens SC','Amiens','Amiens','FR','#1a1a1a','#f4f4f4',54),K2('PIG','GKS Piast Gliwice','Piast Gliwice','Gliwice','PL','#1c3f94','#f4f4f4',52),K2('BAS','SC Bastia','Bastia','Bastia','FR','#1c3f94','#f4f4f4',52),K2('DMK','Dinamo Moskva','Dinamo Moscú','Moscú','RU','#f4f4f4','#1c3f94',62),K2('VIB','Viborg FF','Viborg','Viborg','DK','#1a1a1a','#f4f4f4',52),K2('HIR','Sanfrecce Hiroshima','Hiroshima','Hiroshima','JP','#7b1c1c','#f4f4f4',58),K2('NCY','AS Nancy-Lorraine','Nancy','Nancy','FR','#f4f4f4','#d4192b',52),K2('CRT','Coritiba Foot Ball Club','Coritiba','Curitiba','BR','#1a1a1a','#f4f4f4',56),K2('BGF','Bourges Foot 18','Bourges','Bourges','FR','#1c3f94','#f4f4f4',42),K2('QRM','Quevilly-Rouen Métropole','QRM','Le Petit-Quevilly','FR','#f4f4f4','#1c3f94',44),K2('LPE','Le Puy Foot 43','Le Puy','Le Puy-en-Velay','FR','#1a1a1a','#f4f4f4',42),K2('CAN','AS Cannes','Cannes','Cannes','FR','#d4192b','#f4f4f4',44),K2('GIM','Gimnasia y Esgrima La Plata','Gimnasia LP','La Plata','AR','#f4f4f4','#1c3f94',50),K2('RDZ','Rodez AF','Rodez','Rodez','FR','#d4192b','#f4f4f4',50),K2('RST','Red Star FC','Red Star','Saint-Ouen','FR','#f4f4f4','#d4192b',48),K2('LAU','FC Lausanne-Sport','Lausana','Lausana','CH','#1c3f94','#f4f4f4',48),K2('CON','US Concarneau','Concarneau','Concarneau','FR','#d4192b','#f4f4f4',42),K2('ETT','Al-Ettifaq FC','Al-Ettifaq','Dammam','SA','#f4f4f4','#d4192b',52),K2('AUB','Aubagne FC','Aubagne','Aubagne','FR','#1a1a1a','#f4f4f4',42),K2('CCR','Columbus Crew','Columbus','Columbus','US','#d4192b','#f4f4f4',54),K2('ALY','Alanyaspor','Alanyaspor','Alanya','TR','#f4f4f4','#d4192b',50),K2('INA','Sport Club Internacional','Internacional','Porto Alegre','BR','#d4192b','#f4f4f4',56),K2('KTH','Athens Kallithea','Kallithea','Atenas','GR','#1c3f94','#f4f4f4',46),K2('RDM','FK Rodina Moskva','Rodina Moskva','Moscú','RU','#1a1a1a','#f4f4f4',44),K2('KUT','Belediye Kütahyaspor','Kütahyaspor','Kütahya','TR','#d4192b','#f4f4f4',40),K2('MUG','Muğlaspor','Muğlaspor','Muğla','TR','#f4f4f4','#1c3f94',42),K2('KRS','Kristiansund BK','Kristiansund','Kristiansund','NO','#f4f4f4','#d4192b',44),K2('OSTE','Östers IF','Östers','Växjö','SE','#f4f4f4','#1c3f94',44),K2('KTP','FC KTP','KTP','Kotka','FI','#1c3f94','#f4f4f4',42),K2('BAND','Bandırmaspor','Bandırmaspor','Bandırma','TR','#f4f4f4','#1c3f94',42),K2('UMR','Ümraniyespor','Ümraniyespor','Estambul','TR','#d4192b','#f4f4f4',44),K2('SLAV','NK Slaven Belupo','Slaven Belupo','Koprivnica','HR','#1c3f94','#f4f4f4',46),K2('ADM','FC Admira Wacker Mödling','Admira Wacker','Mödling','AT','#f4f4f4','#d4192b',44),K2('CAMG','Clube Atlético Mineiro','Atlético Mineiro','Belo Horizonte','BR','#1a1a1a','#f4f4f4',56),K2('RKC','RKC Waalwijk','RKC Waalwijk','Waalwijk','NL','#f4f4f4','#d4192b',46),K2('ARAZ','Araz PFK','Araz','Bakú','AZ','#1c3f94','#f4f4f4',44),K2('VRN','NK Veres Rivne','Veres Rivne','Rivne','UA','#f4f4f4','#d4192b',44),K2('QAD','Al-Qadsiah FC','Al-Qadsiah','Al-Khobar','SA','#f4f4f4','#1c3f94',54),K2('AHLS','Al-Ahli SFC','Al-Ahli','Yeda','SA','#f4f4f4','#1a1a1a',56),K2('BID','Al Bidda SC','Al Bidda','Doha','QA','#1a1a1a','#f4f4f4',44),K2('ZOR','Zorya Luhansk','Zorya','Lugansk','UA','#1a1a1a','#f4f4f4',48),K2('KUL','Ravshan Kulob','Ravshan','Kulob','TJ','#f4f4f4','#1c3f94',44),K2('KUD','Kudrivka','Kudrivka','Kiev','UA','#1c3f94','#f4f4f4',44),K2('CHO','Chornomorets Odessa','Chornomorets','Odesa','UA','#1c3f94','#f4f4f4',46),K2('LOK','Lokomotiv Kyiv','Lokomotiv Kyiv','Kiev','UA','#f4f4f4','#d4192b',42),K2('TKU','Torpedo Kutaisi','Torpedo Kutaisi','Kutaisi','GE','#f4f4f4','#1a1a1a',44),K2('HPT','Hapoel Petah Tikva','Hapoel Petah Tikva','Petaj Tikva','IL','#f4f4f4','#1c3f94',44),K2('ARB','FC Artis Brno','Artis Brno','Brno','CZ','#f4f4f4','#1c3f94',44),K2('PARD','FK Pardubice','Pardubice','Pardubice','CZ','#d4192b','#f4f4f4',46),K2('HAZ','Al-Hazem SC','Al-Hazem','Ar Rass','SA','#f4f4f4','#1c3f94',48),K2('LIB','FC Slovan Liberec','Slovan Liberec','Liberec','CZ','#f4f4f4','#1c3f94',50),K2('BOH2','Bohemians Praha 1905','Bohemians 1905','Praga','CZ','#f4f4f4','#1c3f94',48),K2('SLOV','1. FC Slovácko','Slovácko','Uherské Hradiště','CZ','#f4f4f4','#1c3f94',46),K2('SIO','FC Sion','Sion','Sion','CH','#d4192b','#f4f4f4',56),K2('STG','FC St. Gallen','St. Gallen','San Galo','CH','#0a8a4a','#f4f4f4',56),K2('TIL','Tromsø IL','Tromsø','Tromsø','NO','#d4192b','#f4f4f4',54),K2('PAF','Pafos FC','Pafos','Pafos','CY','#1c3f94','#f4f4f4',50),K2('USLD','USL Dunkerque','Dunkerque','Dunkerque','FR','#1c3f94','#f4f4f4',50),K2('MTC','Montecchio','Montecchio','Montecchio','IT','#d4192b','#f4f4f4',40),K2('LGN','Ligorna','Ligorna','Génova','IT','#1c3f94','#f4f4f4',40),K2('CLV','Celle Varazze','Celle Varazze','Celle Ligure','IT','#d4192b','#f4f4f4',40),K2('SMP','Samsunspor','Samsunspor','Samsun','TR','#d4192b','#1c3f94',54),K2('HER','Hércules','Hércules','Alicante','ES','#f4f4f4','#1c3f94',50),K2('MBO','NK Maribor','Maribor','Maribor','SI','#f4f4f4','#8b1a1a',54),K2('PCZ','Piacenza','Piacenza','Piacenza','IT','#d4192b','#f4f4f4',44),K2('LSK','Levski Sofia','Levski','Sofía','BG','#1c3f94','#f4f4f4',54),K2('GHI','GSD Ghiviborgo','Ghiviborgo','Camaiore','IT','#1c3f94','#f4f4f4',40),K2('LUP','Luparense','Luparense','Padua','IT','#1c3f94','#d4192b',44),K2('MES','Mestre','Mestre','Mestre','IT','#f4f4f4','#1c3f94',42),K2('OFI','OFI Creta','OFI','Heraklion','GR','#d4192b','#f4f4f4',52),K2('FOV','Forte Virtus','Forte Virtus','Forte dei Marmi','IT','#d4192b','#f4f4f4',40),K2('TAM','Team Altamura','Altamura','Altamura','IT','#f4f4f4','#d4192b',42),K2('FCSB','FCSB','FCSB','Bucarest','RO','#d4192b','#1c3f94',66),K2('GRO','Grosseto','Grosseto','Grosseto','IT','#f4f4f4','#d4192b',46),K2('CRO','Crotone','Crotone','Crotone','IT','#1c3f94','#f4f4f4',52),K2('TOR2','Toronto FC II','Toronto II','Toronto','CA','#d4192b','#f4f4f4',40),K2('PARA','FC Paradiso','Paradiso','Paradiso','CH','#1c3f94','#f4f4f4',38),K2('CASE','Casertana','Casertana','Caserta','IT','#1c3f94','#f4f4f4',48),K2('SANT','Santos FC','Santos','Santos','BR','#f4f4f4','#1a1a1a',64),K2('TAM','Team Altamura','Altamura','Altamura','IT','#d4192b','#f4f4f4',42),K2('TRE','Treviso','Treviso','Treviso','IT','#1c3f94','#f4f4f4',48),K2('LIVO','Livorno','Livorno','Livorno','IT','#d4192b','#1a3a8a',50),K2('GUB','AS Gubbio 1910','Gubbio','Gubbio','IT','#1c3f94','#f4f4f4',46),K2('DOL','Dolomiti Bellunesi','Bellunesi','Belluno','IT','#1c3f94','#f4f4f4',44),K2('CREM','Crema','Crema','Crema','IT','#d4192b','#f4f4f4',42),K2('RAP','FC Rapid Bucuresti','Rapid','Bucarest','RO','#f4f4f4','#1a3a8a',58),K2('JAZ','Al-Jazira','Al-Jazira','Abu Dabi','AE','#f4f4f4','#d4192b',56),K2('RCA','Racing Club','Racing Club','Avellaneda','AR','#7fb3e0','#f4f4f4',58),K2('ESTU','Estudiantes de La Plata','Estudiantes','La Plata','AR','#d4192b','#f4f4f4',56),K2('CRA','KS Cracovia','Cracovia','Cracovia','PL','#f4f4f4','#d4192b',56),K2('HJK','HJK Helsinki','HJK','Helsinki','FI','#f4f4f4','#003580',56),K2('PIN','Pineto Calcio','Pineto','Pineto','IT','#f4f4f4','#1a3a8a',56),K2('VOZ','FK Vozdovac','Vozdovac','Belgrado','RS','#f4f4f4','#d4192b',56),K2('GRE','Grenoble Foot 38','Grenoble','Grenoble','FR','#f4f4f4','#003580',56),K2('LSR','Deportes La Serena','La Serena','La Serena','CL','#f4f4f4','#d4192b',56),K2('TLS','Toulouse FC','Toulouse','Toulouse','FR','#f4f4f4','#1a3a8a',56),K2('SMB','Sambenedettese','Sambenedettese','San Benedetto del Tronto','IT','#f4f4f4','#003580',56),K2('OSP','Ospitaletto','Ospitaletto','Ospitaletto','IT','#f4f4f4','#d4192b',56),K2('LAN','Club Atlético Lanús','Lanús','Lanús','AR','#f4f4f4','#d4192b',56),K2('CELT','Celtic FC','Celtic','Glasgow','SC','#f4f4f4','#1a8a3a',56),K2('CTA','Calcio Catania','Catania','Catania','IT','#f4f4f4','#1a3a8a',56),K2('DOR','FC Dordrecht','Dordrecht','Dordrecht','NL','#f4f4f4','#d4192b',56),K2('LUZ','FC Luzern','Luzern','Lucerna','CH','#f4f4f4','#003580',56),K2('PAN','Panathinaikos','Panathinaikos','Atenas','GR','#f4f4f4','#1a8a3a',56),K2('UBR','Union Brescia','Union Brescia','Brescia','IT','#f4f4f4','#003580',56),K2('CER','Audace Cerignola','Cerignola','Cerignola','IT','#f4f4f4','#d4192b',56),K2('TAL','Talleres de Córdoba','Talleres','Córdoba','AR','#f4f4f4','#003580',56),K2('PVE','Pro Vercelli','Pro Vercelli','Vercelli','IT','#f4f4f4','#f4f4f4',56),K2('CHI','Chisola Calcio','Chisola','Vinovo','IT','#f4f4f4','#d4192b',56),K2('RED','Red Star Belgrade','Estrella Roja','Belgrado','RS','#f4f4f4','#d4192b',56),K2('BOH','Bohemian FC','Bohemians','Dublín','IE','#f4f4f4','#d4192b',56),K2('AUD','Audax Italiano','Audax Italiano','La Florida','CL','#f4f4f4','#d4192b',56),K2('KOP','FC Koper','Koper','Koper','SI','#f4f4f4','#d4192b',56),K2('IFE','IF Elfsborg','Elfsborg','Borås','SE','#f4f4f4','#d4192b',56),K2('RUD','NK Rudes','Rudes','Zagreb','HR','#f4f4f4','#f4f4f4',56),K2('VIS','Vis Pesaro','Vis Pesaro','Pésaro','IT','#f4f4f4','#d4192b',56),K2('TRT','Trento','Trento','Trento','IT','#f4f4f4','#d4192b',56),K2('ATA2','Atalanta U23','Atalanta U23','Bérgamo','IT','#f4f4f4','#003580',56),K2('FOG','Calcio Foggia','Foggia','Foggia','IT','#f4f4f4','#d4192b',56),K2('GIU','Real Giulianova','Giulianova','Giulianova','IT','#f4f4f4','#d4192b',56),K2('POT','Potenza Calcio','Potenza','Potenza','IT','#f4f4f4','#003580',56),K2('TER','Teramo','Teramo','Teramo','IT','#f4f4f4','#d4192b',56),K2('TAU','Tau Calcio','Tau Calcio','Altopascio','IT','#f4f4f4','#1a3a8a',56),K2('UPM','Unipomezia','Unipomezia','Pomezia','IT','#f4f4f4','#d4192b',56),K2('JUN','Juventus Next Gen','Juve Next Gen','Turín','IT','#f4f4f4','#d4192b',56),K2('LAT','Latina Calcio','Latina','Latina','IT','#f4f4f4','#003580',56),K2('PES','Pescara Calcio','Pescara','Pescara','IT','#f4f4f4','#003580',56),K2('BARL','Barletta Calcio','Barletta','Barletta','IT','#f4f4f4','#d4192b',56),K2('SVO','Savoia 1908','Savoia','Torre Annunziata','IT','#f4f4f4','#f4f4f4',56),K2('ARZ','Arzignano Valchiampo','Arzignano','Arzignano','IT','#f4f4f4','#d4192b',56),K2('RNN','Real Normanna','Real Normanna','Torre del Greco','IT','#f4f4f4','#d4192b',56),K2('SOR','Sorrento Calcio','Sorrento','Sorrento','IT','#f4f4f4','#d4192b',56),K2('CMP','Campobasso','Campobasso','Campobasso','IT','#f4f4f4','#d4192b',56),K2('PAR2','Parma U20','Parma U20','Parma','IT','#f4f4f4','#1c3f94',56),K2('DSZ','Desenzano Calvina','Desenzano','Desenzano del Garda','IT','#f4f4f4','#003580',56),K2('RAD','NK Radomlje','Radomlje','Radomlje','SI','#f4f4f4','#f4f4f4',56),K2('PIC','AZ Picerno','Picerno','Picerno','IT','#f4f4f4','#d4192b',56),K2('RGR','Reggina','Reggina','Reggio Calabria','IT','#f4f4f4','#d4192b',56),K2('LIVO','US Livorno','Livorno','Livorno','IT','#f4f4f4','#d4192b',56),K2('FOR','Forli','Forli','Forli','IT','#f4f4f4','#f4f4f4',56),K2('OST','Ostiamare','Ostiamare','Ostia','IT','#f4f4f4','#d4192b',56),K2('LCO','Calcio Lecco','Lecco','Lecco','IT','#f4f4f4','#003580',56),K2('SST','Sassari Torres','Torres','Sassari','IT','#f4f4f4','#d4192b',56),K2('ALCI','Alcione Milano','Alcione','Milán','IT','#f4f4f4','#003580',56),K2('MONO','Monopoli','Monopoli','Monopoli','IT','#f4f4f4','#f4f4f4',56),K2('FIO2','Fiorentina U20','Fiorentina U20','Florencia','IT','#f4f4f4','#1a3a8a',56),K2('MIF','Milan Futuro','Milan Futuro','Milán','IT','#f4f4f4','#d4192b',56),K2('T20','Torino U20','Torino U20','Turín','IT','#f4f4f4','#d4192b',56),K2('RAV','Ravenna FC','Ravenna','Rávena','IT','#f4f4f4','#d4192b',56),K2('TRP','Trapani Calcio','Trapani','Trapani','IT','#f4f4f4','#f4f4f4',56),K2('GBC','Gençlerbirliği SK','Gençlerbirliği','Ankara','TR','#f4f4f4','#d4192b',56),K2('VOJ','FK Vojvodina','Vojvodina','Novi Sad','RS','#f4f4f4','#d4192b',56),K2('SJK','SJK Seinäjoki','SJK','Seinäjoki','FI','#f4f4f4','#d4192b',56),K2('LAZ2','Lazio U20','Lazio U20','Roma','IT','#f4f4f4','#7fb3e0',56),K2('VAR','Varesina','Varesina','Venegono Superiore','IT','#f4f4f4','#d4192b',56),K2('BOL2','Bologna U20','Bologna U20','Bolonia','IT','#f4f4f4','#d4192b',56),K2('HEI','Heidenheim','Heidenheim','Heidenheim','DE','#1c3f94','#d4192b',58),
+ K2('AMD','Amedspor','Amedspor','Diyarbakır','TR','#d4192b','#1c8f3f',54),K2('IBFK','İstanbul Başakşehir','Başakşehir','Estambul','TR','#1a2a5e','#f47b20',60),K2('RAN','Rangers','Rangers','Glasgow','SC','#1c3f94','#f4f4f4',66),K2('SER','Servette','Servette','Ginebra','CH','#8b1a1a','#f4f4f4',52),K2('LUM','Lumezzane','Lumezzane','Lumezzane','IT','#1c3f94','#f4f4f4',48),K2('PER','Perugia','Perugia','Perugia','IT','#d4192b','#f4f4f4',54),K2('CTN','Catania','Catania','Catania','IT','#d4192b','#1c3f94',50),K2('PIA','Pianese','Pianese','Piancastagnaio','IT','#1c3f94','#f4f4f4',42),K2('COS','Cosenza','Cosenza','Cosenza','IT','#d4192b','#1c3f94',52),K2('BRL','Barletta','Barletta','Barletta','IT','#d4192b','#f4f4f4',42),K2('CRU','Cruzeiro','Cruzeiro','Belo Horizonte','BR','#1c3f94','#f4f4f4',64),K2('VADO','Vado FC','Vado','Vado Ligure','IT','#d4192b','#f4f4f4',42),K2('VOL','Volos NFC','Volos','Volos','GR','#d4192b','#1c3f94',54),K2('ARGJ','Argentinos Juniors','Argentinos','Buenos Aires','AR','#d4192b','#f4f4f4',58),K2('BARI','SSC Bari','Bari','Bari','IT','#f4f4f4','#d4192b',54),K2('VRS','AS Varese 1910','Varese','Varese','IT','#d4192b','#f4f4f4',48),K2('SPL','SPAL','SPAL','Ferrara','IT','#1c3f94','#f4f4f4',48),K2('CPI','AC Carpi','Carpi','Carpi','IT','#f4f4f4','#1c3f94',44),K2('CHV','Chievo Verona','Chievo','Verona','IT','#f2d31b','#1c3f94',46),K2('SIE','Siena FC','Siena','Siena','IT','#1a1a1a','#f4f4f4',46),K2('TERN','Ternana Calcio','Ternana','Terni','IT','#d4192b','#0a8a4a',46),K2('MESN','ACR Messina','Messina','Mesina','IT','#d4192b','#f2d31b',46),K2('TRI','US Triestina','Triestina','Trieste','IT','#d4192b','#f4f4f4',46),K2('ACOY','CD Alcoyano','Alcoyano','Alcoy','ES','#1c3f94','#f4f4f4',48),K2('XER','Xerez CD','Xerez','Jerez','ES','#1c3f94','#f4f4f4',48),K2('NUM','CD Numancia','Numancia','Soria','ES','#d4192b','#f4f4f4',48),K2('LLE','UE Lleida','Lleida','Lérida','ES','#1c3f94','#f4f4f4',46),K2('RBUR','Real Burgos CF','Real Burgos','Burgos','ES','#f4f4f4','#1c3f94',46),K2('CDM','CD Málaga','CD Málaga','Málaga','ES','#1c3f94','#f4f4f4',46),K2('ADA','AD Almería','AD Almería','Almería','ES','#d4192b','#f4f4f4',44),K2('BURY','Bury FC','Bury','Bury','EN','#f4f4f4','#1c3f94',44),K2('WAN','The Wanderers FC','Wanderers','Londres','EN','#f4f4f4','#1a1a1a',40),K2('OET','Old Etonians','Old Etonians','Eton','EN','#1c3f94','#f4f4f4',40),K2('WIM','Wimbledon FC','Wimbledon','Londres','EN','#1c3f94','#f4f4f4',42),K2('BOLY','Blackburn Olympic','Blackburn Olympic','Blackburn','EN','#1c3f94','#f4f4f4',40),K2('OCAR','Old Carthusians','Old Carthusians','Godalming','EN','#1c3f94','#f4f4f4',40),K2('CLR','Clapham Rovers','Clapham Rovers','Londres','EN','#d4192b','#f4f4f4',40),K2('ROE','Royal Engineers','Royal Engineers','Chatham','EN','#f4f4f4','#1c3f94',40),K2('OXU','Oxford University','Oxford University','Oxford','EN','#1c3f94','#f4f4f4',40),K2('SWI','Swindon Town','Swindon','Swindon','EN','#d4192b','#f4f4f4',46),K2('M60','TSV 1860 München','1860 München','Múnich','DE','#1c3f94','#f4f4f4',54),K2('DRSC','Dresdner SC','Dresdner SC','Dresde','DE','#1c3f94','#f4f4f4',50),K2('UER','KFC Uerdingen 05','Uerdingen','Krefeld','DE','#d4192b','#f4f4f4',50),K2('KOF','Kickers Offenbach','Offenbach','Offenbach','DE','#d4192b','#f4f4f4',52),K2('SWE','Schwarz-Weiss Essen','Schwarz-Weiss Essen','Essen','DE','#1a1a1a','#f4f4f4',48),K2('FIV','First Vienna FC','First Vienna','Viena','DE','#1c3f94','#f4f4f4',46),K2('VFL','VfB Leipzig','VfB Leipzig','Leipzig','DE','#f4f4f4','#1c3f94',48),K2('FCI','FC Ingolstadt 04','Ingolstadt','Ingolstadt','DE','#d4192b','#f4f4f4',48),K2('HRO','Hansa Rostock','Hansa','Rostock','DE','#1c3f94','#f4f4f4',50),K2('SKI','Stuttgarter Kickers','Stuttgarter K','Stuttgart','DE','#1c3f94','#f4f4f4',46),K2('HOM','FC 08 Homburg','Homburg','Homburgo','DE','#1c3f94','#f4f4f4',46),K2('TEB','Tennis Borussia Berlin','Tennis Borussia','Berlín','DE','#f4f4f4','#1c3f94',44),K2('NAN','FC Nantes','Nantes','Nantes','FR','#f2d31b','#0a8a4a',60),K2('BOR','Girondins Bordeaux','Bordeaux','Burdeos','FR','#1c3f94','#f4f4f4',58),K2('REI','Stade de Reims','Reims','Reims','FR','#d4192b','#f4f4f4',56),K2('SET','FC Sète 34','Sète','Sète','FR','#1c3f94','#f4f4f4',46),K2('SOC','FC Sochaux-Montbéliard','Sochaux','Montbéliard','FR','#f2d31b','#1c3f94',48),K2('MPL','Montpellier HSC','Montpellier','Montpellier','FR','#1c5aa6','#f4f4f4',58),K2('ROU','RC Roubaix','Roubaix','Roubaix','FR','#f4f4f4','#1a1a1a',44),K2('RCF','RC France','RC France','París','FR','#1c3f94','#f4f4f4',44),K2('OLL','Olympique Lillois','Olympique Lillois','Lille','FR','#f4f4f4','#1a1a1a',44),K2('IFK','IFK Göteborg','Göteborg','Gotemburgo','SE','#1c3f94','#f4f4f4',56),K2('CSKA','CSKA Moskva','CSKA','Moscú','RU','#d4192b','#1c3f94',60),K2('LUGN','FC Lugano','Lugano','Lugano','CH','#1a1a1a','#f4f4f4',60),K2('HEA','Heart of Midlothian','Hearts','Edimburgo','SC','#8b1a8b','#f4f4f4',62),K2('JAB','FK Jablonec','Jablonec','Jablonec nad Nisou','CZ','#1c3f94','#f2d31b',56),K2('NSJ','FC Nordsjaelland','Nordsjaelland','Farum','DK','#d4192b','#f4f4f4',58),K2('BRN','SK Brann','Brann','Bergen','NO','#d4192b','#f4f4f4',58),K2('DNC','Dinamo City','Dinamo City','Tirana','AL','#1c3f94','#f4f4f4',50),K2('HTA','Hapoel Tel Aviv','Hapoel TA','Tel Aviv','IL','#d4192b','#f4f4f4',56),K2('ITU','Inter Turku','Inter Turku','Turku','FI','#1c3f94','#f4f4f4',50),K2('MTA','Maccabi Tel Aviv','Maccabi TA','Tel Aviv','IL','#f2d31b','#1c3f94',58),K2('QAR','Qarabağ FK','Qarabağ','Bakú','AZ','#1a1a1a','#f4f4f4',56),K2('HIL','Al Hilal SFC','Al Hilal','Riad','SA','#1c3f94','#f4f4f4',68),K2('AHL','Al Ahly SC','Al Ahly','El Cairo','EG','#d4192b','#f4f4f4',66),K2('PAC','CF Pachuca','Pachuca','Pachuca','MX','#1c3f94','#f4f4f4',60),K2('FLA','CR Flamengo','Flamengo','Río de Janeiro','BR','#d4192b','#1a1a1a',72),K2('AUC','Auckland City FC','Auckland City','Auckland','NZ','#1c3f94','#f4f4f4',52),K2('AMS','Amiens SC','Amiens','Amiens','FR','#1a1a1a','#f4f4f4',54),K2('PIG','GKS Piast Gliwice','Piast Gliwice','Gliwice','PL','#1c3f94','#f4f4f4',52),K2('BAS','SC Bastia','Bastia','Bastia','FR','#1c3f94','#f4f4f4',52),K2('DMK','Dinamo Moskva','Dinamo Moscú','Moscú','RU','#f4f4f4','#1c3f94',62),K2('VIB','Viborg FF','Viborg','Viborg','DK','#1a1a1a','#f4f4f4',52),K2('HIR','Sanfrecce Hiroshima','Hiroshima','Hiroshima','JP','#7b1c1c','#f4f4f4',58),K2('NCY','AS Nancy-Lorraine','Nancy','Nancy','FR','#f4f4f4','#d4192b',52),K2('CRT','Coritiba Foot Ball Club','Coritiba','Curitiba','BR','#1a1a1a','#f4f4f4',56),K2('BGF','Bourges Foot 18','Bourges','Bourges','FR','#1c3f94','#f4f4f4',42),K2('QRM','Quevilly-Rouen Métropole','QRM','Le Petit-Quevilly','FR','#f4f4f4','#1c3f94',44),K2('LPE','Le Puy Foot 43','Le Puy','Le Puy-en-Velay','FR','#1a1a1a','#f4f4f4',42),K2('CAN','AS Cannes','Cannes','Cannes','FR','#d4192b','#f4f4f4',44),K2('GIM','Gimnasia y Esgrima La Plata','Gimnasia LP','La Plata','AR','#f4f4f4','#1c3f94',50),K2('RDZ','Rodez AF','Rodez','Rodez','FR','#d4192b','#f4f4f4',50),K2('RST','Red Star FC','Red Star','Saint-Ouen','FR','#f4f4f4','#d4192b',48),K2('LAU','FC Lausanne-Sport','Lausana','Lausana','CH','#1c3f94','#f4f4f4',48),K2('CON','US Concarneau','Concarneau','Concarneau','FR','#d4192b','#f4f4f4',42),K2('ETT','Al-Ettifaq FC','Al-Ettifaq','Dammam','SA','#f4f4f4','#d4192b',52),K2('AUB','Aubagne FC','Aubagne','Aubagne','FR','#1a1a1a','#f4f4f4',42),K2('CCR','Columbus Crew','Columbus','Columbus','US','#d4192b','#f4f4f4',54),K2('ALY','Alanyaspor','Alanyaspor','Alanya','TR','#f4f4f4','#d4192b',50),K2('INA','Sport Club Internacional','Internacional','Porto Alegre','BR','#d4192b','#f4f4f4',56),K2('KTH','Athens Kallithea','Kallithea','Atenas','GR','#1c3f94','#f4f4f4',46),K2('RDM','FK Rodina Moskva','Rodina Moskva','Moscú','RU','#1a1a1a','#f4f4f4',44),K2('KUT','Belediye Kütahyaspor','Kütahyaspor','Kütahya','TR','#d4192b','#f4f4f4',40),K2('MUG','Muğlaspor','Muğlaspor','Muğla','TR','#f4f4f4','#1c3f94',42),K2('KRS','Kristiansund BK','Kristiansund','Kristiansund','NO','#f4f4f4','#d4192b',44),K2('OSTE','Östers IF','Östers','Växjö','SE','#f4f4f4','#1c3f94',44),K2('KTP','FC KTP','KTP','Kotka','FI','#1c3f94','#f4f4f4',42),K2('BAND','Bandırmaspor','Bandırmaspor','Bandırma','TR','#f4f4f4','#1c3f94',42),K2('UMR','Ümraniyespor','Ümraniyespor','Estambul','TR','#d4192b','#f4f4f4',44),K2('SLAV','NK Slaven Belupo','Slaven Belupo','Koprivnica','HR','#1c3f94','#f4f4f4',46),K2('ADM','FC Admira Wacker Mödling','Admira Wacker','Mödling','AT','#f4f4f4','#d4192b',44),K2('CAMG','Clube Atlético Mineiro','Atlético Mineiro','Belo Horizonte','BR','#1a1a1a','#f4f4f4',56),K2('RKC','RKC Waalwijk','RKC Waalwijk','Waalwijk','NL','#f4f4f4','#d4192b',46),K2('ARAZ','Araz PFK','Araz','Bakú','AZ','#1c3f94','#f4f4f4',44),K2('VRN','NK Veres Rivne','Veres Rivne','Rivne','UA','#f4f4f4','#d4192b',44),K2('QAD','Al-Qadsiah FC','Al-Qadsiah','Al-Khobar','SA','#f4f4f4','#1c3f94',54),K2('AHLS','Al-Ahli SFC','Al-Ahli','Yeda','SA','#f4f4f4','#1a1a1a',56),K2('BID','Al Bidda SC','Al Bidda','Doha','QA','#1a1a1a','#f4f4f4',44),K2('ZOR','Zorya Luhansk','Zorya','Lugansk','UA','#1a1a1a','#f4f4f4',48),K2('KUL','Ravshan Kulob','Ravshan','Kulob','TJ','#f4f4f4','#1c3f94',44),K2('KUD','Kudrivka','Kudrivka','Kiev','UA','#1c3f94','#f4f4f4',44),K2('CHO','Chornomorets Odessa','Chornomorets','Odesa','UA','#1c3f94','#f4f4f4',46),K2('LOK','Lokomotiv Kyiv','Lokomotiv Kyiv','Kiev','UA','#f4f4f4','#d4192b',42),K2('TKU','Torpedo Kutaisi','Torpedo Kutaisi','Kutaisi','GE','#f4f4f4','#1a1a1a',44),K2('HPT','Hapoel Petah Tikva','Hapoel Petah Tikva','Petaj Tikva','IL','#f4f4f4','#1c3f94',44),K2('ARB','FC Artis Brno','Artis Brno','Brno','CZ','#f4f4f4','#1c3f94',44),K2('PARD','FK Pardubice','Pardubice','Pardubice','CZ','#d4192b','#f4f4f4',46),K2('HAZ','Al-Hazem SC','Al-Hazem','Ar Rass','SA','#f4f4f4','#1c3f94',48),K2('LIB','FC Slovan Liberec','Slovan Liberec','Liberec','CZ','#f4f4f4','#1c3f94',50),K2('BOH2','Bohemians Praha 1905','Bohemians 1905','Praga','CZ','#f4f4f4','#1c3f94',48),K2('SLOV','1. FC Slovácko','Slovácko','Uherské Hradiště','CZ','#f4f4f4','#1c3f94',46),K2('SIO','FC Sion','Sion','Sion','CH','#d4192b','#f4f4f4',56),K2('STG','FC St. Gallen','St. Gallen','San Galo','CH','#0a8a4a','#f4f4f4',56),K2('TIL','Tromsø IL','Tromsø','Tromsø','NO','#d4192b','#f4f4f4',54),K2('PAF','Pafos FC','Pafos','Pafos','CY','#1c3f94','#f4f4f4',50),K2('USLD','USL Dunkerque','Dunkerque','Dunkerque','FR','#1c3f94','#f4f4f4',50),K2('MTC','Montecchio','Montecchio','Montecchio','IT','#d4192b','#f4f4f4',40),K2('LGN','Ligorna','Ligorna','Génova','IT','#1c3f94','#f4f4f4',40),K2('CLV','Celle Varazze','Celle Varazze','Celle Ligure','IT','#d4192b','#f4f4f4',40),K2('SMP','Samsunspor','Samsunspor','Samsun','TR','#d4192b','#1c3f94',54),K2('MBO','NK Maribor','Maribor','Maribor','SI','#f4f4f4','#8b1a1a',54),K2('PCZ','Piacenza','Piacenza','Piacenza','IT','#d4192b','#f4f4f4',44),K2('LSK','Levski Sofia','Levski','Sofía','BG','#1c3f94','#f4f4f4',54),K2('GHI','GSD Ghiviborgo','Ghiviborgo','Camaiore','IT','#1c3f94','#f4f4f4',40),K2('LUP','Luparense','Luparense','Padua','IT','#1c3f94','#d4192b',44),K2('MES','Mestre','Mestre','Mestre','IT','#f4f4f4','#1c3f94',42),K2('OFI','OFI Creta','OFI','Heraklion','GR','#d4192b','#f4f4f4',52),K2('FOV','Forte Virtus','Forte Virtus','Forte dei Marmi','IT','#d4192b','#f4f4f4',40),K2('TAM','Team Altamura','Altamura','Altamura','IT','#f4f4f4','#d4192b',42),K2('FCSB','FCSB','FCSB','Bucarest','RO','#d4192b','#1c3f94',66),K2('GRO','Grosseto','Grosseto','Grosseto','IT','#f4f4f4','#d4192b',46),K2('CRO','Crotone','Crotone','Crotone','IT','#1c3f94','#f4f4f4',52),K2('TOR2','Toronto FC II','Toronto II','Toronto','CA','#d4192b','#f4f4f4',40),K2('PARA','FC Paradiso','Paradiso','Paradiso','CH','#1c3f94','#f4f4f4',38),K2('CASE','Casertana','Casertana','Caserta','IT','#1c3f94','#f4f4f4',48),K2('SANT','Santos FC','Santos','Santos','BR','#f4f4f4','#1a1a1a',64),K2('TAM','Team Altamura','Altamura','Altamura','IT','#d4192b','#f4f4f4',42),K2('TRE','Treviso','Treviso','Treviso','IT','#1c3f94','#f4f4f4',48),K2('LIVO','Livorno','Livorno','Livorno','IT','#d4192b','#1a3a8a',50),K2('GUB','AS Gubbio 1910','Gubbio','Gubbio','IT','#1c3f94','#f4f4f4',46),K2('DOL','Dolomiti Bellunesi','Bellunesi','Belluno','IT','#1c3f94','#f4f4f4',44),K2('CREM','Crema','Crema','Crema','IT','#d4192b','#f4f4f4',42),K2('RAP','FC Rapid Bucuresti','Rapid','Bucarest','RO','#f4f4f4','#1a3a8a',58),K2('JAZ','Al-Jazira','Al-Jazira','Abu Dabi','AE','#f4f4f4','#d4192b',56),K2('RCA','Racing Club','Racing Club','Avellaneda','AR','#7fb3e0','#f4f4f4',58),K2('ESTU','Estudiantes de La Plata','Estudiantes','La Plata','AR','#d4192b','#f4f4f4',56),K2('CRA','KS Cracovia','Cracovia','Cracovia','PL','#f4f4f4','#d4192b',56),K2('HJK','HJK Helsinki','HJK','Helsinki','FI','#f4f4f4','#003580',56),K2('PIN','Pineto Calcio','Pineto','Pineto','IT','#f4f4f4','#1a3a8a',56),K2('VOZ','FK Vozdovac','Vozdovac','Belgrado','RS','#f4f4f4','#d4192b',56),K2('GRE','Grenoble Foot 38','Grenoble','Grenoble','FR','#f4f4f4','#003580',56),K2('LSR','Deportes La Serena','La Serena','La Serena','CL','#f4f4f4','#d4192b',56),K2('TLS','Toulouse FC','Toulouse','Toulouse','FR','#f4f4f4','#1a3a8a',56),K2('SMB','Sambenedettese','Sambenedettese','San Benedetto del Tronto','IT','#f4f4f4','#003580',56),K2('OSP','Ospitaletto','Ospitaletto','Ospitaletto','IT','#f4f4f4','#d4192b',56),K2('LAN','Club Atlético Lanús','Lanús','Lanús','AR','#f4f4f4','#d4192b',56),K2('CELT','Celtic FC','Celtic','Glasgow','SC','#f4f4f4','#1a8a3a',56),K2('CTA','Calcio Catania','Catania','Catania','IT','#f4f4f4','#1a3a8a',56),K2('DOR','FC Dordrecht','Dordrecht','Dordrecht','NL','#f4f4f4','#d4192b',56),K2('LUZ','FC Luzern','Luzern','Lucerna','CH','#f4f4f4','#003580',56),K2('PAN','Panathinaikos','Panathinaikos','Atenas','GR','#f4f4f4','#1a8a3a',56),K2('UBR','Union Brescia','Union Brescia','Brescia','IT','#f4f4f4','#003580',56),K2('CER','Audace Cerignola','Cerignola','Cerignola','IT','#f4f4f4','#d4192b',56),K2('TAL','Talleres de Córdoba','Talleres','Córdoba','AR','#f4f4f4','#003580',56),K2('PVE','Pro Vercelli','Pro Vercelli','Vercelli','IT','#f4f4f4','#f4f4f4',56),K2('CHI','Chisola Calcio','Chisola','Vinovo','IT','#f4f4f4','#d4192b',56),K2('RED','Red Star Belgrade','Estrella Roja','Belgrado','RS','#f4f4f4','#d4192b',56),K2('BOH','Bohemian FC','Bohemians','Dublín','IE','#f4f4f4','#d4192b',56),K2('AUD','Audax Italiano','Audax Italiano','La Florida','CL','#f4f4f4','#d4192b',56),K2('KOP','FC Koper','Koper','Koper','SI','#f4f4f4','#d4192b',56),K2('IFE','IF Elfsborg','Elfsborg','Borås','SE','#f4f4f4','#d4192b',56),K2('RUD','NK Rudes','Rudes','Zagreb','HR','#f4f4f4','#f4f4f4',56),K2('VIS','Vis Pesaro','Vis Pesaro','Pésaro','IT','#f4f4f4','#d4192b',56),K2('TRT','Trento','Trento','Trento','IT','#f4f4f4','#d4192b',56),K2('ATA2','Atalanta U23','Atalanta U23','Bérgamo','IT','#f4f4f4','#003580',56),K2('FOG','Calcio Foggia','Foggia','Foggia','IT','#f4f4f4','#d4192b',56),K2('GIU','Real Giulianova','Giulianova','Giulianova','IT','#f4f4f4','#d4192b',56),K2('POT','Potenza Calcio','Potenza','Potenza','IT','#f4f4f4','#003580',56),K2('TER','Teramo','Teramo','Teramo','IT','#f4f4f4','#d4192b',56),K2('TAU','Tau Calcio','Tau Calcio','Altopascio','IT','#f4f4f4','#1a3a8a',56),K2('UPM','Unipomezia','Unipomezia','Pomezia','IT','#f4f4f4','#d4192b',56),K2('JUN','Juventus Next Gen','Juve Next Gen','Turín','IT','#f4f4f4','#d4192b',56),K2('LAT','Latina Calcio','Latina','Latina','IT','#f4f4f4','#003580',56),K2('PES','Pescara Calcio','Pescara','Pescara','IT','#f4f4f4','#003580',56),K2('BARL','Barletta Calcio','Barletta','Barletta','IT','#f4f4f4','#d4192b',56),K2('SVO','Savoia 1908','Savoia','Torre Annunziata','IT','#f4f4f4','#f4f4f4',56),K2('ARZ','Arzignano Valchiampo','Arzignano','Arzignano','IT','#f4f4f4','#d4192b',56),K2('RNN','Real Normanna','Real Normanna','Torre del Greco','IT','#f4f4f4','#d4192b',56),K2('SOR','Sorrento Calcio','Sorrento','Sorrento','IT','#f4f4f4','#d4192b',56),K2('CMP','Campobasso','Campobasso','Campobasso','IT','#f4f4f4','#d4192b',56),K2('PAR2','Parma U20','Parma U20','Parma','IT','#f4f4f4','#1c3f94',56),K2('DSZ','Desenzano Calvina','Desenzano','Desenzano del Garda','IT','#f4f4f4','#003580',56),K2('RAD','NK Radomlje','Radomlje','Radomlje','SI','#f4f4f4','#f4f4f4',56),K2('PIC','AZ Picerno','Picerno','Picerno','IT','#f4f4f4','#d4192b',56),K2('RGR','Reggina','Reggina','Reggio Calabria','IT','#f4f4f4','#d4192b',56),K2('LIVO','US Livorno','Livorno','Livorno','IT','#f4f4f4','#d4192b',56),K2('FOR','Forli','Forli','Forli','IT','#f4f4f4','#f4f4f4',56),K2('OST','Ostiamare','Ostiamare','Ostia','IT','#f4f4f4','#d4192b',56),K2('LCO','Calcio Lecco','Lecco','Lecco','IT','#f4f4f4','#003580',56),K2('SST','Sassari Torres','Torres','Sassari','IT','#f4f4f4','#d4192b',56),K2('ALCI','Alcione Milano','Alcione','Milán','IT','#f4f4f4','#003580',56),K2('MONO','Monopoli','Monopoli','Monopoli','IT','#f4f4f4','#f4f4f4',56),K2('FIO2','Fiorentina U20','Fiorentina U20','Florencia','IT','#f4f4f4','#1a3a8a',56),K2('MIF','Milan Futuro','Milan Futuro','Milán','IT','#f4f4f4','#d4192b',56),K2('T20','Torino U20','Torino U20','Turín','IT','#f4f4f4','#d4192b',56),K2('RAV','Ravenna FC','Ravenna','Rávena','IT','#f4f4f4','#d4192b',56),K2('TRP','Trapani Calcio','Trapani','Trapani','IT','#f4f4f4','#f4f4f4',56),K2('GBC','Gençlerbirliği SK','Gençlerbirliği','Ankara','TR','#f4f4f4','#d4192b',56),K2('VOJ','FK Vojvodina','Vojvodina','Novi Sad','RS','#f4f4f4','#d4192b',56),K2('SJK','SJK Seinäjoki','SJK','Seinäjoki','FI','#f4f4f4','#d4192b',56),K2('LAZ2','Lazio U20','Lazio U20','Roma','IT','#f4f4f4','#7fb3e0',56),K2('VAR','Varesina','Varesina','Venegono Superiore','IT','#f4f4f4','#d4192b',56),K2('BOL2','Bologna U20','Bologna U20','Bolonia','IT','#f4f4f4','#d4192b',56),K2('HEI','Heidenheim','Heidenheim','Heidenheim','DE','#1c3f94','#d4192b',58),
  K2('DEL','Wehen Wiesbaden','Wiesbaden','Wiesbaden','DE','#d4192b','#0b1310',48),K2('BRV','NK Bravo','Bravo','Liubliana','SI','#1c3f94','#f4f4f4',38),K2('JAG','Jagiellonia Białystok','Jagiellonia','Białystok','PL','#f2d31b','#d4192b',58),
  K2('WID','Widzew Łódź','Widzew','Łódź','PL','#d4192b','#f4f4f4',58),K2('ODE','Odense BK','Odense','Odense','DK','#1c3f94','#f2d31b',56),K2('ROD','Roda JC','Roda JC','Kerkrade','NL','#f2d31b','#1a1a1a',54),
  K2('F95','Fortuna Düsseldorf','Fortuna Düsseldorf','Düsseldorf','DE','#d4192b','#f4f4f4',62),K2('MDT','Midtjylland','Midtjylland','Herning','DK','#1a1a1a','#d4192b',66),K2('SAA','1. FC Saarbrücken','Saarbrücken','Saarbrücken','DE','#1c3f94','#1a1a1a',54),
@@ -1306,7 +1333,7 @@ const CLUBBY=Object.fromEntries([...CLUBS,...LEGACY].map(c=>[c.id,c]));
 /* reputación efectiva de un club dentro de la partida actual: usa el valor evolucionado si existe (ver evolveReputations), si no el de base */
 function repOf(id){return(state&&state.rep&&state.rep[id]!=null)?state.rep[id]:(CLUBBY[id]?CLUBBY[id].rep:55)}
 /* filiales con entidad propia en el juego: nunca generan jugadores ficticios, solo llevan los reales que se les asignen */
-['RSB','CFO','VLP','AMM','BIL','DAB','ILI','ESB','GTB','BETD','SEVB','GIRB','REC','LEGB','MLLB','VILB','OVIB','TENB','RMAB','FCBB','H96B','PSB','SCLB','FAMB','GILB','MARB','MORB','RAVEB','VITB','BNB','JAJ','JNG','AZB','FEYB','FCPB','UTRB','MUNB','AVLB','CHEB'].forEach(id=>{if(CLUBBY[id])CLUBBY[id].bTeam=1});
+['RSB','CFO','VLP','AMM','BIL','DAB','ILI','ESB','GTB','BETD','SEVB','GIRB','REC','LEGB','MLLB','VILB','OVIB','TENB','RMAB','FCBB','H96B','PSB','SCLB','FAMB','GILB','MARB','MORB','RAVEB','VITB','BNB','JAJ','JNG','AZB','FEYB','FCPB','UTRB','MUNB','AVLB','CHEB','MERB'].forEach(id=>{if(CLUBBY[id])CLUBBY[id].bTeam=1});
 /* escudos reales de clubes (solo se muestran en modo Base de datos) */
 const CLUB_LOGO={
  ATH:'https://cdn.resfu.com/img_data/equipos/347.png?size=120x&lossy=1',ATM:'https://cdn.resfu.com/img_data/equipos/369.png?size=120x&lossy=1',
@@ -1546,7 +1573,8 @@ const CLUB_LOGO={
   AHLS:'https://cdn.resfu.com/img_data/equipos/105.png?size=120x&lossy=1',BID:'https://cdn.resfu.com/img_data/equipos/113164.png?size=120x&lossy=1',ZOR:'https://cdn.resfu.com/img_data/equipos/5620.png?size=120x&lossy=1',KUL:'https://cdn.resfu.com/img_data/equipos/17645.png?size=120x&lossy=1',KUD:'https://cdn.resfu.com/img_data/equipos/159184.png?size=120x&lossy=1',CHO:'https://cdn.resfu.com/img_data/equipos/5825.png?size=120x&lossy=1',LOK:'https://cdn.resfu.com/img_data/equipos/159185.png?size=120x&lossy=1',TKU:'https://cdn.resfu.com/img_data/equipos/9166.png?size=120x&lossy=1',HPT:'https://cdn.resfu.com/img_data/equipos/1294.png?size=120x&lossy=1',
   ARB:'https://cdn.resfu.com/img_data/equipos/30979.png?size=120x&lossy=1',PARD:'https://cdn.resfu.com/img_data/equipos/13171.png?size=120x&lossy=1',
   HAZ:'https://cdn.resfu.com/img_data/equipos/108.png?size=120x&lossy=1',LIB:'https://cdn.resfu.com/img_data/equipos/10049.png?size=120x&lossy=1',BOH2:'https://cdn.resfu.com/img_data/escudos/medium/3969.jpg',SLOV:'https://cdn.resfu.com/img_data/equipos/3968.png?size=120x&lossy=1',SND:'https://cdn.resfu.com/img_data/equipos/6379.png?size=120x&lossy=1',KFU:'https://cdn.resfu.com/img_data/equipos/12775.png?size=120x&lossy=1',RAVE:'https://cdn.resfu.com/img_data/equipos/2163.png?size=120x&lossy=1',SCL:'https://cdn.resfu.com/img_data/equipos/11311.png?size=120x&lossy=1',MOR:'https://cdn.resfu.com/img_data/equipos/1737.png?size=120x&lossy=1',ESTP:'https://cdn.resfu.com/img_data/equipos/1007.png?size=120x&lossy=1',FAM:'https://cdn.resfu.com/img_data/equipos/7017.png?size=120x&lossy=1',BOA:'https://cdn.resfu.com/img_data/equipos/513.png?size=120x&lossy=1',BEL:'https://cdn.resfu.com/img_data/equipos/462.png?size=120x&lossy=1',VSE:'https://cdn.resfu.com/img_data/equipos/2732.png?size=120x&lossy=1',DAV:'https://cdn.resfu.com/img_data/equipos/921.png?size=120x&lossy=1',BMR:'https://cdn.resfu.com/img_data/equipos/456.png?size=120x&lossy=1',LEIX:'https://cdn.resfu.com/img_data/equipos/1540.png?size=120x&lossy=1',WIE:'https://cdn.resfu.com/img_data/equipos/140934.png?size=120x&lossy=1',AMR:'https://cdn.resfu.com/img_data/equipos/6995.png?size=120x&lossy=1',SCV:'https://cdn.resfu.com/img_data/equipos/4638.png?size=120x&lossy=1',OUR:'https://cdn.resfu.com/img_data/equipos/3259.png?size=120x&lossy=1',GENC:'https://cdn.resfu.com/img_data/equipos/1213.png?size=120x&lossy=1',ALI:'https://cdn.resfu.com/img_data/equipos/11429.png?size=120x&lossy=1',CEA:'https://cdn.resfu.com/img_data/equipos/4516.png?size=120x&lossy=1',FEI:'https://cdn.resfu.com/img_data/equipos/11310.png?size=120x&lossy=1',AVA:'https://cdn.resfu.com/img_data/equipos/3880.png?size=120x&lossy=1',PTM:'https://cdn.resfu.com/img_data/equipos/11196.png?size=120x&lossy=1',FEL:'https://cdn.resfu.com/img_data/equipos/16142.png?size=120x&lossy=1',ACB:'https://cdn.resfu.com/img_data/equipos/119255.png?size=120x&lossy=1',GAE:'https://cdn.resfu.com/img_data/equipos/1242.png?size=120x&lossy=1',TEL:'https://cdn.resfu.com/img_data/equipos/2924.png?size=120x&lossy=1',FSI:'https://cdn.resfu.com/img_data/equipos/1167.png?size=120x&lossy=1',PEC:'https://cdn.resfu.com/img_data/equipos/1127.png?size=120x&lossy=1',CHL:'https://cdn.resfu.com/img_data/equipos/7514.png?size=120x&lossy=1',MEC:'https://cdn.resfu.com/img_data/equipos/1670.png?size=120x&lossy=1',WAC:'https://cdn.resfu.com/img_data/equipos/9777.png?size=120x&lossy=1',GAK:'https://cdn.resfu.com/img_data/equipos/1254.png?size=120x&lossy=1',TIR:'https://cdn.resfu.com/img_data/equipos/12423.png?size=120x&lossy=1',RIE:'https://cdn.resfu.com/img_data/equipos/9776.png?size=120x&lossy=1',
-   BRO:'https://cdn.resfu.com/img_data/equipos/553.png?size=120x&lossy=1',BRT:'https://cdn.resfu.com/img_data/equipos/4443.png?size=120x&lossy=1',DBU:'https://cdn.resfu.com/img_data/equipos/9960.png?size=120x&lossy=1',DEB:'https://cdn.resfu.com/img_data/equipos/890.png?size=120x&lossy=1',DIM:'https://cdn.resfu.com/img_data/equipos/1374.png?size=120x&lossy=1',DND:'https://cdn.resfu.com/img_data/equipos/894.png?size=120x&lossy=1',EIN:'https://cdn.resfu.com/img_data/equipos/5665.png?size=120x&lossy=1',EMM:'https://cdn.resfu.com/img_data/equipos/2925.png?size=120x&lossy=1',ERZ:'https://cdn.resfu.com/img_data/equipos/990.png?size=120x&lossy=1',FAR:'https://cdn.resfu.com/img_data/equipos/1030.png?size=120x&lossy=1',FCV:'https://cdn.resfu.com/img_data/equipos/1121.png?size=120x&lossy=1',FRB:'https://cdn.resfu.com/img_data/equipos/30670.png?size=120x&lossy=1',GAM:'https://cdn.resfu.com/img_data/equipos/1199.png?size=120x&lossy=1',HAM:'https://cdn.resfu.com/img_data/equipos/1289.png?size=120x&lossy=1',HEL:'https://cdn.resfu.com/img_data/equipos/3987.png?size=120x&lossy=1',HUV:'https://cdn.resfu.com/img_data/equipos/64313.png?size=120x&lossy=1',IKS:'https://cdn.resfu.com/img_data/equipos/1293.png?size=120x&lossy=1',KAR:'https://cdn.resfu.com/img_data/equipos/13178.png?size=120x&lossy=1',KNO:'https://cdn.resfu.com/img_data/equipos/16994.png?size=120x&lossy=1',ODD:'https://cdn.resfu.com/img_data/equipos/1843.png?size=120x&lossy=1',PRM:'https://cdn.resfu.com/img_data/equipos/4330.png?size=120x&lossy=1',ROT:'https://cdn.resfu.com/img_data/equipos/9194.png?size=120x&lossy=1',SHB:'https://cdn.resfu.com/img_data/equipos/11225.png?size=120x&lossy=1',SKN:'https://cdn.resfu.com/img_data/equipos/2351.png?size=120x&lossy=1',URA:'https://cdn.resfu.com/img_data/equipos/4522.png?size=120x&lossy=1',UST:'https://cdn.resfu.com/img_data/equipos/31271.png?size=120x&lossy=1',VAN:'https://cdn.resfu.com/img_data/equipos/65670.png?size=120x&lossy=1',VIR:'https://cdn.resfu.com/img_data/equipos/7521.png?size=120x&lossy=1',VVV:'https://cdn.resfu.com/img_data/equipos/2739.png?size=120x&lossy=1'
+   BRO:'https://cdn.resfu.com/img_data/equipos/553.png?size=120x&lossy=1',BRT:'https://cdn.resfu.com/img_data/equipos/4443.png?size=120x&lossy=1',DBU:'https://cdn.resfu.com/img_data/equipos/9960.png?size=120x&lossy=1',DEB:'https://cdn.resfu.com/img_data/equipos/890.png?size=120x&lossy=1',DIM:'https://cdn.resfu.com/img_data/equipos/1374.png?size=120x&lossy=1',DND:'https://cdn.resfu.com/img_data/equipos/894.png?size=120x&lossy=1',EIN:'https://cdn.resfu.com/img_data/equipos/5665.png?size=120x&lossy=1',EMM:'https://cdn.resfu.com/img_data/equipos/2925.png?size=120x&lossy=1',ERZ:'https://cdn.resfu.com/img_data/equipos/990.png?size=120x&lossy=1',FAR:'https://cdn.resfu.com/img_data/equipos/1030.png?size=120x&lossy=1',FCV:'https://cdn.resfu.com/img_data/equipos/1121.png?size=120x&lossy=1',FRB:'https://cdn.resfu.com/img_data/equipos/30670.png?size=120x&lossy=1',GAM:'https://cdn.resfu.com/img_data/equipos/1199.png?size=120x&lossy=1',HAM:'https://cdn.resfu.com/img_data/equipos/1289.png?size=120x&lossy=1',HEL:'https://cdn.resfu.com/img_data/equipos/3987.png?size=120x&lossy=1',HUV:'https://cdn.resfu.com/img_data/equipos/64313.png?size=120x&lossy=1',IKS:'https://cdn.resfu.com/img_data/equipos/1293.png?size=120x&lossy=1',KAR:'https://cdn.resfu.com/img_data/equipos/13178.png?size=120x&lossy=1',KNO:'https://cdn.resfu.com/img_data/equipos/16994.png?size=120x&lossy=1',ODD:'https://cdn.resfu.com/img_data/equipos/1843.png?size=120x&lossy=1',PRM:'https://cdn.resfu.com/img_data/equipos/4330.png?size=120x&lossy=1',ROT:'https://cdn.resfu.com/img_data/equipos/9194.png?size=120x&lossy=1',SHB:'https://cdn.resfu.com/img_data/equipos/11225.png?size=120x&lossy=1',SKN:'https://cdn.resfu.com/img_data/equipos/2351.png?size=120x&lossy=1',URA:'https://cdn.resfu.com/img_data/equipos/4522.png?size=120x&lossy=1',UST:'https://cdn.resfu.com/img_data/equipos/31271.png?size=120x&lossy=1',VAN:'https://cdn.resfu.com/img_data/equipos/65670.png?size=120x&lossy=1',VIR:'https://cdn.resfu.com/img_data/equipos/7521.png?size=120x&lossy=1',VVV:'https://cdn.resfu.com/img_data/equipos/2739.png?size=120x&lossy=1',
+   BARA:'https://cdn.resfu.com/img_data/equipos/425.png?size=120x&lossy=1',FAB:'https://cdn.resfu.com/img_data/equipos/905.png?size=120x&lossy=1',CACE:'https://cdn.resfu.com/img_data/equipos/602.png?size=120x&lossy=1',AVIL:'https://cdn.resfu.com/img_data/equipos/2096.png?size=120x&lossy=1',NAS:'https://cdn.resfu.com/img_data/equipos/1228.png?size=120x&lossy=1',ALG:'https://cdn.resfu.com/img_data/equipos/166.png?size=120x&lossy=1',EUR:'https://cdn.resfu.com/img_data/equipos/8760.png?size=120x&lossy=1',TRL:'https://cdn.resfu.com/img_data/equipos/2485.png?size=120x&lossy=1',JAE:'https://cdn.resfu.com/img_data/equipos/2104.png?size=120x&lossy=1',ANQ:'https://cdn.resfu.com/img_data/equipos/227.png?size=120x&lossy=1',TRM:'https://cdn.resfu.com/img_data/equipos/4770.png?size=120x&lossy=1',OUR:'https://cdn.resfu.com/img_data/equipos/27634.png?size=120x&lossy=1'
 };
 Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
 /* ciudades reales (lon,lat); o = desplazamiento en px del grupo de escudos para evitar solapes */
@@ -1611,7 +1639,12 @@ Object.assign(CITY,{
  'Guimarães':{ll:[-8.30,41.44],o:[36,6]},'Viseu':{ll:[-7.91,40.66]},'Arouca':{ll:[-8.24,40.93],o:[-34,10]},'Alverca do Ribatejo':{ll:[-9.03,38.88],o:[36,-6]},
  'Vila Nova de Famalicão':{ll:[-8.52,41.41],o:[38,4]},'Moreira de Cónegos':{ll:[-8.34,41.38],o:[-38,10]},'Vila do Conde':{ll:[-8.74,41.35],o:[-36,-10]},
  'Amadora':{ll:[-9.23,38.75],o:[-36,6]},'Estoril':{ll:[-9.40,38.70],o:[-32,20]},
- 'Funchal':{ll:[-16.91,32.65],inset:1},'Ponta Delgada':{ll:[-25.67,37.74],inset:1}
+ 'Funchal':{ll:[-16.91,32.65],inset:1},'Ponta Delgada':{ll:[-25.67,37.74],inset:1},
+ 'Getxo':{ll:[-3.01,43.36],o:[-30,-10]},'Barakaldo':{ll:[-2.99,43.30],o:[30,10]},'Águilas':{ll:[-1.58,37.40]},'Ibiza':{ll:[1.43,38.91]},'Zamora':{ll:[-5.74,41.50]},
+ 'Majadahonda':{ll:[-3.87,40.47]},'Lugo':{ll:[-7.56,43.01]},'Alcorcón':{ll:[-3.83,40.35]},'Coria':{ll:[-6.53,39.98]},'Almendralejo':{ll:[-6.41,38.68]},
+ 'Ourense':{ll:[-7.86,42.34]},'Murcia':{ll:[-1.13,37.99]},'Mérida':{ll:[-6.34,38.92]},'Pontevedra':{ll:[-8.65,42.43]},'Alicante':{ll:[-0.48,38.35]},
+ 'Cáceres':{ll:[-6.37,39.48]},'Avilés':{ll:[-5.92,43.56]},'Algeciras':{ll:[-5.45,36.13]},'Antequera':{ll:[-4.56,37.02]},'Teruel':{ll:[-1.11,40.34]},
+ 'Torremolinos':{ll:[-4.50,36.62]},'Jaén':{ll:[-3.79,37.77]},'Tarragona':{ll:[1.25,41.12]}
 });
 const NAMES={
  ES:{f:['Álvaro','Iker','Dani','Sergio','Marcos','Adrián','Hugo','Jorge','Pablo','Rubén','Nacho','Óscar','Javi','Raúl','Iván','Unai','Mario','Ismael','Bruno','Lucas','Gonzalo','Aitor','Diego','Ángel'],l:['Moreno','Ortega','Vidal','Castro','Navarro','Santana','Ibáñez','Cordero','Lozano','Pastor','Ferrer','Bravo','Soler','Aranda','Quintana','Rojas','Mendoza','Salas','Cabrera','Herrera','Prieto','Campos','Villalba','Marín','Serrano']},
@@ -1665,7 +1698,7 @@ const STADIUM={
  OL:'Groupama Stadium',LEN:'Stade Bollaert-Delelis',OM:'Orange Vélodrome',LIL:'Decathlon Arena – Stade Pierre-Mauroy',ASM:'Stade Louis-II',STR:'Stade de la Meinau',REN:'Roazhon Park',SBR:'Stade Francis-Le Blé',NCE:'Allianz Riviera',LOR:'Stade du Moustoir',PFC:'Stade Jean Bouin',AUX:'Stade de l\u2019Abbé Deschamps',ANG:'Stade Raymond-Kopa',TRO:'Stade de l\u2019Aube',HAC:'Stade Océane',LEM:'Stade Marie-Marvingt',AEKA:'OPAP Arena',
  FCP:'Estádio Do Dragão',PSV:'Philips Stadion',SPTL:'José Alvalade',VFB:'MHPArena',FEN:'Chobani Stadium',GAL:'RAMS Park',BRU:'Jan Breydelstadion',BDG:'Aspmyra Stadion',FEY:'Stadion Feijenoord',VIK:'Lyse Arena',SHK:'Stamford Bridge',SLA:'Fortuna Arena',SBAH:'Bank Respublika Arena',LAS:'Raiffeisen Arena',SVB:'Štadión Tehelné pole',DZG:'Stadion Maksimir',CELT:'Celtic Park',HBS:'Superbet Arena-Giulești',LSK:'Stadion Vasil Levski',NEC:'Goffertstadion',CLJ:'Stadion Z\u2019dežele',
  USG:'The King Power At Den Dreef Stadium',BJK:'Tüpraş Stadyumu',AZA:'AFAS Stadion',SPA:'epet ARENA',OLY:'Stadio Georgios Karaiskakis',RSC:'Lotto Park',LIS:'Åråsen Stadion',FTC:'Groupama Arena',RBS:'Red Bull Arena (Salzburgo)',LECP:'Enea stadion',STU:'Merkur Spiel-Arena',JAG:'Chorten Arena',TRZ:'Estadio Dr. Magalhães Pessoa',RED:'Stadion Rajko Mitić',TRAB:'Papara Park',MJA:'Strandvallen',AAR:'Ceres Park',UCR:'Stadionul Ion Oblemenco',CSKS:'Stadion Bâlgarska Armija',KZA:'Dariaus ir Girėno stadionas',IBE:'David Petriashvili Stadium',THU:'Visana Stadion',STV:'Daio Wasabi Stayen Stadium',KAI:'Ortalyq stadıon',EGN:'Egnatia Arena',VPL:'Doosan Arena',OMN:'GSP Stadium',
- ATA:'New Balance Arena',SPB:'Estádio Municipal de Braga',BHA:'The American Express Community Stadium',MDJ:'MCH Arena',AJA:'Johan Cruyff Arena',SCF:'Europa-Park Stadion',KOB:'Parken Stadion',HAJ:'Stadion Poljud',PAN:'Apostolos Nikolaidis',BRN:'Brann Stadion',TWE:'De Grolsch Veste',PAF:'Stelios Kyriakides',HEA:'Tynecastle Stadium',NSJ:'Right to Dream Park',GET:'Estadio Coliseum',LUGN:'Stadio Comunale di Cornaredo',JAB:'Stadion Strelnice',RIG:'Skonto Stadions',BBL:'Banja Luka City Stadium',GNT:'Planet Group Arena',KUP:'Väre Areena',LRI:'Victoria Stadium',VIT:'Estádio Dom Afonso Henriques',FAM:'Estádio Municipal 22 de Junho',GIL:'Estádio Cidade de Barcelos',MOR:'Comendador Joaquim Almeida Freitas',SCL:'Estádio de São Miguel',ESTP:'Estádio António Coimbra da Mota',ARO:'Estádio Municipal de Arouca',MAR:'Estádio dos Barreiros',AVS:'Estádio Municipal do Fontelo',CPA:'Estádio Municipal de Rio Maior',RAVE:'Estadio dos Arcos',ALV:'Complexo Desportivo do FC Alverca',CDN:'Estádio da Madeira',ETD:'Estádio Municipal de Rio Maior',PSV:'Philips Stadion',FEY:'Stadion Feijenoord',AJA:'Johan Cruyff Arena',AZA:'AFAS Stadion',TWE:'De Grolsch Veste',NEC:'Goffertstadion',UTR:'Stadion Galgenwaard',HFE:'Abe Lenstra Stadion',SPR:'Sparta Stadion Het Kasteel',ADO:'WerkTalent Stadion',GRN:'Euroborg',GAE:'De Adelaarshorst',CMB:'Kooi Stadion',TEL:'BUKO Stadion',EXC:'Van Donge & De Roo Stadion',PEC:'MAC³PARK Stadion',WIL:'Koning Willem II Stadion',FSI:'Fortuna Sittard Stadion',RSC:'Lotto Park',ANT:'Bosuilstadion',CBR:'Jan Breydelstadion',CHL:'Stade du Pays de Charleroi',BRU:'Jan Breydelstadion',GNK:'Cegeka Arena',GNT:'Planet Group Arena',KVK:'Guldensporen Stadion',MEC:'Achter de Kazerne',WES:'Het Kuipje',LOM:'Soevereinstadion',OHL:'The King Power At Den Dreef Stadium',RLL:'Easi Arena',STV:'Daio Wasabi Stayen Stadium',SKB:'Freethiel-Stadion',SLG:'Stade Maurice Dufrasne',USG:'Stade Joseph Mariën',ZUL:'Elindus Arena',LAS:'Raiffeisen Arena',RBS:'Red Bull Arena (Salzburgo)',STU:'Merkur Spiel-Arena',AWI:'Generali Arena',WAC:'Lavanttal Arena',HAR:'Profertil Arena Hartberg',RWI:'Allianz Stadion',RIE:'Josko Arena',ALT:'CASHPOINT Arena',TIR:'Tivoli Stadion Tirol',AUL:'SUN MINIMEAL Arena',GAK:'Stadion Graz-Liebenau'
+ ATA:'New Balance Arena',SPB:'Estádio Municipal de Braga',BHA:'The American Express Community Stadium',MDJ:'MCH Arena',AJA:'Johan Cruyff Arena',SCF:'Europa-Park Stadion',KOB:'Parken Stadion',HAJ:'Stadion Poljud',PAN:'Apostolos Nikolaidis',BRN:'Brann Stadion',TWE:'De Grolsch Veste',PAF:'Stelios Kyriakides',HEA:'Tynecastle Stadium',NSJ:'Right to Dream Park',GET:'Estadio Coliseum',LUGN:'Stadio Comunale di Cornaredo',JAB:'Stadion Strelnice',RIG:'Skonto Stadions',BBL:'Banja Luka City Stadium',GNT:'Planet Group Arena',KUP:'Väre Areena',LRI:'Victoria Stadium',VIT:'Estádio Dom Afonso Henriques',FAM:'Estádio Municipal 22 de Junho',GIL:'Estádio Cidade de Barcelos',MOR:'Comendador Joaquim Almeida Freitas',SCL:'Estádio de São Miguel',ESTP:'Estádio António Coimbra da Mota',ARO:'Estádio Municipal de Arouca',MAR:'Estádio dos Barreiros',AVS:'Estádio Municipal do Fontelo',CPA:'Estádio Municipal de Rio Maior',RAVE:'Estadio dos Arcos',ALV:'Complexo Desportivo do FC Alverca',CDN:'Estádio da Madeira',ETD:'Estádio Municipal de Rio Maior',PSV:'Philips Stadion',FEY:'Stadion Feijenoord',AJA:'Johan Cruyff Arena',AZA:'AFAS Stadion',TWE:'De Grolsch Veste',NEC:'Goffertstadion',UTR:'Stadion Galgenwaard',HFE:'Abe Lenstra Stadion',SPR:'Sparta Stadion Het Kasteel',ADO:'WerkTalent Stadion',GRN:'Euroborg',GAE:'De Adelaarshorst',CMB:'Kooi Stadion',TEL:'BUKO Stadion',EXC:'Van Donge & De Roo Stadion',PEC:'MAC³PARK Stadion',WIL:'Koning Willem II Stadion',FSI:'Fortuna Sittard Stadion',RSC:'Lotto Park',ANT:'Bosuilstadion',CBR:'Jan Breydelstadion',CHL:'Stade du Pays de Charleroi',BRU:'Jan Breydelstadion',GNK:'Cegeka Arena',GNT:'Planet Group Arena',KVK:'Guldensporen Stadion',MEC:'Achter de Kazerne',WES:'Het Kuipje',LOM:'Soevereinstadion',OHL:'The King Power At Den Dreef Stadium',RLL:'Easi Arena',STV:'Daio Wasabi Stayen Stadium',SKB:'Freethiel-Stadion',SLG:'Stade Maurice Dufrasne',USG:'Stade Joseph Mariën',ZUL:'Elindus Arena',LAS:'Raiffeisen Arena',RBS:'Red Bull Arena (Salzburgo)',STU:'Merkur Spiel-Arena',AWI:'Generali Arena',WAC:'Lavanttal Arena',HAR:'Profertil Arena Hartberg',RWI:'Allianz Stadion',RIE:'Josko Arena',ALT:'CASHPOINT Arena',TIR:'Tivoli Stadion Tirol',AUL:'SUN MINIMEAL Arena',GAK:'Stadion Graz-Liebenau',MIR:'Estadio Municipal de Anduva',HUE:'Estadio El Alcoraz',ZAR:'Ibercaja Estadio',VILB:'Ciudad Deportiva José Manuel Llaneza',AMM:'Centro Deportivo Cívitas Alcalá de Henares',RMC:'Estadio Alfredo Di Stéfano',PON:'Municipal El Toralín',CUL:'Estadio Reino de León',PONV:'Estadio Municipal de Pasarón',ZAM:'Estadio Ruta de la Plata',RMU:'Estadio Heredia 21 La Condomina',IBI:'Estadi Palladium Can Misses',BARA:'Nuevo Lasesarre',UNI:'Estadio Municipal Reina Sofía',ALC:'Estadio Santo Domingo',ANQ:'Estadio El Maulí',BIL:'Instalaciones de Lezama',ALG:'Nuevo Mirador',EUR:'Can Dragó',LUG:'Estadio Anxo Carro',HER:'José Rico Pérez',MER:'Estadio Romano José Fouto',NAS:'Nou Estadi Costa Daurada',CTG:'Estadio Cartagonova',LOG:'Estadio Las Gaunas',FER:'Estadio de A Malata',RUS:'Stadium Gal',STA:'Can Dragó',CACE:'Estadio Príncipe Felipe',TRL:'Estadio de Pinilla',TRM:'Municipal El Pozuelo',GETX:'Municipal de Fadura',FAB:'Estadio ABANCA-RIAZOR',RMJ:'Cerro del Espino',AVIL:'Román Suárez Puerta',JAE:'Estadio Municipal La Victoria',AGU:'Estadio El Rubial',EXT:'Francisco de la Hera',CRI:'Estadio La Isla',OUR:'Estadio Municipal de O Couto'
 };
 const stadiumOf=id=>STADIUM[id]||'Estadio municipal';
 const PP_DEFAULT={GK:[['POR']],DF:[['DFC'],['LD','DFC'],['LI','MI'],['DFC','MCD'],['LD','MD']],MD:[['MC','MCD'],['MCO','MC'],['MC','MI'],['MCD','MC'],['MD','MC']],FW:[['DC'],['EI','DC'],['ED','MD'],['DC','MCO'],['EI','ED']]};
@@ -2947,6 +2980,58 @@ ARE:[['Andrea Seculin','GK',1991,'IT',65,70,0.375,0.7,'POR'],['Luca Trombini','G
     ['Lukas Hinterseer','FW',1991,'AT',62,74,0.7,3.1,'DC/MCO'],
     ['Thomas Sabitzer','FW',2001,'AT',64,69,0.9,3.2,'DC/MCO/MC'],
   ],
+  GETX:[
+    ['Hodei Oleaga','GK',1997,'ES',47,48,0.043,1,'POR'],
+    ['Obón','GK',2002,'ES',40,43,0.06,1,'POR'],
+    ['Eric Benítez','GK',2007,'ES',34,40,0.03,1,'POR'],
+    ['Ander Dufur','DF',2001,'ES',54,57,0.21,1,'LD/DFC'],
+    ['E. Zabaleta','DF',1992,'ES',54,55,0.098,1,'LI/DFC'],
+    ['Jon Larrauri','DF',2001,'ES',53,56,0.174,1,'LD/DFC'],
+    ['Julen Zubelzu','DF',2004,'ES',53,59,0.202,1,'DFC/LI'],
+    ['Beñat Arratibel','DF',2004,'ES',50,56,0.039,1,'DFC/MC'],
+    ['E. Ebro','DF',2003,'ES',43,46,0.167,1,'DFC/LI'],
+    ['E. Palacín','DF',2003,'ES',40,43,0.308,1,'LD/LI'],
+    ['I. Telletxea','MD',2002,'ES',54,57,0.106,1,'MCO/MC'],
+    ['Ibon Badiola','MD',2005,'ES',52,58,0.264,1,'MC/MCO'],
+    ['G. Akogo','MD',2004,'ES',41,47,0.072,1,'MC/LD'],
+    ['Álvaro Arnedo','MD',1996,'ES',39,40,0.107,1,'MC/MCD'],
+    ['Rubi','FW',2002,'ES',56,59,0.301,1,'ED/MI'],
+    ['J. Cortés','FW',2001,'ES',54,57,0.574,2,'DC/MC'],
+    ['Ekaitz Redondo','FW',2005,'ES',52,58,0.232,1,'DC/MD'],
+    ['Martín Pedroarena','FW',2003,'ES',50,53,0.354,1,'DC/ED'],
+    ['Julen Lartitegi','FW',2003,'ES',49,52,0.181,1,'ED/MI'],
+    ['Álex Oyón','FW',2003,'ES',45,48,0.138,1,'EI/DC'],
+    ['Unai Buján','FW',2001,'ES',43,46,0.168,1,'EI/DC'],
+    ['Suso','FW',2007,'ES',38,44,0.003,1,'ED/MCO'],
+  ],
+  MER:[
+    ['Adrián Csenterics','GK',2005,'HU',57,65,0.472,2,'POR'],
+    ['B. Juhász','GK',2005,'HU',54,62,0.661,3,'POR'],
+    ['Álex Gil','GK',2007,'ES',33,41,0.01,1,'POR'],
+    ['Hugo Sanz','DF',2002,'ES',65,69,0.899,4,'LI'],
+    ['Álex Barbu','DF',2001,'ES',62,66,0.537,2,'DFC/LI'],
+    ['Chechu Martínez','DF',2001,'ES',61,65,0.453,2,'LI/DFC'],
+    ['Fito Rodríguez','DF',2002,'ES',58,62,0.297,1,'DFC/LI'],
+    ['A. Salguero','DF',2003,'ES',56,60,0.279,1,'DFC/LD'],
+    ['Nacho González','DF',1995,'ES',56,57,0.341,1,'DFC/MD'],
+    ['A. Jay','DF',2002,'ES',50,54,0.388,2,'LD/LI'],
+    ['Martín Solar','MD',2000,'ES',59,63,0.693,3,'MC/MCO'],
+    ['Raúl Beneit','MD',1994,'ES',59,60,0.311,1,'MC/MCO'],
+    ['Jota López','MD',2003,'ES',56,60,0.38,2,'MC/ED'],
+    ['Antonio Aranda','MD',2001,'ES',54,58,0.331,1,'MCO/MI'],
+    ['Benny Dibrani','MD',2004,'AL',48,56,0.19,1,'MCO/MC'],
+    ['E. Moreno','MD',2008,'ES',35,43,0.02,1,'MD'],
+    ['S. Hallsson','FW',1999,'IS',66,68,1.17,5,'DC/MD'],
+    ['Carlos Doncel','FW',1997,'ES',60,62,0.607,2,'EI/MD'],
+    ['Sofiane','FW',2001,'MA',59,63,0.454,2,'DC/ED'],
+    ['Javier Areso','FW',1997,'ES',56,58,0.336,1,'ED/MD'],
+    ['Lacine Koné','FW',2003,'CI',49,53,0.171,1,'DC/EI'],
+    ['Dani Sandoval','FW',1998,'ES',49,51,0.43,2,'EI/ED'],
+  ],
+  MERB:[
+    ['D. Carvajal','DF',2008,'ES',39,47,0.001,1,'DFC'],
+    ['Santi Amaro Jr','FW',2009,'ES',27,35,0.005,1,'ED/EI'],
+  ],
 };
 /* cesiones reales al inicio de la temporada (solo modo Base de datos).
    Formato: [jugador, club origen, club destino, % del sueldo que paga el destino (0-1), rol prometido] */
@@ -4119,7 +4204,12 @@ const REAL_LOANS=[
  ['Tobias Lund Jensen','BRU','RIE',1,'Rotación',['Tobias Lund Jensen','MD',2006,'DK',63,79,1.2,2.1,'MD/MI/MCO/ED/EI/MC']],
  ['Magnus Dalpiaz','BAY','HAR',1,'Rotación',['Magnus Dalpiaz','DF',2007,'AT',59,79,0.6,0.9,'LD/DFC/LI']],
  ['Erik Kojzek','WAC','PTZ',1,'Rotación',['Erik Kojzek','FW',2006,'AT',63,74,0.9,2,'DC']],
- ['Michael Olakigbe','BRE','TIR',1,'Rotación',['Michael Olakigbe','MD',2004,'EN',60,68,0.55,8.1,'MD/MI/ED/EI']]
+ ['Michael Olakigbe','BRE','TIR',1,'Rotación',['Michael Olakigbe','MD',2004,'EN',60,68,0.55,8.1,'MD/MI/ED/EI']],
+ ['I. García','ZAR','GETX',1,'Rotación',['I. García','MD',2003,'ES',52,60,0.142,1,'MC/MCD']],
+ ['A. Lekuna','BIL','GETX',1,'Rotación',['A. Lekuna','DF',2006,'ES',54,63,0.074,1,'LI']],
+ ['Hugo Carrillo','ZAR','MER',1,'Rotación',['Hugo Carrillo','DF',2002,'ES',55,59,0.197,1,'DFC/LD']],
+ ['Darwin Guagua','BRE','MER',1,'Rotación',['Darwin Guagua','MD',2008,'EC',60,68,1.67,7,'MC/MD']],
+ ['Geo Almeida','FAR','MER',1,'Rotación',['Geo Almeida','MD',2004,'PT',48,56,0.361,1,'MC/MCD']]
 ];
 /* atributos de jugadores reales conocidos (opcional).
    Porteros: EST, PAR, SAQ, REF, COL. Jugadores de campo: RIT, TIR, PAS, REG, DEF, FÍS. */
@@ -4394,7 +4484,7 @@ function genSquad(club,seed){
   const pos=shuffle(POS_PLAN.slice(),r);
   return pos.map((ps,i)=>mkPlayer(r,club.id+i,ps,ovrs[i],isB(club.id)?Math.round(17+(r()+r())/2*5):Math.round(19+(r()+r()+r())/3*16),club.co,used,club.id));
 }
-const BUDGET={ATH:25,ATM:45,CEL:8,ALA:4.5,ELC:3.5,ESP:5,FCB:60,GET:4,LEV:3.8,MAL:3.5,OSA:6,RAC:3.2,RAY:4.2,DEP:4.8,BET:14,RMA:110,RSO:18,SEV:12,VAL:9,VIL:16,CEU:0.45,ALB:1.1,ALM:9,BUR:1.6,CAD:4,CAS:2,SAB:0.55,CFO:0.15,COR:0.9,EIB:3.5,ELD:0.7,AND:1.4,GIR:11.5,GRA:4.5,LEG:5.5,MLL:10.5,OVI:4.7,RSB:0.15,SPO:4,VLL:6,TEN:2,LPA:6,BOU:28,ARS:95,AVL:55,BRE:25,BHA:35,CHE:85,CRY:28,EVE:22,FUL:26,IPS:15,LIV:100,MCI:130,MUN:90,NEW:60,NFO:24,TOT:50,BIR:1.2,BLB:2.5,BWT:0.9,BRC:1.5,BUN:11,CAR:2.2,CHA:0.85,COV:4,DER:1.1,HUL:3.5,LEE:12,LIN:0.65,MID:4.5,MLW:2,NOR:3.8,PMH:1.3,PRE:1.4,QPR:2.1,SHU:1.8,SOU:14.5,STK:1.9,SUN:5,SWA:2.8,WAT:4.2,WBA:3.2,WHU:32,WOL:28,WRE:2.2,BVB:35,B04:38,BMG:11,BAY:85,SGE:14,FCA:5.5,HSV:6,TSG:7,KOE:5,M05:4.8,SCP:1.5,RBL:32,SCF:6.5,S04:4.5,VFB:12.5,ELV:1.2,FCU:5.8,SVW:5.2,DSC:0.35,D98:1.1,SGD:0.4,SGS:0.3,EBS:0.38,FCE:0.25,ETR:0.25,HAV:0.2,MEP:0.45,FWK:0.5,STP:2.1,SGF:0.95,H96:1.8,FCH:1.4,BSC:2.8,KIE:1.2,FCK:1.6,KSC:1,FCM:0.85,FCN:1.5,BOC:2.2,OSN:0.3,WOB:15,MON:8.5,ATA:24,BOL:11,CAG:3.5,COM:4,FIO:10.5,FRO:2.8,GEN:6.5,INT:40,JUV:45,LAZ:18,LEC:3,MIL:38,NAP:26,PAR:3.8,ROM:22,SAS:5.5,TOR:7.5,UDI:4.2,VEN:3.2,ASC:0.2,AVE:0.15,BEN:0.25,CRR:0.1,CAT:0.45,CES:0.55,CRE:1.3,EMP:2.2,SUD:0.18,VER:2.5,JST:0.12,MAN:0.14,MOD:0.65,PAD:0.2,PAL:2,PIS:0.8,SAM:2.4,ARE:0.11,VIC:0.22,ENT:0.25,ANG:3,AUX:3.5,HAC:3.2,LEM:1.2,LEN:16,LIL:22,LOR:5,ASM:35,NCE:18,OL:25,OM:28,PFC:6,PSG:120,SBR:10,REN:15,STR:14,TOU:6.5,TRO:4,LEP:4.5,SKB:1.3,AVS:1.5,ARO:2.2,SLB:35,CPA:1.8,SCL:2.5,ESTP:2,ETD:1.9,FAM:5.5,ALV:1.2,GIL:2.2,MAR:1.8,MOR:2,CDN:1.6,FCP:28,RAVE:2.5,SPB:12,SPTL:32,VIT:6.5,ADO:1.8,AJA:32,AZA:12.5,CMB:1.2,EXC:1.5,FEY:24,FSI:2.2,GAE:2.5,GRN:2.8,HFE:3.5,NEC:4,PEC:2,PSV:35,TEL:0.85,SPR:3.2,TWE:8,UTR:7.5,WIL:2.1,RSC:12,ANT:10.5,CBR:4.5,CHL:3.2,BRU:25,GNK:14,GNT:9.5,KVK:2.2,MEC:3,WES:4.8,LOM:3.5,OHL:2.8,RLL:1.2,STV:2.5,SKB:1.5,SLG:5,USG:11,ZUL:1.8,AUL:0.9,AWI:3.5,GAK:1.2,LAS:6.5,RWI:5,RBS:22,ALT:1.1,STU:10,RIE:1,HAR:1.4,WAC:2.2,TIR:0.85};
+const BUDGET={ATH:25,ATM:45,CEL:8,ALA:4.5,ELC:3.5,ESP:5,FCB:60,GET:4,LEV:3.8,MAL:3.5,OSA:6,RAC:3.2,RAY:4.2,DEP:4.8,BET:14,RMA:110,RSO:18,SEV:12,VAL:9,VIL:16,CEU:0.45,ALB:1.1,ALM:9,BUR:1.6,CAD:4,CAS:2,SAB:0.55,CFO:0.15,COR:0.9,EIB:3.5,ELD:0.7,AND:1.4,GIR:11.5,GRA:4.5,LEG:5.5,MLL:10.5,OVI:4.7,RSB:0.15,SPO:4,VLL:6,TEN:2,LPA:6,BOU:28,ARS:95,AVL:55,BRE:25,BHA:35,CHE:85,CRY:28,EVE:22,FUL:26,IPS:15,LIV:100,MCI:130,MUN:90,NEW:60,NFO:24,TOT:50,BIR:1.2,BLB:2.5,BWT:0.9,BRC:1.5,BUN:11,CAR:2.2,CHA:0.85,COV:4,DER:1.1,HUL:3.5,LEE:12,LIN:0.65,MID:4.5,MLW:2,NOR:3.8,PMH:1.3,PRE:1.4,QPR:2.1,SHU:1.8,SOU:14.5,STK:1.9,SUN:5,SWA:2.8,WAT:4.2,WBA:3.2,WHU:32,WOL:28,WRE:2.2,BVB:35,B04:38,BMG:11,BAY:85,SGE:14,FCA:5.5,HSV:6,TSG:7,KOE:5,M05:4.8,SCP:1.5,RBL:32,SCF:6.5,S04:4.5,VFB:12.5,ELV:1.2,FCU:5.8,SVW:5.2,DSC:0.35,D98:1.1,SGD:0.4,SGS:0.3,EBS:0.38,FCE:0.25,ETR:0.25,HAV:0.2,MEP:0.45,FWK:0.5,STP:2.1,SGF:0.95,H96:1.8,FCH:1.4,BSC:2.8,KIE:1.2,FCK:1.6,KSC:1,FCM:0.85,FCN:1.5,BOC:2.2,OSN:0.3,WOB:15,MON:8.5,ATA:24,BOL:11,CAG:3.5,COM:4,FIO:10.5,FRO:2.8,GEN:6.5,INT:40,JUV:45,LAZ:18,LEC:3,MIL:38,NAP:26,PAR:3.8,ROM:22,SAS:5.5,TOR:7.5,UDI:4.2,VEN:3.2,ASC:0.2,AVE:0.15,BEN:0.25,CRR:0.1,CAT:0.45,CES:0.55,CRE:1.3,EMP:2.2,SUD:0.18,VER:2.5,JST:0.12,MAN:0.14,MOD:0.65,PAD:0.2,PAL:2,PIS:0.8,SAM:2.4,ARE:0.11,VIC:0.22,ENT:0.25,ANG:3,AUX:3.5,HAC:3.2,LEM:1.2,LEN:16,LIL:22,LOR:5,ASM:35,NCE:18,OL:25,OM:28,PFC:6,PSG:120,SBR:10,REN:15,STR:14,TOU:6.5,TRO:4,LEP:4.5,SKB:1.3,AVS:1.5,ARO:2.2,SLB:35,CPA:1.8,SCL:2.5,ESTP:2,ETD:1.9,FAM:5.5,ALV:1.2,GIL:2.2,MAR:1.8,MOR:2,CDN:1.6,FCP:28,RAVE:2.5,SPB:12,SPTL:32,VIT:6.5,ADO:1.8,AJA:32,AZA:12.5,CMB:1.2,EXC:1.5,FEY:24,FSI:2.2,GAE:2.5,GRN:2.8,HFE:3.5,NEC:4,PEC:2,PSV:35,TEL:0.85,SPR:3.2,TWE:8,UTR:7.5,WIL:2.1,RSC:12,ANT:10.5,CBR:4.5,CHL:3.2,BRU:25,GNK:14,GNT:9.5,KVK:2.2,MEC:3,WES:4.8,LOM:3.5,OHL:2.8,RLL:1.2,STV:2.5,SKB:1.5,SLG:5,USG:11,ZUL:1.8,AUL:0.9,AWI:3.5,GAK:1.2,LAS:6.5,RWI:5,RBS:22,ALT:1.1,STU:10,RIE:1,HAR:1.4,WAC:2.2,TIR:0.85,MER:0.35,GETX:0.18,BARA:0.28,BIL:0.1,CRI:0.15,EXT:0.25,LUG:0.5,CACE:0.22,CUL:0.75,FAB:0.09,MIR:0.65,PON:0.55,PONV:0.32,FER:0.6,AVIL:0.28,RUS:0.3,LOG:0.45,OUR:0.19,UNI:0.34,ZAM:0.26,AGU:0.28,ALC:0.55,ALG:0.32,ANQ:0.3,AMM:0.09,TRL:0.2,EUR:0.21,CTG:0.65,NAS:0.5,HER:0.48,HUE:0.7,TRM:0.18,RMJ:0.25,JAE:0.22,RMU:0.8,ZAR:1.2,RMC:0.15,IBI:0.7,STA:0.22,VILB:0.12};
 /* presupuesto: parte del dato real/generado del club a su reputación de partida, pero luego SIGUE a la reputación
    actual (10% más por cada punto ganado o perdido). Así un club que sube de reputación de verdad gana recursos de
    verdad, y uno que se hunde los pierde, sea cual sea su fama de partida. */
@@ -4436,7 +4526,7 @@ const FORMS={
 };
 const FORM_LBL=Object.fromEntries(Object.keys(FORMS).map(k=>[k,FORMS[k].map(x=>x[3])]));
 /* ============ FORMACIONES ============ */
-const FORM_MAIN={FCB:'4-2-1-3',ATH:'4-2-3-1',ATM:'3-4-1-2',RMA:'4-2-1-3',CEL:'3-4-2-1',CFO:'3-4-2-1',ALA:'3-1-4-2',ELC:'3-4-2-1',GET:'5-2-1-2',LEV:'4-1-4-1',MAL:'4-1-4-1',OSA:'4-2-3-1',RAC:'4-2-3-1',RAY:'4-2-3-1',DEP:'4-2-3-1',BET:'4-2-1-3',RSO:'4-2-3-1',SEV:'4-2-3-1',ALM:'4-2-3-1',BUR:'4-2-3-1',CAD:'4-3-3',CAS:'3-4-3',VAL:'4-3-3',VIL:'4-4-2',RSB:'4-2-3-1',CEU:'4-3-3',ALB:'5-3-2',COR:'4-3-3',EIB:'4-2-3-1',ELD:'4-2-3-1',AND:'4-3-3',GIR:'4-1-4-1',GRA:'4-3-3',MLL:'4-4-1-1',LEG:'5-3-2',OVI:'4-2-3-1',VLL:'4-2-3-1',SPO:'3-4-1-2',LPA:'4-2-3-1',BOU:'4-2-3-1',ARS:'4-2-3-1',AVL:'4-2-3-1',BRE:'4-2-3-1',BHA:'4-2-3-1',CHE:'3-4-2-1',COV:'4-2-3-1',CRY:'3-4-2-1',EVE:'4-2-3-1',FUL:'4-2-3-1',HUL:'5-4-1',IPS:'4-2-3-1',LEE:'3-4-2-1',LIV:'4-2-3-1',MCI:'4-2-3-1',MUN:'4-2-3-1',NEW:'4-2-3-1',NFO:'3-4-2-1',SUN:'4-2-3-1',TOT:'4-2-3-1',BIR:'4-2-3-1',BLB:'4-2-3-1',BWT:'4-2-3-1',BRC:'4-2-3-1',BUN:'4-2-3-1',CAR:'4-2-3-1',CHA:'4-2-3-1',DER:'4-2-3-1',LIN:'3-4-2-1',MID:'4-2-3-1',MLW:'4-3-3',NOR:'4-2-3-1',PMH:'4-2-3-1',PRE:'5-3-2',QPR:'4-4-2',SHU:'4-4-2',SOU:'4-2-3-1',STK:'4-2-3-1',SWA:'4-3-3',WAT:'4-2-3-1',WBA:'4-4-2',WHU:'4-4-1-1',WOL:'4-2-3-1',WRE:'3-4-2-1',BVB:'3-4-2-1',B04:'4-2-3-1',BMG:'4-2-3-1',BAY:'4-2-3-1',SGE:'3-4-2-1',FCA:'3-4-2-1',HSV:'3-4-2-1',TSG:'4-4-2',KOE:'4-2-3-1',M05:'5-3-2',SCP:'5-3-2',RBL:'4-3-3',SCF:'4-2-3-1',S04:'3-4-2-1',VFB:'4-2-3-1',ELV:'4-2-3-1',FCU:'4-2-2-2',SVW:'4-2-3-1',DSC:'4-1-4-1',D98:'4-2-3-1',EBS:'4-2-3-1',SGD:'4-2-3-1',SGS:'4-4-2',FCE:'4-2-3-1',ETR:'4-2-3-1',HAV:'4-3-3',MEP:'4-4-2',FWK:'4-2-3-1',STP:'3-4-1-2',LEP:'4-2-3-1',SKB:'4-2-3-1',SGF:'4-4-2',H96:'3-4-3',FCH:'4-4-2',BSC:'4-2-3-1',KIE:'4-1-4-1',FCK:'3-4-2-1',KSC:'4-1-2-1-2',FCM:'4-1-4-1',FCN:'4-2-1-3',BOC:'4-2-3-1',OSN:'3-4-2-1',WOB:'4-2-3-1',MON:'3-4-2-1',ATA:'4-3-3',BOL:'4-2-3-1',CAG:'4-3-2-1',COM:'4-2-3-1',FIO:'4-3-2-1',FRO:'4-2-3-1',GEN:'3-4-2-1',INT:'5-3-2',JUV:'4-2-3-1',LAZ:'4-3-3',LEC:'4-3-3',MIL:'3-4-2-1',NAP:'4-3-3',PAR:'5-3-2',ROM:'3-4-2-1',SAS:'4-3-3',TOR:'3-4-2-1',UDI:'3-4-2-1',VEN:'5-3-2',ASC:'4-2-3-1',AVE:'5-3-2',BEN:'4-3-3',CRR:'5-3-2',CAT:'3-4-2-1',CES:'4-3-3',CRE:'4-2-3-1',EMP:'5-3-2',SUD:'4-4-1-1',VER:'4-2-3-1',JST:'4-3-3',MAN:'3-4-2-1',MOD:'4-3-2-1',PAD:'5-3-2',PAL:'4-2-3-1',PIS:'4-3-2-1',SAM:'4-3-3',ARE:'4-3-3',VIC:'5-3-2',ENT:'5-3-2',PSG:'4-3-3',ANG:'4-2-3-1',AUX:'4-3-3',HAC:'3-4-2-1',LEM:'5-3-2',LEN:'3-4-3',LIL:'4-2-3-1',LOR:'3-4-2-1',ASM:'4-2-3-1',NCE:'3-4-2-1',OL:'4-3-3',OM:'4-2-3-1',PFC:'4-2-3-1',SBR:'4-2-3-1',REN:'4-1-4-1',STR:'4-2-3-1',TOU:'4-2-3-1',TRO:'4-1-4-1',AEKA:'4-4-2',BRU:'4-2-3-1',FEN:'4-2-3-1',FEY:'4-3-3',BDG:'4-4-2',GAL:'4-2-3-1',LAS:'3-4-1-2',FCP:'4-3-3',PSV:'4-3-3',SBAH:'4-2-3-1',SHK:'4-3-3',SLA:'3-4-2-1',AVS:'4-3-3',ARO:'4-2-3-1',SLB:'4-2-3-1',CPA:'4-3-3',SCL:'4-2-3-1',SPB:'3-4-2-1',SPTL:'4-2-3-1',ESTP:'4-2-3-1',ETD:'4-3-3',FAM:'4-2-3-1',ALV:'3-4-3',GIL:'4-2-3-1',MAR:'4-2-3-1',MOR:'4-2-3-1',CDN:'3-4-2-1',RAVE:'4-2-3-1',VIT:'4-2-3-1',AJA:'4-3-3',ADO:'4-2-3-1',AZA:'4-2-1-3',CMB:'4-3-3',EXC:'4-3-3',FSI:'5-2-3',GAE:'4-2-3-1',GRN:'4-2-3-1',HFE:'4-2-1-3',NEC:'3-4-2-1',PEC:'4-2-3-1',TEL:'5-4-1',SPR:'4-2-3-1',TWE:'4-3-3',UTR:'3-4-2-1',WIL:'4-2-3-1',RSC:'4-4-2',ANT:'4-4-2',CBR:'3-4-2-1',CHL:'4-2-3-1',GNK:'4-2-3-1',GNT:'3-4-2-1',KVK:'3-4-2-1',MEC:'3-4-1-2',WES:'4-2-3-1',LOM:'4-2-3-1',OHL:'3-4-3',RLL:'3-4-1-2',STV:'4-2-3-1',SKB:'4-2-3-1',SLG:'4-3-3',USG:'3-4-1-2',ZUL:'4-2-3-1',AUL:'4-2-3-1',AWI:'3-4-2-1',GAK:'3-4-1-2',RWI:'4-2-3-1',RBS:'4-2-3-1',ALT:'3-4-2-1',STU:'4-2-3-1',RIE:'4-2-3-1',HAR:'5-3-2',WAC:'3-4-2-1',TIR:'4-2-3-1'};
+const FORM_MAIN={FCB:'4-2-1-3',ATH:'4-2-3-1',ATM:'3-4-1-2',RMA:'4-2-1-3',CEL:'3-4-2-1',CFO:'3-4-2-1',ALA:'3-1-4-2',ELC:'3-4-2-1',GET:'5-2-1-2',LEV:'4-1-4-1',MAL:'4-1-4-1',OSA:'4-2-3-1',RAC:'4-2-3-1',RAY:'4-2-3-1',DEP:'4-2-3-1',BET:'4-2-1-3',RSO:'4-2-3-1',SEV:'4-2-3-1',ALM:'4-2-3-1',BUR:'4-2-3-1',CAD:'4-3-3',CAS:'3-4-3',VAL:'4-3-3',VIL:'4-4-2',RSB:'4-2-3-1',CEU:'4-3-3',ALB:'5-3-2',COR:'4-3-3',EIB:'4-2-3-1',ELD:'4-2-3-1',AND:'4-3-3',GIR:'4-1-4-1',GRA:'4-3-3',MLL:'4-4-1-1',LEG:'5-3-2',OVI:'4-2-3-1',VLL:'4-2-3-1',SPO:'3-4-1-2',LPA:'4-2-3-1',BOU:'4-2-3-1',ARS:'4-2-3-1',AVL:'4-2-3-1',BRE:'4-2-3-1',BHA:'4-2-3-1',CHE:'3-4-2-1',COV:'4-2-3-1',CRY:'3-4-2-1',EVE:'4-2-3-1',FUL:'4-2-3-1',HUL:'5-4-1',IPS:'4-2-3-1',LEE:'3-4-2-1',LIV:'4-2-3-1',MCI:'4-2-3-1',MUN:'4-2-3-1',NEW:'4-2-3-1',NFO:'3-4-2-1',SUN:'4-2-3-1',TOT:'4-2-3-1',BIR:'4-2-3-1',BLB:'4-2-3-1',BWT:'4-2-3-1',BRC:'4-2-3-1',BUN:'4-2-3-1',CAR:'4-2-3-1',CHA:'4-2-3-1',DER:'4-2-3-1',LIN:'3-4-2-1',MID:'4-2-3-1',MLW:'4-3-3',NOR:'4-2-3-1',PMH:'4-2-3-1',PRE:'5-3-2',QPR:'4-4-2',SHU:'4-4-2',SOU:'4-2-3-1',STK:'4-2-3-1',SWA:'4-3-3',WAT:'4-2-3-1',WBA:'4-4-2',WHU:'4-4-1-1',WOL:'4-2-3-1',WRE:'3-4-2-1',BVB:'3-4-2-1',B04:'4-2-3-1',BMG:'4-2-3-1',BAY:'4-2-3-1',SGE:'3-4-2-1',FCA:'3-4-2-1',HSV:'3-4-2-1',TSG:'4-4-2',KOE:'4-2-3-1',M05:'5-3-2',SCP:'5-3-2',RBL:'4-3-3',SCF:'4-2-3-1',S04:'3-4-2-1',VFB:'4-2-3-1',ELV:'4-2-3-1',FCU:'4-2-2-2',SVW:'4-2-3-1',DSC:'4-1-4-1',D98:'4-2-3-1',EBS:'4-2-3-1',SGD:'4-2-3-1',SGS:'4-4-2',FCE:'4-2-3-1',ETR:'4-2-3-1',HAV:'4-3-3',MEP:'4-4-2',FWK:'4-2-3-1',STP:'3-4-1-2',LEP:'4-2-3-1',SKB:'4-2-3-1',SGF:'4-4-2',H96:'3-4-3',FCH:'4-4-2',BSC:'4-2-3-1',KIE:'4-1-4-1',FCK:'3-4-2-1',KSC:'4-1-2-1-2',FCM:'4-1-4-1',FCN:'4-2-1-3',BOC:'4-2-3-1',OSN:'3-4-2-1',WOB:'4-2-3-1',MON:'3-4-2-1',ATA:'4-3-3',BOL:'4-2-3-1',CAG:'4-3-2-1',COM:'4-2-3-1',FIO:'4-3-2-1',FRO:'4-2-3-1',GEN:'3-4-2-1',INT:'5-3-2',JUV:'4-2-3-1',LAZ:'4-3-3',LEC:'4-3-3',MIL:'3-4-2-1',NAP:'4-3-3',PAR:'5-3-2',ROM:'3-4-2-1',SAS:'4-3-3',TOR:'3-4-2-1',UDI:'3-4-2-1',VEN:'5-3-2',ASC:'4-2-3-1',AVE:'5-3-2',BEN:'4-3-3',CRR:'5-3-2',CAT:'3-4-2-1',CES:'4-3-3',CRE:'4-2-3-1',EMP:'5-3-2',SUD:'4-4-1-1',VER:'4-2-3-1',JST:'4-3-3',MAN:'3-4-2-1',MOD:'4-3-2-1',PAD:'5-3-2',PAL:'4-2-3-1',PIS:'4-3-2-1',SAM:'4-3-3',ARE:'4-3-3',VIC:'5-3-2',ENT:'5-3-2',PSG:'4-3-3',ANG:'4-2-3-1',AUX:'4-3-3',HAC:'3-4-2-1',LEM:'5-3-2',LEN:'3-4-3',LIL:'4-2-3-1',LOR:'3-4-2-1',ASM:'4-2-3-1',NCE:'3-4-2-1',OL:'4-3-3',OM:'4-2-3-1',PFC:'4-2-3-1',SBR:'4-2-3-1',REN:'4-1-4-1',STR:'4-2-3-1',TOU:'4-2-3-1',TRO:'4-1-4-1',AEKA:'4-4-2',BRU:'4-2-3-1',FEN:'4-2-3-1',FEY:'4-3-3',BDG:'4-4-2',GAL:'4-2-3-1',LAS:'3-4-1-2',FCP:'4-3-3',PSV:'4-3-3',SBAH:'4-2-3-1',SHK:'4-3-3',SLA:'3-4-2-1',AVS:'4-3-3',ARO:'4-2-3-1',SLB:'4-2-3-1',CPA:'4-3-3',SCL:'4-2-3-1',SPB:'3-4-2-1',SPTL:'4-2-3-1',ESTP:'4-2-3-1',ETD:'4-3-3',FAM:'4-2-3-1',ALV:'3-4-3',GIL:'4-2-3-1',MAR:'4-2-3-1',MOR:'4-2-3-1',CDN:'3-4-2-1',RAVE:'4-2-3-1',VIT:'4-2-3-1',AJA:'4-3-3',ADO:'4-2-3-1',AZA:'4-2-1-3',CMB:'4-3-3',EXC:'4-3-3',FSI:'5-2-3',GAE:'4-2-3-1',GRN:'4-2-3-1',HFE:'4-2-1-3',NEC:'3-4-2-1',PEC:'4-2-3-1',TEL:'5-4-1',SPR:'4-2-3-1',TWE:'4-3-3',UTR:'3-4-2-1',WIL:'4-2-3-1',RSC:'4-4-2',ANT:'4-4-2',CBR:'3-4-2-1',CHL:'4-2-3-1',GNK:'4-2-3-1',GNT:'3-4-2-1',KVK:'3-4-2-1',MEC:'3-4-1-2',WES:'4-2-3-1',LOM:'4-2-3-1',OHL:'3-4-3',RLL:'3-4-1-2',STV:'4-2-3-1',SKB:'4-2-3-1',SLG:'4-3-3',USG:'3-4-1-2',ZUL:'4-2-3-1',AUL:'4-2-3-1',AWI:'3-4-2-1',GAK:'3-4-1-2',RWI:'4-2-3-1',RBS:'4-2-3-1',ALT:'3-4-2-1',STU:'4-2-3-1',RIE:'4-2-3-1',HAR:'5-3-2',WAC:'3-4-2-1',TIR:'4-2-3-1',GETX:'4-4-1-1',MER:'4-4-1-1'};
 const FOOT_S={Izquierda:'Izq.',Derecha:'Der.',Ambas:'Amb.'};
 /* pierna buena conocida de jugadores reales (D derecha, I izquierda, A ambas); ampliable */
 const REAL_FOOT={'Kamil Grabara':'D','Andreas Skov Olsen':'I','Mohamed Amoura':'D','Joan García':'D','Dominik Livaković':'D','Wojciech Szczęsny':'D','Jules Koundé':'D','Xavi Espart':'D','Eric García':'D','Pau Cubarsí':'D','Gerard Martín':'I','Andreas Christensen':'D','João Cancelo':'D','Balde':'I','Rodri':'D','Marc Bernal':'I','Pedri':'D','Gavi':'D','Brian Fariñas':'D','Frenkie de Jong':'D','Fermín':'D','Dani Olmo':'D','Karim Adeyemi':'D','Lamine Yamal':'I','Roony Bardghji':'I','Gabriel Jesus':'D','Hamza Abdelkarim':'A','Raphinha':'I','Anthony Gordon':'D','Jesse Eugen Bisiwu':'D','Ronald Araújo':'D','Marc-André ter Stegen':'D','Marc Casadó':'D','Áron Yaakobishvili':'D','Toni Fernández':'I',
@@ -7079,6 +7169,12 @@ Object.entries({'Ármin Pécsi':3202828,'Luka Maric':873146,'Harald Postl':34340
 Object.entries({'Lukas Gütlbauer':706863,'Lior Gliklich':3207967,'David Skubl':692941,'Boris Matic':3201627,'Cheick Mamadou Diabate':3459523,'Raffael Behounek':294433,'Adama Dramé':3527767,'Nicolas Wimmer':339238,'Matteo Kitz':3185116,'David Djuric':3167334,'Simon Piesinger':159255,'Marco Sulzner':836217,'Michael Schweiger':973603,'Fabian Wohlmuth':826101,'Otar Mamageishvili':887807,'Thorsten Schriebl':724566,'Emmanuel Agyemang':3168455,'Rene Renner':287607,'Aaron Sky Schwarz':886629,'Dominik Fitz':321075,'Donis Avdijaj':206492,'Marco Schabauer':973367,'Giacomo Vrioni':353709,'Phillip Verhounig':976528,'Markus Pink':280678,'Luca Hassler':3162788,'Sankara Karamoko':3274137,'Veljko Vukojevic':3272486,'Erik Kojzek':3181001}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 /* WSG Tirol */
 Object.entries({'Salko Hamzić':976527,'Alexander Eckmayr':469125,'Felix Libiseller':3179946,'David Jaunegg':836153,'Marco Boras':882776,'David Kubatta':897939,'David Gugganig':279616,'Drew Murray':3385976,'Raphael Gschösser':976722,'Michael Neuner':3266587,'Nemanja Ćelić':378996,'Marc Striednig':976529,'Michael Olakigbe':912416,'Quincy Butler':658996,'Matthäus Taferner':416072,'Murat Satin':250408,'Moritz Oswald':826065,'David Falkner':3198641,'Husein Balić':330297,'Thomas Goiginger':243626,'Moritz Wels':886642,'Mazou Bambara':3528276,'Nikolai Baden Frederiksen':393798,'Lukas Hinterseer':66693,'Thomas Sabitzer':372647}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* Arenas de Getxo */
+Object.entries({'E. Ebro':1024476,'E. Palacín':1024459,'I. Telletxea':951506,'Ibon Badiola':1025843,'I. García':3183464,'G. Akogo':3214151,'Álvaro Arnedo':310277,'Rubi':995310,'J. Cortés':948590,'Ekaitz Redondo':1023451,'Martín Pedroarena':1005559,'Julen Lartitegi':3227630,'Álex Oyón':951230,'Unai Buján':951459,'Suso':3554952,'A. Lekuna':3313805,'Hodei Oleaga':339664,'Obón':949954,'Eric Benítez':3451708,'Ander Dufur':3188007,'E. Zabaleta':124622,'Jon Larrauri':951768,'Julen Zubelzu':1024270,'Beñat Arratibel':3230386}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+Object.assign(REAL_ATTR,{'Ibon Badiola':{RIT:64,TIR:55,PAS:57,REG:61,DEF:50,FÍS:58},'G. Akogo':{RIT:78,TIR:43,PAS:54,REG:69,DEF:58,FÍS:67},'Ekaitz Redondo':{RIT:67,TIR:54,PAS:52,REG:60,DEF:28,FÍS:58},'Julen Lartitegi':{RIT:72,TIR:52,PAS:50,REG:58,DEF:35,FÍS:51},'Álex Oyón':{RIT:70,TIR:57,PAS:55,REG:64,DEF:34,FÍS:58},'Hodei Oleaga':{EST:63,PAR:58,SAQ:60,COL:61,REF:61},'Obón':{EST:62,PAR:55,SAQ:65,COL:55,REF:62},'Hugo Carrillo':{RIT:66,TIR:33,PAS:45,REG:60,DEF:56,FÍS:63},'Darwin Guagua':{RIT:72,TIR:45,PAS:56,REG:66,DEF:55,FÍS:58},'Carlos Doncel':{RIT:72,TIR:62,PAS:63,REG:69,DEF:40,FÍS:58},'Dani Sandoval':{RIT:75,TIR:62,PAS:58,REG:70,DEF:32,FÍS:61}});
+Object.assign(REAL_FOOT,{'E. Ebro':'I','I. García':'I','Julen Lartitegi':'D','A. Lekuna':'I','Adrián Csenterics':'D','B. Juhász':'D','Álex Gil':'D','Hugo Sanz':'I','Álex Barbu':'I','Chechu Martínez':'I','Fito Rodríguez':'D','A. Salguero':'D','Nacho González':'D','Hugo Carrillo':'D','D. Carvajal':'D','Darwin Guagua':'I','Martín Solar':'D','Raúl Beneit':'D','Jota López':'D','Antonio Aranda':'D','Geo Almeida':'D','S. Hallsson':'D','Carlos Doncel':'I','Javier Areso':'D','Dani Sandoval':'I'});
+/* AD Mérida */
+Object.entries({'Adrián Csenterics':3172363,'B. Juhász':3434904,'Álex Gil':3265385,'Hugo Sanz':950942,'Álex Barbu':870844,'Chechu Martínez':661901,'Fito Rodríguez':951503,'A. Salguero':1006520,'Nacho González':196693,'Hugo Carrillo':999677,'A. Jay':887390,'D. Carvajal':3453655,'Darwin Guagua':3589130,'Martín Solar':870071,'Raúl Beneit':343005,'Jota López':950257,'Antonio Aranda':845182,'Benny Dibrani':903979,'Geo Almeida':3244985,'E. Moreno':3571399,'S. Hallsson':493580,'Carlos Doncel':281724,'Sofiane':802936,'Javier Areso':356433,'Lacine Koné':3255322,'Dani Sandoval':415296,'Santi Amaro Jr':3574635}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 /* nombres que coinciden entre jugadores reales distintos: una foto por club en vez de pisarse */
 REAL_PHOTO['Dani Martín']={LEV:'https://cdn.resfu.com/img_data/players/medium/3187971.jpg?size=120x&lossy=1',TEN:'https://cdn.resfu.com/img_data/players/medium/235682.jpg?size=120x&lossy=1'};
 REAL_PHOTO['David Rodríguez']={ELD:'https://cdn.resfu.com/img_data/players/medium/3361962.jpg?size=120x&lossy=1',TEN:'https://cdn.resfu.com/img_data/players/medium/927739.jpg?size=120x&lossy=1'};
@@ -7523,7 +7619,9 @@ const TV_WEEK={1:.5,2:.08};
    proporcional a la afluencia = reputación/GRL del once) menos nómina y mantenimiento (que sube con la reputación). */
 function weekFinance(id,home){
   const c=CLUBBY[id];
-  const tv=TV_WEEK[c.div]||0;
+  /* TV por categoría, escalado al tamaño real del club dentro de la división: un pequeño cobra una fracción y un
+     gigante puede llegar a 1.5x la base (los descendidos, con presupuesto a la mitad, también generan menos TV). */
+  const tv=(TV_WEEK[c.div]||0)*clamp(.4+Math.min(1.5,budgetFor(c)/100),.4,1.5);
   const comercial=budgetFor(c)*.01;
   const gate=home?clamp(repOf(id)-45,0,55)*.018:0;
   const wages=(id===state.club?wageBill():wageK(state.teams[id].players))/1000;
@@ -7545,6 +7643,7 @@ function playLeagueStage(){
   const r=state.week,round=state.fixtures[r],before=posOf(state.club),t=me();
   const hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id));
   round.forEach(simMatch);finance(round);updateMood();progressTick(r);positionTick();if(r===19){aiMarket('winter');aiIdle('winter');aiPoach('winter');aiYouth('winter')}
+  famInteract();
   const cups=advanceWorld(r);
   state.week++;
   if(state.week>=state.fixtures.length)afterLeague();
@@ -7731,6 +7830,15 @@ function planPlayoffs(){
     const seeds=nl1.slice(3,7);
     if(seeds.length===4){const it={co:'NLPO',kind:'nlpo',seeds,alive:seeds.slice(),rounds:[],winner:null,single:true};po.items.push(it)}
   }
+  /* Primera Federación (ES5/ES6): los campeones y los dos ganadores del playoff intergrupo ascienden a 2ª,
+     y 2ª pierde 4 (2 por grupo) para darles hueco. De momento no hay descensos a Segunda Federación (no existe). */
+  const s5=poOrder('ES',5),s6=poOrder('ES',6),e2o=poOrder('ES',2);
+  if(s5.length>=16&&s6.length>=16&&e2o.length>=4){
+    const mkRF=seeds=>seeds.length===4?{co:'ES',kind:'rfpo',seeds,alive:seeds.slice(),rounds:[],winner:null}:null;
+    const pA=mkRF([s5[1],s5[2],s6[3],s6[4]]),pB=mkRF([s6[1],s6[2],s5[3],s5[4]]);
+    if(pA)po.items.push(pA);if(pB)po.items.push(pB);
+    po.rf={up:[s5[0],s6[0]],down2:e2o.slice(-4)};
+  }
   return po;
 }
 function poRoundName(n,it,byes){return it.kind==='rel'?'Eliminatoria':byes?'Primera ronda':n===1?'Final':n===2?'Semifinales':'Cuartos de final'}
@@ -7758,9 +7866,10 @@ function poSimLeg(t,leg){
   }
   t.l[leg]=L;
 }
-function poDecide(t){
+function poDecide(t,it){
   const ga=t.l[0].ag+t.l[1].hg,gb=t.l[0].hg+t.l[1].ag;t.agg=[ga,gb];
   if(ga!==gb)t.w=ga>gb?t.a:t.b;
+  else if(it&&it.kind==='rfpo')t.w=t.a;   /* Primera Federación: sin penaltis, pasa el mejor clasificado en liga regular */
   else{const wa=Math.random()<.5+(virt(t.a).ovr-virt(t.b).ovr)*.004,k=3+Math.floor(Math.random()*3);t.pen=wa?[k+1,k]:[k,k+1];t.w=wa?t.a:t.b}
 }
 function poFinish(){
@@ -7773,6 +7882,7 @@ function poFinish(){
     }
     po.res[co]={up,down};
   });
+  const rf=po.rf;if(rf){po.items.filter(x=>x.kind==='rfpo'&&x.winner).forEach(x=>rf.up.push(x.winner))}
   const nlpo=po.items.find(x=>x.kind==='nlpo');
   if(nlpo&&nlpo.winner)state.nlPoWinner=nlpo.winner;
 }
@@ -7796,7 +7906,7 @@ function poAdvance(){
   });
   if(leg===1){
     po.items.forEach(it=>{
-      if(it.winner||it.single)return;const R=it.rounds[it.rounds.length-1];R.ties.forEach(poDecide);R.done=true;
+      if(it.winner||it.single)return;const R=it.rounds[it.rounds.length-1];R.ties.forEach(t=>poDecide(t,it));R.done=true;
       const ws=new Set(R.ties.map(t=>t.w).concat(R.byes));it.alive=it.seeds.filter(id=>ws.has(id));
       if(it.alive.length===1)it.winner=it.alive[0];
     });
@@ -7829,7 +7939,7 @@ function playPoStage(){
   if(mine&&mine.t.w){
     const w=mine.t.w===state.club;
     if(mine.it.single)news(`Playoff por la Conference League: ${w?'ganáis la eliminatoria y conseguís la plaza europea':'quedáis eliminados del playoff europeo'}.`);
-    else if(mine.leg===1)news(`${mine.it.kind==='promo'?'Playoff de ascenso':'Playoff de permanencia'}: ${w?'superáis la eliminatoria':'quedáis eliminados'} (${mine.t.agg[0]}-${mine.t.agg[1]} global${mine.t.pen?', penaltis '+mine.t.pen[0]+'-'+mine.t.pen[1]:''}).`)}
+    else if(mine.leg===1)news(`${mine.it.kind==='promo'||mine.it.kind==='rfpo'?'Playoff de ascenso':'Playoff de permanencia'}: ${w?'superáis la eliminatoria':'quedáis eliminados'} (${mine.t.agg[0]}-${mine.t.agg[1]} global${mine.t.pen?', penaltis '+mine.t.pen[0]+'-'+mine.t.pen[1]:''}).`)}
   poAutoRun();saveGame();
   return mine?{mine,done:state.po.done}:null;
 }
@@ -7839,6 +7949,7 @@ function poResultTxt(mine){
   if(it.winner){
     if(it.kind==='nlpo')return it.winner===me?'¡Ganáis el playoff y os clasificáis para la fase previa de la Conference League!':'Quedáis eliminados del playoff europeo.';
     if(it.kind==='promo')return it.winner===me?`¡Ascendéis a ${divName(it.co,1)}!`:'Quedáis eliminados y no ascendéis esta temporada.';
+    if(it.kind==='rfpo')return it.winner===me?`¡Ascendéis a ${divName('ES',2)}!`:'Quedáis eliminados y no ascendéis esta temporada.';
     const upTeam=it.seeds[1]===me;
     return it.winner===me?(upTeam?`¡Ascendéis a ${divName(it.co,1)}!`:'¡Os salváis y seguís en Primera!'):(upTeam?'Os quedáis en Segunda.':`Descendéis a ${divName(it.co,2)}.`);
   }
@@ -7848,7 +7959,7 @@ function poSheet(res){
   const {it,R,t,leg}=res.mine,home=leg===0?t.b:t.a,away=leg===0?t.a:t.b,L=t.l[leg],hc=CLUBBY[home],ac=CLUBBY[away];
   const sc=side=>(L.sc||[]).filter(z=>z.s===side).map(z=>`${esc(z.n)} ${z.min}'`).join('<br>')||'&nbsp;';
   const others=R.ties.filter(o=>o!==t).map(o=>{const h=leg===0?o.b:o.a,a=leg===0?o.a:o.b,l=o.l[leg];return`<div class="res">${teamCell(h,'',false)}<b>${l.hg} - ${l.ag}</b>${teamCell(a,'',true)}</div>${leg===1&&o.pen?`<div class="pen">Global ${o.agg[0]}-${o.agg[1]}, penaltis ${o.pen[0]}-${o.pen[1]}</div>`:leg===1?`<div class="pen">Global ${o.agg[0]}-${o.agg[1]}</div>`:''}`}).join('');
-  openSheet(`<div class="res-top"><p class="muted-s" style="text-align:center">${it.kind==='nlpo'?'Playoff por la Conference League':(it.kind==='promo'?'Playoff de ascenso a '+esc(divName(it.co,1)):'Playoff de permanencia')}, ${esc(R.n.toLowerCase())}${it.single?'':', '+(leg===0?'ida':'vuelta')}</p>
+  openSheet(`<div class="res-top"><p class="muted-s" style="text-align:center">${it.kind==='nlpo'?'Playoff por la Conference League':(it.kind==='promo'?'Playoff de ascenso a '+esc(divName(it.co,1)):it.kind==='rfpo'?'Playoff de ascenso a '+esc(divName('ES',2)):'Playoff de permanencia')}, ${esc(R.n.toLowerCase())}${it.single?'':', '+(leg===0?'ida':'vuelta')}</p>
   <div class="score"><div class="tm">${crestHTML(hc,52)}<span>${esc(hc.name)}</span></div><div class="sc">${L.hg} - ${L.ag}</div><div class="tm">${crestHTML(ac,52)}<span>${esc(ac.name)}</span></div></div>
   <div class="scorers"><div>${sc('h')}</div><div class="r">${sc('a')}</div></div>
   ${leg===1?`<p style="text-align:center;margin-top:6px"><b>Global ${t.agg[0]} - ${t.agg[1]}</b>${t.pen?`, penaltis ${t.pen[0]}-${t.pen[1]}`:''}</p>`:''}
@@ -7863,6 +7974,11 @@ function movesHTML(){
     return`<div class="subh">${FLAG[co]} ${esc(COUNTRIES[co].name)}</div>
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName(co,1))}</b>${teamsHTML(up)}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>`}).join('');
+  const rf=po.rf;
+  if(rf){const th=ids=>ids.length?`<div class="mv-teams">${ids.map(id=>`<div class="mv-team">${crestHTML(CLUBBY[id],34)}<span>${esc(cname(id))}</span></div>`).join('')}</div>`:'<p class="muted-s" style="margin:0">Nadie.</p>';
+    return `<div class="subh">${FLAG.ES} Primera Federación</div>
+    <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('ES',2))}</b>${th(rf.up)}</div></div>
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Bajan de 2ª a Primera Federación</b>${th(rf.down2)}</div></div>`;}
 }
 function myMoveTxt(){
   const po=state.po;if(!po||!po.done||!po.res)return'';
@@ -7877,6 +7993,14 @@ function applyMoves(){
     (r.down||[]).forEach(id=>{state.divs[id]=2;const c=CLUBBY[id];if(c&&c.div===1)state.relegated[id]=1});
     news(`${FLAG[co]} Ascienden a ${divName(co,1)}: ${(r.up||[]).map(cname).join(', ')}. Descienden a ${divName(co,2)}: ${(r.down||[]).map(cname).join(', ')}.`);
   });
+  /* Primera Federación: campeones y playoff ascienden a 2ª; 2ª pierde 4 (2 por grupo) para darles hueco.
+     No hay descensos a Segunda Federación (aún no existe). */
+  const rf=state.po&&state.po.rf;
+  if(rf){
+    rf.up.forEach(id=>{state.divs[id]=2;delete state.relegated[id]});
+    rf.down2.forEach((id,i)=>{state.divs[id]=5+(i%2)});
+    news(`${FLAG.ES} Ascienden a ${divName('ES',2)}: ${rf.up.map(cname).join(', ')}.`);
+  }
   Object.keys(state.divs).forEach(id=>{if(state.divs[id]===BASE_DIV[id])delete state.divs[id]});
   applyDivs();
 }
@@ -7954,7 +8078,7 @@ function newSeason(){
   });state.loans=[];
   (state.loansAbroad||[]).forEach(l=>{const T=state.teams[l.from];if(T&&!T.players.some(x=>x.id===l.p.id)){l.p._loanSeason=true;delete l.p.loanIn;T.players.push(l.p)}});state.loansAbroad=[];
   const T0=me();
-  T0.players.forEach(p=>{if(p.loanIn&&state.teams[p.loanIn.from]){const T=state.teams[p.loanIn.from];if(!T.players.some(x=>x.id===p.id))T.players.push(p)}});
+  T0.players.forEach(p=>{if(p.loanIn){const from=p.loanIn.from;if(state.teams[from]){const T=state.teams[from];if(!T.players.some(x=>x.id===p.id))T.players.push(p)}else if(state.gone)delete state.gone[p.id]}});
   T0.players=T0.players.filter(p=>!p.loanIn);
   state.loanRev=[];
   (state.loansOut||[]).forEach(l=>{const p=l.p;state.loanRev.push({id:p.id,to:l.to,role:l.role,ap:(p.st&&p.st[l.to])||0,rt:(p.ap||0)?(p.rt||0)/p.ap:0,ovr:p.ovr});if(state.teams[l.to]){const T=state.teams[l.to];T.players=T.players.filter(x=>x.id!==p.id)}p._loanSeason=true;delete p.loanIn;loanReturn(l,p.age+1).arr.push(p)});state.loansOut=[];
@@ -7989,7 +8113,7 @@ function newSeason(){
   state.academy=(state.academy||[]).filter(p=>{p.age++;return p.age<=19});
   applyMoves();syncLeague();state.po=null;
   if(myMove)news(myMove);
-  state.season++;state.week=0;state.phase='play';
+  state.season++;state.week=0;state.phase='play';state.famPromo=0;
   state.fixtures=makeFixtures(Object.keys(state.teams),r);state.table=emptyTable(Object.keys(state.teams));
   /* ingresos de los rivales: cada temporada recuperan parte de su presupuesto para poder seguir fichando */
   Object.keys(state.teams).forEach(id=>{if(id===state.club||(state.fam&&state.fam.id===id))return;const T=state.teams[id],base=budgetFor(CLUBBY[id]);T.budget=r1(Math.min(base*1.8,T.budget+Math.max(3,base*.45)))});
@@ -8209,7 +8333,7 @@ function sellPlayer(id){
 const fmtM=v=>'€'+(v<1?Math.round(v*1000)+'K':(v>=100?Math.round(v):v.toFixed(1))+'M');
 
 /* ===================== filiales, ofertas y cesiones ===================== */
-const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'REC',REC:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMAB',RMAB:'RMA',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL',FAM:'FAMB',FAMB:'FAM',GIL:'GILB',GILB:'GIL',MAR:'MARB',MARB:'MAR',MOR:'MORB',MORB:'MOR',RAVE:'RAVEB',RAVEB:'RAVE',VIT:'VITB',VITB:'VIT',JUV:'JNG',JNG:'JUV',AJA:'JAJ',JAJ:'AJA',AZA:'AZB',AZB:'AZA',FEY:'FEYB',FEYB:'FEY',FCP:'FCPB',FCPB:'FCP',UTR:'UTRB',UTRB:'UTR',MUN:'MUNB',MUNB:'MUN',AVL:'AVLB',AVLB:'AVL',CHE:'CHEB',CHEB:'CHE'};
+const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'REC',REC:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMAB',RMAB:'RMA',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL',FAM:'FAMB',FAMB:'FAM',GIL:'GILB',GILB:'GIL',MAR:'MARB',MARB:'MAR',MOR:'MORB',MORB:'MOR',RAVE:'RAVEB',RAVEB:'RAVE',VIT:'VITB',VITB:'VIT',JUV:'JNG',JNG:'JUV',AJA:'JAJ',JAJ:'AJA',AZA:'AZB',AZB:'AZA',FEY:'FEYB',FEYB:'FEY',FCP:'FCPB',FCPB:'FCP',UTR:'UTRB',UTRB:'UTR',MUN:'MUNB',MUNB:'MUN',AVL:'AVLB',AVLB:'AVL',CHE:'CHEB',CHEB:'CHE',MER:'MERB',MERB:'MER'};
 /* los filiales sin escudo propio usan el del primer equipo */
 Object.keys(CLUBBY).forEach(id=>{if(!CLUBBY[id].logo){const p=FAMILY[id];if(p&&CLUBBY[p]&&CLUBBY[p].logo)CLUBBY[id].logo=CLUBBY[p].logo}});
 const isB=id=>id==='RSB'||id==='CFO'||!!(CLUBBY[id]&&CLUBBY[id].bTeam);
@@ -8233,7 +8357,14 @@ const FAC_MAX=15,ACAD_EVERY=8;
 const FAC_NAME={train:'Instalaciones de entrenamiento',acad:'Academia de juveniles'};
 const ACAD_BONUS={FCB:2,RSO:3,ATH:3,VIL:2,CEL:3,RMA:1,SEV:1,BET:1,VAL:1,ESP:1,ALA:1,OSA:1,MCI:1,ARS:1,CHE:2,MUN:1,TOT:1,SOU:3,LEE:2,WHU:2,EVE:1,BHA:1,INT:1,MIL:1,JUV:1,ATA:4,ROM:2,EMP:3,BAY:1,BVB:2,B04:1,RBL:2,SGF:3,SGE:1,KOE:1,S04:2,LEG:1,GIR:1,SPO:1,OVI:1,LPA:1};
 const TRAIN_BONUS={RMA:1,BAY:1,MCI:1,ARS:1,LIV:1,ATM:1,B04:1,RBL:1,NEW:1,AVL:1,INT:0};
+/* instalaciones fijas de la Primera RFEF (Entrenamiento/Cantera) según la actualización de la categoría */
+const FAC_SET={
+  MER:{train:6,acad:5},GETX:{train:4,acad:4},BARA:{train:5,acad:5},BIL:{train:9,acad:10},CRI:{train:3,acad:3},EXT:{train:4,acad:4},LUG:{train:7,acad:6},CACE:{train:4,acad:4},CUL:{train:8,acad:7},FAB:{train:8,acad:9},MIR:{train:7,acad:6},PON:{train:8,acad:7},PONV:{train:6,acad:5},FER:{train:7,acad:6},AVIL:{train:4,acad:4},RUS:{train:5,acad:4},LOG:{train:6,acad:5},OUR:{train:4,acad:4},UNI:{train:5,acad:4},ZAM:{train:5,acad:4},
+  AGU:{train:4,acad:4},ALC:{train:8,acad:7},ALG:{train:5,acad:4},ANQ:{train:5,acad:4},AMM:{train:9,acad:10},TRL:{train:4,acad:4},EUR:{train:5,acad:6},CTG:{train:8,acad:7},NAS:{train:8,acad:7},HER:{train:8,acad:7},HUE:{train:9,acad:8},TRM:{train:4,acad:3},RMJ:{train:7,acad:8},JAE:{train:5,acad:5},RMU:{train:8,acad:7},ZAR:{train:9,acad:10},RMC:{train:9,acad:10},IBI:{train:9,acad:6},STA:{train:5,acad:6},VILB:{train:9,acad:10}
+};
 function facLevels(id){
+  const set=FAC_SET&&FAC_SET[id];
+  if(set)return{train:clamp(set.train,1,FAC_MAX),acad:clamp(set.acad,1,FAC_MAX)};
   const base=clamp(Math.round((repOf(id)-44)/3),1,FAC_MAX);
   return{train:clamp(base+(TRAIN_BONUS[id]||0),1,FAC_MAX),acad:clamp(base+(ACAD_BONUS[id]||0),1,FAC_MAX)};
 }
@@ -8646,12 +8777,15 @@ function trainingTick(){
 }
 function genIntake(){
   const L=state.fac.acad,r=rng(hashStr('ac'+state.seed+'_'+state.season+'_'+state.week)),n=2+Math.floor(L/5),used=new Set(me().players.map(p=>p.n)),out=[];
+  /* techo de GRL de la cantera de un filial: aunque tenga buenas instalaciones, el nivel se limita por la categoría
+     en la que compite para evitar generar talento 'chetado' (el potencial sí puede apuntar un poco más arriba) */
+  const cap=isB(state.club)?({1:72,2:66,3:60,4:56,5:52,6:52,7:50}[CLUBBY[state.club].div]||50):68;
   for(let i=0;i<n;i++){
     const pos=pick(['GK','DF','DF','DF','MD','MD','MD','FW','FW'],r),age=16+Math.floor(r()*3);
-    const ovr=clamp(Math.round(38+L*1.2+(r()-.5)*10),30,68);
+    const ovr=clamp(Math.round(38+L*1.2+(r()-.5)*10),30,cap);
     let pot=ovr+10+L+Math.round((r()-.35)*16);if(r()<L*.008)pot+=8;
     const p=mkPlayer(r,'Y'+state.season+'_'+state.week+'_'+i,pos,ovr,age,CLUBBY[state.club].co,used,state.club);
-    p.pot=clamp(pot,ovr+3,94);p.val=calcVal(p);p.wage=Math.max(1,Math.round(p.val*.6));p.acad=state.season;
+    p.pot=clamp(pot,ovr+3,cap+8);p.val=calcVal(p);p.wage=Math.max(1,Math.round(p.val*.6));p.acad=state.season;
     out.push(p);
   }
   state.academy=state.academy.concat(out).slice(-12);state.acadNew=true;
@@ -8854,6 +8988,60 @@ function advanceFilial(){
     const _rr=matchRating({pos:p.pos,ovr:p.ovr,gd:0,g,a,ga:_ga,sv:_sv});p.rt=(p.rt||0)+_rr;bumpStat(p,key,'rt',_rr);bumpStat(p,key,'rtN',1);
   });
 }
+/* interacción primer equipo <-> filial cuando el usuario entrena a un FILIAL: la IA del primer equipo puede
+   reclamar canteranos que destaquen y bajar jóvenes (<=23) para que cojan minutos. */
+function famAlert(title,msg,p,clubId){
+  openSheet(`<h3>${esc(title)}</h3><p style="margin:0 0 12px">${msg}</p>${playerCard(p,clubId)}<div class="row-btns" style="margin-top:12px"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`);
+}
+function famInteract(){
+  if(!state||!isB(state.club))return;
+  const parentId=FAMILY[state.club];if(!parentId||!CLUBBY[parentId])return;
+  const mine=me();
+  /* 1) El primer equipo (IA) reclama a un canterano que destaca o supera las expectativas */
+  promoteStandout(parentId,mine);
+  /* 2) El primer equipo baja temporalmente a un joven (<=23) que necesite minutos */
+  if(state.week%3===0)sendDownYouth(parentId,mine);
+}
+function weakOf(T,pos){
+  const n=FORMS[T.formation].filter(x=>x[0]===pos).length,o=T.players.filter(p=>p.pos===pos).map(p=>p.ovr).sort((a,b)=>b-a);
+  return o[n-1]!=null?o[n-1]:0;
+}
+function promoteStandout(parentId,mine){
+  state.famPromo=state.famPromo||0;if(state.famPromo>=2)return;
+  const P=state.teams[parentId]?state.teams[parentId]:previewTeam(parentId);
+  if(P.players.length>=40)return;
+  const cand=mine.players.filter(p=>!p.loanIn&&p.age<=21&&p.ap>=6&&((p.rt||0)/p.ap>=7.0||p.ovr>=60))
+    .sort((a,b)=>(b.rt||0)/Math.max(1,b.ap)-(a.rt||0)/Math.max(1,a.ap)||b.ovr-a.ovr);
+  if(!cand.length||Math.random()>.25)return;
+  const p=cand[0];if(p.ovr<52)return;
+  mine.players=mine.players.filter(x=>x.id!==p.id);
+  const pp=Object.assign({},p,{role:roleAt(p,parentId)});
+  if(state.teams[parentId]){const T=state.teams[parentId];if(!T.players.some(x=>x.id===pp.id))T.players.push(pp);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)}
+  else{state.arrivals=state.arrivals||{};(state.arrivals[parentId]=state.arrivals[parentId]||[]).push(pp)}
+  invalidateSquads([parentId]);
+  state.famPromo++;
+  news(`${cname(parentId)} reclama a ${p.n} (${p.ovr}) y lo sube al primer equipo.`);
+  famAlert('Ascenso al primer equipo',`El primer equipo (${cname(parentId)}) ha ascendido a <b>${esc(p.n)}</b> a su disciplina.`,pp,parentId);
+  saveGame();
+}
+function sendDownYouth(parentId,mine){
+  if(mine.players.length>=30)return;
+  const P=state.teams[parentId]?state.teams[parentId]:previewTeam(parentId);
+  const xi=new Set(bestXI(P,P.formation));
+  const young=P.players.filter(p=>!p.loanIn&&p.age<=23&&p.age>=18&&p.ovr>=50&&!xi.has(p.id)).sort((a,b)=>b.ovr-a.ovr);
+  if(!young.length||Math.random()>.3)return;
+  const p=young[Math.floor(Math.random()*Math.min(2,young.length))];
+  if(mine.players.some(x=>x.id===p.id))return;
+  p.loanIn={from:parentId,season:state.season,share:1};p.role='Titular';p.en=100;p.inj=0;
+  mine.players.push(p);
+  if(state.teams[parentId]){const T=state.teams[parentId];T.players=T.players.filter(x=>x.id!==p.id);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)}
+  else{state.gone=state.gone||{};state.gone[p.id]=1}
+  invalidateSquads([parentId]);
+  news(`${cname(parentId)} baja a ${p.n} (${p.age} años) al filial para que coja ritmo.`);
+  famAlert('Refuerzo del primer equipo',`${cname(parentId)} cede temporalmente a <b>${esc(p.n)}</b> (${p.age} años) al filial.`,p,state.club);
+  saveGame();
+}
+
 /* lista de traspasos y ofertas */
 function toggleList(pid){
   const L=locate(pid);if(!L||L.where!=='mine'||L.p.loanIn)return'No se puede poner en venta a este jugador.';
@@ -9189,19 +9377,53 @@ function saveGame(){
   state.saved=Date.now();
   const c=CLUBBY[state.club];
   const meta={club:state.club,name:c.name,country:state.country,div:state.div||1,mode:state.mode||'fict',season:state.season,week:state.week,total:state.fixtures.length,pos:posOf(state.club),saved:state.saved};
-  const ok=Store.set('mister.slot.'+state.slot,JSON.stringify(state));
-  Store.set('mister.meta.'+state.slot,JSON.stringify(meta));
-  if(!ok&&!Store.warned){Store.warned=true;if(typeof toast==='function')toast('El navegador bloquea el guardado: la partida solo vive en esta sesión.')}
+  const json=JSON.stringify(state),mjson=JSON.stringify(meta);
+  const ok=Store.set('mister.slot.'+state.slot,json);
+  Store.set('mister.meta.'+state.slot,mjson);
+  /* el almacén durable es IndexedDB: aunque localStorage se llene (cuota), la partida sigue guardada */
+  IDB.put('slot.'+state.slot,json);IDB.put('meta.'+state.slot,meta);
+  if(!ok&&!IDB.ok&&!Store.warned){Store.warned=true;if(typeof toast==='function')toast('El navegador bloquea el guardado: la partida solo vive en esta sesión.')}
   return ok;
 }
 function readMeta(n){try{const v=Store.get('mister.meta.'+n);return v?JSON.parse(v):null}catch(e){return null}}
 function readSlot(n){try{const v=Store.get('mister.slot.'+n);const s=v?JSON.parse(v):null;return s&&s.v===1&&s.teams?s:null}catch(e){return null}}
-function deleteSlot(n){Store.del('mister.slot.'+n);Store.del('mister.meta.'+n)}
+function deleteSlot(n){Store.del('mister.slot.'+n);Store.del('mister.meta.'+n);IDB.del('slot.'+n);IDB.del('meta.'+n)}
+/* exportar/importar a archivo: no depende del localStorage del navegador, así que funciona aunque esté bloqueado
+   (Safari con archivo local, modo privado...) y permite partidas que se guardan y restauran siempre. */
+function storageOK(){try{const k='mister._t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
+function downloadSave(json,name){
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+function importJSON(text,slotN){
+  let s;try{s=JSON.parse(text)}catch(e){s=null}
+  if(!s||s.v!==1||!s.teams||!s.club||!CLUBBY[s.club]){toast('El archivo no es una partida válida.');return}
+  const c=CLUBBY[s.club],total=(s.fixtures&&s.fixtures.length)||38,wk=Math.min((s.week||0)+1,total);
+  const meta={club:s.club,name:c.name,country:s.country||c.co,div:s.div||1,mode:s.mode||'fict',season:s.season||1,week:s.week||0,total,pos:1,saved:s.saved||Date.now()};
+  if(slotN!=null){
+    const n=+slotN;
+    const doIt=()=>storeImport(n,s,meta);
+    if(readSlot(n))confirmBox('¿Sobrescribir el slot '+n+'?','Hay una partida guardada en ese slot.','Sobrescribir',true).then(ok=>{if(ok)doIt()});
+    else doIt();
+    return;
+  }
+  ui.importing={s,meta};
+  openSheet(`<h3>Importar partida</h3><p style="margin-bottom:10px">${esc(c.name)} · ${esc(divName(ui.importing.meta.country,ui.importing.meta.div))} · Temp. ${ui.importing.meta.season} · Semana ${wk}. ¿En qué slot lo pongo?</p><div class="res-scroll">${[1,2,3].map(n=>{const m=readMeta(n);return`<button class="lrow" data-act="imp-slot" data-n="${n}"><span class="lt"><b>Slot ${n}</b><small>${m&&CLUBBY[m.club]?esc(CLUBBY[m.club].name):'Vacío'}</small></span></button>`}).join('')}</div><div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+}
+function storeImport(n,s,meta){
+  const json=JSON.stringify(s),mjson=JSON.stringify(meta);
+  Store.set('mister.slot.'+n,json);
+  Store.set('mister.meta.'+n,mjson);
+  IDB.put('slot.'+n,json);IDB.put('meta.'+n,meta);
+  ui.importing=null;closeSheet();renderSlots();toast('Partida importada en el slot '+n);
+}
 
 /* ===================== mundo: otras ligas y torneos ===================== */
 const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup'};
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC','ATSC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC','ATSC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga'};
 const SC_TEAMS={ES:4};
 const SC_SKIP={AT:1};
@@ -9217,11 +9439,18 @@ const compName=k=>{
   if(k==='ECLQ')return'Previa de Conference League';
   if(k==='SCE')return'Supercopa de Europa';
   if(k==='IFC')return'Copa Intercontinental de la FIFA';
+  if(k==='ESRF')return'Primera Federación';
   const co=k.slice(0,2),suf=k.slice(2);
   if(suf==='SC')return TROPHY_SC[co]||'Supercopa';
   if(suf==='LC')return LCNAME[co]||'Copa de la Liga';
   if(suf==='C')return CUPNAME[co];
   return divName(co,+suf);
+};
+/* título de liga con grupos (Primera Federación): la categoría arriba y el grupo debajo en pequeño */
+const compTitle=k=>{
+  const co=String(k).slice(0,2),d=String(k).slice(-1),g=DIV_GROUPS[co];
+  if(g){const s=g.subs.find(x=>x[0]===+d);if(s)return `${esc(g.label)} <span class="grp-s">${esc(s[1])}</span>`}
+  return esc(compName(k));
 };
 const CONT_FLAGS={europe:'data:image/png;base64,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',africa:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAqCAIAAACMZMq1AAAAjUlEQVR42u3Yuw2DQBBF0VmWBBGQWq6BkAoowK1RGhRAjFuwLcFShIPVle7r4GjmaT8plkCniRAgQIAAAQIEVEub6IBS4IC+ZQPSe4NP4NHRO3DBAdcJB+QBXuLXHMb8s0LTCAeUnX4O/LyN1gVEpq/QF17i9QmfwOeAA5pELzH8Sem3igABAgQIEFAzN3KOE29CdVVsAAAAAElFTkSuQmCC',asia:'data:image/png;base64,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',namerica:'data:image/png;base64,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',samerica:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAqCAIAAACMZMq1AAAAiUlEQVR42u3PMQrCQBhE4ZklKBJIl8rGKufIIbyHF7HKpXIIG8kFBO2yJr+d5WIrea8eBj6P+qmQKumVdufT5VE1jnfIhb2tWHzY59t1OLbPNTs5yv+Wcrib+vtcJy9r8f9b0p8HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2BfgALQUZQZRUeDoAAAAASUVORK5CYII=',oceania:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAqCAIAAACMZMq1AAAGr0lEQVR42u1ZW2xc1RXde59z7r0zc23Hdh52wQluIMExiUMf0IYmoUkqBCnvUhURtaWPjwpVbYUqtVLVVqr4aeGjqB+oFSpq/pqPirYgLGhITdtgQiCyQ0IcJyHvl53Y87rPs3c/JnESxwnM2C6mYn/euTPnrL3XWvucPfijF/PwUQ6Cj3h8DOD/HIAIiEzrCnrq98wsAkhIREgEACLCzCKCAJUnMxQAMxORm82SUjZJ4jBM4hgAtDGO52nHYeYkDG1qiRAQZxAAYUaibJ0flsr7d/Qd3LnrxHsH82fOJlEkIsZx6hpnzZ3ftuCmJW0di3MNDVG5bK2lqagGTr4PsGU3m0njuG/Lazte3jx08DCkCSgFRMAAhJXqgE1BqVnXtC67fdXyL63N1OXCUnnyGCYLgJmzdf6hdwdeefZPJ98dAMdBz0FAInRSu3pN1zt7jh4/NmwBgEhEJI4hjBqvm7/mG48s+szNQaE4SVWozz/y00nt3vd3vNrz/JO/LQwNU50Piipi5TC+Y23X3zc+vmhhS3f3W0GUCIKIoFKU8YKRkd09/ybHaV92UxonOAk91A6ALWfr/e0vb+7+3TNiDDqOMJ8rK6Kktsw8b3ZDT++eV7f0o+fIeT8VETQGtT7Yu421vn55VxxFNWOokULM7GWz+/v6Nz3xGzQGEGWc34t4nhOeKWDOQ0WcMozbISIhcKF05w8f6/riqqBYrE0PNfFPRGldyudf+v0f4Ty5L8sMhkFMdVkBGLd7REREEBEBzHj/eG7j0JGjxnGkppZHNaVf3Ezm9b++WDhylDxvjDmX/TZy5aNLcy9RInEyxqV4JN+z6S/aGPjfABAR7ZgzJ072benBbJYv8P4D8BWAmBd3tLV/shWZEYCtxVx27xvbjg3uM55XQxFqAeB43sC27fHwGTS6kjZEFH7/tRFRJfbpX234xeP3YTmukB4VSTnYtbVXG1MDgKo7MQLYNN3f1w+kzi0nIklqMm4SJyAAiq4CPtXq+z/bmKSWPYMiACAsYMx7/buici19jarNP2ldzheGDh+DCmtFHNc0+Zkff++uzhvb/PPbmvjbAKLVwO7DBwaPg9GVfIsIGHP25Kn88LDSutoiVAdAAJRSpdHRoFCoZJoQVWp/8NiXn/jJQ3948tttrU1geUJTJ0IiBBHKOOReIlkkskGQHz6rtIJpBQACSBQHISdJxT1RUTBS2rx199btg/95c+/udw6RayZ0VS5HXAoBkVl43AuIYG1ULiOSTLcGAEBALu5o4HuDB06uWP/LufNmOc11cZSMsyQi5GK4/u5bshl3059fI9/jiRRfWx/Q1UpYmB3PQ62FGRBFABQdPTwERp06cRYUTWCoAkB0aijvugYUgUx0cSNys5nKOWoaAVScO9dQ7/l+MDKCFc0JoKNFBM3EEmQRyDjbevcAC+Q8vuwdYaaMV9fYyNZWe9GpUgOI1tpsfX3zJ1oguUCVC35yFfvKuOR7l2sUESFNG+bMaZjdnCZVn0yrb2Qs2pj2pZ1gbVVrsciE1EdCiOP5HYs93+crnUqmEAASJlG06LOf1vX1ktoPVja8ekbAdZesuNWmKQJOPwDEJI7ntl3bcdvnpFwmpd5f91fGSYqkXF6wfFnbjYvjMESafgDnMETRbfff4zU3SxxfLcEiYGVeSyMRAU/QHMAyed7qrz4gtY6PagWQJLPmzVn36AaJIsQrnkVd10CSPvXzh2c3+QaBaFx/IC4UV37toWtuWBgHYW2XshqvlIiYRPG1i64XrQ/1bkfXRcKLDZ4QJUrWrV76zFPfuWtN17pVnczy9tv7UCkBQEQi4pHRrnvX3/7wVyYznqh9IkBEQbG08sH7Vj66QYJA4oSUGssii+is2/3863v2HXccHcfps8+9IloJACkl1nKh8KkH773jW1+Pg7AG7U7NVAIR0zhZuHzpnOsWHBvYG54eAqVQa6rAENCO7uxo+/XTfwuSdOfg8TCIRUSKxUx9/drvfvML998Th6GITGYqMRWDLeZMLlcYGXnzhe6d//xX6fRpAAStQREZw9bCaAlcDUZBGLvNTUtW3HrL3Xc2trSExSJ+6IOtMQxaayeTGR0aOrCj/0D/ztOHjhTz+SSMANHzXM/3m1pb2pd2tt+8rKm1JY2iJE5mymhx7DQhLNpo43kAEpWDoFhMwggAtONk/JybyxJREkVJnJwbTMyo6TQiokJrbVosVsbouYYGbEQAFGZmjkrlMf+Zuf8PXJxam6aXPCdCmPrQMG0xVSSZrj4wQ+JjAB92/BcMd2+8otfj8QAAAABJRU5ErkJggg=='};
 const groupFlag=id=>id==='EU'?'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="vertical-align:-.15em"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>':FLAG[id];
@@ -9839,6 +10068,13 @@ function initWorld(){
     const ids=leagueClubs(co,d).map(c=>c.id);
     state.others[key]={fx:makeFixtures(ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
   }));
+  /* Primera Federación (ES5 y ES6): se simulan para que ambos grupos tengan clasificación; el grupo del usuario
+     ya es su propia liga (state.lk) y se salta aquí. */
+  ['ES5','ES6'].forEach(key=>{
+    if(key===state.lk)return;
+    const ids=leagueClubs('ES',+key.slice(-1)).map(c=>c.id);
+    if(ids.length>1)state.others[key]={fx:makeFixtures(ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
+  });
   PLAYABLE.forEach(co=>{
     const ids=CLUBS.filter(c=>c.co===co&&!isB(c.id)).map(c=>c.id);
     if(CLUBBY[state.club]&&CLUBBY[state.club].co===co&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
@@ -10138,13 +10374,18 @@ function compPalmaresHTML(key){
 function viewComps(){
   if(!ui.cc||!ui.cco){ui.cc=userKey();ui.cco=state.country}
   migrateUclIfNeeded();
+  /* 'Primera Federación' abre el grupo en el que estés; si no juegas ahí, el Grupo 1 */
+  if(ui.cc==='ESRF'){const ud=CLUBBY[state.club];ui.cc=(ud&&ud.co==='ES'&&(ud.div===5||ud.div===6))?'ES'+ud.div:'ES5'}
   const key=ui.cc,cup=isCup(key),grp=GROUPS.find(g=>g.id===ui.cco)||GROUPS[0];
   const opts=ccViewOpts(key);
   if(!opts.some(([v])=>v===ui.ct))ui.ct=opts[0][0];   /* si vienes de otra competición, se ajusta la vista a las pestañas válidas de esta */
   const grpStat=grp.id==='EU'?'':(()=>{const v=divAvgOvr(grp.id,1);return`<span class="lstat"><small class="lrep">${starsFracHTML(v)} ${v}</small></span>`})();
   const sel=`<button class="lrow cco" data-act="cco-pick" style="width:100%;margin-bottom:8px"><span class="fl">${groupFlag(grp.id)}</span><span class="lt"><b>${esc(grp.name)}</b></span>${grpStat}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
   const ctLbl=(opts.find(([v])=>v===ui.ct)||opts[0])[1];
-  const compCard=`<div class="lrow cco compcard sel"><button class="cc-name-btn" data-act="cc-pick"><span class="fl ico">${cup?ICO_CUP:ICO_TROPHY}</span><span class="lt"><b>${esc(compName(key))}</b>${isMine(key)?'<i class="dot" title="Tu club juega aquí"></i>':''}</span></button><button class="cc-view-btn" data-act="ccview-pick"><span>${esc(ctLbl)}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>`;
+  const isRF=key==='ES5'||key==='ES6';
+  const rfName=isRF?esc(DIV_GROUPS.ES.label):esc(compName(key));
+  const grpSel=isRF?`<div class="grp-sel">${DIV_GROUPS.ES.subs.map(([d,n])=>`<button class="grp-sel-btn${('ES'+d)===key?' on':''}" data-act="cc2" data-k="ES${d}">${esc(n)}</button>`).join('')}</div>`:'';
+  const compCard=`<div class="lrow cco compcard sel"><button class="cc-name-btn" data-act="cc-pick"><span class="fl ico">${cup?ICO_CUP:ICO_TROPHY}</span><span class="lt"><b>${rfName}</b>${isMine(key)?'<i class="dot" title="Tu club juega aquí"></i>':''}</span></button><button class="cc-view-btn" data-act="ccview-pick"><span>${esc(ctLbl)}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>${grpSel}`;
   let body;
   const qualOf={UCLQ:'ucl',UELQ:'uel',ECLQ:'ecl'}[key];
   if(qualOf){
@@ -10166,7 +10407,7 @@ function viewComps(){
   }else{
     body=ui.ct==='pal'?compPalmaresHTML(key):ui.ct==='cal'?leagueCal(key):ui.ct==='stats'?leagueStats(key):leagueTable(key);
   }
-  return`<div class="sec-h"><h2>${esc(compName(key))}</h2><span>Temporada ${state.season}</span></div>${sel}${compCard}${body}`;
+  return`<div class="sec-h"><h2>${isRF?esc(DIV_GROUPS.ES.label):compTitle(key)}</h2><span>Temporada ${state.season}</span></div>${sel}${compCard}${body}`;
 }
 function zoneColor(key,pos,total){
   const d=String(key).slice(-1),co=String(key).slice(0,2);
@@ -10209,6 +10450,12 @@ function zoneColor(key,pos,total){
     if(pos<=6)return'#26a69a';
     return pos<=total-3?'#9e9e9e':'#e53935';
   }
+  if(co==='ES'&&(d==='5'||d==='6')){   /* Primera Federación: Grupo 1 (5) y Grupo 2 (6) */
+    if(pos===1)return'#49CB2B';
+    if(pos<=5)return'#38D996';
+    if(pos<=15)return'#BCBCBC';
+    return'#ED3B46';
+  }
   return null;
 }
 const ZONES_D1=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#26a69a','Previa de Champions'],['#29b6f6','Europa League'],['#90a4ae','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
@@ -10221,7 +10468,8 @@ const ZONES_D2_18=ZONES_D2,ZONES_D2_20=ZONES_D2;
 /* ============ CLASIFICACIÓN / FIN DE TEMPORADA ============ */
 function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1';let ep=0;
-  const allZones=String(key).slice(0,2)==='PT'&&d==='1'?ZONES_PT1:String(key).slice(0,2)==='NL'&&d==='1'?ZONES_NL1:String(key).slice(0,2)==='BE'&&d==='1'?ZONES_BE1:d==='1'?ZONES_D1:d==='2'?ZONES_D2:null;
+  const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
+  const allZones=String(key).slice(0,2)==='PT'&&d==='1'?ZONES_PT1:String(key).slice(0,2)==='NL'&&d==='1'?ZONES_NL1:String(key).slice(0,2)==='BE'&&d==='1'?ZONES_BE1:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(String(key).slice(0,2)==='ES'&&(d==='5'||d==='6')?ZONES_ES5:null);
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -10484,13 +10732,32 @@ function renderSlots(){
   const nw=ui.mode==='new';
   $('#slots-title').textContent=nw?'Nueva partida':'Cargar partida';
   $('#slots-sub').textContent=nw?'Elige el slot donde guardar tu carrera':'Elige la partida que quieres continuar';
-  $('#slots').innerHTML=[1,2,3].map(n=>{
+  const warn=storageOK()?'':`<div class="card" style="border-color:#f59e0b"><p style="margin:0"><b>Guardado automático no disponible</b> (Safari con archivo local, modo privado o almacenamiento bloqueado). La partida solo vive en esta sesión: usa <b>Exportar</b> y <b>Importar</b> para no perderla.</p></div>`;
+  const bar=`<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 12px">${warn}</div>`;
+  $('#slots').innerHTML=bar+[1,2,3].map(n=>{
     const m=readMeta(n);
-    if(!m||!readSlot(n))return`<div class="slot empty"><div class="slot-ico">+</div><div class="slot-info"><div class="slot-h">Slot ${n}</div><div class="slot-l">Vacío</div></div><div class="slot-act"><button class="btn primary sm" data-act="slot-new" data-n="${n}">Nueva partida aquí</button></div></div>`;
+    if(!m||!readSlot(n))return`<div class="slot empty"><div class="slot-ico">+</div><div class="slot-info"><div class="slot-h">Slot ${n}</div><div class="slot-l">Vacío</div></div><div class="slot-act"><button class="btn primary sm" data-act="slot-new" data-n="${n}">Nueva partida aquí</button><button class="btn ghost sm" data-act="slot-import" data-n="${n}">Importar aquí</button></div></div>`;
     const c=CLUBBY[m.club],C=COUNTRIES[m.country],sy=BASE_YEAR+m.season-1,syTxt=`${sy}/${String((sy+1)%100).padStart(2,'0')}`;
     return`<div class="slot">${crestHTML(c,52,m.mode)}<div class="slot-info"><div class="slot-h">${esc(c.name)}</div><div class="slot-l">${FLAG[m.country]} ${divName(m.country,m.div)}</div><div class="slot-l">Temp. ${m.season} (${syTxt}) - Semana ${Math.min(m.week+1,m.total)}${m.week?`, vas ${m.pos}º`:''}</div><div class="slot-l"><span class="tag" style="margin-left:0">${modeName(m.mode)}</span></div><div class="slot-l">Guardada el ${fmtDate(m.saved)}</div></div>
-      <div class="slot-act">${nw?`<button class="btn ghost sm" data-act="slot-over" data-n="${n}">Sobrescribir</button>`:`<button class="btn primary sm" data-act="slot-load" data-n="${n}">Cargar</button>`}<button class="btn danger sm" data-act="slot-del" data-n="${n}">Borrar</button></div></div>`;
+      <div class="slot-act">${nw?`<button class="btn ghost sm" data-act="slot-over" data-n="${n}">Sobrescribir</button>`:`<button class="btn primary sm" data-act="slot-load" data-n="${n}">Cargar</button>`}<button class="btn ghost sm" data-act="slot-export" data-n="${n}">Exportar</button><button class="btn danger sm" data-act="slot-del" data-n="${n}">Borrar</button></div></div>`;
   }).join('');
+  reconcileSlots();
+}
+/* si localStorage perdió un slot (cuota/expulsión) pero IndexedDB lo conserva, lo restaura y repinta la pantalla */
+async function reconcileSlots(){
+  if(!IDB.ok)return;
+  let changed=false;
+  for(let n=1;n<=3;n++){
+    const [im,is]=await Promise.all([IDB.get('meta.'+n),IDB.get('slot.'+n)]);
+    if(!is)continue;
+    const lm=readMeta(n),ls=readSlot(n);
+    if(!ls||!lm||(im&&im.saved&&lm&&lm.saved&&im.saved>lm.saved)){
+      Store.set('mister.slot.'+n,is);
+      if(im)Store.set('mister.meta.'+n,JSON.stringify(im));
+      changed=true;
+    }
+  }
+  if(changed)renderSlots();
 }
 
 /* ===================== mapa: mundo, Europa, país ===================== */
@@ -10609,10 +10876,21 @@ function renderCountry(cid){
   renderDivCtl();renderPins();
   const l=$('#L2');if(l.scrollTo)l.scrollTo((l.scrollWidth-l.clientWidth)/2,(l.scrollHeight-l.clientHeight)/2);
 }
+const DIV_GROUPS={ES:{label:'Primera Federación',subs:[[5,'Grupo 1'],[6,'Grupo 2']]}};
 function renderDivCtl(){
   const C=COUNTRIES[ui.country];
-  const divs=C.divs.map((n,i)=>({n,d:i+1})).filter(x=>leagueClubs(ui.country,x.d).length>1&&!(ui.country==='PT'&&x.d===2));
-  $('#divctl').innerHTML=divs.map(({n,d})=>`<button class="divbtn ${ui.div===d?'on':''}" data-act="div" data-d="${d}" aria-pressed="${ui.div===d}">${esc(n)}<span class="n">${leagueClubs(ui.country,d).length}</span></button>`).join('');
+  const grp=DIV_GROUPS[ui.country];
+  const subSet=grp?new Set(grp.subs.map(s=>s[0])):null;
+  const divs=C.divs.map((n,i)=>({n,d:i+1})).filter(x=>leagueClubs(ui.country,x.d).length>1&&!(ui.country==='PT'&&x.d===2)&&!(subSet&&subSet.has(x.d)));
+  let html=divs.map(({n,d})=>`<button class="divbtn ${ui.div===d?'on':''}" data-act="div" data-d="${d}" aria-pressed="${ui.div===d}">${esc(n)}<span class="n">${leagueClubs(ui.country,d).length}</span></button>`).join('');
+  if(grp){
+    const on=subSet.has(ui.div);
+    const total=grp.subs.reduce((a,s)=>a+leagueClubs(ui.country,s[0]).length,0);
+    html+=`<button class="divbtn ${on?'on':''}" data-act="div" data-d="${grp.subs[0][0]}" aria-pressed="${on}">${esc(grp.label)}<span class="n">${total}</span></button>`;
+  }
+  $('#divctl').innerHTML=html;
+  $('#divctl2').innerHTML=(grp&&subSet.has(ui.div))?grp.subs.map(([d,n])=>`<button class="divbtn ${ui.div===d?'on':''}" data-act="div" data-d="${d}" aria-pressed="${ui.div===d}">${esc(n)}<span class="n">${leagueClubs(ui.country,d).length}</span></button>`).join(''):'';
+  const SM=$('#s-map');if(SM)SM.classList.toggle('grp',!!(grp&&subSet.has(ui.div)));
 }
 function pinLL(city){const i=CITY[city]||{ll:COUNTRIES[ui.country].pin};const ins=COUNTRIES[ui.country].inset;return i.inset&&ins?insPt(ins,i.ll):i.ll}
 /* Un pin por club, con punto exacto (ciudad real) y línea de referencia */
@@ -10722,7 +11000,7 @@ const ICO_GLOBE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const TROPHY_ICO={league:ICO_TROPHY,cup:ICO_CUP,sc:ICO_SHIELD,lc:ICO_CUP,ucl:ICO_STAR,uel:ICO_CUP,ecl:ICO_CUP,cwc:ICO_SHIELD,sce:ICO_SHIELD,wc:ICO_GLOBE,ic:ICO_GLOBE,cf:ICO_CUP,d2:ICO_TROPHY,d3:ICO_TROPHY,d4:ICO_TROPHY,eflt:ICO_CUP,fat:ICO_CUP,scc:ICO_CUP,lp2:ICO_CUP,cisc:ICO_CUP};
 const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Copa de Turquía',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup'};
 const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica'};
-const TROPHY_ORDER=['league','cup','sc','lc','ucl','uel','ecl','cwc','sce','wc','ic','ifc','cf','d2','d3','d4','d5','eflt','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
+const TROPHY_ORDER=['league','cup','sc','lc','ucl','uel','ecl','cwc','sce','wc','ic','ifc','cf','cofed','d2','d3','d4','d5','eflt','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
 function trophyName(club,k){
   const co=club.co;
   if(k==='league')return(COUNTRIES[co]&&COUNTRIES[co].divs[0])||'Liga';
@@ -10739,11 +11017,11 @@ function trophyName(club,k){
   if(k==='balon')return'Balón de Oro';
   if(k==='golden')return'Golden Boy';
   if(k==='yashin')return'Trofeo Yashin';
-  return{ucl:'Champions League',uel:'Europa League',ecl:'Conference League',cwc:'Recopa de Europa',sce:'Supercopa de Europa',wc:'Mundial de Clubes',ic:'Copa Intercontinental',ifc:'Copa Intercontinental de la FIFA',cf:'Copa de Ferias',scc:'Supercoppa Serie C',lp2:'Lega Pro 2',cisc:'Coppa Italia Serie C'}[k]||k;
+  return{ucl:'Champions League',uel:'Europa League',ecl:'Conference League',cwc:'Recopa de Europa',sce:'Supercopa de Europa',wc:'Mundial de Clubes',ic:'Copa Intercontinental',ifc:'Copa Intercontinental de la FIFA',cf:'Copa de Ferias',cofed:'Copa Federación',scc:'Supercoppa Serie C',lp2:'Lega Pro 2',cisc:'Coppa Italia Serie C'}[k]||k;
 }
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d4:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',d4:'178',d5:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',d4:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},NL:{league:'9',cup:'524',sc:'298',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},BE:{league:'12',cup:'651',sc:'676',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',d4:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},AT:{league:'11',cup:'1562'}};
-const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668'};
+const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668'};
 function trophyImg(club,k){
   const co=club&&club.co;
   const v=(TROPHY_IMG_CO[co]&&TROPHY_IMG_CO[co][k])||TROPHY_IMG_ANY[k]||INDIV_TROPHY_IMG[k];
@@ -10815,7 +11093,7 @@ const PALMARES={
  RSB:{d4:5},
  CFO:{d4:3},
  ZAR:{cup:6,cwc:1,cf:1,d2:1,d4:2,sc:1},
-  HUE:{d2:1},REC:{d2:1},HER:{d2:1},CUL:{d2:1},RMAB:{d2:1},RMU:{d2:5},ACOY:{d2:3},MER:{d2:2},XER:{d2:1},NUM:{d2:1},LLE:{d2:1},RBUR:{d2:1},CDM:{d2:1},ADA:{d2:1},PONV:{d2:1},
+  HUE:{d2:1,d4:6},REC:{d2:1},HER:{d2:3,d4:5},CUL:{d2:1,d3:2,d4:4},RMAB:{d2:1},RMU:{d2:9,d3:2,cofed:1,d4:3},ACOY:{d2:3},MER:{d4:2},XER:{d2:1},NUM:{d2:1},LLE:{d2:1},RBUR:{d2:1},CDM:{d2:1},ADA:{d2:1},PONV:{d2:2,d3:2,d4:10,cofed:2},
  /* Alemania (2. Bundesliga) */
  F95:{d2:2,cup:2},WMA:{d2:1},M60:{league:1,d2:1,cup:2},FCI:{d2:1},HRO:{d2:1},SKI:{d2:1},HOM:{d2:1,cup:1},TEB:{d2:1},
  FCN:{league:1,cup:4,d2:2,d4:2,d5:4},
@@ -10963,7 +11241,7 @@ const PALMARES={
  DEP:{league:1,cup:2,d2:4,sc:3,d3:1},
  RSO:{league:2,cup:3,d2:4,sc:1},
  ESP:{cup:4,d2:2},
- BET:{league:1,cup:3,d2:7,d4:1},RUS:{cup:3},GETX:{cup:1},CCS:{cup:1},
+ BET:{league:1,cup:3,d2:7,d4:1},RUS:{cup:3,d3:1,d4:6,cofed:1},GETX:{cup:1,d4:4},CCS:{cup:1},
  VIL:{uel:1,d4:1},
  CEL:{d2:4,d3:1,d4:1},
  ALA:{d2:4,d3:4,d4:7},
@@ -11053,7 +11331,38 @@ USG:{league:12,cup:2,sc:2,d2:1,d3:1},
   HAR:{d3:3},
   TIR:{d2:1,d3:2},
   AUL:{d2:3},
-};
+
+  /* Primera RFEF (Grupo 1) */
+  BARA:{d3:3,d5:1,d4:8},
+  BIL:{d3:2,d4:3},
+  EXT:{d4:1,d5:1,cofed:1},
+  LUG:{d4:4},
+  CACE:{d3:1,d4:13},
+  FAB:{d4:6,d5:1},
+  MIR:{d4:4,cofed:1},
+  PON:{d3:2,d4:3},
+  FER:{d3:2,d4:11},
+  AVIL:{d3:1,d4:8},
+  LOG:{d3:1},
+  UNI:{d4:1},
+  OUR:{d5:1},
+  ZAM:{d4:7},
+  /* Primera RFEF (Grupo 2) */
+  AMM:{d3:3,d5:1,d4:1},
+  ALG:{d3:1,d4:7},
+  ANQ:{d4:1},
+  TRL:{d4:5},
+  AGU:{d5:1,d4:1},
+  CTG:{d3:2,d4:2},
+  NAS:{d3:1,d4:6},
+  TRM:{d4:1,d5:2},
+  EUR:{d4:4,d5:1},
+  RMJ:{d4:4},
+  JAE:{d2:2,d3:1,cofed:1,d4:6},
+  STA:{d3:1,d4:5},
+  VILB:{d4:1},
+  IBI:{d3:1,d4:3},
+  RMC:{d2:1,d3:4}};
 /* total oficial indicado por la fuente (el desglose puede sumar mas por solapes entre competiciones) */
 const PAL_TOTAL={RMA:99,FCB:97};
 const honorsOf=id=>(typeof state!=='undefined'&&state&&state.honors&&state.honors[id])||{};
@@ -11486,7 +11795,7 @@ home(){
     const st=standings();
     next=`<div class="card next"><div class="card-h"><h3>Temporada terminada</h3><span>Campeón: ${esc(CLUBBY[st[0].id].name)}</span></div><p class="muted-s" style="margin-bottom:14px">Has acabado ${pos}º. La directiva te ingresará ${fmtM(Math.max(0,13-pos)*3)} por la clasificación.</p><button class="btn primary" data-act="newseason">Empezar la temporada ${state.season+1}</button><button class="btn ghost" style="margin-top:8px;width:100%" data-act="season-summary">Resumen temporada</button></div>`;
   }
-  const fin=state.fin?`<div class="card"><div class="card-h"><h3>Finanzas de la última jornada</h3></div><div class="stats" style="border:0;margin:0;padding:0"><div><small>Ingresos</small><b>${fmtM(state.fin.inc)}</b></div><div><small>Gastos (nómina y mantenimiento)</small><b>${fmtM(state.fin.exp)}</b></div><div><small>Balance</small><b class="${state.fin.inc-state.fin.exp<0?'bad':''}">${fmtM(Math.round((state.fin.inc-state.fin.exp)*10)/10)}</b></div><div><small>Caja</small><b>${fmtM(t.budget)}</b></div></div></div>`:'';
+  const fin=state.fin?`<div class="card"><div class="card-h"><h3>Finanzas de la última jornada</h3></div><div class="stats" style="border:0;margin:0;padding:0"><div><small>Ingresos</small><b>${fmtM(state.fin.inc)}</b></div><div><small>Gastos</small><b>${fmtM(state.fin.exp)}</b></div><div><small>Balance</small><b class="${state.fin.inc-state.fin.exp<0?'bad':''}">${fmtM(Math.round((state.fin.inc-state.fin.exp)*10)/10)}</b></div><div><small>Caja</small><b>${fmtM(t.budget)}</b></div></div></div>`:'';
   const cl=Object.keys(state.cups||{}).map(k=>{const c=state.cups[k],st=myCupStatus(c);return st?`<div class="cupline"><b>${esc(c.name)}</b><span class="${st.out?'bad':''}">${esc(cupStatusText(st))}</span></div>`:''}).join('');
   const offs=[];me().players.forEach(p=>{(p.offers||[]).forEach(o=>offs.push({p,o}));(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1}))});if(state.fam)state.fam.players.forEach(p=>(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1})));
   const offCard=offs.length?`<div class="card"><div class="card-h"><h3>Ofertas de traspaso</h3><span>${offs.length} pendiente${offs.length>1?'s':''}</span></div>${offs.slice(0,5).map(x=>`<button class="cupline" style="width:100%;text-align:left" data-act="pl-act" data-id="${x.p.id}"><b>${esc(x.p.n)}</b><span>${x.loan?'Cesión en '+esc(cname(x.o.to))+', '+esc(x.o.role.toLowerCase()):esc(cname(x.o.from))+': '+fmtM(x.o.amt)}</span></button>`).join('')}</div>`:'';
@@ -11794,9 +12103,12 @@ const H={
     const n=+t.dataset.n;
     if(await confirmBox('¿Sobrescribir el slot '+n+'?','Se perderá la partida guardada en este slot.','Sobrescribir',true)){deleteSlot(n);askMode(n)}
   },
-  'slot-load'(t){
-    const n=+t.dataset.n,s=readSlot(n);
-    if(!s){toast('No se pudo leer esa partida');renderSlots();return}
+  async 'slot-load'(t){
+    const n=+t.dataset.n;
+    let raw=Store.get('mister.slot.'+n);
+    if(!raw)raw=await IDB.get('slot.'+n);
+    let s=null;try{s=raw?JSON.parse(raw):null}catch(e){s=null}
+    if(!s||s.v!==1||!s.teams){toast('No se pudo leer esa partida');renderSlots();return}
     try{
       state=s;state.slot=n;migrateUclIfNeeded();ensureState();enterGame();
     }catch(e){
@@ -11809,6 +12121,30 @@ const H={
   async 'slot-del'(t){
     const n=+t.dataset.n;
     if(await confirmBox('¿Borrar el slot '+n+'?','La partida se eliminará de este navegador y no se puede recuperar.','Borrar partida',true)){deleteSlot(n);renderSlots();toast('Partida borrada')}
+  },
+  async 'slot-export'(t){
+    const n=+t.dataset.n;
+    let raw=Store.get('mister.slot.'+n);
+    if(!raw)raw=await IDB.get('slot.'+n);
+    if(!raw){toast('No hay guardado que exportar');return}
+    downloadSave(raw,'mister_slot_'+n+'.json');toast('Slot '+n+' exportado a archivo');
+  },
+  'slot-import'(t){
+    const n=t.dataset.n;
+    const inp=document.createElement('input');
+    inp.type='file';inp.accept='.json,application/json';
+    inp.onchange=()=>{const f=inp.files&&inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>importJSON(String(r.result||''),n);r.readAsText(f)};
+    inp.click();
+  },
+  async 'imp-slot'(t){
+    const n=+t.dataset.n,im=ui.importing;if(!im)return;
+    if(readSlot(n)&&!(await confirmBox('¿Sobrescribir el slot '+n+'?','Hay una partida guardada en ese slot.','Sobrescribir',true)))return;
+    storeImport(n,im.s,im.meta);
+  },
+  'export-save'(){
+    if(!state)return;
+    const c=CLUBBY[state.club],name='mister_'+(c.short||c.id)+'_s'+state.season+'.json';
+    downloadSave(JSON.stringify(state),name);closeSheet();toast('Partida exportada a archivo');
   },
   hotspot(){openEurope()},
   country(t){openCountry(t.dataset.c)},
@@ -12016,7 +12352,7 @@ const H={
   ptop(t){openTop10(t.dataset.k,t.dataset.s)},
   crv(t){const L=leagueData(ui.cc),total=L.fx.length;ui.rvs=ui.rvs||{};ui.rvs[ui.cc]=clamp(leagueRv(ui.cc)+(+t.dataset.d),0,total-1);renderGame()},
   uclrv(t){const key=t.dataset.k,total=state.cups[key].league.fx.length;ui.rvs=ui.rvs||{};ui.rvs[key+'_L']=clamp(uclLeagueRv(key)+(+t.dataset.d),0,total-1);renderGame()},
-  menu(){openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="mgr-profile">Perfil de entrenador</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
+  menu(){openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="export-save">Exportar a archivo</button><button class="btn ghost" data-act="mgr-profile">Perfil de entrenador</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
   'mgr-profile'(){mgrProfileSheet()},
   'save-now'(){saveGame();closeSheet();toast('Partida guardada')},
   exit(){saveGame();closeSheet();state=null;resetDivs();go('title')},
@@ -12070,6 +12406,7 @@ function bindEvents(){
 function init(){
   $('#title-map').innerHTML=worldSVG();
   bindEvents();
+  IDB.open();
 }
 init();
 </script>
