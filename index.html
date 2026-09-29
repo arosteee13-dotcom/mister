@@ -686,6 +686,13 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .tbl tr.me td:first-child{border-radius:10px 0 0 10px}.tbl tr.me td:last-child{border-radius:0 10px 10px 0}
 .ns{display:none}
 .ucltbl .nl{display:none}.ucltbl .ns{display:inline}
+.ucltbl{table-layout:fixed;min-width:0}
+.ucltbl th{font-size:11px;padding:6px 2px}
+.ucltbl td{padding:9px 2px;white-space:nowrap}
+.ucltbl td.tm{overflow:hidden}
+.ucltbl th:nth-child(1),.ucltbl td:nth-child(1){width:30px}
+.ucltbl th:nth-child(3),.ucltbl td:nth-child(3){width:34px}
+.ucltbl th:nth-child(n+4),.ucltbl td:nth-child(n+4){width:33px}
 .abbtbl .nl{display:none}.abbtbl .ns{display:inline}
 @media(max-width:520px){.nl{display:none}.ns{display:inline}}
 .seg{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
@@ -1077,7 +1084,7 @@ const COUNTRIES={
    HU:{name:'Hungría',league:'NB I',divs:['NB I'],pin:[19.0,47.5],polys:[]},
    SA:{name:'Arabia Saudí',league:'Saudi Pro League',divs:['Saudi Pro League'],pin:[45.0,23.9],polys:[]}
 };
-function divName(co,d){const C=COUNTRIES[co];return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
+function divName(co,d){const C=COUNTRIES[co];if(d===2)return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
 function leagueClubs(co,d){return CLUBS.filter(c=>c.co===co&&c.div===(d||1))}
 const LOCKED=[];
 
@@ -4391,7 +4398,11 @@ const BUDGET={ATH:25,ATM:45,CEL:8,ALA:4.5,ELC:3.5,ESP:5,FCB:60,GET:4,LEV:3.8,MAL
 /* presupuesto: parte del dato real/generado del club a su reputación de partida, pero luego SIGUE a la reputación
    actual (10% más por cada punto ganado o perdido). Así un club que sube de reputación de verdad gana recursos de
    verdad, y uno que se hunde los pierde, sea cual sea su fama de partida. */
-const BASE_BUDGET=c=>BUDGET[c.id]!=null?BUDGET[c.id]:Math.round(18+Math.max(0,c.rep-55)*2.4);
+const BASE_BUDGET=c=>{
+  const base=BUDGET[c.id]!=null?BUDGET[c.id]:Math.round(18+Math.max(0,c.rep-55)*2.4);
+  /* un club que ha descendido de 1ª a 2ª genera mucho menos: su presupuesto base se reduce a la mitad hasta que ascienda */
+  return state&&state.relegated&&state.relegated[c.id]?Math.max(.1,Math.round(base*.5*100)/100):base;
+};
 const budgetFor=c=>{
   if(isB(c.id)){const pid=FAMILY[c.id],pb=pid&&CLUBBY[pid]?budgetFor(CLUBBY[pid]):8;return Math.max(.1,Math.round(pb*.02*100)/100)}
   const base=BASE_BUDGET(c),factor=Math.pow(1.1,repOf(c.id)-c.rep);
@@ -7506,13 +7517,27 @@ function simMatch(m){
   rateXI(H,m.hg>m.ag?1:m.hg<m.ag?-1:0,aH,m.h);rateXI(A,m.ag>m.hg?1:m.ag<m.hg?-1:0,aA,m.a);
   tally(m.h,m.hg,m.ag);tally(m.a,m.ag,m.hg);wear(H,m.h);wear(A,m.a);
 }
+/* TV por categoría: ingresos estables según la división (1ª y 2ª), en M€/semana */
+const TV_WEEK={1:.5,2:.08};
+/* finanzas semanales de un club de tu liga: TV por categoría + comercial (por tamaño real) + taquilla (solo en casa,
+   proporcional a la afluencia = reputación/GRL del once) menos nómina y mantenimiento (que sube con la reputación). */
+function weekFinance(id,home){
+  const c=CLUBBY[id];
+  const tv=TV_WEEK[c.div]||0;
+  const comercial=budgetFor(c)*.01;
+  const gate=home?clamp(repOf(id)-45,0,55)*.018:0;
+  const wages=(id===state.club?wageBill():wageK(state.teams[id].players))/1000;
+  const mant=clamp(repOf(id)-50,0,48)*.014;
+  const inc=r1(tv+comercial+gate);
+  const exp=r1(wages+mant);
+  state.teams[id].budget=r1(state.teams[id].budget+inc-exp);
+  return{inc,exp};
+}
 function finance(round){
-  const t=me(),c=CLUBBY[state.club],wk=wageBill()/1000,home=round.some(m=>m.h===state.club);
-  /* los ingresos dependen del tamaño real del club (presupuesto/reputación), no de lo que te gastes en sueldos:
-     si tu nómina se dispara por encima de lo que tu club puede generar, entras en pérdidas de verdad */
-  const inc=Math.round((budgetFor(c)*.028+(home?.4+repOf(state.club)*.01:0))*10)/10;
-  t.budget=Math.round((t.budget+inc-wk)*10)/10;
-  state.fin={inc,exp:Math.round(wk*10)/10};
+  const mine=weekFinance(state.club,round.some(m=>m.h===state.club));
+  state.fin={inc:mine.inc,exp:mine.exp};
+  /* financiera ligera para los demás clubes de tu división (los filiales no generan ingresos propios) */
+  Object.keys(state.teams).forEach(id=>{if(id!==state.club&&!isB(id))weekFinance(id,round.some(m=>m.h===id))});
 }
 /* ============ FASE DE LIGA (JORNADAS) ============ */
 function playLeagueStage(){
@@ -7845,10 +7870,11 @@ function myMoveTxt(){
   return r.up.includes(state.club)?`¡Ascenso! Jugarás en ${divName(state.country,1)}.`:r.down.includes(state.club)?`Descenso: jugarás en ${divName(state.country,2)}.`:'';
 }
 function applyMoves(){
-  const res=state.po.res;state.divs=state.divs||{};
+  const res=state.po.res;state.divs=state.divs||{};state.relegated=state.relegated||{};
   PLAYABLE.forEach(co=>{
     const r=res[co];if(!r)return;
-    (r.up||[]).forEach(id=>{state.divs[id]=1});(r.down||[]).forEach(id=>{state.divs[id]=2});
+    (r.up||[]).forEach(id=>{state.divs[id]=1;delete state.relegated[id]});
+    (r.down||[]).forEach(id=>{state.divs[id]=2;const c=CLUBBY[id];if(c&&c.div===1)state.relegated[id]=1});
     news(`${FLAG[co]} Ascienden a ${divName(co,1)}: ${(r.up||[]).map(cname).join(', ')}. Descienden a ${divName(co,2)}: ${(r.down||[]).map(cname).join(', ')}.`);
   });
   Object.keys(state.divs).forEach(id=>{if(state.divs[id]===BASE_DIV[id])delete state.divs[id]});
@@ -7914,6 +7940,7 @@ function newSeason(){
   }
   if(!state.po)setupPlayoffs();
   poRunAll();
+  raidRelegated();
   evolveReputations();
   const myMove=myMoveTxt();
   const pos=posOf(state.club),t=me(),prize=Math.max(0,13-pos)*3;
@@ -9324,40 +9351,72 @@ function rollGoals(l){const N=l/.3,n=Math.floor(N)+(Math.random()<N%1?1:0);let g
 function sortTable(tb){
   return Object.keys(tb).map(id=>({id,...tb[id]})).sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||cname(a.id).localeCompare(cname(b.id)));
 }
-/* reputación de los clubes al final de temporada: sube o baja según si el rendimiento (posición final)
-   se aleja del esperado según su reputación de partida, con un empujón extra por título/ascenso/descenso.
-   Movimiento acotado (±3/temporada, hasta ±9 en una gran temporada) y con techo/suelo fijos en 20-99 para todos los clubes por igual: */
+/* reputación de los clubes al final de temporada: sigue el GRL medio del mejor once (xiAvgOvr), no la posición ni
+   la división ni el palmarés. Si un club se queda sin sus mejores jugadores (p. ej. tras descender), su once baja
+   y con él su reputación. Movimiento acotado a [20,99]. */
 function evolveReputations(){
   state.rep=state.rep||{};state.repDelta={};
-  const results={};
+  const ids=new Set();
   PLAYABLE.forEach(co=>[1,2].forEach(d=>{
-    const L=leagueData(co+d),tb=sortTable(L.tb);
-    tb.forEach((row,i)=>{results[row.id]={pos:i+1,co,div:d}});
+    const key=co+d;
+    if(key==='PT2'||key==='NL2'||key==='BE2'||key==='AT2')return;
+    leagueClubs(co,d).forEach(c=>ids.add(c.id));
   }));
-  const res=(state.po&&state.po.res)||{};
-  PLAYABLE.forEach(co=>{
-    const r=res[co];if(!r)return;
-    (r.up||[]).forEach(id=>{if(results[id])results[id].promoted=1});
-    (r.down||[]).forEach(id=>{if(results[id])results[id].relegated=1});
-  });
-  PLAYABLE.forEach(co=>{
-    const top=sortTable(leagueData(co+'1').tb)[0];
-    if(top&&results[top.id])results[top.id].champion=1;
-  });
-  Object.keys(results).forEach(id=>{
+  ids.forEach(id=>{
     const c=CLUBBY[id];if(!c)return;
-    const R=results[id],list=CLUBS.filter(x=>x.co===R.co&&x.div===R.div).sort((a,b)=>repOf(b.id)-repOf(a.id)),n=list.length||1;
-    const expected=list.findIndex(x=>x.id===id)+1||n,diff=expected-R.pos;
-    let delta=clamp(Math.round(diff*.4),-3,3);
-    if(R.champion)delta+=2;
-    if(R.promoted)delta+=4;
-    if(R.relegated)delta-=4;
-    if(!delta)return;
-    const cur=repOf(id),next=clamp(cur+delta,20,99);
+    const xi=xiAvgOvr(previewTeam(id));
+    const cur=repOf(id),next=clamp(xi,20,99);
     if(next!==cur){state.rep[id]=next;state.repDelta[id]=next-cur}
   });
-  if(results[state.club]&&results[state.club].promoted){state.mgrLog=state.mgrLog||[];const R=results[state.club];state.mgrLog.push({s:state.season,club:state.club,k:'promo',dn:divName(R.co,R.div-1)});}
-  if(results[state.club]&&results[state.club].relegated){state.mgrLog=state.mgrLog||[];const R=results[state.club];state.mgrLog.push({s:state.season,club:state.club,k:'releg',dn:divName(R.co,R.div+1)});}
+  if(state.po&&state.po.res){
+    const r=state.po.res[state.country],club=CLUBBY[state.club];if(!r||!club)return;
+    if(r.up.includes(state.club)){state.mgrLog=state.mgrLog||[];state.mgrLog.push({s:state.season,club:state.club,k:'promo',dn:divName(club.co,club.div-1)});}
+    else if(r.down.includes(state.club)){state.mgrLog=state.mgrLog||[];state.mgrLog.push({s:state.season,club:state.club,k:'releg',dn:divName(club.co,club.div+1)});}
+  }
+}
+/* Descenso de 1ª a 2ª: el presupuesto baja a niveles de segunda y el club pierde a sus 3 mejores jugadores (salvo tu
+   club, que decide tú): los ficha un club más grande que necesite esa posición, y el dinero entra en la caja del
+   descendido para que pueda reconstruir. */
+function raidRelegated(){
+  if(!state||!state.po||!state.po.res)return;
+  state.gone=state.gone||{};state.arrivals=state.arrivals||{};
+  const res=state.po.res;
+  const rel=[];
+  PLAYABLE.forEach(co=>{const r=res[co];if(!r)return;(r.down||[]).forEach(id=>{const c=CLUBBY[id];if(c&&c.div===1)rel.push(id)})});
+  if(!rel.length)return;
+  rel.forEach(id=>{if(state.teams[id])state.teams[id].budget=Math.max(.1,r1(state.teams[id].budget*.5))});
+  const ai=rel.filter(id=>id!==state.club);
+  if(!ai.length)return;
+  const weak=(T,pos)=>{const n=FORMS[T.formation].filter(x=>x[0]===pos).length,o=T.players.filter(p=>p.pos===pos).map(p=>p.ovr).sort((a,b)=>b-a);return o[n-1]!=null?o[n-1]:0};
+  const fee=p=>Math.max(.1,r1(p.val*(1.05+Math.random()*.3)));
+  const teamOf=id=>state.teams[id]||previewTeam(id);
+  const changed=new Set(),notable=[];
+  ai.forEach(sid=>{
+    const S=(state.teams[sid]&&state.teams[sid].players)||squadFor(sid);
+    const tops=S.filter(p=>!p.loanIn).sort((a,b)=>b.ovr-a.ovr).slice(0,3);
+    tops.forEach(p=>{
+      const cand=Object.keys(CLUBBY).filter(id=>{
+        const c=CLUBBY[id];if(!c||isB(id)||id===sid||rel.includes(id)||id===state.club||repOf(id)<repOf(sid)-1)return false;
+        if(state.teams[id]&&state.teams[id].players.some(q=>q.id===p.id))return false;
+        if(!canJoin(id,p)||p.ovr<weak(teamOf(id),p.pos))return false;
+        return true;
+      }).sort((a,b)=>repOf(b)-repOf(a)||cname(a).localeCompare(cname(b)));
+      if(!cand.length)return;
+      const to=cand[0],BT=state.teams[to],amt=fee(p);
+      if(BT&&BT.budget<amt)return;
+      if(state.teams[sid]){state.teams[sid].players=state.teams[sid].players.filter(q=>q.id!==p.id)}
+      else state.gone[p.id]=1;
+      if(BT){if(!BT.players.some(q=>q.id===p.id))BT.players.push(p)}
+      else (state.arrivals[to]=state.arrivals[to]||[]).push(p);
+      if(state.teams[sid]&&BT){state.teams[sid].budget=r1(state.teams[sid].budget+amt);BT.budget=r1(BT.budget-amt)}
+      else if(state.teams[sid])state.teams[sid].budget=r1(state.teams[sid].budget+amt*.7);
+      if(p.ovr>=68&&notable.length<6)notable.push(`${cname(to)} ficha a ${p.n} (${p.ovr}, ${p.age} años) del descendido ${cname(sid)} por ${fmtM(amt)}.`);
+      changed.add(sid);changed.add(to);
+    });
+  });
+  changed.forEach(id=>{const T=state.teams[id];if(T){aiFillMin(id);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)}});
+  if(changed.size)invalidateSquads(Array.from(changed));
+  notable.forEach(n=>news(n));
 }
 function liteRound(L,r){
   L.fx[r].forEach(m=>{
@@ -9970,7 +10029,7 @@ function ccListHTML(){
 function ccViewOpts(key){
   const cup=isCup(key);
   if(key==='UCL'||key==='UEL'||key==='ECL')return[['lg','Clasificación'],['ko','Eliminatorias'],['cal','Calendario'],['stats','Estadísticas'],['rep','Reputación'],['pal','Palmarés']];
-  if(key==='UCLQ'||key==='UELQ'||key==='ECLQ')return[['table','Resultado']];
+  if(key==='UCLQ'||key==='UELQ'||key==='ECLQ')return[['table','Resultado'],['cal','Calendario'],['stats','Estadísticas'],['rep','Reputación']];
   return[['table',cup?'Cuadro':'Clasificación'],['cal','Calendario'],['stats','Estadísticas'],['rep','Reputación'],['pal','Palmarés']];
 }
 function uclQualHTML(key){
@@ -9978,6 +10037,48 @@ function uclQualHTML(key){
   if(!eq)return'<div class="card"><p class="muted-s">Esta temporada la fase previa ya está resuelta desde el principio (son los equipos de la temporada 1).</p></div>';
   return eq.rounds.map(R=>`<div class="card"><div class="card-h"><h3>${esc(R.n)}</h3></div>${R.ties.map(tieRow).join('')}</div>`).join('')
     +'<p class="hint">Los ganadores de la ronda de play-offs ocupan las 4 plazas de la fase de liga que no tienen dueño fijo.</p>';
+}
+/* Calendario de la fase previa: doble partido por eliminatoria con el agregado como desempate */
+function uclQualCalHTML(key){
+  const eq=state.euroQual&&state.euroQual[key];
+  if(!eq)return'<div class="card"><p class="muted-s">Esta temporada la fase previa ya está resuelta desde el principio (son los equipos de la temporada 1).</p></div>';
+  const leg=(h,a,L,lab)=>`<div class="res"><span class="chip-s" style="flex:none">${lab}</span>${teamCell(h,false,false)}<b>${L&&L.hg!==undefined?L.hg+' - '+L.ag:'vs'}</b>${teamCell(a,false,true)}</div>`;
+  return`<p class="hint" style="margin:2px 2px 10px">Calendario de la fase previa: doble partido por eliminatoria, el marcador agregado decide el pase.</p>`
+    +eq.rounds.map(R=>`<div class="card"><div class="card-h"><h3>${esc(R.n)}</h3></div>${(R.ties||[]).map(t=>`<div class="rd"><div class="rd-h"><b>${esc(cname(t.h))} - ${esc(cname(t.a))}</b></div>${leg(t.h,t.a,t.l&&t.l[0],'Ida')}${leg(t.a,t.h,t.l&&t.l[1],'Vuelta')}<p class="muted-s" style="margin-top:6px">Agregado: <b>${t.hg}-${t.ag}</b> · Pasa ${esc(cname(t.w))}</p></div>`).join('')}</div>`).join('');
+}
+/* Estadísticas de la fase previa (solo de estos partidos: no se suman a las de la fase de liga) */
+function uclQualStatsHTML(key){
+  const eq=state.euroQual&&state.euroQual[key];
+  if(!eq)return'<div class="card"><p class="muted-s">Esta temporada la fase previa ya está resuelta desde el principio (son los equipos de la temporada 1).</p></div>';
+  let n=0,big=null,hi=null;const tm={};
+  eq.rounds.forEach(R=>(R.ties||[]).forEach(t=>{
+    if(t.hg===undefined)return;n++;
+    const d=Math.abs(t.hg-t.ag),tt=t.hg+t.ag;
+    if(!big||d>big.d||(d===big.d&&tt>big.tt))big={m:t,d,tt};
+    if(!hi||tt>hi.tt)hi={m:t,tt};
+    [[t.h,t.hg,t.ag],[t.a,t.ag,t.hg]].forEach(([id,f,c])=>{const r=tm[id]||(tm[id]={id,gf:0,ga:0,p:0});r.gf+=f;r.ga+=c;r.p++});
+  }));
+  if(!n)return'<div class="card"><p class="muted-s">Todavía no se ha jugado ninguna eliminatoria.</p></div>';
+  const line=t=>`${teamLink(t.h)} ${t.hg}-${t.ag} ${teamLink(t.a)}`;
+  return`<div class="card"><div class="statgrid">
+  ${bestAttDef(Object.values(tm))}
+  ${tile('Mayor goleada',line(big.m),'',1)}${tile('Partido con más goles',line(hi.m),hi.tt+' goles',1)}</div></div>
+  <p class="hint">Estadísticas solo de la fase previa: no se suman a las de la fase de liga.</p>`;
+}
+/* Reputación de los clubes que disputan la fase previa */
+function qualRepHTML(key){
+  const eq=state.euroQual&&state.euroQual[key];
+  if(!eq)return'<div class="card"><p class="muted-s">Esta temporada la fase previa ya está resuelta desde el principio (son los equipos de la temporada 1).</p></div>';
+  const ids=[...new Set(eq.rounds.flatMap(R=>(R.ties||[]).flatMap(t=>[t.h,t.a])))].filter(id=>CLUBBY[id]);
+  ids.sort((a,b)=>repOf(b)-repOf(a)||cname(a).localeCompare(cname(b)));
+  const rows=ids.map((id,i)=>{const c=CLUBBY[id],r=repOf(id);
+    return`<button class="lrow${id===state.club?' sel':''}" data-act="club-view" data-club="${id}">
+      <span class="muted-s" style="width:22px;text-align:right">${i+1}</span>${crestHTML(c,32)}
+      <span class="lt"><b>${esc(c.name)}</b><small>${esc(c.city)}</small></span>
+      <span class="lstat"><small class="lrep">${starsFracHTML(r)} ${r}</small></span>
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
+  }).join('');
+  return`<p class="hint" style="margin:2px 2px 10px">Reputación actual de los clubes que disputan esta fase previa, de mayor a menor.</p><div style="display:flex;flex-direction:column;gap:10px">${rows}</div>`;
 }
 /* Reputación de los clubes de una competición (liga: los que están ahora en esa división; copa: los participantes).
    La reputación se recalcula al empezar cada temporada según posición final, títulos, ascensos y descensos. */
@@ -10047,7 +10148,10 @@ function viewComps(){
   let body;
   const qualOf={UCLQ:'ucl',UELQ:'uel',ECLQ:'ecl'}[key];
   if(qualOf){
-    body=uclQualHTML(qualOf);
+    body=ui.ct==='rep'?qualRepHTML(qualOf)
+      :ui.ct==='cal'?uclQualCalHTML(qualOf)
+      :ui.ct==='stats'?uclQualStatsHTML(qualOf)
+      :uclQualHTML(qualOf);
   }else if(ui.ct==='rep'){
     body=repListHTML(key);
   }else if(state.cups[key]&&state.cups[key].league){
@@ -11382,7 +11486,7 @@ home(){
     const st=standings();
     next=`<div class="card next"><div class="card-h"><h3>Temporada terminada</h3><span>Campeón: ${esc(CLUBBY[st[0].id].name)}</span></div><p class="muted-s" style="margin-bottom:14px">Has acabado ${pos}º. La directiva te ingresará ${fmtM(Math.max(0,13-pos)*3)} por la clasificación.</p><button class="btn primary" data-act="newseason">Empezar la temporada ${state.season+1}</button><button class="btn ghost" style="margin-top:8px;width:100%" data-act="season-summary">Resumen temporada</button></div>`;
   }
-  const fin=state.fin?`<div class="card"><div class="card-h"><h3>Finanzas de la última jornada</h3></div><div class="stats" style="border:0;margin:0;padding:0"><div><small>Ingresos</small><b>${fmtM(state.fin.inc)}</b></div><div><small>Salarios</small><b>${fmtM(state.fin.exp)}</b></div><div><small>Balance</small><b class="${state.fin.inc-state.fin.exp<0?'bad':''}">${fmtM(Math.round((state.fin.inc-state.fin.exp)*10)/10)}</b></div><div><small>Caja</small><b>${fmtM(t.budget)}</b></div></div></div>`:'';
+  const fin=state.fin?`<div class="card"><div class="card-h"><h3>Finanzas de la última jornada</h3></div><div class="stats" style="border:0;margin:0;padding:0"><div><small>Ingresos</small><b>${fmtM(state.fin.inc)}</b></div><div><small>Gastos (nómina y mantenimiento)</small><b>${fmtM(state.fin.exp)}</b></div><div><small>Balance</small><b class="${state.fin.inc-state.fin.exp<0?'bad':''}">${fmtM(Math.round((state.fin.inc-state.fin.exp)*10)/10)}</b></div><div><small>Caja</small><b>${fmtM(t.budget)}</b></div></div></div>`:'';
   const cl=Object.keys(state.cups||{}).map(k=>{const c=state.cups[k],st=myCupStatus(c);return st?`<div class="cupline"><b>${esc(c.name)}</b><span class="${st.out?'bad':''}">${esc(cupStatusText(st))}</span></div>`:''}).join('');
   const offs=[];me().players.forEach(p=>{(p.offers||[]).forEach(o=>offs.push({p,o}));(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1}))});if(state.fam)state.fam.players.forEach(p=>(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1})));
   const offCard=offs.length?`<div class="card"><div class="card-h"><h3>Ofertas de traspaso</h3><span>${offs.length} pendiente${offs.length>1?'s':''}</span></div>${offs.slice(0,5).map(x=>`<button class="cupline" style="width:100%;text-align:left" data-act="pl-act" data-id="${x.p.id}"><b>${esc(x.p.n)}</b><span>${x.loan?'Cesión en '+esc(cname(x.o.to))+', '+esc(x.o.role.toLowerCase()):esc(cname(x.o.from))+': '+fmtM(x.o.amt)}</span></button>`).join('')}</div>`:'';
@@ -11643,7 +11747,7 @@ function teamStatCardsHTML(){
     return best;
   };
   const cats=[
-    {label:'Más partidos',unit:'partidos',best:pick(p=>p.ap||0)},
+    {label:'Más partidos jugados',unit:'partidos',best:pick(p=>p.ap||0)},
     {label:'Máximo goleador',unit:'goles',best:pick(p=>p.g||0)},
     {label:'Máximo asistente',unit:'asistencias',best:pick(p=>p.as||0)},
     {label:'Más tarjetas amarillas',unit:'amarillas',best:pick(p=>p.yc||0)},
