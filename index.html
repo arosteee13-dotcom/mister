@@ -5781,7 +5781,7 @@ function mktSheetHTML(){
   const f=ui.mkt,fam=state.fam?state.fam.id:null;
   /* país de la liga -> liga -> equipo: cada nivel solo se activa cuando se ha elegido el anterior */
   const countries=PLAYABLE.filter(c=>CLUBS.some(x=>x.co===c));
-  const leagues=f.country==='ALL'?[]:COUNTRIES[f.country].divs.map((n,i)=>[f.country+(i+1),n,i+1]).filter(([k,n,d])=>CLUBS.some(x=>x.co===f.country&&(x.div||1)===d));
+  const leagues=f.country==='ALL'?[]:COUNTRIES[f.country].divs.map((n,i)=>[f.country+(i+1),n,i+1]).filter(([k,n,d])=>CLUBS.some(x=>x.co===f.country&&(x.div||1)===d)&&k!=='PT2');
   const teamOpts=f.league==='ALL'?[]:CLUBS.filter(x=>x.co+(x.div||1)===f.league&&x.id!==state.club&&x.id!==fam).map(x=>x.id).sort((a,b)=>cname(a).localeCompare(cname(b)));
   const nats=[...new Set(state.market.map(p=>p.nat).filter(Boolean).concat(f.country==='ALL'&&!f.q?[]:mktEntries(Object.assign({},f,{nat:'ALL'})).map(e=>e.p.nat).filter(Boolean)))].sort((a,b)=>(NATNAME[a]||a).localeCompare(NATNAME[b]||b));
   const opts=(o,cur)=>o.map(([v,l])=>`<option value="${v}"${v===cur?' selected':''}>${esc(l)}</option>`).join('');
@@ -7922,6 +7922,7 @@ function initWorld(){
   state.lk=userKey();state.others={};state.cups={};
   PLAYABLE.forEach(co=>[1,2].forEach(d=>{
     const key=co+d;if(key===state.lk)return;
+    if(key==='PT2')return;
     const ids=leagueClubs(co,d).map(c=>c.id);
     state.others[key]={fx:makeFixtures(ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
   }));
@@ -7987,7 +7988,9 @@ function ensureWorld(){
 }
 function leagueData(key){
   if(key===userKey())return{key,fx:state.fixtures,tb:state.table,mine:true};
-  const L=state.others[key];return{key,fx:L.fx,tb:L.tb,sc:L.sc,mine:false};
+  const L=state.others[key];
+  if(!L)return{key,fx:[],tb:{},sc:{},mine:false};
+  return{key,fx:L.fx,tb:L.tb,sc:L.sc,mine:false};
 }
 function leagueScorers(key){
   const by=(a,b)=>b.g-a.g||a.n.localeCompare(b.n);
@@ -8623,7 +8626,7 @@ function renderCountry(cid){
 }
 function renderDivCtl(){
   const C=COUNTRIES[ui.country];
-  const divs=C.divs.map((n,i)=>({n,d:i+1})).filter(x=>leagueClubs(ui.country,x.d).length>1);
+  const divs=C.divs.map((n,i)=>({n,d:i+1})).filter(x=>leagueClubs(ui.country,x.d).length>1&&!(ui.country==='PT'&&x.d===2));
   $('#divctl').innerHTML=divs.map(({n,d})=>`<button class="divbtn ${ui.div===d?'on':''}" data-act="div" data-d="${d}" aria-pressed="${ui.div===d}">${esc(n)}<span class="n">${leagueClubs(ui.country,d).length}</span></button>`).join('');
 }
 function pinLL(city){const i=CITY[city]||{ll:COUNTRIES[ui.country].pin};const ins=COUNTRIES[ui.country].inset;return i.inset&&ins?insPt(ins,i.ll):i.ll}
