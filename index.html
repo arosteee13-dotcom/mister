@@ -1274,7 +1274,7 @@ const LEGACY=[K2('DES','Defensor Sporting','Defensor','Montevideo','UY','#8b1a1a
  K2('GOZ','Göztepe','Göztepe','Esmirna','TR','#f4d31b','#d4192b',58),K2('RAK','Raków Częstochowa','Raków','Częstochowa','PL','#d4192b','#f4f4f4',60),K2('LUD','Ludogorets II','Ludogorets II','Razgrad','BG','#1c8f3f','#f4f4f4',50),K2('BPV','Botev Plovdiv','Botev Plovdiv','Plovdiv','BG','#f4d31b','#1a1a1a',54),
  K2('STU','Sturm Graz','Sturm Graz','Graz','AT','#1a1a1a','#f4f4f4',62),K2('SLC','St. Louis City','St. Louis City','San Luis','US','#d4192b','#1c3f94',58),
  K2('WYC','Wycombe Wanderers','Wycombe','High Wycombe','EN','#1c3f94','#f4f4f4',52),K2('HIB','Hibernian','Hibernian','Edimburgo','SC','#1c8f3f','#f4f4f4',60),
- K2('BNB','Benfica II','Benfica II','Lisboa','PT','#d4192b','#f4f4f4',58),K2('DBU','Dinamo Bucureşti','Dinamo','Bucarest','RO','#d4192b','#f4f4f4',55),K2('PEC','PEC Zwolle','PEC','Zwolle','NL','#1c3f94','#f4f4f4',56),K2('FAR','SC Farense','Farense','Faro','PT','#d4192b','#f4f4f4',52),K2('IKS','Ironi Kiryat Shmona','Ironi KS','Kiryat Shmona','IL','#0a8a4a','#f4f4f4',50),K2('NCO','Notts County','Notts County','Nottingham','EN','#1a1a1a','#f4f4f4',52),K2('CLE','Clermont','Clermont','Clermont-Ferrand','FR','#d4192b','#f4f4f4',54),K2('LAF','Los Angeles FC','LAFC','Los Ángeles','US','#1a1a1a','#c9a227',62),K2('GOR','Górnik Zabrze','Górnik','Zabrze','PL','#1c3f94','#d4192b',58),
+ K2('BNB','Benfica II','Benfica II','Lisboa','PT','#d4192b','#f4f4f4',58),K2('DBU','Dinamo Bucureşti','Dinamo','Bucarest','RO','#d4192b','#f4f4f4',55),K2('PEC','PEC Zwolle','PEC','Zwolle','NL','#1c3f94','#f4f4f4',56),K2('FAR','SC Farense','Farense','Faro','PT','#d4192b','#f4f4f4',52),K2('IKS','Ironi Kiryat Shmona','Ironi KS','Kiryat Shmona','IL','#0a8a4a','#f4f4f4',50),K2('WAC','Wolfsberger AC','Wolfsberger','Wolfsberg','AT','#f4f4f4','#0a6a3a',55),K2('FAMB','Famalicão U23','Famalicão U23','Vila Nova de Famalicão','PT','#f4f4f4','#0a3a8a',45),K2('UST','União Desportiva de Santarém','União Santarém','Santarém','PT','#d4192b','#f4f4f4',48),K2('ACB','Athletic Club','Athletic','São João del-Rei','BR','#1a1a1a','#f4f4f4',55),K2('GILB','Gil Vicente II','Gil Vicente II','Barcelos','PT','#d4192b','#f4f4f4',42),K2('MARB','Marítimo II','Marítimo II','Funchal','PT','#f4f4f4','#d4192b',45),K2('MORB','Moreirense II','Moreirense II','Moreira de Cónegos','PT','#0a8a3d','#f4f4f4',43),K2('RAVEB','Rio Ave II','Rio Ave II','Vila do Conde','PT','#0a3a8a','#f4f4f4',44),K2('VITB','Vitória Guimarães B','Vitória B','Guimarães','PT','#f4f4f4','#1a1a1a',44),K2('NCO','Notts County','Notts County','Nottingham','EN','#1a1a1a','#f4f4f4',52),K2('CLE','Clermont','Clermont','Clermont-Ferrand','FR','#d4192b','#f4f4f4',54),K2('LAF','Los Angeles FC','LAFC','Los Ángeles','US','#1a1a1a','#c9a227',62),K2('GOR','Górnik Zabrze','Górnik','Zabrze','PL','#1c3f94','#d4192b',58),
  K2('TOL','Deportes Tolima','Tolima','Ibagué','CO','#f2d31b','#d4192b',56),K2('NPT','Newport County','Newport','Newport','WA','#f2d31b','#1a1a1a',52),
  
  K2('NCU','Newcastle U21','Newcastle U21','Newcastle','EN','#241f20','#f4f4f4',52),K2('AME','América','América','Ciudad de México','MX','#f2d31b','#1c3f94',68),
@@ -1295,7 +1295,7 @@ const CLUBBY=Object.fromEntries([...CLUBS,...LEGACY].map(c=>[c.id,c]));
 /* reputación efectiva de un club dentro de la partida actual: usa el valor evolucionado si existe (ver evolveReputations), si no el de base */
 function repOf(id){return(state&&state.rep&&state.rep[id]!=null)?state.rep[id]:(CLUBBY[id]?CLUBBY[id].rep:55)}
 /* filiales con entidad propia en el juego: nunca generan jugadores ficticios, solo llevan los reales que se les asignen */
-['RSB','CFO','VLP','AMM','BIL','DAB','ILI','ESB','GTB','BETD','SEVB','GIRB','REC','LEGB','MLLB','VILB','OVIB','TENB','RMAB','FCBB','H96B','PSB','SCLB'].forEach(id=>{if(CLUBBY[id])CLUBBY[id].bTeam=1});
+['RSB','CFO','VLP','AMM','BIL','DAB','ILI','ESB','GTB','BETD','SEVB','GIRB','REC','LEGB','MLLB','VILB','OVIB','TENB','RMAB','FCBB','H96B','PSB','SCLB','FAMB','GILB','MARB','MORB','RAVEB','VITB'].forEach(id=>{if(CLUBBY[id])CLUBBY[id].bTeam=1});
 /* escudos reales de clubes (solo se muestran en modo Base de datos) */
 const CLUB_LOGO={
  ATH:'https://cdn.resfu.com/img_data/equipos/347.png?size=120x&lossy=1',ATM:'https://cdn.resfu.com/img_data/equipos/369.png?size=120x&lossy=1',
@@ -1534,7 +1534,7 @@ const CLUB_LOGO={
   QAD:'https://cdn.resfu.com/img_data/equipos/117.png?size=120x&lossy=1',
   AHLS:'https://cdn.resfu.com/img_data/equipos/105.png?size=120x&lossy=1',BID:'https://cdn.resfu.com/img_data/equipos/113164.png?size=120x&lossy=1',ZOR:'https://cdn.resfu.com/img_data/equipos/5620.png?size=120x&lossy=1',KUL:'https://cdn.resfu.com/img_data/equipos/17645.png?size=120x&lossy=1',KUD:'https://cdn.resfu.com/img_data/equipos/159184.png?size=120x&lossy=1',CHO:'https://cdn.resfu.com/img_data/equipos/5825.png?size=120x&lossy=1',LOK:'https://cdn.resfu.com/img_data/equipos/159185.png?size=120x&lossy=1',TKU:'https://cdn.resfu.com/img_data/equipos/9166.png?size=120x&lossy=1',HPT:'https://cdn.resfu.com/img_data/equipos/1294.png?size=120x&lossy=1',
   ARB:'https://cdn.resfu.com/img_data/equipos/30979.png?size=120x&lossy=1',PARD:'https://cdn.resfu.com/img_data/equipos/13171.png?size=120x&lossy=1',
-  HAZ:'https://cdn.resfu.com/img_data/equipos/108.png?size=120x&lossy=1',LIB:'https://cdn.resfu.com/img_data/equipos/10049.png?size=120x&lossy=1',BOH2:'https://cdn.resfu.com/img_data/escudos/medium/3969.jpg',SLOV:'https://cdn.resfu.com/img_data/equipos/3968.png?size=120x&lossy=1',SND:'https://cdn.resfu.com/img_data/equipos/6379.png?size=120x&lossy=1',KFU:'https://cdn.resfu.com/img_data/equipos/12775.png?size=120x&lossy=1',RAVE:'https://cdn.resfu.com/img_data/equipos/2163.png?size=120x&lossy=1',SCL:'https://cdn.resfu.com/img_data/equipos/11311.png?size=120x&lossy=1',MOR:'https://cdn.resfu.com/img_data/equipos/1737.png?size=120x&lossy=1',ESTP:'https://cdn.resfu.com/img_data/equipos/1007.png?size=120x&lossy=1',FAM:'https://cdn.resfu.com/img_data/equipos/7017.png?size=120x&lossy=1',BOA:'https://cdn.resfu.com/img_data/equipos/513.png?size=120x&lossy=1',BEL:'https://cdn.resfu.com/img_data/equipos/462.png?size=120x&lossy=1',VSE:'https://cdn.resfu.com/img_data/equipos/2732.png?size=120x&lossy=1',DAV:'https://cdn.resfu.com/img_data/equipos/921.png?size=120x&lossy=1',BMR:'https://cdn.resfu.com/img_data/equipos/456.png?size=120x&lossy=1',LEIX:'https://cdn.resfu.com/img_data/equipos/1540.png?size=120x&lossy=1',WIE:'https://cdn.resfu.com/img_data/equipos/140934.png?size=120x&lossy=1',AMR:'https://cdn.resfu.com/img_data/equipos/6995.png?size=120x&lossy=1',SCV:'https://cdn.resfu.com/img_data/equipos/4638.png?size=120x&lossy=1',OUR:'https://cdn.resfu.com/img_data/equipos/3259.png?size=120x&lossy=1',GENC:'https://cdn.resfu.com/img_data/equipos/1213.png?size=120x&lossy=1',ALI:'https://cdn.resfu.com/img_data/equipos/11429.png?size=120x&lossy=1',CEA:'https://cdn.resfu.com/img_data/equipos/4516.png?size=120x&lossy=1',FEI:'https://cdn.resfu.com/img_data/equipos/11310.png?size=120x&lossy=1',AVA:'https://cdn.resfu.com/img_data/equipos/3880.png?size=120x&lossy=1',PTM:'https://cdn.resfu.com/img_data/equipos/11196.png?size=120x&lossy=1',FEL:'https://cdn.resfu.com/img_data/equipos/16142.png?size=120x&lossy=1'
+  HAZ:'https://cdn.resfu.com/img_data/equipos/108.png?size=120x&lossy=1',LIB:'https://cdn.resfu.com/img_data/equipos/10049.png?size=120x&lossy=1',BOH2:'https://cdn.resfu.com/img_data/escudos/medium/3969.jpg',SLOV:'https://cdn.resfu.com/img_data/equipos/3968.png?size=120x&lossy=1',SND:'https://cdn.resfu.com/img_data/equipos/6379.png?size=120x&lossy=1',KFU:'https://cdn.resfu.com/img_data/equipos/12775.png?size=120x&lossy=1',RAVE:'https://cdn.resfu.com/img_data/equipos/2163.png?size=120x&lossy=1',SCL:'https://cdn.resfu.com/img_data/equipos/11311.png?size=120x&lossy=1',MOR:'https://cdn.resfu.com/img_data/equipos/1737.png?size=120x&lossy=1',ESTP:'https://cdn.resfu.com/img_data/equipos/1007.png?size=120x&lossy=1',FAM:'https://cdn.resfu.com/img_data/equipos/7017.png?size=120x&lossy=1',BOA:'https://cdn.resfu.com/img_data/equipos/513.png?size=120x&lossy=1',BEL:'https://cdn.resfu.com/img_data/equipos/462.png?size=120x&lossy=1',VSE:'https://cdn.resfu.com/img_data/equipos/2732.png?size=120x&lossy=1',DAV:'https://cdn.resfu.com/img_data/equipos/921.png?size=120x&lossy=1',BMR:'https://cdn.resfu.com/img_data/equipos/456.png?size=120x&lossy=1',LEIX:'https://cdn.resfu.com/img_data/equipos/1540.png?size=120x&lossy=1',WIE:'https://cdn.resfu.com/img_data/equipos/140934.png?size=120x&lossy=1',AMR:'https://cdn.resfu.com/img_data/equipos/6995.png?size=120x&lossy=1',SCV:'https://cdn.resfu.com/img_data/equipos/4638.png?size=120x&lossy=1',OUR:'https://cdn.resfu.com/img_data/equipos/3259.png?size=120x&lossy=1',GENC:'https://cdn.resfu.com/img_data/equipos/1213.png?size=120x&lossy=1',ALI:'https://cdn.resfu.com/img_data/equipos/11429.png?size=120x&lossy=1',CEA:'https://cdn.resfu.com/img_data/equipos/4516.png?size=120x&lossy=1',FEI:'https://cdn.resfu.com/img_data/equipos/11310.png?size=120x&lossy=1',AVA:'https://cdn.resfu.com/img_data/equipos/3880.png?size=120x&lossy=1',PTM:'https://cdn.resfu.com/img_data/equipos/11196.png?size=120x&lossy=1',FEL:'https://cdn.resfu.com/img_data/equipos/16142.png?size=120x&lossy=1',ACB:'https://cdn.resfu.com/img_data/equipos/119255.png?size=120x&lossy=1'
 };
 Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
 /* ciudades reales (lon,lat); o = desplazamiento en px del grupo de escudos para evitar solapes */
@@ -2572,6 +2572,20 @@ ARE:[['Andrea Seculin','GK',1991,'IT',65,70,0.375,0.7,'POR'],['Luca Trombini','G
  SPTL:[['Rui Silva','GK',1994,'PT',81,81,13.5,11.5,'POR'],['Diego Calai','GK',2005,'BR',68,81,2.5,2,'POR'],['Kaique','GK',2003,'BR',69,77,2.7,3,'POR'],['Fresneda','DF',2005,'ES',76,83,14,8.7,'LD/MD'],['Georgios Vagiannidis','DF',2002,'GR',75,81,8.5,9.8,'LD/MD'],['Zeno Debast','DF',2004,'BE',78,86,29.5,9.9,'DFC/MCD/MC'],['Gonçalo Inácio','DF',2002,'PT',80,85,29,13.5,'DFC'],['Eduardo Quaresma','DF',2002,'PT',78,85,26,11.5,'DFC/LD'],['Ibrahima Ba','DF',2005,'SN',72,84,5.5,6.3,'DFC'],['Rodrigo Dias','DF',2006,'PT',59,70,0.475,0.95,'LI/MI'],['Altimira','MD',2002,'ES',77,83,15.5,11,'MCD/MC'],['Silas Andersen','MD',2004,'DK',74,81,8,7.6,'MCD/MC'],['João Simões','MD',2007,'PT',69,81,3.1,3.9,'MCD/MC'],['Eduardo Felicíssimo','MD',2007,'PT',64,79,1.3,2,'MCD/MC/DFC'],['Geny Catamo','MD',2001,'MZ',79,82,24,13.5,'MD/MI/ED/EI'],['Nestory Irankunda','MD',2006,'AU',70,83,3.8,5.1,'MD/DC/MI/ED/EI'],['Salvador Blopa','MD',2007,'PT',67,82,2.4,3.3,'MD/ED/LD'],['Issa Doumbia','MD',2004,'IT',73,83,7,7.4,'MC/MCD'],['Pedro Lima','MD',2003,'BR',69,76,2.8,5.5,'MC/MCO/MCD'],['Maximiliano Araújo','MD',2000,'UY',81,82,31,17,'MI/LI/EI'],['Luis Guilherme','MD',2006,'BR',72,85,5.5,6.3,'MI/MD/MCO/EI/ED'],['Jesse Derry','MD',2007,'EN',68,85,3.1,19,'MI/EI'],['Nuno Santos','MD',1995,'PT',75,80,7.5,12.5,'MI/LI/EI'],['Moncef Zekri','MD',2009,'MA',61,82,1,1.2,'MI/LI'],['Flávio Gonçalves','MD',2007,'PT',66,80,2,2.9,'MCO/MI/MC/EI'],['Rodrigo Zalazar','MD',2000,'UY',82,85,40.5,19,'MCO/MC/ED'],['Luis Javier Suárez','FW',1998,'CO',82,82,33,21,'DC'],['Rafael Nel','FW',2005,'PT',68,79,2.7,4.8,'DC'],['Fotis Ioannidis','FW',2000,'GR',76,79,10,13,'DC']],
  ESTP:[['Joel Robles','GK',1990,'ES',71,78,1.8,3.2,'POR'],['Martin Turk','GK',2004,'SI',66,76,1.7,1.5,'POR'],['Diogo Dias','GK',2003,'PT',59,69,0.45,0.7,'POR'],['Ricard','DF',2000,'ES',71,74,2.3,7.5,'LD/MD/ED'],['Pedro Carvalho','DF',2003,'PT',66,72,1.3,3.6,'LD/MD/ED'],['Ferro','DF',1997,'PT',70,78,3.1,7.2,'DFC'],['Ismael Sierra','DF',2003,'ES',65,72,1.3,2.9,'DFC'],['Xavi Sintes','DF',2002,'ES',68,72,1.6,4.8,'DFC'],['Antef Tsoungui','DF',2003,'BE',69,78,2.9,5.3,'DFC/MCD'],['Stélios Andreou','DF',2003,'CY',67,73,1.5,3.4,'DFC/LD'],['Jordan Arnolin','DF',2008,'PT',60,79,0.575,0.95,'DFC/MCD/LD/MC'],['Sam Amissah','DF',2007,'EN',60,78,0.6,5.9,'DFC/LD/LI'],['Gonçalo Costa','DF',2000,'PT',67,70,1.2,4.6,'LI/MI/EI'],['Medrano','DF',2000,'ES',65,68,0.875,3.3,'LI/MI/EI'],['Tiago Parente','DF',2004,'PT',63,72,1,2.1,'LI/MI'],['Roko Jurišić','DF',2002,'HR',65,71,1.1,2.9,'LI/MI'],['Tiago Brito','MD',2004,'PT',64,73,1.2,2.3,'MCD/MC'],['Axel Camblan','MD',2004,'FR',64,72,1.3,2.4,'MD/ED'],['Jordan Holsgrove','MD',2000,'SC',75,77,7,11.5,'MC/MCD'],['Xeka','MD',1995,'PT',71,77,2.6,8.6,'MC/MCD'],['Milan Robin','MD',2000,'FR',66,67,1,4.1,'MC/MCO'],['Fabrício Garcia','MD',2001,'CV',67,70,1.4,4.4,'MI/EI/ED/MD'],['João Carvalho','MD',1997,'PT',75,75,5.5,12.5,'MCO/EI/MI/MC'],['Luís Gomes','MD',2004,'PT',61,70,0.725,1.8,'MCO/MC'],['Rafik Guitane','FW',1999,'DZ',74,74,4.6,11.5,'ED/MCO/MD/MC'],['Peixinho','FW',2004,'PT',64,73,1.3,2.7,'ED/MCO/MD'],['André Lacximicant','FW',2001,'PT',68,73,1.8,5.5,'DC/MI'],['Yanis Begraoui','FW',2002,'MA',75,79,8,11.5,'DC/MCO/MD/ED'],['Nail Omerović','FW',2003,'BA',69,74,2.1,6,'EI/MI/ED/MD'],['Kelian Baruti','FW',2006,'FR',60,75,0.575,1.5,'EI/MI']],
  ETD:[['Diogo Pinto','GK',2004,'PT',67,77,2,1.2,'POR'],['Léo Linck','GK',2001,'BR',71,76,2.3,2.7,'POR'],['David Grilo','GK',1997,'PT',64,64,0.425,1.5,'POR'],['Dudu','GK',1999,'DE',66,69,0.85,1.8,'POR'],['Jefferson Encada','DF',1998,'GW',67,67,0.975,3.4,'LD/MD/ED'],['Max Scholze','DF',2005,'DE',65,76,1.5,1.8,'LD/MD/ED'],['Luan Patrick','DF',2002,'BR',70,76,2.3,4.2,'DFC'],['Bernardo Schappo','DF',1999,'BR',72,74,2.6,6,'DFC'],['Stefan Leković','DF',2004,'RS',67,80,2.4,2.5,'DFC'],['Georgiy Tunguliadi','DF',2005,'RU',59,72,0.5,0.7,'DFC'],['Atanas Chernev','DF',2002,'BG',64,72,1.2,1.9,'DFC'],['Rafa Soares','DF',1995,'PT',70,75,1.9,5.1,'LI/MI'],['Lucas Mincarelli','DF',2004,'FR',68,77,2.6,2.8,'LI/DFC/MCD'],['Santiago Serra','MD',2007,'PT',62,77,0.875,1.1,'MCD/MC'],['Abraham Marcus','MD',2000,'NG',71,72,2.2,5.5,'MD/ED/MC/MCD'],['Eddy Gueladan Doué','MD',2006,'CI',64,78,1.4,1.6,'MC/MCD'],['Joan Jordán','MD',1995,'ES',74,80,6,8,'MC/MCD'],['Tom Moustier','MD',2002,'FR',66,73,1.7,2.6,'MC/MCD'],['Kevin Höög Jansson','MD',2001,'SE',65,70,1.1,2.2,'MC/DFC/MCD'],['Robinho','MD',2003,'BR',68,75,2.4,3.5,'MC/MCO/MCD'],['Emerson Vanga','MD',2006,'FR',60,75,0.575,0.95,'MC/MCD'],['Ianis Stoica','MD',2003,'RO',70,78,3.6,4.4,'MI/DC/EI/MCO'],['Lovro Zvonarek','MD',2005,'HR',67,78,2.2,2.7,'MCO/MC'],['Leandro Antonetti','FW',2003,'PR',62,71,0.9,1.7,'DC/EI'],['René Mitongo','FW',2008,'BE',61,81,0.9,2.1,'DC'],['Jeremy Arévalo Mera','FW',2005,'EC',66,80,2.1,8.7,'DC/MCO'],['Bénito Souza','FW',2004,'FR',65,75,1.6,2,'EI/ED/MI'],['Alisson','FW',2005,'BR',58,68,0.45,0.85,'EI/DC/ED/MI'],['Rodrigo Dudok','FW',2008,'UY',62,77,0.9,1.1,'EI/MI']],
+ FAM:[['Lazar Carević','GK',1999,'ME',76,79,7.5,8.2,'POR'],['Ivan Zlobin','GK',1997,'RU',70,72,1.4,5.2,'POR'],['Gabriel Cabral','GK',2003,'BR',62,71,0.775,1.4,'POR'],['Rodrigo Pinheiro','DF',2003,'PT',73,82,6.5,9,'LD/MD'],['Gustavo Garcia','DF',2002,'BR',69,74,2,5.7,'LD/MD'],['Finn van Breemen','DF',2003,'NL',71,82,3.9,7.3,'DFC'],['Leonardo Realpe','DF',2001,'EC',70,75,2.2,6.5,'DFC'],['Vojin Serafimović','DF',2006,'RS',61,71,0.65,1.7,'DFC'],['Renan Santana','DF',2005,'BR',63,75,1.1,2.2,'DFC'],['Rafael Venâncio','DF',2006,'BR',61,75,0.725,1.7,'DFC'],['Rofino','DF',2003,'ES',64,72,1.2,2.9,'DFC'],['Pedro Bondo','DF',2005,'AO',68,78,2.5,4.4,'LI/MI'],['Leny Meyer','DF',2004,'CH',65,74,1.5,2.7,'LI/MI/EI'],['Tom van de Looi','MD',2000,'NL',72,76,3,9.2,'MCD/MC/DFC'],['Gil Dias','MD',1997,'PT',73,76,3.7,11.5,'MD/ED/LD'],['Sorriso','MD',2001,'BR',75,78,7.5,11,'MD/MI/ED/EI'],['Pedro Santos','MD',2003,'PT',68,77,2.7,5.5,'MD/MC/MCO/ED'],['Mathias de Amorim','MD',2005,'PT',73,84,6.5,8.1,'MC/MCO/MCD'],['Paulo Moreira','MD',2000,'PT',68,71,1.6,6.1,'MC/MCO/MCD'],['Tamás Szücs','MD',2005,'HU',65,77,1.7,2.9,'MC/MCD'],['Marcos Peña','MD',2005,'ES',64,78,1.4,2.6,'MC/MCD'],['Óscar Aranda','MD',2002,'ES',74,78,6,10.5,'MI/DC/MD/EI/ED'],['Roméo Beney','FW',2005,'CH',64,77,1.4,2.9,'ED/DC/MD'],['Georgios Koutsias','FW',2004,'GR',67,76,2.3,4.5,'DC'],['Umar Abubakar','FW',2006,'NG',66,78,2,3.7,'DC'],['Patricio Salas','FW',2004,'MX',67,74,2.1,4.3,'DC/MCO']],
+ FAMB:[['Lamine Bèye','MD',2007,'SN',60,76,0.625,1.4,'MCO/MC'],['Mathis Jangéal','MD',2008,'FR',64,81,1.5,1.9,'MCO/MC']],
+ ALV:[['Matheus Mendes','GK',1999,'BR',68,70,1.1,2,'POR'],['Jhonatan','GK',1991,'BR',72,75,0.9,3.2,'POR'],['André Paulo','GK',1997,'PT',63,65,0.4,1.1,'POR'],['Noah Raveyre','GK',2005,'FR',66,74,1.6,0.85,'POR'],['Diogo Spencer','DF',2004,'PT',65,76,1.5,1.4,'LD/MD/ED'],['Toni Tamarit','DF',2006,'ES',63,78,1.1,1.1,'LD/MD/ED'],['Steven Baseya','DF',2005,'FR',62,74,0.9,1,'DFC'],['Yaya Bojang','DF',2005,'GM',63,76,1.1,1.2,'DFC'],['Bastien Meupiyou','DF',2006,'FR',69,79,2.8,2.3,'DFC'],['Sergi Gómez','DF',1992,'ES',71,80,2.9,4.6,'DFC'],['Julián Martinez','DF',2004,'HN',65,74,1.5,1.4,'DFC'],['Mofe Jemide','DF',2007,'EN',63,79,1.1,1,'DFC'],['Isaac James','DF',2005,'NG',62,73,0.825,1,'LI/MI'],['Chissumba','DF',2005,'PT',70,80,3.3,6,'LI/MI/EI'],['Ikker Julian','DF',2006,'BE',58,65,0.375,0.55,'LI'],['Ian Luccas','MD',2003,'BR',62,67,0.55,1.2,'MCD/MC'],['Rayan Lucas','MD',2005,'BR',66,81,1.9,1.7,'MCD/MC'],['Nabil Touaizi','MD',2001,'MA',67,70,1.4,2.4,'MD/LD'],['Vasco Moreira','MD',2001,'PT',63,68,0.725,1.5,'MC/MCD'],['Sabit Abdulai','MD',1999,'GH',63,64,0.55,1.7,'MC/MCD'],['Davy Gui','MD',2006,'CI',61,70,0.7,0.9,'MC/MCD'],['Tiago Octávio','MD',2005,'PT',60,67,0.475,0.8,'MC/MCD'],['Zakaria Kassary','MD',2006,'MA',58,67,0.45,0.6,'MC/MCD'],['Chiquinho','MD',2000,'PT',73,74,3.6,5.3,'MI/EI/ED/MD'],['André Vidigal','MD',1999,'AO',66,72,1.3,2.4,'MI/DC/EI/MCO'],['Zé Rafael','MD',1993,'BR',72,76,2.5,5.3,'MCO/MC'],['Figueiredo','FW',2002,'BR',71,75,2.7,4.3,'ED/EI/MCO/MD'],['Rodrigo Catraio','FW',2005,'PT',59,67,0.5,0.65,'ED/EI/MD'],['Gabriel Carioca','FW',2006,'BR',57,66,0.35,0.65,'ED/DC/MD'],['Dawda Camara','FW',2003,'MR',68,74,2,3.2,'DC'],['Samy Merheg','FW',2007,'LB',60,76,0.625,0.8,'DC'],['Cédric Nuozzi','FW',2006,'BE',64,76,1.4,1.4,'EI/ED/MI/MD']],
+ GIL:[['Lucão','GK',2001,'BR',61,67,0.425,1.1,'POR'],['Samuel Portugal','GK',1994,'BR',69,73,1.1,4.2,'POR'],['André Picornell','GK',2004,'SE',59,71,0.475,0.5,'POR'],['Ricardo Esgaio','DF',1993,'PT',68,78,2.1,5.8,'LD/MD'],['Zé Carlos','DF',2002,'PT',67,74,1.9,4.2,'LD/MCD/MC'],['José Silva','DF',2006,'PT',65,77,1.6,2.3,'LD/MD'],['Marvin Elimbi','DF',2003,'FR',66,75,1.8,3.6,'DFC'],['Buatu','DF',1994,'AO',69,69,0.95,6.4,'DFC'],['David Moreira','DF',2004,'CV',63,72,1,2.1,'DFC/LI'],['Espigares','DF',2005,'ES',66,77,1.8,3,'DFC'],['Weverson','DF',2001,'BR',70,75,2.2,6,'LI/MI'],['Mohamed Bamba','MD',2005,'CI',64,77,1.3,2.3,'MCD/MC/DFC'],['Murilo','MD',1995,'BR',74,75,4.4,11.5,'MD/MI/ED/EI'],['Bermejo','MD',1998,'ES',68,70,1.5,5.8,'MD/MCO/ED/MC'],['Diogo Prioste','MD',2004,'PT',66,77,1.9,3.2,'MC/MCD'],['Andreas Sejr Lausen','MD',2003,'DK',62,74,0.975,2.3,'MC/MCD'],['Martín Fernández Benítez','MD',2003,'UY',68,75,2.5,5,'MI/MCO/EI/MC'],['Tidjany Touré','MD',2003,'FR',68,75,2.5,5,'MI/MD/EI/ED'],['Joelson Fernandes','MD',2003,'PT',67,76,2.3,4.4,'MI/EI'],['Santi García','MD',2002,'ES',74,80,6.5,9.7,'MCO/MC/MCD'],['Gil Martins','MD',2006,'PT',61,75,0.775,1.7,'MCO/MC'],['Agustín Moreira','FW',2001,'UY',64,67,0.8,3.1,'ED/EI/MD/MI'],['Héctor','FW',1996,'ES',72,72,2.3,10,'DC'],['Walace França','FW',2006,'BR',62,74,0.95,2.1,'DC'],['Carlos Eduardo','FW',2003,'BR',64,73,1.3,3.1,'DC'],['Mohamed Kaba','FW',2003,'ML',58,68,0.45,1.4,'DC']],
+ GILB:[['Gui Beleza','MD',2007,'PT',60,70,0.475,1.2,'MCD/MC'],['Gui Freitas','MD',2006,'PT',60,69,0.5,1.3,'MCD/MC'],['Gonçalo Maia','MD',2006,'PT',58,64,0.3,1.1,'MCO/MC']],
+ MAR:[['Alfonso Pastor','GK',2001,'ES',64,70,0.75,1.6,'POR'],['Gonçalo Tabuaço','GK',2001,'PT',64,70,0.75,1.6,'POR'],['Fran Vieites','GK',1999,'ES',68,72,1.3,3.5,'POR'],['Igor Julião','DF',1995,'BR',67,69,1,5,'LD'],['Tomás Tavares','DF',2001,'PT',65,73,1.5,2.9,'LD/MCD/LI/DFC'],['Romain Correia','DF',2000,'PT',67,70,1.2,4.6,'DFC'],['Gábor Szalai','DF',2000,'HU',69,71,1.5,11,'DFC'],['Paulo Henrique','DF',1997,'PT',67,68,1,5,'LI/MI/EI'],['Nathanael Ogbeta','DF',2001,'EN',64,68,0.775,2.7,'LI/MI'],['Nilton Varela','DF',2001,'PT',68,72,1.6,4.8,'LI/MI/EI'],['Rodrigo Andrade','MD',2002,'PT',64,69,0.8,2.7,'MCD/MC'],['Vladan Danilović','MD',2000,'BA',67,71,1.3,4.6,'MCD/MC'],['Ibrahim Alani','MD',2007,'NG',64,80,1.4,2,'MCD/MC'],['Israel Ayuma','MD',2006,'NG',61,70,0.675,1.5,'MCD/MC'],['Enrique Peña Zauner','MD',2000,'VE',65,66,0.85,3.4,'MD/MI/MCO/ED'],['Bryan Limbombe','MD',2001,'BE',64,67,0.8,2.8,'MD/MI/ED/EI'],['Raphael Guzzo','MD',1995,'PT',68,70,1.3,6,'MC/MCD/MCO'],['Maxime Dominguez','MD',1996,'CH',67,71,1.3,5.3,'MC/MD/MCO/MCD/ED'],['Simo Bouzaidi','MD',2000,'ES',68,69,1.4,5.6,'MI/EI/MD'],['Martín Tejón','MD',2004,'ES',69,80,3.1,4.7,'MI/MD/EI'],['Samuel Bamba','MD',2004,'DE',64,73,1.3,2.4,'MI/EI/ED'],['Butzke','FW',1999,'ES',66,68,1.1,4.7,'DC'],['Maurice Boakyé','FW',2005,'DE',63,74,1.1,2.4,'DC/EI'],['José Melro','FW',2004,'PT',61,71,0.75,2,'DC'],['Mons Bassouamina','FW',1998,'CG',66,67,1,4.7,'DC/MI/MD']],
+ MARB:[['Kimiss Zavala','GK',2004,'MZ',60,69,0.475,0.65,'POR'],['Pedro Teixeira','GK',2002,'PT',61,67,0.425,1.1,'POR'],['Xico','MD',2004,'PT',62,69,0.8,2,'MI/MD/EI']],
+ MOR:[['André Ferreira','GK',1996,'PT',71,72,1.4,5.3,'POR'],['Aranha','GK',2005,'BR',68,78,2.3,2,'POR'],['Leandro Santos','DF',2006,'PT',69,81,3.2,4.1,'LD/MD'],['Dinis Pinto','DF',2001,'PT',73,76,3.8,8.1,'LD'],['Gilberto','DF',2004,'GW',70,81,3.3,5,'DFC/LD/MCD'],['Maracás','DF',1994,'BR',72,74,1.9,9,'DFC'],['Kevyn','DF',2006,'BR',64,79,1.3,2.1,'DFC'],['Janderson','DF',2006,'BR',62,76,0.875,1.8,'DFC/LD'],['Kiko','DF',2002,'PT',68,74,1.8,4.8,'LI/MI/MCD/EI'],['Álvaro Martínez','DF',2002,'ES',65,69,0.95,2.9,'LI/MI/MCD/EI'],['Guilherme Liberato','MD',2001,'BR',65,69,0.925,2.9,'MCD/MC'],['Mateja Stjepanović','MD',2004,'RS',68,79,2.6,4,'MCD/MC/DFC/MCO'],['Michael Dacosta','MD',2005,'ES',60,74,0.6,1.4,'MD/MI/ED'],['Rodri Alonso','MD',2003,'ES',69,76,2.8,5.5,'MC/MCD/MD/LD'],['Kiko Bondoso','MD',1996,'PT',71,72,2,8.5,'MI/EI/MD/ED'],['Nile John','MD',2003,'EN',62,69,0.8,2.4,'MCO/MC'],['Manuel Mendonça','MD',2005,'PT',63,76,1.2,2.3,'MCO/EI/MC'],['Koby Mottoh','FW',2007,'EN',53,71,0.24,0.85,'ED/MD/LD'],['Landerson','FW',2007,'BR',63,75,1.1,2.2,'ED/EI/MD/MI'],['Afonso Vieira','FW',2007,'PT',59,74,0.525,1.1,'ED/MD'],['Alexandre Parsemain','FW',2003,'FR',65,71,1.2,3.4,'DC'],['Yan Lincon','FW',2003,'BR',65,74,1.6,3.4,'DC'],['Leonardo Vonić','FW',2004,'HR',65,72,1.5,2.9,'DC'],['Tiago Andrade','FW',2006,'PT',62,79,1,2.1,'EI/ED/MI/MD']],
+ MORB:[['Pedro Jesus','DF',2008,'BR',60,77,0.575,0.9,'DFC'],['Afonso Assis','MD',2007,'PT',65,79,1.6,2.1,'MCD/MC'],['Miguel Silva','MD',2008,'PT',59,73,0.5,0.8,'MC/MCD'],['Jimi Gower','MD',2005,'EN',66,78,2.1,3.2,'MC/MCO/MCD']],
+ CDN:[['João Gonçalves','GK',2001,'PT',69,75,1.8,2.3,'POR'],['Kevyn Vinícius','GK',2005,'BR',62,74,0.85,0.7,'POR'],['Daniel de la Cruz','DF',2004,'EC',67,73,1.5,2.7,'LD/MD'],['Léo Santos','DF',1999,'BR',68,70,1.3,4.2,'DFC'],['Zé Vítor','DF',2001,'BR',72,77,3.2,5.7,'DFC'],['Ulisses Wilson','DF',2000,'BR',67,70,1.2,3.5,'DFC'],['Francisco Gonçalves','DF',2004,'PT',64,73,1.2,1.7,'DFC'],['Ivanildo Fernandes','DF',1996,'CV',64,75,1.1,2.5,'DFC'],['José Gomes','DF',1997,'PT',68,68,1.1,4.4,'LI/MI'],['Williams Kokolo','DF',2000,'FR',66,69,1,4.9,'LI/MI/DFC/EI'],['Matheus Dias','MD',2002,'BR',68,76,2.5,3.7,'MCD/MC/DFC/MCO'],['Wesley Gasolina','MD',2000,'BR',63,71,1,2.2,'MD/LD/ED'],['Pablo Ruan','MD',2003,'BR',65,71,1.1,2.4,'MD/ED/DC'],['Stavros Gavriel','MD',2002,'CY',68,73,1.8,3.9,'MD/ED'],['Liziero','MD',1998,'BR',70,70,1.7,5.6,'MC/MCD'],['Filipe Soares','MD',1999,'PT',66,70,1.2,3.3,'MC/MCO/MCD'],['Miguel Baeza','MD',2000,'ES',67,70,1.3,3.7,'MC/MD/MCO/MCD/ED'],['Joel Silva','MD',2003,'PT',68,74,1.9,3.9,'MC/MCD/LI'],['Matchoi Djaló','MD',2003,'PT',66,74,1.9,2.9,'MC/MCO/ED/MCD/MD'],['Chiheb Labidi','MD',2001,'TN',67,72,1.5,3.4,'MC/MCD'],['Deivison','MD',2006,'BR',60,72,0.575,1,'MC/MCD'],['Danel Dongmo','MD',2001,'CM',64,69,0.875,2.2,'MC/MCD/DFC'],['Song Min Kyu','MD',2000,'KR',72,73,2.8,6.7,'MI/EI'],['Mateus Iseppe','MD',2006,'BR',61,70,0.7,1.3,'MCO/MC'],['Markus Jensen','FW',2006,'DK',62,77,0.95,1.5,'ED/EI/MD/MI'],['Daniel Júnior','FW',2002,'BR',65,71,1.1,2.6,'ED/MCO/MD'],['Martim Watts','FW',2006,'PT',60,71,0.525,1.1,'ED/MCO/MD'],['Fernando Nava','FW',2004,'BO',65,69,1,2.2,'ED/EI/MD/MI'],['Njoya Abdel','FW',2004,'CM',63,69,0.775,1.9,'DC'],['Allen Obando','FW',2006,'EC',64,78,1.4,1.9,'DC']],
+ RAVE:[['Ennio van der Gouw','GK',2000,'NL',70,75,1.9,4.1,'POR'],['Kevin Chamorro','GK',2000,'CR',65,69,0.775,2,'POR'],['Cezary Miszta','GK',2002,'PL',74,81,7,5.2,'POR'],['Vítor Hugo','GK',2002,'BR',67,72,1.2,2.4,'POR'],['Marios Vrousai','DF',1999,'GR',70,72,1.8,6.9,'LD/MD/ED'],['João Tomé','DF',2003,'PT',66,73,1.6,3.5,'LD/MD/ED'],['Zé Carlos','DF',1999,'PT',72,73,2.5,8.6,'LD'],['Francisco Petrasso','DF',2002,'AR',68,76,2.5,4.8,'DFC/LD/MCD'],['Gustavo Mancha','DF',2005,'BR',67,79,2.3,8.2,'DFC'],['Andreas Ntoi','DF',2003,'GR',68,72,1.6,4.8,'DFC/MCD/MC'],['Jakub Brabec','DF',1993,'CZ',72,75,2,9,'DFC'],['Julien Lomboto','DF',2002,'FR',65,73,1.5,2.9,'DFC/MCD'],['Caike','DF',2005,'BR',59,73,0.5,1,'DFC'],['Simón García','DF',2005,'CO',69,78,2.9,4.4,'DFC'],['Nelson Abbey','DF',2004,'EN',66,75,1.8,3,'LI/DFC'],['Pedro Amaral','DF',1998,'PT',68,70,1.3,5.5,'LI/MI/DFC/MCD/EI'],['Georgios Liavas','MD',2001,'GR',66,69,1.1,3.5,'MCD/MC/LD/DFC'],['Tamás Nikitscher','MD',2000,'HU',69,73,1.8,5.8,'MCD/MC/DFC'],['Ryan Guilherme','MD',2003,'BR',66,75,1.8,3.5,'MCD/MC/MCO'],['Diogo Bezerra','MD',2003,'BR',67,76,2.3,4.4,'MD/MCO/MI/ED'],['Roland Galčík','MD',2002,'SK',65,71,1.1,3.1,'MD/DC/ED'],['Malik Sellouki','MD',2000,'FR',70,72,2,7,'MD/MCO/MC/ED'],['Tobías Medina','MD',2004,'AR',64,75,1.3,2.4,'MC/MCO/MCD'],['Diogo Nascimento','MD',2003,'PT',68,76,2.7,11.5,'MC/MCD/MCO'],['Brandon Aguilera','MD',2003,'CR',70,79,3.6,6.3,'MC/MCO/MCD'],['Antoine Wenck','MD',2006,'SN',59,74,0.525,1,'MC/MCD/MCO'],['Dario Špikić','MD',1999,'HR',69,72,1.8,6.4,'MI/EI/MCO'],['Sebastian Clemmensen','MD',2004,'DK',66,76,1.9,3.2,'MI/MD/EI/ED'],['Miguel Patrício','MD',2007,'PT',62,78,1,1.8,'MCO/MC'],['Jalen Blesa','FW',2001,'ES',70,74,2.3,6.9,'DC/MCO'],['Tamble','FW',2001,'GW',65,68,1,3.4,'DC']],
+ RAVEB:[['Samuel Alves','FW',2008,'BR',61,77,0.825,1.4,'DC']],
+ VIT:[['Oliwier Zych','GK',2004,'PL',70,79,3.1,13,'POR'],['Juan Castillo','GK',2003,'CO',68,77,2.3,3.3,'POR'],['João Oliveira','GK',2003,'PT',62,74,0.85,1.5,'POR'],['Tony Strata','DF',2005,'RO',64,73,1.2,2.7,'LD/LI/MD/MI'],['Miguel Maga','DF',2003,'PT',70,76,2.4,7.1,'LD/MD/DFC/ED'],['Óscar Rivas','DF',2000,'ES',68,73,1.6,6.3,'DFC/MCD/MC'],['Thiago Balieiro','DF',2003,'BR',60,71,0.525,1.9,'DFC'],['Toni Borevković','DF',1997,'HR',70,73,1.7,11,'DFC'],['Yeimar Jesús M. Mosquera','DF',2005,'CO',60,72,0.55,1.6,'DFC'],['João Mendes','DF',2000,'PT',71,74,2.3,8.8,'LI/MI/EI'],['Francisco Dias','DF',2003,'ES',61,70,0.7,2.3,'LI'],['Beni','MD',2002,'AO',72,77,3.2,8.7,'MCD/MC'],['Gonçalo Nogueira','MD',2004,'PT',66,77,1.8,3.5,'MCD/MC'],['Matija Mitrović','MD',2005,'RS',69,79,2.9,5.2,'MCD/MC/DFC'],['Lohann Doucet','MD',2003,'BF',68,72,1.6,5.6,'MCD/MC'],['Rica Rocha','MD',2004,'PT',58,67,0.425,1.2,'MCD/MC'],['Gustavo Silva','MD',1999,'BR',71,71,2,9.6,'MD/MI/DC/ED/EI'],['Oumar Camara','MD',2007,'FR',70,85,3.7,5.6,'MD/DC/MI/ED'],['Telmo Arcanjo','MD',2001,'CV',72,75,3.2,9.2,'MD/ED/MCO/MC'],['Marco Cruz','MD',2004,'PT',63,74,1.1,2.6,'MC/MCD'],['Santi Verdi','MD',2008,'PT',60,78,0.6,1.2,'MC/MCD'],['Fabio Blanco','MD',2004,'ES',64,75,1.3,2.8,'MI/MD/EI'],['Victor Gonçalves Andersson','MD',2005,'SE',62,74,0.95,2.3,'MI/MD/DC/EI/ED'],['Samu','MD',1996,'PT',74,75,4.5,13.5,'MCO/MC/MCD'],['Alan','MD',2000,'BR',75,78,7.5,13.5,'MCO/MC'],['Miguel Nogueira','MD',2005,'PT',61,74,0.8,2.1,'MCO/MC'],['Alioune Ndoye','FW',2002,'SN',66,72,1.4,4.8,'DC'],['Patrick Ouotro','FW',2006,'CI',61,69,0.725,2.2,'DC'],['Arnel Jakupović','FW',1998,'AT',64,70,0.875,4.1,'DC/ED/EI/MD/MI']],
+ VITB:[['Zeega','MD',2009,'PT',60,79,0.625,1.2,'MCO/ED/MC/MD']],
 };
 /* cesiones reales al inicio de la temporada (solo modo Base de datos).
    Formato: [jugador, club origen, club destino, % del sueldo que paga el destino (0-1), rol prometido] */
@@ -2731,6 +2745,16 @@ const REAL_LOANS=[
  ['Chilohem Onuoha','ETD','HAR',1,'Rotación',['Chilohem Onuoha','FW',2006,'NG',60,70,0.6,1.5,'DC/EI']],
  ['João Gastão','ETD','FAR',1,'Rotación',['João Gastão','FW',2004,'PT',62,72,0.7,1.8,'DC']],
  ['Alex Sola','ETD','IKS',1,'Rotación',['Alex Sola','MD',2002,'ES',65,70,1,3,'MC/MCD']],
+ ['Riccieli','FAM','VIT',1,'Rotación',['Riccieli','DF',1998,'BR',70,72,2.5,6,'DFC']],
+ ['Otar Mamageishvili','FAM','WAC',1,'Rotación',['Otar Mamageishvili','MD',2003,'GE',64,72,1.2,3,'MC/MCD']],
+ ['Matheus França','CRY','ALV',1,'Rotación',['Matheus França','MD',2004,'BR',69,80,3.1,24.5,'MCO/EI/ED/MC']],
+ ['S. Diarra','ALV','UST',1,'Rotación',['S. Diarra','FW',2004,'ML',62,70,0.8,2,'DC/EI']],
+ ['Léo Chú','ALV','AVA',1,'Rotación',['Léo Chú','FW',2000,'BR',66,72,1.5,3,'EI/ED']],
+ ['Gian Cabezas','ALV','ACB',1,'Rotación',['Gian Cabezas','MD',2003,'EC',63,72,1,2,'MC/MCO']],
+ ['Fabiano','MOR','VIT',1,'Rotación',['Fabiano','DF',1997,'BR',66,70,1,3,'DFC']],
+ ['Rafael Lobato','RAVE','AVS',1,'Rotación',['Rafael Lobato','FW',2005,'BR',61,68,0.5,1.5,'DC']],
+ ['Miguel Nóbrega','VIT','LEI',1,'Rotación',['Miguel Nóbrega','DF',2000,'PT',63,68,0.8,2.5,'DFC']],
+ ['Felipe Lima','ALV','BNB',1,'Rotación',['Felipe Lima','FW',2004,'BR',61,70,0.6,1.5,'DC']],
  ['Anthony Bermont','LEN','ANG',1,'Rotación',['Anthony Bermont','MD',2005,'FR',68,78,2.6,8.6,'MI/EI']],
  ['Lanroy Machine','ANG','HFE',1,'Rotación'],
  ['Dan Sinaté','ANG','AMS',1,'Rotación'],
@@ -2896,7 +2920,7 @@ const REAL_LOANS=[
  ['Q. Hartman','BUN','ESP',1,'Titular'],
  ['Gabriel Moscardo','PSG','ESP',1,'Rotación',['Gabriel Moscardo','MD',2005,'BR',72,81,4.8,12,'MCD/MC/DFC']],
  ['Yoram Zague','PSG','PAF',1,'Rotación',['Yoram Zague','DF',2006,'FR',65,80,3.0,6,'LD/LI']],
- ['Renato Marin','PSG','CDN',1,'Rotación',['Renato Marin','GK',2006,'BR',62,78,1.5,4,'POR']],
+ ['Renato Marin','PSG','CDN',1,'Rotación',['Renato Marin','GK',2007,'IT',70,83,3.2,3.8,'POR']],
  ['Khalil Ayari','PSG','USLD',1,'Rotación',['Khalil Ayari','FW',2005,'FR',64,78,2.0,5,'DC']],
  ['Vanja Drkušić','ZEN','ESP',1,'Rotación',['Vanja Drkušić','DF',1999,'SI',71,76,2.5,13,'DFC/LD']],
  ['José Gragera','ESP','BUR',1,'Titular'],
@@ -3226,7 +3250,7 @@ const REAL_LOANS=[
  ['Mattia Compagnon','VEN','VER',1,'Rotación',['Mattia Compagnon','MD',2002,'IT',66,71,1.3,11,'MD/ED']],
  ['Kevin Cannavò','VEN','SPE',1,'Rotación',['Kevin Cannavò','FW',2004,'IT',63,75,1.2,6,'DC']],
  ['Daniel Fila','VEN','AVE',1,'Rotación',['Daniel Fila','FW',2003,'CZ',69,74,2.2,17,'DC']],
- ['Ahmed Sidibé','VEN','VIT',1,'Rotación',['Ahmed Sidibé','DF',2004,'FR',63,75,1.3,6,'DFC']],
+ ['Ahmed Sidibé','VEN','VIT',1,'Rotación',['Ahmed Sidibé','DF',2002,'FR',66,72,1.2,9.9,'DFC']],
  ['Calixte Ligue','VEN','RIJ',1,'Rotación',['Calixte Ligue','DF',2005,'CM',62,75,1.2,5,'DFC']],
  ['Alvin Obinna Okoro','VEN','SUD',1,'Rotación',['Alvin Obinna Okoro','FW',2005,'IT',65,76,1.6,8,'DC']],
  ['Saad El Haddad','VEN','RUD',1,'Rotación',['Saad El Haddad','MD',2005,'MA',62,74,1.0,5,'MC/MCO']],
@@ -3527,7 +3551,7 @@ const REAL_LOANS=[
  ['Isaac','VER','IST',1,'Rotación',['Isaac','FW',2003,'BR',63,75,1.2,6,'DC']],
  ['Charlys','VER','INU',1,'Rotación',['Charlys','MD',2003,'BR',63,75,1.2,6,'MC/MCO']],
  ['Federico Magro','VER','CASE',1,'Rotación',['Federico Magro','GK',2005,'IT',60,72,0.8,4,'POR']],
- ['Yellu Santiago','VER','MAR',1,'Rotación',['Yellu Santiago','MD',2004,'PT',63,75,1.2,6,'MCD/MC']],
+ ['Yellu Santiago','VER','MAR',1,'Rotación',['Yellu Santiago','MD',2004,'ES',68,80,2.8,1.4,'MCD/MC']],
  ['Adi Kurti','VER','CER',1,'Rotación',['Adi Kurti','DF',2004,'XK',62,74,1.0,5,'DFC']],
  ['Samuel John Nwachukwu','VER','LUM',1,'Rotación',['Samuel John Nwachukwu','DF',2004,'IT',61,73,0.9,4,'DFC']],
  ['Christian Corradi','VER','JUN',1,'Rotación',['Christian Corradi','DF',2004,'IT',62,74,1.0,5,'DFC']],
@@ -3817,7 +3841,7 @@ function dfnScore(p){if(p.pos==='GK')return gkScore(p);const a=attrsOf(p);return
 function shotScore(p){if(p.pos==='GK')return p.ovr;const a=attrsOf(p);return atv(a,'TIR',p)*.5+atv(a,'REG',p)*.15+atv(a,'RIT',p)*.15+p.ovr*.2}
 function passScore(p){if(p.pos==='GK')return p.ovr;const a=attrsOf(p);return atv(a,'PAS',p)*.5+atv(a,'REG',p)*.2+atv(a,'RIT',p)*.1+p.ovr*.2}
 
-Object.assign(NATNAME,{NL:'Países Bajos',BE:'Bélgica',HR:'Croacia',UY:'Uruguay',CO:'Colombia',EC:'Ecuador',MA:'Marruecos',NG:'Nigeria',SN:'Senegal',CI:'Costa de Marfil',GH:'Ghana',CM:'Camerún',DZ:'Argelia',EG:'Egipto',EE:'Estonia',BG:'Bulgaria',JP:'Japón',KR:'Corea del Sur',US:'Estados Unidos',CA:'Canadá',DK:'Dinamarca',NO:'Noruega',SE:'Suecia',FI:'Finlandia',PL:'Polonia',CZ:'Chequia',SK:'Eslovaquia',AT:'Austria',CH:'Suiza',RS:'Serbia',GE:'Georgia',UA:'Ucrania',TR:'Turquía',SC:'Escocia',WA:'Gales',NIR:'Irlanda del Norte',HU:'Hungría',RO:'Rumanía',BA:'Bosnia y Herzegovina',XK:'Kosovo',SI:'Eslovenia',ML:'Malí',GN:'Guinea',BF:'Burkina Faso',CV:'Cabo Verde',IR:'Irán',AM:'Armenia',AL:'Albania',ME:'Montenegro',VE:'Venezuela',MX:'México',UZ:'Uzbekistán',RU:'Rusia',IS:'Islandia',AE:'Emiratos Árabes Unidos',KE:'Kenia',DO:'República Dominicana',CL:'Chile',IL:'Israel',CD:'RD Congo',TG:'Togo',BO:'Bolivia',AU:'Australia',IE:'Irlanda',AO:'Angola',ID:'Indonesia',GA:'Gabón',GR:'Grecia',MK:'Macedonia del Norte',MQ:'Martinica',CW:'Curazao',KM:'Comoras',AD:'Andorra',GQ:'Guinea Ecuatorial',PH:'Filipinas',SA:'Arabia Saudí',GM:'Gambia',TN:'Túnez',ZM:'Zambia',QA:'Catar',TH:'Tailandia',JM:'Jamaica',CF:'Rep. Centroafricana',CR:'Costa Rica',GW:'Guinea-Bissau',MZ:'Mozambique',PR:'Puerto Rico'});
+Object.assign(NATNAME,{NL:'Países Bajos',BE:'Bélgica',HR:'Croacia',UY:'Uruguay',CO:'Colombia',EC:'Ecuador',MA:'Marruecos',NG:'Nigeria',SN:'Senegal',CI:'Costa de Marfil',GH:'Ghana',CM:'Camerún',DZ:'Argelia',EG:'Egipto',EE:'Estonia',BG:'Bulgaria',JP:'Japón',KR:'Corea del Sur',US:'Estados Unidos',CA:'Canadá',DK:'Dinamarca',NO:'Noruega',SE:'Suecia',FI:'Finlandia',PL:'Polonia',CZ:'Chequia',SK:'Eslovaquia',AT:'Austria',CH:'Suiza',RS:'Serbia',GE:'Georgia',UA:'Ucrania',TR:'Turquía',SC:'Escocia',WA:'Gales',NIR:'Irlanda del Norte',HU:'Hungría',RO:'Rumanía',BA:'Bosnia y Herzegovina',XK:'Kosovo',SI:'Eslovenia',ML:'Malí',GN:'Guinea',BF:'Burkina Faso',CV:'Cabo Verde',IR:'Irán',AM:'Armenia',AL:'Albania',ME:'Montenegro',VE:'Venezuela',MX:'México',UZ:'Uzbekistán',RU:'Rusia',IS:'Islandia',AE:'Emiratos Árabes Unidos',KE:'Kenia',DO:'República Dominicana',CL:'Chile',IL:'Israel',CD:'RD Congo',TG:'Togo',BO:'Bolivia',AU:'Australia',IE:'Irlanda',AO:'Angola',ID:'Indonesia',GA:'Gabón',GR:'Grecia',MK:'Macedonia del Norte',MQ:'Martinica',CW:'Curazao',KM:'Comoras',AD:'Andorra',GQ:'Guinea Ecuatorial',PH:'Filipinas',SA:'Arabia Saudí',GM:'Gambia',TN:'Túnez',ZM:'Zambia',QA:'Catar',TH:'Tailandia',JM:'Jamaica',CF:'Rep. Centroafricana',CR:'Costa Rica',GW:'Guinea-Bissau',MZ:'Mozambique',PR:'Puerto Rico',HN:'Honduras',MR:'Mauritania',LB:'Líbano'});
 const isoFlag=c=>String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);
 Object.assign(FLAG,{SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',WA:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',NIR:'\u{1F1EC}\u{1F1E7}'});
 Object.keys(NATNAME).forEach(c=>{if(!FLAG[c])FLAG[c]=isoFlag(c)});
@@ -3944,7 +3968,7 @@ const FORMS={
 };
 const FORM_LBL=Object.fromEntries(Object.keys(FORMS).map(k=>[k,FORMS[k].map(x=>x[3])]));
 /* ============ FORMACIONES ============ */
-const FORM_MAIN={FCB:'4-2-1-3',ATH:'4-2-3-1',ATM:'3-4-1-2',RMA:'4-2-1-3',CEL:'3-4-2-1',CFO:'3-4-2-1',ALA:'3-1-4-2',ELC:'3-4-2-1',GET:'5-2-1-2',LEV:'4-1-4-1',MAL:'4-1-4-1',OSA:'4-2-3-1',RAC:'4-2-3-1',RAY:'4-2-3-1',DEP:'4-2-3-1',BET:'4-2-1-3',RSO:'4-2-3-1',SEV:'4-2-3-1',ALM:'4-2-3-1',BUR:'4-2-3-1',CAD:'4-3-3',CAS:'3-4-3',VAL:'4-3-3',VIL:'4-4-2',RSB:'4-2-3-1',CEU:'4-3-3',ALB:'5-3-2',COR:'4-3-3',EIB:'4-2-3-1',ELD:'4-2-3-1',AND:'4-3-3',GIR:'4-1-4-1',GRA:'4-3-3',MLL:'4-4-1-1',LEG:'5-3-2',OVI:'4-2-3-1',VLL:'4-2-3-1',SPO:'3-4-1-2',LPA:'4-2-3-1',BOU:'4-2-3-1',ARS:'4-2-3-1',AVL:'4-2-3-1',BRE:'4-2-3-1',BHA:'4-2-3-1',CHE:'3-4-2-1',COV:'4-2-3-1',CRY:'3-4-2-1',EVE:'4-2-3-1',FUL:'4-2-3-1',HUL:'5-4-1',IPS:'4-2-3-1',LEE:'3-4-2-1',LIV:'4-2-3-1',MCI:'4-2-3-1',MUN:'4-2-3-1',NEW:'4-2-3-1',NFO:'3-4-2-1',SUN:'4-2-3-1',TOT:'4-2-3-1',BIR:'4-2-3-1',BLB:'4-2-3-1',BWT:'4-2-3-1',BRC:'4-2-3-1',BUN:'4-2-3-1',CAR:'4-2-3-1',CHA:'4-2-3-1',DER:'4-2-3-1',LIN:'3-4-2-1',MID:'4-2-3-1',MLW:'4-3-3',NOR:'4-2-3-1',PMH:'4-2-3-1',PRE:'5-3-2',QPR:'4-4-2',SHU:'4-4-2',SOU:'4-2-3-1',STK:'4-2-3-1',SWA:'4-3-3',WAT:'4-2-3-1',WBA:'4-4-2',WHU:'4-4-1-1',WOL:'4-2-3-1',WRE:'3-4-2-1',BVB:'3-4-2-1',B04:'4-2-3-1',BMG:'4-2-3-1',BAY:'4-2-3-1',SGE:'3-4-2-1',FCA:'3-4-2-1',HSV:'3-4-2-1',TSG:'4-4-2',KOE:'4-2-3-1',M05:'5-3-2',SCP:'5-3-2',RBL:'4-3-3',SCF:'4-2-3-1',S04:'3-4-2-1',VFB:'4-2-3-1',ELV:'4-2-3-1',FCU:'4-2-2-2',SVW:'4-2-3-1',DSC:'4-1-4-1',D98:'4-2-3-1',EBS:'4-2-3-1',SGD:'4-2-3-1',SGS:'4-4-2',FCE:'4-2-3-1',ETR:'4-2-3-1',HAV:'4-3-3',MEP:'4-4-2',FWK:'4-2-3-1',STP:'3-4-1-2',LEP:'4-2-3-1',SKB:'4-2-3-1',SGF:'4-4-2',H96:'3-4-3',FCH:'4-4-2',BSC:'4-2-3-1',KIE:'4-1-4-1',FCK:'3-4-2-1',KSC:'4-1-2-1-2',FCM:'4-1-4-1',FCN:'4-2-1-3',BOC:'4-2-3-1',OSN:'3-4-2-1',WOB:'4-2-3-1',MON:'3-4-2-1',ATA:'4-3-3',BOL:'4-2-3-1',CAG:'4-3-2-1',COM:'4-2-3-1',FIO:'4-3-2-1',FRO:'4-2-3-1',GEN:'3-4-2-1',INT:'5-3-2',JUV:'4-2-3-1',LAZ:'4-3-3',LEC:'4-3-3',MIL:'3-4-2-1',NAP:'4-3-3',PAR:'5-3-2',ROM:'3-4-2-1',SAS:'4-3-3',TOR:'3-4-2-1',UDI:'3-4-2-1',VEN:'5-3-2',ASC:'4-2-3-1',AVE:'5-3-2',BEN:'4-3-3',CRR:'5-3-2',CAT:'3-4-2-1',CES:'4-3-3',CRE:'4-2-3-1',EMP:'5-3-2',SUD:'4-4-1-1',VER:'4-2-3-1',JST:'4-3-3',MAN:'3-4-2-1',MOD:'4-3-2-1',PAD:'5-3-2',PAL:'4-2-3-1',PIS:'4-3-2-1',SAM:'4-3-3',ARE:'4-3-3',VIC:'5-3-2',ENT:'5-3-2',PSG:'4-3-3',ANG:'4-2-3-1',AUX:'4-3-3',HAC:'3-4-2-1',LEM:'5-3-2',LEN:'3-4-3',LIL:'4-2-3-1',LOR:'3-4-2-1',ASM:'4-2-3-1',NCE:'3-4-2-1',OL:'4-3-3',OM:'4-2-3-1',PFC:'4-2-3-1',SBR:'4-2-3-1',REN:'4-1-4-1',STR:'4-2-3-1',TOU:'4-2-3-1',TRO:'4-1-4-1',AEKA:'4-4-2',BRU:'4-2-3-1',FEN:'4-2-3-1',FEY:'4-3-3',BDG:'4-4-2',GAL:'4-2-3-1',LAS:'3-4-1-2',FCP:'4-3-3',PSV:'4-3-3',SBAH:'4-2-3-1',SHK:'4-3-3',SLA:'3-4-2-1',AVS:'4-3-3',ARO:'4-2-3-1',SLB:'4-2-3-1',CPA:'4-3-3',SCL:'4-2-3-1',SPB:'3-4-2-1',SPTL:'4-2-3-1',ESTP:'4-2-3-1',ETD:'4-3-3'};
+const FORM_MAIN={FCB:'4-2-1-3',ATH:'4-2-3-1',ATM:'3-4-1-2',RMA:'4-2-1-3',CEL:'3-4-2-1',CFO:'3-4-2-1',ALA:'3-1-4-2',ELC:'3-4-2-1',GET:'5-2-1-2',LEV:'4-1-4-1',MAL:'4-1-4-1',OSA:'4-2-3-1',RAC:'4-2-3-1',RAY:'4-2-3-1',DEP:'4-2-3-1',BET:'4-2-1-3',RSO:'4-2-3-1',SEV:'4-2-3-1',ALM:'4-2-3-1',BUR:'4-2-3-1',CAD:'4-3-3',CAS:'3-4-3',VAL:'4-3-3',VIL:'4-4-2',RSB:'4-2-3-1',CEU:'4-3-3',ALB:'5-3-2',COR:'4-3-3',EIB:'4-2-3-1',ELD:'4-2-3-1',AND:'4-3-3',GIR:'4-1-4-1',GRA:'4-3-3',MLL:'4-4-1-1',LEG:'5-3-2',OVI:'4-2-3-1',VLL:'4-2-3-1',SPO:'3-4-1-2',LPA:'4-2-3-1',BOU:'4-2-3-1',ARS:'4-2-3-1',AVL:'4-2-3-1',BRE:'4-2-3-1',BHA:'4-2-3-1',CHE:'3-4-2-1',COV:'4-2-3-1',CRY:'3-4-2-1',EVE:'4-2-3-1',FUL:'4-2-3-1',HUL:'5-4-1',IPS:'4-2-3-1',LEE:'3-4-2-1',LIV:'4-2-3-1',MCI:'4-2-3-1',MUN:'4-2-3-1',NEW:'4-2-3-1',NFO:'3-4-2-1',SUN:'4-2-3-1',TOT:'4-2-3-1',BIR:'4-2-3-1',BLB:'4-2-3-1',BWT:'4-2-3-1',BRC:'4-2-3-1',BUN:'4-2-3-1',CAR:'4-2-3-1',CHA:'4-2-3-1',DER:'4-2-3-1',LIN:'3-4-2-1',MID:'4-2-3-1',MLW:'4-3-3',NOR:'4-2-3-1',PMH:'4-2-3-1',PRE:'5-3-2',QPR:'4-4-2',SHU:'4-4-2',SOU:'4-2-3-1',STK:'4-2-3-1',SWA:'4-3-3',WAT:'4-2-3-1',WBA:'4-4-2',WHU:'4-4-1-1',WOL:'4-2-3-1',WRE:'3-4-2-1',BVB:'3-4-2-1',B04:'4-2-3-1',BMG:'4-2-3-1',BAY:'4-2-3-1',SGE:'3-4-2-1',FCA:'3-4-2-1',HSV:'3-4-2-1',TSG:'4-4-2',KOE:'4-2-3-1',M05:'5-3-2',SCP:'5-3-2',RBL:'4-3-3',SCF:'4-2-3-1',S04:'3-4-2-1',VFB:'4-2-3-1',ELV:'4-2-3-1',FCU:'4-2-2-2',SVW:'4-2-3-1',DSC:'4-1-4-1',D98:'4-2-3-1',EBS:'4-2-3-1',SGD:'4-2-3-1',SGS:'4-4-2',FCE:'4-2-3-1',ETR:'4-2-3-1',HAV:'4-3-3',MEP:'4-4-2',FWK:'4-2-3-1',STP:'3-4-1-2',LEP:'4-2-3-1',SKB:'4-2-3-1',SGF:'4-4-2',H96:'3-4-3',FCH:'4-4-2',BSC:'4-2-3-1',KIE:'4-1-4-1',FCK:'3-4-2-1',KSC:'4-1-2-1-2',FCM:'4-1-4-1',FCN:'4-2-1-3',BOC:'4-2-3-1',OSN:'3-4-2-1',WOB:'4-2-3-1',MON:'3-4-2-1',ATA:'4-3-3',BOL:'4-2-3-1',CAG:'4-3-2-1',COM:'4-2-3-1',FIO:'4-3-2-1',FRO:'4-2-3-1',GEN:'3-4-2-1',INT:'5-3-2',JUV:'4-2-3-1',LAZ:'4-3-3',LEC:'4-3-3',MIL:'3-4-2-1',NAP:'4-3-3',PAR:'5-3-2',ROM:'3-4-2-1',SAS:'4-3-3',TOR:'3-4-2-1',UDI:'3-4-2-1',VEN:'5-3-2',ASC:'4-2-3-1',AVE:'5-3-2',BEN:'4-3-3',CRR:'5-3-2',CAT:'3-4-2-1',CES:'4-3-3',CRE:'4-2-3-1',EMP:'5-3-2',SUD:'4-4-1-1',VER:'4-2-3-1',JST:'4-3-3',MAN:'3-4-2-1',MOD:'4-3-2-1',PAD:'5-3-2',PAL:'4-2-3-1',PIS:'4-3-2-1',SAM:'4-3-3',ARE:'4-3-3',VIC:'5-3-2',ENT:'5-3-2',PSG:'4-3-3',ANG:'4-2-3-1',AUX:'4-3-3',HAC:'3-4-2-1',LEM:'5-3-2',LEN:'3-4-3',LIL:'4-2-3-1',LOR:'3-4-2-1',ASM:'4-2-3-1',NCE:'3-4-2-1',OL:'4-3-3',OM:'4-2-3-1',PFC:'4-2-3-1',SBR:'4-2-3-1',REN:'4-1-4-1',STR:'4-2-3-1',TOU:'4-2-3-1',TRO:'4-1-4-1',AEKA:'4-4-2',BRU:'4-2-3-1',FEN:'4-2-3-1',FEY:'4-3-3',BDG:'4-4-2',GAL:'4-2-3-1',LAS:'3-4-1-2',FCP:'4-3-3',PSV:'4-3-3',SBAH:'4-2-3-1',SHK:'4-3-3',SLA:'3-4-2-1',AVS:'4-3-3',ARO:'4-2-3-1',SLB:'4-2-3-1',CPA:'4-3-3',SCL:'4-2-3-1',SPB:'3-4-2-1',SPTL:'4-2-3-1',ESTP:'4-2-3-1',ETD:'4-3-3',FAM:'4-2-3-1',ALV:'3-4-3',GIL:'4-2-3-1',MAR:'4-2-3-1',MOR:'4-2-3-1',CDN:'3-4-2-1',RAVE:'4-2-3-1',VIT:'4-2-3-1'};
 const FOOT_S={Izquierda:'Izq.',Derecha:'Der.',Ambas:'Amb.'};
 /* pierna buena conocida de jugadores reales (D derecha, I izquierda, A ambas); ampliable */
 const REAL_FOOT={'Kamil Grabara':'D','Andreas Skov Olsen':'I','Mohamed Amoura':'D','Joan García':'D','Dominik Livaković':'D','Wojciech Szczęsny':'D','Jules Koundé':'D','Xavi Espart':'D','Eric García':'D','Pau Cubarsí':'D','Gerard Martín':'I','Andreas Christensen':'D','João Cancelo':'D','Balde':'I','Rodri':'D','Marc Bernal':'I','Pedri':'D','Gavi':'D','Brian Fariñas':'D','Frenkie de Jong':'D','Fermín':'D','Dani Olmo':'D','Karim Adeyemi':'D','Lamine Yamal':'I','Roony Bardghji':'I','Gabriel Jesus':'D','Hamza Abdelkarim':'A','Raphinha':'I','Anthony Gordon':'D','Jesse Eugen Bisiwu':'D','Ronald Araújo':'D','Marc-André ter Stegen':'D','Marc Casadó':'D','Áron Yaakobishvili':'D','Toni Fernández':'I',
@@ -5242,6 +5266,244 @@ REAL_PHOTO['S. Van Hooijdonk']='https://cdn.resfu.com/img_data/players/medium/69
 REAL_PHOTO['Chilohem Onuoha']='https://cdn.resfu.com/img_data/players/medium/3178581.jpg?size=120x&lossy=1';
 REAL_PHOTO['João Gastão']='https://cdn.resfu.com/img_data/players/medium/3610619.jpg?size=120x&lossy=1';
 REAL_PHOTO['Alex Sola']='https://cdn.resfu.com/img_data/players/medium/3503050.jpg?size=120x&lossy=1';
+REAL_PHOTO['Lazar Carević']='https://cdn.resfu.com/img_data/players/medium/279181.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ivan Zlobin']='https://cdn.resfu.com/img_data/players/medium/332643.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gabriel Cabral']='https://cdn.resfu.com/img_data/players/medium/912643.jpg?size=120x&lossy=1';
+REAL_PHOTO['Rodrigo Pinheiro']='https://cdn.resfu.com/img_data/players/medium/872742.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gustavo Garcia']='https://cdn.resfu.com/img_data/players/medium/851725.jpg?size=120x&lossy=1';
+REAL_PHOTO['Finn van Breemen']='https://cdn.resfu.com/img_data/players/medium/893059.jpg?size=120x&lossy=1';
+REAL_PHOTO['Leonardo Realpe']='https://cdn.resfu.com/img_data/players/medium/848101.jpg?size=120x&lossy=1';
+REAL_PHOTO['Vojin Serafimović']='https://cdn.resfu.com/img_data/players/medium/3191861.jpg?size=120x&lossy=1';
+REAL_PHOTO['Rofino']='https://cdn.resfu.com/img_data/players/medium/995405.jpg?size=120x&lossy=1';
+REAL_PHOTO['Pedro Bondo']='https://cdn.resfu.com/img_data/players/medium/1013147.jpg?size=120x&lossy=1';
+REAL_PHOTO['Leny Meyer']='https://cdn.resfu.com/img_data/players/medium/885859.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tom van de Looi']='https://cdn.resfu.com/img_data/players/medium/320181.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gil Dias']='https://cdn.resfu.com/img_data/players/medium/277404.jpg?size=120x&lossy=1';
+REAL_PHOTO['Sorriso']={FAM:'https://cdn.resfu.com/img_data/players/medium/913017.jpg?size=120x&lossy=1'};
+REAL_PHOTO['Pedro Santos']='https://cdn.resfu.com/img_data/players/medium/901704.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mathias de Amorim']='https://cdn.resfu.com/img_data/players/medium/3209680.jpg?size=120x&lossy=1';
+REAL_PHOTO['Paulo Moreira']='https://cdn.resfu.com/img_data/players/medium/341908.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tamás Szücs']='https://cdn.resfu.com/img_data/players/medium/3183263.jpg?size=120x&lossy=1';
+REAL_PHOTO['Marcos Peña']='https://cdn.resfu.com/img_data/players/medium/3147470.jpg?size=120x&lossy=1';
+REAL_PHOTO['Óscar Aranda']='https://cdn.resfu.com/img_data/players/medium/861573.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mathis Jangéal']='https://cdn.resfu.com/img_data/players/medium/3238885.jpg?size=120x&lossy=1';
+REAL_PHOTO['Roméo Beney']='https://cdn.resfu.com/img_data/players/medium/3132122.jpg?size=120x&lossy=1';
+REAL_PHOTO['Georgios Koutsias']='https://cdn.resfu.com/img_data/players/medium/888974.jpg?size=120x&lossy=1';
+REAL_PHOTO['Umar Abubakar']='https://cdn.resfu.com/img_data/players/medium/3404392.jpg?size=120x&lossy=1';
+REAL_PHOTO['Patricio Salas']='https://cdn.resfu.com/img_data/players/medium/830174.jpg?size=120x&lossy=1';
+REAL_PHOTO['Riccieli']='https://cdn.resfu.com/img_data/players/medium/465179.jpg?size=120x&lossy=1';
+REAL_PHOTO['Otar Mamageishvili']='https://cdn.resfu.com/img_data/players/medium/887807.jpg?size=120x&lossy=1';
+REAL_PHOTO['Lamine Bèye']='https://cdn.resfu.com/img_data/players/medium/3718283.jpg?size=120x&lossy=1';
+REAL_PHOTO['Matheus Mendes']='https://cdn.resfu.com/img_data/players/medium/905880.jpg?size=120x&lossy=1';
+REAL_PHOTO['Jhonatan']='https://cdn.resfu.com/img_data/players/medium/249394.jpg?size=120x&lossy=1';
+REAL_PHOTO['André Paulo']='https://cdn.resfu.com/img_data/players/medium/480462.jpg?size=120x&lossy=1';
+REAL_PHOTO['Noah Raveyre']='https://cdn.resfu.com/img_data/players/medium/3201322.jpg?size=120x&lossy=1';
+REAL_PHOTO['Diogo Spencer']='https://cdn.resfu.com/img_data/players/medium/1029312.jpg?size=120x&lossy=1';
+REAL_PHOTO['Toni Tamarit']='https://cdn.resfu.com/img_data/players/medium/3155716.jpg?size=120x&lossy=1';
+REAL_PHOTO['Steven Baseya']='https://cdn.resfu.com/img_data/players/medium/3213403.jpg?size=120x&lossy=1';
+REAL_PHOTO['Yaya Bojang']='https://cdn.resfu.com/img_data/players/medium/3406269.jpg?size=120x&lossy=1';
+REAL_PHOTO['Bastien Meupiyou']='https://cdn.resfu.com/img_data/players/medium/3209206.jpg?size=120x&lossy=1';
+REAL_PHOTO['Sergi Gómez']='https://cdn.resfu.com/img_data/players/medium/79543.jpg?size=120x&lossy=1';
+REAL_PHOTO['Julián Martinez']='https://cdn.resfu.com/img_data/players/medium/3380196.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mofe Jemide']='https://cdn.resfu.com/img_data/players/medium/3303206.jpg?size=120x&lossy=1';
+REAL_PHOTO['Isaac James']='https://cdn.resfu.com/img_data/players/medium/3366672.jpg?size=120x&lossy=1';
+REAL_PHOTO['Chissumba']='https://cdn.resfu.com/img_data/players/medium/3159664.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ikker Julian']='https://cdn.resfu.com/img_data/players/medium/3467149.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ian Luccas']='https://cdn.resfu.com/img_data/players/medium/868536.jpg?size=120x&lossy=1';
+REAL_PHOTO['Rayan Lucas']='https://cdn.resfu.com/img_data/players/medium/1016250.jpg?size=120x&lossy=1';
+REAL_PHOTO['Nabil Touaizi']='https://cdn.resfu.com/img_data/players/medium/427290.jpg?size=120x&lossy=1';
+REAL_PHOTO['Vasco Moreira']='https://cdn.resfu.com/img_data/players/medium/893792.jpg?size=120x&lossy=1';
+REAL_PHOTO['Sabit Abdulai']='https://cdn.resfu.com/img_data/players/medium/769384.jpg?size=120x&lossy=1';
+REAL_PHOTO['Davy Gui']='https://cdn.resfu.com/img_data/players/medium/3614160.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tiago Octávio']='https://cdn.resfu.com/img_data/players/medium/922424.jpg?size=120x&lossy=1';
+REAL_PHOTO['Zakaria Kassary']='https://cdn.resfu.com/img_data/players/medium/3543133.jpg?size=120x&lossy=1';
+REAL_PHOTO['Chiquinho']='https://cdn.resfu.com/img_data/players/medium/905470.jpg?size=120x&lossy=1';
+REAL_PHOTO['André Vidigal']='https://cdn.resfu.com/img_data/players/medium/397538.jpg?size=120x&lossy=1';
+REAL_PHOTO['Zé Rafael']='https://cdn.resfu.com/img_data/players/medium/180677.jpg?size=120x&lossy=1';
+REAL_PHOTO['Figueiredo']='https://cdn.resfu.com/img_data/players/medium/864200.jpg?size=120x&lossy=1';
+REAL_PHOTO['Cédric Nuozzi']='https://cdn.resfu.com/img_data/players/medium/3202246.jpg?size=120x&lossy=1';
+REAL_PHOTO['Dawda Camara']='https://cdn.resfu.com/img_data/players/medium/1024046.jpg?size=120x&lossy=1';
+REAL_PHOTO['Samy Merheg']='https://cdn.resfu.com/img_data/players/medium/3531584.jpg?size=120x&lossy=1';
+REAL_PHOTO['S. Diarra']='https://cdn.resfu.com/img_data/players/medium/319613.jpg?size=120x&lossy=1';
+REAL_PHOTO['Léo Chú']='https://cdn.resfu.com/img_data/players/medium/833465.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gian Cabezas']='https://cdn.resfu.com/img_data/players/medium/3141950.jpg?size=120x&lossy=1';
+REAL_PHOTO['Felipe Lima']='https://cdn.resfu.com/img_data/players/medium/3266849.jpg?size=120x&lossy=1';
+REAL_PHOTO['Lucão']='https://cdn.resfu.com/img_data/players/medium/365351.jpg?size=120x&lossy=1';
+REAL_PHOTO['Samuel Portugal']='https://cdn.resfu.com/img_data/players/medium/475274.jpg?size=120x&lossy=1';
+REAL_PHOTO['André Picornell']='https://cdn.resfu.com/img_data/players/medium/887483.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ricardo Esgaio']='https://cdn.resfu.com/img_data/players/medium/148977.jpg?size=120x&lossy=1';
+REAL_PHOTO['Zé Carlos']='https://cdn.resfu.com/img_data/players/medium/3171056.jpg?size=120x&lossy=1';
+REAL_PHOTO['José Silva']='https://cdn.resfu.com/img_data/players/medium/901617.jpg?size=120x&lossy=1';
+REAL_PHOTO['Marvin Elimbi']='https://cdn.resfu.com/img_data/players/medium/998807.jpg?size=120x&lossy=1';
+REAL_PHOTO['Buatu']='https://cdn.resfu.com/img_data/players/medium/121220.jpg?size=120x&lossy=1';
+REAL_PHOTO['David Moreira']='https://cdn.resfu.com/img_data/players/medium/922423.jpg?size=120x&lossy=1';
+REAL_PHOTO['Espigares']='https://cdn.resfu.com/img_data/players/medium/1000294.jpg?size=120x&lossy=1';
+REAL_PHOTO['Weverson']='https://cdn.resfu.com/img_data/players/medium/365358.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mohamed Bamba']='https://cdn.resfu.com/img_data/players/medium/3453653.jpg?size=120x&lossy=1';
+REAL_PHOTO['Murilo']='https://cdn.resfu.com/img_data/players/medium/237344.jpg?size=120x&lossy=1';
+REAL_PHOTO['Bermejo']='https://cdn.resfu.com/img_data/players/medium/275587.jpg?size=120x&lossy=1';
+REAL_PHOTO['Diogo Prioste']='https://cdn.resfu.com/img_data/players/medium/907005.jpg?size=120x&lossy=1';
+REAL_PHOTO['Andreas Sejr Lausen']='https://cdn.resfu.com/img_data/players/medium/430680.jpg?size=120x&lossy=1';
+REAL_PHOTO['Martín Fernández Benítez']='https://cdn.resfu.com/img_data/players/medium/985090.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tidjany Touré']='https://cdn.resfu.com/img_data/players/medium/878161.jpg?size=120x&lossy=1';
+REAL_PHOTO['Joelson Fernandes']='https://cdn.resfu.com/img_data/players/medium/873965.jpg?size=120x&lossy=1';
+REAL_PHOTO['Santi García']='https://cdn.resfu.com/img_data/players/medium/970725.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gil Martins']='https://cdn.resfu.com/img_data/players/medium/3193957.jpg?size=120x&lossy=1';
+REAL_PHOTO['Agustín Moreira']='https://cdn.resfu.com/img_data/players/medium/906921.jpg?size=120x&lossy=1';
+REAL_PHOTO['Héctor']='https://cdn.resfu.com/img_data/players/medium/186694.jpg?size=120x&lossy=1';
+REAL_PHOTO['Walace França']='https://cdn.resfu.com/img_data/players/medium/3336323.jpg?size=120x&lossy=1';
+REAL_PHOTO['Carlos Eduardo']='https://cdn.resfu.com/img_data/players/medium/928473.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mohamed Kaba']='https://cdn.resfu.com/img_data/players/medium/3173398.jpg?size=120x&lossy=1';
+REAL_PHOTO['Alfonso Pastor']='https://cdn.resfu.com/img_data/players/medium/364666.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gonçalo Tabuaço']='https://cdn.resfu.com/img_data/players/medium/653126.jpg?size=120x&lossy=1';
+REAL_PHOTO['Kimiss Zavala']='https://cdn.resfu.com/img_data/players/medium/1017524.jpg?size=120x&lossy=1';
+REAL_PHOTO['Fran Vieites']='https://cdn.resfu.com/img_data/players/medium/240682.jpg?size=120x&lossy=1';
+REAL_PHOTO['Igor Julião']='https://cdn.resfu.com/img_data/players/medium/161630.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tomás Tavares']='https://cdn.resfu.com/img_data/players/medium/484363.jpg?size=120x&lossy=1';
+REAL_PHOTO['Romain Correia']='https://cdn.resfu.com/img_data/players/medium/490482.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gábor Szalai']='https://cdn.resfu.com/img_data/players/medium/3167165.jpg?size=120x&lossy=1';
+REAL_PHOTO['Paulo Henrique']='https://cdn.resfu.com/img_data/players/medium/198981.jpg?size=120x&lossy=1';
+REAL_PHOTO['Nathanael Ogbeta']='https://cdn.resfu.com/img_data/players/medium/425922.jpg?size=120x&lossy=1';
+REAL_PHOTO['Nilton Varela']='https://cdn.resfu.com/img_data/players/medium/886873.jpg?size=120x&lossy=1';
+REAL_PHOTO['Rodrigo Andrade']='https://cdn.resfu.com/img_data/players/medium/924550.jpg?size=120x&lossy=1';
+REAL_PHOTO['Vladan Danilović']='https://cdn.resfu.com/img_data/players/medium/391133.jpg?size=120x&lossy=1';
+REAL_PHOTO['Yellu Santiago']='https://cdn.resfu.com/img_data/players/medium/1002312.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ibrahim Alani']='https://cdn.resfu.com/img_data/players/medium/3617344.jpg?size=120x&lossy=1';
+REAL_PHOTO['Israel Ayuma']='https://cdn.resfu.com/img_data/players/medium/3405471.jpg?size=120x&lossy=1';
+REAL_PHOTO['Enrique Peña Zauner']='https://cdn.resfu.com/img_data/players/medium/501521.jpg?size=120x&lossy=1';
+REAL_PHOTO['Bryan Limbombe']='https://cdn.resfu.com/img_data/players/medium/879092.jpg?size=120x&lossy=1';
+REAL_PHOTO['Raphael Guzzo']='https://cdn.resfu.com/img_data/players/medium/147843.jpg?size=120x&lossy=1';
+REAL_PHOTO['Maxime Dominguez']='https://cdn.resfu.com/img_data/players/medium/281037.jpg?size=120x&lossy=1';
+REAL_PHOTO['Simo Bouzaidi']='https://cdn.resfu.com/img_data/players/medium/463389.jpg?size=120x&lossy=1';
+REAL_PHOTO['Martín Tejón']='https://cdn.resfu.com/img_data/players/medium/1001520.jpg?size=120x&lossy=1';
+REAL_PHOTO['Xico']='https://cdn.resfu.com/img_data/players/medium/3239302.jpg?size=120x&lossy=1';
+REAL_PHOTO['Samuel Bamba']='https://cdn.resfu.com/img_data/players/medium/879166.jpg?size=120x&lossy=1';
+REAL_PHOTO['Butzke']='https://cdn.resfu.com/img_data/players/medium/732568.jpg?size=120x&lossy=1';
+REAL_PHOTO['Maurice Boakyé']='https://cdn.resfu.com/img_data/players/medium/975814.jpg?size=120x&lossy=1';
+REAL_PHOTO['José Melro']='https://cdn.resfu.com/img_data/players/medium/3160252.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mons Bassouamina']='https://cdn.resfu.com/img_data/players/medium/353262.jpg?size=120x&lossy=1';
+REAL_PHOTO['André Ferreira']='https://cdn.resfu.com/img_data/players/medium/207066.jpg?size=120x&lossy=1';
+REAL_PHOTO['Aranha']='https://cdn.resfu.com/img_data/players/medium/3301639.jpg?size=120x&lossy=1';
+REAL_PHOTO['Leandro Santos']='https://cdn.resfu.com/img_data/players/medium/3205804.jpg?size=120x&lossy=1';
+REAL_PHOTO['Dinis Pinto']='https://cdn.resfu.com/img_data/players/medium/869758.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gilberto']='https://cdn.resfu.com/img_data/players/medium/913853.jpg?size=120x&lossy=1';
+REAL_PHOTO['Maracás']='https://cdn.resfu.com/img_data/players/medium/249340.jpg?size=120x&lossy=1';
+REAL_PHOTO['Kevyn']='https://cdn.resfu.com/img_data/players/medium/3234710.jpg?size=120x&lossy=1';
+REAL_PHOTO['Janderson']='https://cdn.resfu.com/img_data/players/medium/3372408.jpg?size=120x&lossy=1';
+REAL_PHOTO['Pedro Jesus']={MOR:'https://cdn.resfu.com/img_data/players/medium/3446167.jpg?size=120x&lossy=1',MORB:'https://cdn.resfu.com/img_data/players/medium/3446167.jpg?size=120x&lossy=1',SCLB:'https://cdn.resfu.com/img_data/players/medium/3175814.jpg?size=120x&lossy=1'};
+REAL_PHOTO['Kiko']='https://cdn.resfu.com/img_data/players/medium/901707.jpg?size=120x&lossy=1';
+REAL_PHOTO['Álvaro Martínez']='https://cdn.resfu.com/img_data/players/medium/950547.jpg?size=120x&lossy=1';
+REAL_PHOTO['Guilherme Liberato']='https://cdn.resfu.com/img_data/players/medium/743562.jpg?size=120x&lossy=1';
+REAL_PHOTO['Afonso Assis']='https://cdn.resfu.com/img_data/players/medium/3445977.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mateja Stjepanović']='https://cdn.resfu.com/img_data/players/medium/886109.jpg?size=120x&lossy=1';
+REAL_PHOTO['Michael Dacosta']='https://cdn.resfu.com/img_data/players/medium/1019999.jpg?size=120x&lossy=1';
+REAL_PHOTO['Rodri Alonso']='https://cdn.resfu.com/img_data/players/medium/885936.jpg?size=120x&lossy=1';
+REAL_PHOTO['Jimi Gower']='https://cdn.resfu.com/img_data/players/medium/3152142.jpg?size=120x&lossy=1';
+REAL_PHOTO['Miguel Silva']='https://cdn.resfu.com/img_data/players/medium/3341541.jpg?size=120x&lossy=1';
+REAL_PHOTO['Kiko Bondoso']='https://cdn.resfu.com/img_data/players/medium/461887.jpg?size=120x&lossy=1';
+REAL_PHOTO['Nile John']='https://cdn.resfu.com/img_data/players/medium/848632.jpg?size=120x&lossy=1';
+REAL_PHOTO['Manuel Mendonça']='https://cdn.resfu.com/img_data/players/medium/901625.jpg?size=120x&lossy=1';
+REAL_PHOTO['Koby Mottoh']='https://cdn.resfu.com/img_data/players/medium/3350000.jpg?size=120x&lossy=1';
+REAL_PHOTO['Landerson']='https://cdn.resfu.com/img_data/players/medium/3269677.jpg?size=120x&lossy=1';
+REAL_PHOTO['Afonso Vieira']='https://cdn.resfu.com/img_data/players/medium/3222143.jpg?size=120x&lossy=1';
+REAL_PHOTO['Alexandre Parsemain']='https://cdn.resfu.com/img_data/players/medium/975261.jpg?size=120x&lossy=1';
+REAL_PHOTO['Yan Lincon']='https://cdn.resfu.com/img_data/players/medium/912920.jpg?size=120x&lossy=1';
+REAL_PHOTO['Leonardo Vonić']='https://cdn.resfu.com/img_data/players/medium/922668.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tiago Andrade']='https://cdn.resfu.com/img_data/players/medium/937466.jpg?size=120x&lossy=1';
+REAL_PHOTO['Fabiano']='https://cdn.resfu.com/img_data/players/medium/475257.jpg?size=120x&lossy=1';
+REAL_PHOTO['Renato Marin']='https://cdn.resfu.com/img_data/players/medium/3318283.jpg?size=120x&lossy=1';
+REAL_PHOTO['João Gonçalves']='https://cdn.resfu.com/img_data/players/medium/869383.jpg?size=120x&lossy=1';
+REAL_PHOTO['Kevyn Vinícius']='https://cdn.resfu.com/img_data/players/medium/3301818.jpg?size=120x&lossy=1';
+REAL_PHOTO['Daniel de la Cruz']='https://cdn.resfu.com/img_data/players/medium/3240763.jpg?size=120x&lossy=1';
+REAL_PHOTO['Léo Santos']='https://cdn.resfu.com/img_data/players/medium/296303.jpg?size=120x&lossy=1';
+REAL_PHOTO['Zé Vítor']='https://cdn.resfu.com/img_data/players/medium/3146140.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ulisses Wilson']='https://cdn.resfu.com/img_data/players/medium/839134.jpg?size=120x&lossy=1';
+REAL_PHOTO['Francisco Gonçalves']='https://cdn.resfu.com/img_data/players/medium/3186167.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ivanildo Fernandes']='https://cdn.resfu.com/img_data/players/medium/321481.jpg?size=120x&lossy=1';
+REAL_PHOTO['José Gomes']='https://cdn.resfu.com/img_data/players/medium/340151.jpg?size=120x&lossy=1';
+REAL_PHOTO['Williams Kokolo']='https://cdn.resfu.com/img_data/players/medium/432143.jpg?size=120x&lossy=1';
+REAL_PHOTO['Matheus Dias']='https://cdn.resfu.com/img_data/players/medium/934472.jpg?size=120x&lossy=1';
+REAL_PHOTO['Wesley Gasolina']='https://cdn.resfu.com/img_data/players/medium/365360.jpg?size=120x&lossy=1';
+REAL_PHOTO['Pablo Ruan']='https://cdn.resfu.com/img_data/players/medium/1004014.jpg?size=120x&lossy=1';
+REAL_PHOTO['Stavros Gavriel']='https://cdn.resfu.com/img_data/players/medium/814489.jpg?size=120x&lossy=1';
+REAL_PHOTO['Liziero']='https://cdn.resfu.com/img_data/players/medium/296002.jpg?size=120x&lossy=1';
+REAL_PHOTO['Filipe Soares']='https://cdn.resfu.com/img_data/players/medium/426838.jpg?size=120x&lossy=1';
+REAL_PHOTO['Miguel Baeza']='https://cdn.resfu.com/img_data/players/medium/427591.jpg?size=120x&lossy=1';
+REAL_PHOTO['Joel Silva']='https://cdn.resfu.com/img_data/players/medium/3251094.jpg?size=120x&lossy=1';
+REAL_PHOTO['Matchoi Djaló']='https://cdn.resfu.com/img_data/players/medium/868425.jpg?size=120x&lossy=1';
+REAL_PHOTO['Chiheb Labidi']='https://cdn.resfu.com/img_data/players/medium/864840.jpg?size=120x&lossy=1';
+REAL_PHOTO['Deivison']='https://cdn.resfu.com/img_data/players/medium/3478795.jpg?size=120x&lossy=1';
+REAL_PHOTO['Danel Dongmo']='https://cdn.resfu.com/img_data/players/medium/982880.jpg?size=120x&lossy=1';
+REAL_PHOTO['Song Min Kyu']='https://cdn.resfu.com/img_data/players/medium/677345.jpg?size=120x&lossy=1';
+REAL_PHOTO['Mateus Iseppe']='https://cdn.resfu.com/img_data/players/medium/3301884.jpg?size=120x&lossy=1';
+REAL_PHOTO['Markus Jensen']='https://cdn.resfu.com/img_data/players/medium/3201236.jpg?size=120x&lossy=1';
+REAL_PHOTO['Daniel Júnior']='https://cdn.resfu.com/img_data/players/medium/947418.jpg?size=120x&lossy=1';
+REAL_PHOTO['Martim Watts']='https://cdn.resfu.com/img_data/players/medium/3186166.jpg?size=120x&lossy=1';
+REAL_PHOTO['Fernando Nava']='https://cdn.resfu.com/img_data/players/medium/3304180.jpg?size=120x&lossy=1';
+REAL_PHOTO['Njoya Abdel']='https://cdn.resfu.com/img_data/players/medium/3530500.jpg?size=120x&lossy=1';
+REAL_PHOTO['Allen Obando']='https://cdn.resfu.com/img_data/players/medium/3300990.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ennio van der Gouw']='https://cdn.resfu.com/img_data/players/medium/710717.jpg?size=120x&lossy=1';
+REAL_PHOTO['Kevin Chamorro']='https://cdn.resfu.com/img_data/players/medium/448275.jpg?size=120x&lossy=1';
+REAL_PHOTO['Cezary Miszta']='https://cdn.resfu.com/img_data/players/medium/651181.jpg?size=120x&lossy=1';
+REAL_PHOTO['Vítor Hugo']='https://cdn.resfu.com/img_data/players/medium/906122.jpg?size=120x&lossy=1';
+REAL_PHOTO['Marios Vrousai']='https://cdn.resfu.com/img_data/players/medium/302322.jpg?size=120x&lossy=1';
+REAL_PHOTO['João Tomé']='https://cdn.resfu.com/img_data/players/medium/886617.jpg?size=120x&lossy=1';
+REAL_PHOTO['Zé Carlos']={RAVE:'https://cdn.resfu.com/img_data/players/medium/756065.jpg?size=120x&lossy=1',GIL:'https://cdn.resfu.com/img_data/players/medium/3171056.jpg?size=120x&lossy=1'};
+REAL_PHOTO['Francisco Petrasso']='https://cdn.resfu.com/img_data/players/medium/3245945.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gustavo Mancha']='https://cdn.resfu.com/img_data/players/medium/3163215.jpg?size=120x&lossy=1';
+REAL_PHOTO['Andreas Ntoi']='https://cdn.resfu.com/img_data/players/medium/879287.jpg?size=120x&lossy=1';
+REAL_PHOTO['Jakub Brabec']='https://cdn.resfu.com/img_data/players/medium/140302.jpg?size=120x&lossy=1';
+REAL_PHOTO['Julien Lomboto']='https://cdn.resfu.com/img_data/players/medium/976978.jpg?size=120x&lossy=1';
+REAL_PHOTO['Caike']='https://cdn.resfu.com/img_data/players/medium/3525203.jpg?size=120x&lossy=1';
+REAL_PHOTO['Simón García']='https://cdn.resfu.com/img_data/players/medium/3424869.jpg?size=120x&lossy=1';
+REAL_PHOTO['Nelson Abbey']='https://cdn.resfu.com/img_data/players/medium/921332.jpg?size=120x&lossy=1';
+REAL_PHOTO['Pedro Amaral']='https://cdn.resfu.com/img_data/players/medium/316976.jpg?size=120x&lossy=1';
+REAL_PHOTO['Georgios Liavas']='https://cdn.resfu.com/img_data/players/medium/465019.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tamás Nikitscher']='https://cdn.resfu.com/img_data/players/medium/847248.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ryan Guilherme']='https://cdn.resfu.com/img_data/players/medium/3143932.jpg?size=120x&lossy=1';
+REAL_PHOTO['Roland Galčík']='https://cdn.resfu.com/img_data/players/medium/771918.jpg?size=120x&lossy=1';
+REAL_PHOTO['Malik Sellouki']='https://cdn.resfu.com/img_data/players/medium/853199.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tobías Medina']='https://cdn.resfu.com/img_data/players/medium/893907.jpg?size=120x&lossy=1';
+REAL_PHOTO['Diogo Nascimento']='https://cdn.resfu.com/img_data/players/medium/878927.jpg?size=120x&lossy=1';
+REAL_PHOTO['Brandon Aguilera']='https://cdn.resfu.com/img_data/players/medium/832877.jpg?size=120x&lossy=1';
+REAL_PHOTO['Antoine Wenck']='https://cdn.resfu.com/img_data/players/medium/3659814.jpg?size=120x&lossy=1';
+REAL_PHOTO['Dario Špikić']='https://cdn.resfu.com/img_data/players/medium/319481.jpg?size=120x&lossy=1';
+REAL_PHOTO['Sebastian Clemmensen']='https://cdn.resfu.com/img_data/players/medium/885460.jpg?size=120x&lossy=1';
+REAL_PHOTO['Miguel Patrício']='https://cdn.resfu.com/img_data/players/medium/3345076.jpg?size=120x&lossy=1';
+REAL_PHOTO['Jalen Blesa']='https://cdn.resfu.com/img_data/players/medium/3377357.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tamble']='https://cdn.resfu.com/img_data/players/medium/981635.jpg?size=120x&lossy=1';
+REAL_PHOTO['Samuel Alves']='https://cdn.resfu.com/img_data/players/medium/3647474.jpg?size=120x&lossy=1';
+REAL_PHOTO['Rafael Lobato']='https://cdn.resfu.com/img_data/players/medium/3301944.jpg?size=120x&lossy=1';
+REAL_PHOTO['Oliwier Zych']='https://cdn.resfu.com/img_data/players/medium/856970.jpg?size=120x&lossy=1';
+REAL_PHOTO['Juan Castillo']='https://cdn.resfu.com/img_data/players/medium/851993.jpg?size=120x&lossy=1';
+REAL_PHOTO['Tony Strata']='https://cdn.resfu.com/img_data/players/medium/3212365.jpg?size=120x&lossy=1';
+REAL_PHOTO['Miguel Maga']='https://cdn.resfu.com/img_data/players/medium/901781.jpg?size=120x&lossy=1';
+REAL_PHOTO['Óscar Rivas']='https://cdn.resfu.com/img_data/players/medium/875064.jpg?size=120x&lossy=1';
+REAL_PHOTO['Thiago Balieiro']='https://cdn.resfu.com/img_data/players/medium/3223721.jpg?size=120x&lossy=1';
+REAL_PHOTO['Toni Borevković']='https://cdn.resfu.com/img_data/players/medium/296533.jpg?size=120x&lossy=1';
+REAL_PHOTO['Ahmed Sidibé']='https://cdn.resfu.com/img_data/players/medium/921764.jpg?size=120x&lossy=1';
+REAL_PHOTO['Yeimar Jesús M. Mosquera']='https://cdn.resfu.com/img_data/players/medium/3427231.jpg?size=120x&lossy=1';
+REAL_PHOTO['João Mendes']='https://cdn.resfu.com/img_data/players/medium/924454.jpg?size=120x&lossy=1';
+REAL_PHOTO['Francisco Dias']='https://cdn.resfu.com/img_data/players/medium/3594959.jpg?size=120x&lossy=1';
+REAL_PHOTO['Beni']='https://cdn.resfu.com/img_data/players/medium/893292.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gonçalo Nogueira']='https://cdn.resfu.com/img_data/players/medium/1021963.jpg?size=120x&lossy=1';
+REAL_PHOTO['Matija Mitrović']='https://cdn.resfu.com/img_data/players/medium/3219201.jpg?size=120x&lossy=1';
+REAL_PHOTO['Lohann Doucet']='https://cdn.resfu.com/img_data/players/medium/3219466.jpg?size=120x&lossy=1';
+REAL_PHOTO['Rica Rocha']='https://cdn.resfu.com/img_data/players/medium/3194559.jpg?size=120x&lossy=1';
+REAL_PHOTO['Gustavo Silva']='https://cdn.resfu.com/img_data/players/medium/3239101.jpg?size=120x&lossy=1';
+REAL_PHOTO['Oumar Camara']='https://cdn.resfu.com/img_data/players/medium/3323346.jpg?size=120x&lossy=1';
+REAL_PHOTO['Telmo Arcanjo']='https://cdn.resfu.com/img_data/players/medium/953724.jpg?size=120x&lossy=1';
+REAL_PHOTO['Marco Cruz']='https://cdn.resfu.com/img_data/players/medium/901518.jpg?size=120x&lossy=1';
+REAL_PHOTO['Santi Verdi']='https://cdn.resfu.com/img_data/players/medium/3337916.jpg?size=120x&lossy=1';
+REAL_PHOTO['Fabio Blanco']='https://cdn.resfu.com/img_data/players/medium/907178.jpg?size=120x&lossy=1';
+REAL_PHOTO['Victor Gonçalves Andersson']='https://cdn.resfu.com/img_data/players/medium/3182192.jpg?size=120x&lossy=1';
+REAL_PHOTO['Samu']='https://cdn.resfu.com/img_data/players/medium/232122.jpg?size=120x&lossy=1';
+REAL_PHOTO['Alan']='https://cdn.resfu.com/img_data/players/medium/365364.jpg?size=120x&lossy=1';
+REAL_PHOTO['Miguel Nogueira']='https://cdn.resfu.com/img_data/players/medium/937485.jpg?size=120x&lossy=1';
+REAL_PHOTO['Alioune Ndoye']='https://cdn.resfu.com/img_data/players/medium/970465.jpg?size=120x&lossy=1';
+REAL_PHOTO['Patrick Ouotro']='https://cdn.resfu.com/img_data/players/medium/3362888.jpg?size=120x&lossy=1';
+REAL_PHOTO['Arnel Jakupović']='https://cdn.resfu.com/img_data/players/medium/302683.jpg?size=120x&lossy=1';
+REAL_PHOTO['Miguel Nóbrega']='https://cdn.resfu.com/img_data/players/medium/426833.jpg?size=120x&lossy=1';
 REAL_PHOTO['Vitinha']={PSG:'https://cdn.resfu.com/img_data/players/medium/427536.jpg?size=120x&lossy=1',GEN:'https://cdn.resfu.com/img_data/players/medium/873827.jpg?size=120x&lossy=1'};
 /* Genoa cedidos */
 Object.entries({'Lorenzo Gagliardi':983670,'Simone Calvani':983560,'Gianluca Rossi':3192112,'Hugo Cuenca':3261973,'Tommaso Pittino':3191644,'Edoardo Meconi':3201371,'Ernestas Lysionok':3289714,'Matteo Barbini':3333031,'Gabriele Pessolani':3321831,'Alessandro Debenedetti':3358884,'Chec Doumbia':3767419}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
@@ -5385,6 +5647,7 @@ Object.entries({'Lucas França':321952,'Neneca':987471,'Lucas Soares':445232,'Pe
 REAL_PHOTO['Dani Martín']={LEV:'https://cdn.resfu.com/img_data/players/medium/3187971.jpg?size=120x&lossy=1',TEN:'https://cdn.resfu.com/img_data/players/medium/235682.jpg?size=120x&lossy=1'};
 REAL_PHOTO['David Rodríguez']={ELD:'https://cdn.resfu.com/img_data/players/medium/3361962.jpg?size=120x&lossy=1',TEN:'https://cdn.resfu.com/img_data/players/medium/927739.jpg?size=120x&lossy=1'};
 REAL_PHOTO['Robinho']={ETD:'https://cdn.resfu.com/img_data/players/medium/3226531.jpg?size=120x&lossy=1',AVS:'https://cdn.resfu.com/img_data/players/medium/460374.jpg?size=120x&lossy=1'};
+REAL_PHOTO['Sorriso']={FAM:'https://cdn.resfu.com/img_data/players/medium/913017.jpg?size=120x&lossy=1',SCL:'https://cdn.resfu.com/img_data/players/medium/3271870.jpg?size=120x&lossy=1'};
 Object.assign(REAL_FOOT,{'Nicolás Lozano':'D','Álex Fita':'I','Marc Domènech':'I','Mahamadou Baldé':'D','Pasquale Mazzocchi':'D','Jesper Lindstrøm':'D','Nosa Edward':'I','Dinis Rodrigues':'I','Jacob Ondrejka':'D','Oliver Sørensen':'I','Anass Salah-Eddine':'I','Luigi Cherubini':'D','Filippo Reale':'I','Mattia Mannini':'D','Samuele Mulattieri':'D','Janis Antiste':'D','Giuseppe Kevin Leone':'D','Luca D’Andrea':'I','Filippo Missori':'D','Alessandro Di Bitonto':'D','Justin Kumi':'D','Agustín Álvarez':'D','Côme Bianay Balcot':'D','Jonathan Silva':'I','Sergiu Perciun':'D','Wisdom Acquah':'I'});
 function footOf(p){
   if(p.foot)return p.foot;
@@ -6472,7 +6735,7 @@ function sellPlayer(id){
 const fmtM=v=>'€'+(v<1?Math.round(v*1000)+'K':(v>=100?Math.round(v):v.toFixed(1))+'M');
 
 /* ===================== filiales, ofertas y cesiones ===================== */
-const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'REC',REC:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMAB',RMAB:'RMA',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL'};
+const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'REC',REC:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMAB',RMAB:'RMA',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL',FAM:'FAMB',FAMB:'FAM',GIL:'GILB',GILB:'GIL',MAR:'MARB',MARB:'MAR',MOR:'MORB',MORB:'MOR',RAVE:'RAVEB',RAVEB:'RAVE',VIT:'VITB',VITB:'VIT'};
 const isB=id=>id==='RSB'||id==='CFO'||!!(CLUBBY[id]&&CLUBBY[id].bTeam);
 /* filial: devuelve el real si existe; si no, crea uno ficticio (club B con plantilla generada) */
 function filialFor(id){
@@ -8690,8 +8953,18 @@ function animList(dir){
 }
 function toggleView(){
   ui.vmode=ui.vmode==='list'?'map':'list';
+  Store.set('mister.vmode',ui.vmode);
   $('#s-map').dataset.view=ui.vmode;
   if(ui.vmode==='list')renderList();
+  else if(ui.level===2&&ui.country){renderPins();centerMapView()}
+  else if(ui.level===0)centerHotspot();
+  else centerMapView();
+}
+function centerMapView(){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const l=$('#L'+ui.level);if(!l||!l.scrollTo)return;
+    l.scrollTo((l.scrollWidth-l.clientWidth)/2,(l.scrollHeight-l.clientHeight)/2);
+  }));
 }
 function renderList(){
   const l=$('#listview');
@@ -8727,7 +9000,7 @@ function askMode(n){
   <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
 }
 function startMap(){
-  ui.seed=(Math.random()*4294967296)>>>0;ui.preview={};ui.zoom=1;ui.div=1;ui.club=null;ui.country=null;ui.origins=['50% 50%','50% 50%'];ui.vmode='map';$('#s-map').dataset.view='map';
+  ui.seed=(Math.random()*4294967296)>>>0;ui.preview={};ui.zoom=1;ui.div=1;ui.club=null;ui.country=null;ui.origins=['50% 50%','50% 50%'];ui.vmode=Store.get('mister.vmode')==='list'?'list':'map';$('#s-map').dataset.view=ui.vmode;
   $('#map-slot').textContent='Slot '+ui.slot+', '+(ui.gmode==='real'?'real':'ficticio');
   if(!ui.mapBuilt){buildMap();ui.mapBuilt=true}
   $('#L2').innerHTML='';closeCard();setLevel(0);go('map');
