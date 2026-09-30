@@ -260,6 +260,13 @@ button.posc:hover{transform:translateY(-1px)}
 .fac-act.top{padding-top:14px;border-top:1px solid var(--line)}
 .fac .card-h span{white-space:nowrap}
 .fac-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fac-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.fac-tile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:16px;background:rgba(220,240,228,.045);border:1px solid var(--line);color:inherit;text-align:center;transition:border-color .2s,background .2s}
+.fac-tile svg{width:26px;height:26px;color:var(--muted)}
+.fac-tile b{font:600 13px var(--display);letter-spacing:-.01em}
+.fac-tile small{color:var(--muted);font-size:11.5px}
+.fac-tile.on{border-color:var(--blue);background:rgba(143,180,255,.1)}
+.fac-tile.on svg{color:var(--blue)}
 .fac-head h3{font:600 17px var(--display);letter-spacing:-.01em}
 .fac-lv{font-size:13px;color:var(--muted);margin-top:6px;white-space:nowrap}
 .fac-sub{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
@@ -628,6 +635,16 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .stats b{font:600 18px var(--display)}
 .card{border-radius:18px;padding:18px;background:var(--surface);border:1px solid var(--line)}
 .card-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
+.fin-h{width:100%;background:none;border:0;padding:0;margin-bottom:12px;font:inherit;color:inherit;cursor:pointer;align-items:center}
+.fin-h .chev{flex:none;color:var(--muted);transition:transform .15s}
+.fin-h .chev.open{transform:rotate(90deg)}
+.fin-detail{margin-top:-2px}
+.fin-sec{padding:10px 0;border-top:1px solid var(--line)}
+.fin-detail .fin-sec:first-child{border-top:0;padding-top:0}
+.fin-row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+.fin-sub{display:flex;justify-content:space-between;padding:4px 2px 0 14px;font-size:12.5px;color:var(--muted)}
+.fin-amt{font-size:14px!important}
+.stats .fin-amt{font-size:15px!important}
 .card-h h3{font:600 17px var(--display);letter-spacing:-.01em}
 .card-h span{font-size:13px;color:var(--muted)}
 .comp-pal h3{font:600 16px/1.2 var(--display);margin:0 0 2px}
@@ -663,6 +680,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .pname .tt,.pc-name .tt{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:7px;vertical-align:middle}
 .pc-meta .tag{font-size:10.5px;padding:1px 7px}
 .bad{color:var(--bad)}
+.good{color:#66bb6a}
 .pb{display:inline-grid;place-items:center;width:34px;height:22px;border-radius:7px;font:600 11px var(--ui)}
 .pb-GK{background:rgba(232,184,102,.16);color:var(--amber)}
 .pb-DF{background:rgba(143,180,255,.15);color:var(--blue)}
@@ -4730,6 +4748,17 @@ function calcVal(p){
   v*=p.age<=21?1.35:p.age<=24?1.2:p.age<=28?1:p.age<=31?.7:.4;
   return Math.max(.2,Math.round(v*10)/10);
 }
+/* sueldo estimado para plantillas reales de divisiones no élite (Segunda, filiales, Primera RFEF...): parte del
+   valor de mercado (que ya recoge GRL y edad) y le añade una prima por potencial y por estar en la edad óptima,
+   para que un jugador prometedor o en su plenitud no cobre lo mismo que uno de valor similar pero sin recorrido. */
+function calcWage(p){
+  const ovr=p.ovr,pot=p.pot||ovr,val=p.val||.1,age=p.age||25;
+  const potBonus=1+Math.min(.5,Math.max(0,pot-ovr)*.035);
+  const ageFactor=age<=20?.75:age<=23?.9:age<=30?1.15:age<=33?.95:.7;
+  const grlBonus=1+Math.max(0,ovr-55)*.01;
+  const mult=clamp(potBonus*ageFactor*grlBonus,.5,2.2);
+  return Math.max(.5,Math.round(val*4*mult*10)/10);
+}
 /* ajusta el valor de un jugador tras un cambio de GRL de forma proporcional a su valor actual,
    en vez de recalcularlo desde cero: así un jugador con un valor ya alto (p.ej. por ser un crack real)
    no se desploma ni se dispara de golpe por subir o bajar un solo punto de media */
@@ -4755,14 +4784,19 @@ REAL_PHOTO['Javi Castro']={CAD:'https://cdn.resfu.com/img_data/players/medium/76
 function realSquad(club){
   return REAL_DB[club.id].map((r,i)=>{
     const p={id:club.id+i,n:r[0],nat:r[3],pos:r[1],age:BASE_YEAR-r[2],ovr:r[4],pot:Math.max(r[5],r[4]),en:100,inj:0,g:0,ap:0,real:1};
-    p.val=r[6]!=null?r[6]:calcVal(p);p.wage=r[7]!=null?r[7]:Math.round(p.val*4);if(r[8])p.pp=r[8].split('/');p.at=fixAt(p,REAL_ATTR[p.n]);const ph=photoFor(p.n,club.id);if(ph)p.photo=ph;if(club.id==='ATH')p.eus=1;return p;
+    p.val=r[6]!=null?r[6]:calcVal(p);
+    p.wage=(club.div===5||club.div===6)?Math.max(r[7]||0,calcWage(p)):(r[7]!=null?r[7]:Math.round(p.val*4));
+    if(r[8])p.pp=r[8].split('/');p.at=fixAt(p,REAL_ATTR[p.n]);const ph=photoFor(p.n,club.id);if(ph)p.photo=ph;if(club.id==='ATH')p.eus=1;return p;
   });
 }
 /* jugador cedido cuyo club de origen no tiene plantilla real: sus datos van en la propia entrada de REAL_LOANS (6.º valor) */
 function extLoanPlayer(idx){
   const L=REAL_LOANS[idx],r=L&&L[5];if(!r)return null;
   const p={id:L[1]+'L'+idx,n:r[0],nat:r[3],pos:r[1],age:BASE_YEAR-r[2],ovr:r[4],pot:Math.max(r[5],r[4]),en:100,inj:0,g:0,ap:0,real:1};
-  p.val=r[6]!=null?r[6]:calcVal(p);p.wage=r[7]!=null?r[7]:Math.round(p.val*4);if(r[8])p.pp=r[8].split('/');p.at=fixAt(p,REAL_ATTR[p.n]);const ph=photoFor(p.n,L[1]);if(ph)p.photo=ph;return p;
+  const dc=CLUBBY[L[1]];
+  p.val=r[6]!=null?r[6]:calcVal(p);
+  p.wage=(dc&&(dc.div===5||dc.div===6))?Math.max(r[7]||0,calcWage(p)):(r[7]!=null?r[7]:Math.round(p.val*4));
+  if(r[8])p.pp=r[8].split('/');p.at=fixAt(p,REAL_ATTR[p.n]);const ph=photoFor(p.n,L[1]);if(ph)p.photo=ph;return p;
 }
 function genSquad(club,seed){
   if(curMode()==='real'&&REAL_DB[club.id])return realSquad(club);
@@ -7930,7 +7964,7 @@ function simMatch(m){
   tally(m.h,m.hg,m.ag);tally(m.a,m.ag,m.hg);wear(H,m.h);wear(A,m.a);
 }
 /* TV por categoría: ingresos estables según la división (1ª y 2ª), en M€/semana */
-const TV_WEEK={1:.5,2:.08};
+const TV_WEEK={1:.5,2:.08,5:.02,6:.02};
 /* finanzas semanales de un club de tu liga: TV por categoría + comercial (por tamaño real) + taquilla (solo en casa,
    proporcional a la afluencia = reputación/GRL del once) menos nómina y mantenimiento (que sube con la reputación). */
 function weekFinance(id,home){
@@ -7938,18 +7972,26 @@ function weekFinance(id,home){
   /* TV por categoría, escalado al tamaño real del club dentro de la división: un pequeño cobra una fracción y un
      gigante puede llegar a 1.5x la base (los descendidos, con presupuesto a la mitad, también generan menos TV). */
   const tv=(TV_WEEK[c.div]||0)*clamp(.4+Math.min(1.5,budgetFor(c)/100),.4,1.5);
-  const comercial=budgetFor(c)*.01;
-  const gate=home?clamp(repOf(id)-45,0,55)*.018:0;
+  const comercial=budgetFor(c)*.01*(1+(zoneLevel(id)-1)*.05);
+  const gate=home?Math.min(6,.00006*Math.pow(1.12,repOf(id))):0;
   const wages=(id===state.club?wageBill():wageK(state.teams[id].players))/1000;
-  const mant=clamp(repOf(id)-50,0,48)*.014;
+  const mant=Math.min(.7,.0000035*Math.pow(1.132,repOf(id)));
   const inc=r1(tv+comercial+gate);
   const exp=r1(wages+mant);
   state.teams[id].budget=r1(state.teams[id].budget+inc-exp);
-  return{inc,exp};
+  return{inc,exp,tv,comercial,gate,wages,mant};
+}
+/* finanzas acumuladas del club del usuario desde que empezó la partida: se van sumando por categoría cada jornada y con cada traspaso */
+function ensureFinTotal(){
+  if(!state.finTotal)state.finTotal={tv:0,comercial:0,gate:0,wages:0,mant:0,transferIn:0,transferOut:0,prizes:0,facilities:0};
+  if(state.finTotal.prizes==null)state.finTotal.prizes=0;
+  if(state.finTotal.facilities==null)state.finTotal.facilities=0;
+  return state.finTotal;
 }
 function finance(round){
   const mine=weekFinance(state.club,round.some(m=>m.h===state.club));
-  state.fin={inc:mine.inc,exp:mine.exp};
+  const F=ensureFinTotal();
+  F.tv+=mine.tv;F.comercial+=mine.comercial;F.gate+=mine.gate;F.wages+=mine.wages;F.mant+=mine.mant;
   /* financiera ligera para los demás clubes de tu división (los filiales no generan ingresos propios) */
   Object.keys(state.teams).forEach(id=>{if(id!==state.club&&!isB(id))weekFinance(id,round.some(m=>m.h===id))});
 }
@@ -8385,6 +8427,7 @@ function newSeason(){
   const myMove=myMoveTxt();
   const pos=posOf(state.club),t=me(),prize=Math.max(0,13-pos)*3;
   t.budget=Math.round((t.budget+prize)*10)/10;
+  ensureFinTotal().prizes+=prize;
   const r=rng(hashStr('ns'+state.seed+'_'+state.season));
   (state.loans||[]).forEach(l=>{
     const p=l.p;
@@ -8634,6 +8677,7 @@ function buyPlayer(id){
   if(t.budget<p.price)return'No tienes presupuesto suficiente.';
   t.budget=Math.round((t.budget-p.price)*10)/10;state.market.splice(i,1);
   const fromClub=p.from,fee=p.price;
+  ensureFinTotal().transferOut+=fee;
   delete p.price;delete p.from;p.en=100;p.inj=0;p.g=0;p.ap=0;t.players.push(p);
   (p.career=p.career||[]).push({s:state.season,ev:'in',from:fromClub,to:state.club,fee});
   news(`Fichas a ${p.n} (${p.ovr}) por ${fmtM(p.val)}.`);saveGame();return null;
@@ -8644,9 +8688,10 @@ function sellPlayer(id){
   if(p.pos==='GK'&&t.players.filter(x=>x.pos==='GK').length<=2)return'Necesitas al menos 2 porteros.';
   const price=Math.round(p.val*.85*10)/10;
   t.players=t.players.filter(x=>x.id!==id);delete p.tr;t.budget=Math.round((t.budget+price)*10)/10;
+  ensureFinTotal().transferIn+=price;
   fixLineup(t);news(`Vendes a ${p.n} por ${fmtM(price)}.`);saveGame();return null;
 }
-const fmtM=v=>'€'+(v<1?Math.round(v*1000)+'K':(v>=100?Math.round(v):v.toFixed(1))+'M');
+const fmtM=v=>{const s=v<0?'-':'',a=Math.abs(v);return s+'€'+(a<1?Math.round(a*1000)+'K':(a>=100?Math.round(a):a.toFixed(1))+'M')};
 
 /* ===================== filiales, ofertas y cesiones ===================== */
 const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'GRAB',GRAB:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMC',RMC:'RMA',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL',FAM:'FAMB',FAMB:'FAM',GIL:'GILB',GILB:'GIL',MAR:'MARB',MARB:'MAR',MOR:'MORB',MORB:'MOR',RAVE:'RAVEB',RAVEB:'RAVE',VIT:'VITB',VITB:'VIT',JUV:'JNG',JNG:'JUV',AJA:'JAJ',JAJ:'AJA',AZA:'AZB',AZB:'AZA',FEY:'FEYB',FEYB:'FEY',FCP:'FCPB',FCPB:'FCP',UTR:'UTRB',UTRB:'UTR',MUN:'MUNB',MUNB:'MUN',AVL:'AVLB',AVLB:'AVL',CHE:'CHEB',CHEB:'CHE',MER:'MERB',MERB:'MER',BARA:'BARAB',BARAB:'BARA',ZAR:'ZARB',ZARB:'ZAR',LPA:'LPAB',LPAB:'LPA',VAL:'VALB',VALB:'VAL',NAS:'NASB',NASB:'NAS',DEP:'FAB',FAB:'DEP'};
@@ -8670,7 +8715,11 @@ function filialFor(id){
 function initFam(){const f=filialFor(state.club);state.fam=f&&CLUBBY[f]?{id:f,players:genSquad(CLUBBY[f],state.seed)}:null;state.loansOut=[]}
 /* ===================== instalaciones y academia (niveles 1-15) ===================== */
 const FAC_MAX=15,ACAD_EVERY=8;
-const FAC_NAME={train:'Instalaciones de entrenamiento',acad:'Academia de juveniles'};
+const FAC_NAME={train:'Instalaciones de entrenamiento',acad:'Academia de juveniles',zone:'Zona del club'};
+const ICO_TRAIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="9.5" width="3" height="5" rx="1"/><rect x="19.5" y="9.5" width="3" height="5" rx="1"/><line x1="4.5" y1="12" x2="19.5" y2="12"/><rect x="6" y="7.5" width="2.6" height="9" rx="1"/><rect x="15.4" y="7.5" width="2.6" height="9" rx="1"/></svg>';
+const ICO_CANTERA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V10"/><path d="M12 10C12 6 9 4 5 4c0 4 2 7 7 7"/><path d="M12 13c0-4 3-6 7-6c0 4-2 7-7 7"/></svg>';
+const ICO_ZONE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9.5v9.5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9.5"/><path d="M3 9.3c0 1.6 1.3 2.9 3 2.9s3-1.3 3-2.9"/><path d="M9 9.3c0 1.6 1.3 2.9 3 2.9s3-1.3 3-2.9"/><path d="M15 9.3c0 1.6 1.3 2.9 3 2.9s3-1.3 3-2.9"/></svg>';
+const FAC_ICO={train:ICO_TRAIN,acad:ICO_CANTERA,zone:ICO_ZONE};
 const ACAD_BONUS={FCB:2,RSO:3,ATH:3,VIL:2,CEL:3,RMA:1,SEV:1,BET:1,VAL:1,ESP:1,ALA:1,OSA:1,MCI:1,ARS:1,CHE:2,MUN:1,TOT:1,SOU:3,LEE:2,WHU:2,EVE:1,BHA:1,INT:1,MIL:1,JUV:1,ATA:4,ROM:2,EMP:3,BAY:1,BVB:2,B04:1,RBL:2,SGF:3,SGE:1,KOE:1,S04:2,LEG:1,GIR:1,SPO:1,OVI:1,LPA:1};
 const TRAIN_BONUS={RMA:1,BAY:1,MCI:1,ARS:1,LIV:1,ATM:1,B04:1,RBL:1,NEW:1,AVL:1,INT:0};
 /* instalaciones fijas de la Primera RFEF (Entrenamiento/Cantera) según la actualización de la categoría */
@@ -8680,25 +8729,31 @@ const FAC_SET={
 };
 function facLevels(id){
   const set=FAC_SET&&FAC_SET[id];
-  if(set)return{train:clamp(set.train,1,FAC_MAX),acad:clamp(set.acad,1,FAC_MAX)};
   const base=clamp(Math.round((repOf(id)-44)/3),1,FAC_MAX);
-  return{train:clamp(base+(TRAIN_BONUS[id]||0),1,FAC_MAX),acad:clamp(base+(ACAD_BONUS[id]||0),1,FAC_MAX)};
+  if(set)return{train:clamp(set.train,1,FAC_MAX),acad:clamp(set.acad,1,FAC_MAX),zone:base};
+  return{train:clamp(base+(TRAIN_BONUS[id]||0),1,FAC_MAX),acad:clamp(base+(ACAD_BONUS[id]||0),1,FAC_MAX),zone:base};
 }
 const trainLevel=id=>state&&id===state.club&&state.fac?state.fac.train:facLevels(id).train;
+/* nivel de la zona del club (tienda, museo, entorno del estadio): sube el ingreso comercial semanal */
+const zoneLevel=id=>state&&id===state.club&&state.fac&&state.fac.zone!=null?state.fac.zone:facLevels(id).zone;
 /* bonus de desarrollo de fin de temporada segun las instalaciones del club */
 function trainBonus(id,a,r){
   const fb=(trainLevel(id)-1)/14;
   return a<=24?Math.floor(r()*(1+fb*2)):a<=29?(r()<fb*.5?1:0):(a>=31&&r()<fb*.35?1:0);
 }
-const facCost=L=>r1(3+L*L*.35),facWeeks=L=>10+Math.round(L);
+const facCostBase=L=>r1(3+L*L*.35),facWeeksBase=L=>10+Math.round(L);
+/* la zona del club sale más barata y rápida que entrenamiento/cantera, sobre todo en los primeros niveles */
+const facCostZone=L=>r1(.6+L*L*.15),facWeeksZone=L=>6+Math.round(L*.8);
+const facCost=(k,L)=>k==='zone'?facCostZone(L):facCostBase(L);
+const facWeeks=(k,L)=>k==='zone'?facWeeksZone(L):facWeeksBase(L);
 /* ============ INSTALACIONES ============ */
 function initFacilities(){state.fac=facLevels(state.club);state.works=[];state.academy=[];state.acadIn=ACAD_EVERY}
 function startWork(k){
   const L=state.fac[k],t=me();
   if(L>=FAC_MAX)return'Ya está al nivel máximo.';
   if(state.works.some(w=>w.k===k))return'Ya hay unas obras en marcha.';
-  const cost=facCost(L);if(t.budget<cost)return'No tienes presupuesto suficiente.';
-  t.budget=r1(t.budget-cost);state.works.push({k,to:L+1,left:facWeeks(L)});
+  const cost=facCost(k,L);if(t.budget<cost)return'No tienes presupuesto suficiente.';
+  t.budget=r1(t.budget-cost);ensureFinTotal().facilities+=cost;state.works.push({k,to:L+1,left:facWeeks(k,L)});
   news(`Empiezan las obras: ${FAC_NAME[k].toLowerCase()} subirá al nivel ${L+1} (${fmtM(cost)}).`);saveGame();return null;
 }
 /* ===================== mercado de la IA =====================
@@ -9371,6 +9426,7 @@ function acceptOffer(pid,oid){
   const f=offerFind(pid,oid);if(!f)return'La oferta ya no está disponible.';
   const t=me(),err=canLeaveTeam(t.players,f.p,!isB(state.club));if(err)return err;
   t.players.splice(t.players.indexOf(f.p),1);t.budget=r1(t.budget+f.o.amt);fixLineup(t);
+  ensureFinTotal().transferIn+=f.o.amt;
   (f.p.career=f.p.career||[]).push({s:state.season,ev:'out',from:state.club,to:f.o.from,fee:f.o.amt});
   receiveTransfer(f.p,f.o.from,f.o.amt);
   news(`Vendes a ${f.p.n} al ${cname(f.o.from)} por ${fmtM(f.o.amt)}.`);saveGame();return null;
@@ -9620,7 +9676,7 @@ function negotiateBuy(id,fee,sal,promised){
   else if(sal>=T.wmin*.9)msgs.push(`${p.n} pide un sueldo de unos €${T.wmin}K semanales.${isLowRole(T.roleMe)?' No tiene asegurado el protagonismo en tu equipo.':''}`);
   else msgs.push(`${p.n} rechaza las condiciones económicas.${isLowRole(T.roleMe)?' No cuenta con jugar en tu equipo.':''}`);
   if(clubOk&&plOk){
-    const from=p.from;t.budget=r1(t.budget-fee);joinSquad(p,Object.assign({wage:Math.round(sal)},promised?{role:promised}:{}));
+    const from=p.from;t.budget=r1(t.budget-fee);ensureFinTotal().transferOut+=fee;joinSquad(p,Object.assign({wage:Math.round(sal)},promised?{role:promised}:{}));
     (p.career=p.career||[]).push({s:state.season,ev:'in',from,to:state.club,fee});
     news(`Fichas a ${p.n} (${p.ovr}) del ${cname(from)} por ${fmtM(fee)}, con un sueldo de €${Math.round(sal)}K semanales.`);saveGame();
     return{msgs:[`Fichaje cerrado: ${p.n} ya es jugador de tu club.`],done:true};
@@ -12044,7 +12100,19 @@ function migrateUclIfNeeded(){
     }
   }
 }
-function enterGame(){ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';migrateUclIfNeeded();renderGame();go('game')}
+/* partidas ya en marcha: los jugadores de plantillas reales de Primera RFEF (div 5/6) que ya se generaron con la
+   fórmula de sueldo antigua se recalculan al entrar, sin bajar nunca lo que ya cobraban. */
+function migrateWagesIfNeeded(){
+  if(!state||!state.teams)return;
+  if(state.fac&&state.fac.zone==null)state.fac.zone=facLevels(state.club).zone;
+  const bump=p=>{if(p.real)p.wage=Math.max(p.wage,calcWage(p))};
+  Object.keys(state.teams).forEach(id=>{
+    const c=CLUBBY[id];if(!c||(c.div!==5&&c.div!==6))return;
+    (state.teams[id].players||[]).forEach(bump);
+  });
+  if(state.fam){const fc=CLUBBY[state.fam.id];if(fc&&(fc.div===5||fc.div===6))(state.fam.players||[]).forEach(bump)}
+}
+function enterGame(){ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';migrateUclIfNeeded();migrateWagesIfNeeded();renderGame();go('game')}
 function renderGame(){
   const c=CLUBBY[state.club],t=me();
   $('#g-crest').innerHTML=crestHTML(c,38);$('#g-club').textContent=c.name;
@@ -12111,7 +12179,25 @@ home(){
     const st=standings();
     next=`<div class="card next"><div class="card-h"><h3>Temporada terminada</h3><span>Campeón: ${esc(CLUBBY[st[0].id].name)}</span></div><p class="muted-s" style="margin-bottom:14px">Has acabado ${pos}º. La directiva te ingresará ${fmtM(Math.max(0,13-pos)*3)} por la clasificación.</p><button class="btn primary" data-act="newseason">Empezar la temporada ${state.season+1}</button><button class="btn ghost" style="margin-top:8px;width:100%" data-act="season-summary">Resumen temporada</button></div>`;
   }
-  const fin=state.fin?`<div class="card"><div class="card-h"><h3>Finanzas de la última jornada</h3></div><div class="stats" style="border:0;margin:0;padding:0"><div><small>Ingresos</small><b>${fmtM(state.fin.inc)}</b></div><div><small>Gastos</small><b>${fmtM(state.fin.exp)}</b></div><div><small>Balance</small><b class="${state.fin.inc-state.fin.exp<0?'bad':''}">${fmtM(Math.round((state.fin.inc-state.fin.exp)*10)/10)}</b></div><div><small>Caja</small><b>${fmtM(t.budget)}</b></div></div></div>`:'';
+  const FT=ensureFinTotal();
+  const finInc=FT.tv+FT.comercial+FT.gate+FT.transferIn+FT.prizes,finExp=FT.wages+FT.mant+FT.transferOut+FT.facilities,finBal=finInc-finExp;
+  const fin=`<div class="card"><button class="card-h fin-h" data-act="fin-toggle"><h3>Finanzas</h3><svg class="chev${ui.finOpen?' open':''}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>${ui.finOpen?`<div class="fin-detail">
+    <div class="fin-sec"><div class="fin-row"><b>Ingresos</b><b class="good fin-amt">${fmtM(finInc)}</b></div>
+      <div class="fin-sub"><span>TV</span><span>${fmtM(FT.tv)}</span></div>
+      <div class="fin-sub"><span>Comercial</span><span>${fmtM(FT.comercial)}</span></div>
+      <div class="fin-sub"><span>Taquilla</span><span>${fmtM(FT.gate)}</span></div>
+      <div class="fin-sub"><span>Traspasos</span><span>${fmtM(FT.transferIn)}</span></div>
+      <div class="fin-sub"><span>Premios</span><span>${fmtM(FT.prizes)}</span></div>
+    </div>
+    <div class="fin-sec"><div class="fin-row"><b>Gastos</b><b class="bad fin-amt">${fmtM(finExp)}</b></div>
+      <div class="fin-sub"><span>Nómina</span><span>${fmtM(FT.wages)}</span></div>
+      <div class="fin-sub"><span>Mantenimiento</span><span>${fmtM(FT.mant)}</span></div>
+      <div class="fin-sub"><span>Traspasos</span><span>${fmtM(FT.transferOut)}</span></div>
+      <div class="fin-sub"><span>Instalaciones</span><span>${fmtM(FT.facilities)}</span></div>
+    </div>
+    <div class="fin-sec"><div class="fin-row"><b>Balance</b><b class="fin-amt ${finBal<0?'bad':'good'}">${fmtM(finBal)}</b></div></div>
+    <div class="fin-sec"><div class="fin-row"><b>Caja</b><b class="fin-amt">${fmtM(t.budget)}</b></div></div>
+  </div>`:`<div class="stats" style="border:0;margin:0;padding:0"><div><small>Ingresos</small><b class="good fin-amt">${fmtM(finInc)}</b></div><div><small>Gastos</small><b class="bad fin-amt">${fmtM(finExp)}</b></div><div><small>Balance</small><b class="fin-amt ${finBal<0?'bad':'good'}">${fmtM(finBal)}</b></div><div><small>Caja</small><b class="fin-amt">${fmtM(t.budget)}</b></div></div>`}</div>`;
   const cl=Object.keys(state.cups||{}).map(k=>{const c=state.cups[k],st=myCupStatus(c);return st?`<div class="cupline"><b>${esc(c.name)}</b><span class="${st.out?'bad':''}">${esc(cupStatusText(st))}</span></div>`:''}).join('');
   const offs=[];me().players.forEach(p=>{(p.offers||[]).forEach(o=>offs.push({p,o}));(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1}))});if(state.fam)state.fam.players.forEach(p=>(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1})));
   const offCard=offs.length?`<div class="card"><div class="card-h"><h3>Ofertas de traspaso</h3><span>${offs.length} pendiente${offs.length>1?'s':''}</span></div>${offs.slice(0,5).map(x=>`<button class="cupline" style="width:100%;text-align:left" data-act="pl-act" data-id="${x.p.id}"><b>${esc(x.p.n)}</b><span>${x.loan?'Cesión en '+esc(cname(x.o.to))+', '+esc(x.o.role.toLowerCase()):esc(cname(x.o.from))+': '+fmtM(x.o.amt)}</span></button>`).join('')}</div>`:'';
@@ -12183,14 +12269,19 @@ club(){
   if(!ui.clubTab)ui.clubTab='info';
   const seg=`<div class="seg">${[['info','Información'],['inst','Instalaciones'],['palmares','Palmarés']].map(([k,l])=>`<button class="${ui.clubTab===k?'on':''}" data-act="club-tab" data-k="${k}">${l}</button>`).join('')}</div>`;
   const card=(k,extra='')=>{
-    const L=state.fac[k],w=state.works.find(x=>x.k===k),cost=facCost(L);
-    const act=L>=FAC_MAX?'<button class="btn ghost sm" disabled>Nivel máximo</button>':w?`<p class="muted-s">En obras: nivel ${w.to} dentro de ${w.left} jornada${w.left>1?'s':''}.</p>`:`<button class="btn ${t.budget>=cost?'primary':'ghost'} sm" data-act="fac-up" data-k="${k}">Mejorar a nivel ${L+1}</button><small class="muted-s">Coste ${fmtM(cost)} y ${facWeeks(L)} jornadas de obras</small>`;
+    const L=state.fac[k],w=state.works.find(x=>x.k===k),cost=facCost(k,L);
+    const act=L>=FAC_MAX?'<button class="btn ghost sm" disabled>Nivel máximo</button>':w?`<p class="muted-s">En obras: nivel ${w.to} dentro de ${w.left} jornada${w.left>1?'s':''}.</p>`:`<button class="btn ${t.budget>=cost?'primary':'ghost'} sm" data-act="fac-up" data-k="${k}">Mejorar a nivel ${L+1}</button><small class="muted-s">Coste ${fmtM(cost)} y ${facWeeks(k,L)} jornadas de obras</small>`;
     return`<div class="card fac"><div class="fac-head"><h3>${FAC_NAME[k]}</h3><button class="ibtn" data-act="fac-info" data-k="${k}" aria-label="Información">i</button></div><div class="fac-lv">Nivel <b class="lv">${L}</b> de ${FAC_MAX}</div><div class="fac-meter"><i style="width:${Math.round(L/FAC_MAX*100)}%"></i></div><div class="fac-act top" style="margin-top:14px">${act}</div>${extra}</div>`;
   };
   const hornada=`<div class="fac-sub"><div class="fac-head"><h3>Hornada de la academia</h3><button class="ibtn" data-act="acad-info" aria-label="Información">i</button></div><div class="fac-lv">${ac.length?ac.length+' juvenil'+(ac.length>1?'es':''):'Sin juveniles'}, próxima en ${state.acadIn} jornada${state.acadIn>1?'s':''}</div></div>
   ${ac.length?`<div class="pcs">${ac.map(p=>playerCard(p,state.club)).join('')}</div><p class="hint">Toca una tarjeta para verla y ascenderla a la plantilla o liberarla. Solo se guardan los 12 más recientes.</p>`:''}`;
+  const zoneExtra=`<div class="fac-sub"><p class="muted-s">Sube un 5 % los ingresos comerciales semanales por cada nivel por encima del 1. Ahora mismo: <b>+${(state.fac.zone-1)*5}%</b>.</p></div>`;
   const info=`<div class="defs"><div><i>Estadio</i><b>${esc(stadiumOf(state.club))}</b></div><div><i>Presupuesto</i><b>${fmtM(t.budget)}</b></div><div><i>Reputación</i><b>${starsFracHTML(xiAvgOvr(t))} ${xiAvgOvr(t)}</b></div><div><i>Objetivo de la directiva</i><b>${objective(state.club)}</b></div></div>`;
-  const inst=`${card('train')}${trainingBox()}${card('acad',hornada)}`;
+  if(!ui.facSel)ui.facSel='train';
+  const facTabs=[['train','Entrenamiento'],['acad','Cantera'],['zone','Zona del club']];
+  const tiles=`<div class="fac-grid">${facTabs.map(([k,l])=>`<button class="fac-tile${ui.facSel===k?' on':''}" data-act="fac-sel" data-k="${k}">${FAC_ICO[k]}<b>${l}</b><small>Nivel ${state.fac[k]} de ${FAC_MAX}</small></button>`).join('')}</div>`;
+  const panel=ui.facSel==='train'?`${card('train')}${trainingBox()}`:ui.facSel==='acad'?card('acad',hornada):card('zone',zoneExtra);
+  const inst=`${tiles}${panel}`;
   const pal=palmaresOf(c),palTotal=palTotalOf(c.id,pal);
   const palBody=`<div class="sq-title"><h3>Palmarés</h3><span>${palTotal} título${palTotal===1?'':'s'}</span></div>${pal.length?`<div class="palgrid">${pal.map(x=>`<div class="pal"><i>${x.icon}</i><b>${x.n}</b><span>${esc(x.name)}</span>${x.add?`<em class="pal-add">+${x.add} en esta partida</em>`:''}</div>`).join('')}</div>${pal.some(x=>x.add)?'<p class="muted-s" style="margin-top:8px">Los títulos con «+» se han ganado en esta partida.</p>':''}`:'<p class="muted-s">Sin títulos oficiales.</p>'}`;
   return`<div class="sec-h"><h2>Club</h2><span>${esc(c.name)}</span></div>${seg}${ui.clubTab==='palmares'?palBody:ui.clubTab==='inst'?inst:info}`;
@@ -12465,6 +12556,7 @@ const H={
   hotspot(){openEurope()},
   country(t){openCountry(t.dataset.c)},
   'view-toggle'(){toggleView()},
+  'fin-toggle'(){ui.finOpen=!ui.finOpen;renderGame()},
   'map-back'(){
     if(ui.level===2){closeCard();setLevel(1)}else if(ui.level===1){setLevel(0);centerHotspot()}else go('slots');
   },
@@ -12477,9 +12569,10 @@ const H={
   'cv-tab'(t){ui.cvTab=t.dataset.k;if(ui.cvId)openClubView(ui.cvId)},
   'cv-sub'(t){ui.cvSub=t.dataset.k;if(ui.cvId)openClubView(ui.cvId)},
   'club-tab'(t){ui.clubTab=t.dataset.k;renderGame()},
+  'fac-sel'(t){ui.facSel=t.dataset.k;renderGame()},
   'fac-info'(t){
     const k=t.dataset.k,L=state.fac[k];
-    const eff=k==='train'?`Desarrollo: los jóvenes crecen más y los veteranos pierden nivel más despacio (+${Math.round((L-1)/14*100)} % de efecto).`:`Cada ${ACAD_EVERY} jornadas llegan ${2+Math.floor(L/5)} juveniles. Cuanto más nivel, mejores GRL y potenciales.`;
+    const eff=k==='train'?`Desarrollo: los jóvenes crecen más y los veteranos pierden nivel más despacio (+${Math.round((L-1)/14*100)} % de efecto).`:k==='zone'?`Sube un 5 % los ingresos comerciales semanales por cada nivel por encima del 1 (ahora +${(L-1)*5}%).`:`Cada ${ACAD_EVERY} jornadas llegan ${2+Math.floor(L/5)} juveniles. Cuanto más nivel, mejores GRL y potenciales.`;
     openInfo(FAC_NAME[k],`<p>${eff}</p>`);
   },
   'pt-info'(){openInfo('Aprender posiciones','<p>Con más nivel de instalaciones hay más plazas y se tarda menos. Mientras aprende, el jugador entrena los atributos de esa posición.</p>')},
