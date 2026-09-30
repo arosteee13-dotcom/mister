@@ -8621,15 +8621,16 @@ function poSheet(res){
 function movesHTML(){
   const po=state.po;if(!po||!po.done||!po.res)return'';
   const teamsHTML=ids=>ids.length?`<div class="mv-teams">${ids.map(id=>`<div class="mv-team">${crestHTML(CLUBBY[id],34)}<span>${esc(cname(id))}</span></div>`).join('')}</div>`:'<p class="muted-s" style="margin:0">Nadie.</p>';
-  const countries=PLAYABLE.map(co=>{const r=po.res[co],up=r&&r.up||[],down=r&&r.down||[];
+  const rf=po.rf;
+  /* la Primera Federación va justo debajo del bloque de España (1ª/2ª), agrupada con el resto de divisiones
+     de ese país, en vez de al final de toda la lista de países */
+  const rfHTML=rf?`
+    <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('ES',2))}</b>${teamsHTML(rf.up)}</div></div>
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a Primera Federación</b>${teamsHTML(rf.down2)}</div></div>`:'';
+  return PLAYABLE.map(co=>{const r=po.res[co],up=r&&r.up||[],down=r&&r.down||[];
     return`<div class="subh">${FLAG[co]} ${esc(COUNTRIES[co].name)}</div>
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName(co,1))}</b>${teamsHTML(up)}</div></div>
-    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>`}).join('');
-  const rf=po.rf;
-  const rfHTML=rf?`<div class="subh">${FLAG.ES} Primera Federación</div>
-    <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('ES',2))}</b>${teamsHTML(rf.up)}</div></div>
-    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Bajan de 2ª a Primera Federación</b>${teamsHTML(rf.down2)}</div></div>`:'';
-  return countries+rfHTML;
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML:''}`}).join('');
 }
 function myMoveTxt(){
   const po=state.po;if(!po||!po.done||!po.res)return'';
