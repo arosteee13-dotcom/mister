@@ -9062,7 +9062,7 @@ function trainBonus(id,a,r){
   const fb=(trainLevel(id)-1)/14;
   return a<=24?Math.floor(r()*(1+fb*2)):a<=29?(r()<fb*.5?1:0):(a>=31&&r()<fb*.35?1:0);
 }
-const facCostBase=L=>r1(3+L*L*.35),facWeeksBase=L=>10+Math.round(L);
+const facCostBase=L=>r1(2.5+L*L*.28),facWeeksBase=L=>10+Math.round(L);
 /* la zona del club sale más barata y rápida que entrenamiento/cantera, sobre todo en los primeros niveles */
 const facCostZone=L=>r1(.6+L*L*.15),facWeeksZone=L=>6+Math.round(L*.8);
 const facCost=(k,L)=>k==='zone'?facCostZone(L):facCostBase(L);
