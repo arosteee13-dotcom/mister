@@ -154,6 +154,11 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .lrow .lstat{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
 .lrow .lstat b{font:600 14px var(--display)}
 .lrow .lstat .lrep{color:var(--muted);font-size:12px;white-space:nowrap}
+/* cambio de reputación (▲/▼): columna propia de ancho fijo para que la tarjeta no crezca nunca */
+.lrow .repd{flex:none;display:inline-flex;align-items:center;gap:2px;min-width:34px;justify-content:flex-end;font-size:11px;font-weight:700;line-height:1}
+.lrow .repd b{font:700 11px var(--display)}
+.lrow .repd.up{color:#66bb6a}
+.lrow .repd.dn{color:#e57373}
 .lrow b{display:block;font:600 15px var(--display)}
 .lrow small{color:var(--muted);font-size:12.5px}
 .lrow[disabled]{--o:.35;opacity:.35;pointer-events:none}
@@ -200,7 +205,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .cc-head h3{font:600 20px/1.15 var(--display);letter-spacing:-.01em}
 .cc-x{margin-left:auto;align-self:flex-start;width:32px;height:32px;border-radius:50%;background:rgba(220,240,228,.06);display:grid;place-items:center;color:var(--muted)}
 .cc-stars{color:var(--amber);letter-spacing:2px;font-size:13px}
-.cc-stars5{position:relative;display:inline-block;color:rgba(233,238,233,.22);letter-spacing:2px}
+.cc-stars5{position:relative;display:inline-block;color:rgba(233,238,233,.22);letter-spacing:1px;font-size:10.5px;vertical-align:middle}
 .cc-stars5::before{content:'★★★★★';position:absolute;left:0;top:0;width:var(--p);overflow:hidden;color:var(--amber);white-space:nowrap}
 .mode-card{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;padding:16px;margin-top:12px;border-radius:18px;background:rgba(220,240,228,.045);border:1px solid var(--line);transition:border-color .25s,background .25s,transform .2s var(--ease)}
 .mode-card:hover{border-color:var(--accent-line);background:var(--accent-soft)}
@@ -10863,7 +10868,10 @@ function qualRepHTML(key){
   return`<p class="hint" style="margin:2px 2px 10px">Reputación actual de los clubes que disputan esta fase previa, de mayor a menor.</p><div style="display:flex;flex-direction:column;gap:10px">${rows}</div>`;
 }
 /* Reputación de los clubes de una competición (liga: los que están ahora en esa división; copa: los participantes).
-   La reputación se recalcula al empezar cada temporada según posición final, títulos, ascensos y descensos. */
+   La reputación se recalcula al empezar cada temporada según posición final, títulos, ascensos y descensos.
+   El cambio va en su propia columna (.repd) y no dentro de .lrep: ese bloque es nowrap, así que alShares arrow lo
+   empujaba hacia la izquierda y, como .lstat es flex:none, la tarjeta crecía más allá del ancho de la hoja y
+   salía scroll horizontal. Ahora el ancho del número es fijo y el nombre recibe el espacio sobrante. */
 function repListHTML(key){
   const cupObj=state.cups&&state.cups[key];
   let ids=cupObj?(cupObj.ids||[]):leagueClubs(String(key).slice(0,2),+String(key).slice(2)||1).map(c=>c.id);
@@ -10872,11 +10880,11 @@ function repListHTML(key){
   const list=ids.slice().sort((a,b)=>repOf(b)-repOf(a)||cname(a).localeCompare(cname(b)));
   const rows=list.map((id,i)=>{
     const c=CLUBBY[id],r=repOf(id),d=state.repDelta&&state.repDelta[id]||0;
-    const dl=d?`<i style="font-style:normal;font-size:11px;font-weight:700;margin-left:4px;color:${d>0?'#66bb6a':'#e57373'}">${d>0?'▲ +':'▼ '}${d}</i>`:'';
+    const dl=d?`<span class="repd ${d>0?'up':'dn'}">${d>0?'▲':'▼'}<b>${d>0?'+':''}${d}</b></span>`:'';
     return`<button class="lrow${id===state.club?' sel':''}" data-act="club-view" data-club="${id}">
       <span class="muted-s" style="width:22px;text-align:right">${i+1}</span>${crestHTML(c,32)}
       <span class="lt"><b>${esc(c.name)}</b><small>${esc(c.city)}</small></span>
-      <span class="lstat"><small class="lrep">${starsFracHTML(r)} ${r}${dl}</small></span>
+      <span class="lstat"><small class="lrep">${starsFracHTML(r)} <b>${r}</b></small></span>${dl}
       <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
   }).join('');
   return`<p class="hint" style="margin:2px 2px 10px">Reputación actual de cada club, de mayor a menor. Se actualiza al empezar la siguiente temporada según su posición final, títulos, ascensos y descensos (las flechas indican el último cambio).</p>
@@ -11004,11 +11012,10 @@ function zoneColor(key,pos,total){
   }
   return null;
 }
-const ZONES_D1=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#26a69a','Previa de Champions'],['#29b6f6','Europa League'],['#90a4ae','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
+const ZONES_D1=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#29b6f6','Europa League'],['#79B9DE','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_PT1=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#26a69a','Previa de Champions'],['#29b6f6','Previa de Europa League'],['#79B9DE','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_NL1=[['#558b2f','Champions League'],['#7cb342','Previa de Champions'],['#29b6f6','Previa de Europa League'],['#79B9DE','Playoffs'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff de Descenso'],['#e53935','Descenso']];
 const ZONES_BE1=[['#558b2f','Campeón y Champions'],['#7cb342','Previa de Champions'],['#29b6f6','Previa de Europa League'],['#79B9DE','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#e53935','Descenso']];
-const ZONES_D1_18=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#26a69a','Previa de Champions'],['#29b6f6','Europa League'],['#90a4ae','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_D2=[['#66bb6a','Ascenso'],['#26a69a','Playoff Ascenso'],['#9e9e9e','Mitad de tabla'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_D2_18=ZONES_D2,ZONES_D2_20=ZONES_D2;
 /* ============ CLASIFICACIÓN / FIN DE TEMPORADA ============ */
