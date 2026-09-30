@@ -8137,6 +8137,17 @@ function makeFixtures(ids,r){
 const emptyTable=ids=>Object.fromEntries(ids.map(id=>[id,{p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}]));
 function standings(){return sortTable(state.table)}
 const posOf=id=>standings().findIndex(r=>r.id===id)+1;
+/* premio de fin de temporada por clasificación: proporcional al presupuesto medio de TU división/país (que ya
+   refleja lo grande que es esa liga), no un importe fijo. Así un campeón de Primera Federación o de una liga
+   pequeña cobra mucho menos que un campeón de LaLiga o la Premier, y dentro de cada liga el resto de puestos
+   escala igual que antes (arriba cobran más, la mitad de abajo de la tabla no cobra nada). */
+function leaguePosPrize(){
+  if(!state)return 0;
+  const cs=leagueClubs(state.country,state.div);if(!cs.length)return 0;
+  const avg=cs.reduce((a,c)=>a+budgetFor(c),0)/cs.length,n=cs.length,pos=posOf(state.club);
+  const cutoff=Math.max(1,Math.round(n*.65)),rank=Math.max(0,cutoff-pos+1);
+  return r1(rank*avg*.09);
+}
 function news(t){state.news.unshift({w:state.week,t});if(state.news.length>40)state.news.length=40}
 function poisson(l){const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math.random()}while(p>L&&k<10);return k-1}
 const xg=(A,B,home)=>xgAny(A,B,home?1:-1);
@@ -8732,7 +8743,7 @@ function newSeason(){
   raidRelegated();
   evolveReputations();
   const myMove=myMoveTxt();
-  const pos=posOf(state.club),t=me(),prize=Math.max(0,13-pos)*3;
+  const pos=posOf(state.club),t=me(),prize=leaguePosPrize();
   t.budget=Math.round((t.budget+prize)*10)/10;
   ensureFinTotal().prizes+=prize;
   const r=rng(hashStr('ns'+state.seed+'_'+state.season));
@@ -12592,7 +12603,7 @@ home(){
     <button class="btn primary" data-act="play">Jugar partido de playoff</button></div>`;
   }else{
     const st=standings();
-    next=`<div class="card next"><div class="card-h"><h3>Temporada terminada</h3><span>Campeón: ${esc(CLUBBY[st[0].id].name)}</span></div><p class="muted-s" style="margin-bottom:14px">Has acabado ${pos}º. La directiva te ingresará ${fmtM(Math.max(0,13-pos)*3)} por la clasificación.</p><button class="btn primary" data-act="newseason">Empezar la temporada ${state.season+1}</button><button class="btn ghost" style="margin-top:8px;width:100%" data-act="season-summary">Resumen temporada</button></div>`;
+    next=`<div class="card next"><div class="card-h"><h3>Temporada terminada</h3><span>Campeón: ${esc(CLUBBY[st[0].id].name)}</span></div><p class="muted-s" style="margin-bottom:14px">Has acabado ${pos}º. La directiva te ingresará ${fmtM(leaguePosPrize())} por la clasificación.</p><button class="btn primary" data-act="newseason">Empezar la temporada ${state.season+1}</button><button class="btn ghost" style="margin-top:8px;width:100%" data-act="season-summary">Resumen temporada</button></div>`;
   }
   const FT=ensureFinTotal();
   const finInc=FT.gate+FT.transferIn+FT.prizes,finExp=FT.wages+FT.transferOut+FT.facilities,finBal=finInc-finExp;
@@ -12889,7 +12900,7 @@ function seasonSheet(){
   const seg=`<div class="seg" style="margin:12px 0 2px">${[['general','General'],['moves','Ascensos y descensos']].map(([k,l])=>`<button class="${ui.ssTab===k?'on':''}" data-act="ss-tab" data-k="${k}">${l}</button>`).join('')}</div>`;
   const body=ui.ssTab==='moves'?movesHtml:`${titlesHtml}${indivHtml}${statsHtml}${compsHtml}`;
   openSheet(`<div class="res-top"><h3>Temporada ${state.season} terminada</h3>
-  <p>La directiva ingresa ${fmtM(Math.max(0,13-pos)*3)} en caja por tu clasificación.</p>
+  <p>La directiva ingresa ${fmtM(leaguePosPrize())} en caja por tu clasificación.</p>
   ${ut?`<p style="margin-top:8px"><b>${ut.it.kind==='promo'?'Tu club disputa el playoff de ascenso a '+esc(divName(ut.it.co,1))+'.':ut.it.kind==='nlpo'?'Tu club disputa el playoff por la plaza de la Conference League.':'Tu club disputa el playoff de permanencia.'}</b>${ut.it.single?' Juega el partido único desde el Inicio.':' Juega los partidos de ida y vuelta desde el Inicio.'}</p>`:''}
   ${mv?`<p style="margin-top:8px"><b>${mv}</b></p>`:''}
   ${seg}</div>
