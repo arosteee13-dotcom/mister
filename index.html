@@ -723,13 +723,14 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .tbl tr.me td:first-child{border-radius:10px 0 0 10px}.tbl tr.me td:last-child{border-radius:0 10px 10px 0}
 .ns{display:none}
 .ucltbl .nl{display:none}.ucltbl .ns{display:inline}
-.ucltbl{table-layout:fixed;min-width:0}
+.ucltbl{table-layout:fixed;min-width:300px}
 .ucltbl th{font-size:11px;padding:6px 2px}
 .ucltbl td{padding:9px 2px;white-space:nowrap}
-.ucltbl td.tm{overflow:hidden}
+.ucltbl td.tm{display:table-cell;vertical-align:middle;overflow:hidden}
 .ucltbl th:nth-child(1),.ucltbl td:nth-child(1){width:30px}
-.ucltbl th:nth-child(3),.ucltbl td:nth-child(3){width:34px}
-.ucltbl th:nth-child(n+4),.ucltbl td:nth-child(n+4){width:33px}
+.ucltbl th:nth-child(2),.ucltbl td:nth-child(2){width:68px}
+.ucltbl th:nth-child(3),.ucltbl td:nth-child(3){width:26px}
+.ucltbl th:nth-child(n+4),.ucltbl td:nth-child(n+4){width:25px}
 .abbtbl .nl{display:none}.abbtbl .ns{display:inline}
 @media(max-width:520px){.nl{display:none}.ns{display:inline}}
 .seg{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
@@ -7763,7 +7764,7 @@ function bestXIOpt(t,form){
 /* once de la IA: el habitual (por posiciones y GRL) y, como mucho, 3 cambios por semana para descansar a los mas cansados */
 function aiLineup(t){
   const sl=FORMS[t.formation],base=bestXI(t,t.formation,true),map=new Map(t.players.map(p=>[p.id,p])),used=new Set(base),out=base.map(id=>map.get(id));
-  const tired=out.map((p,i)=>({p,i})).filter(x=>x.p.pos!=='GK'&&x.p.en<70).sort((a,b)=>a.p.en-b.p.en);
+  const tired=out.map((p,i)=>({p,i})).filter(x=>x.p&&x.p.pos!=='GK'&&x.p.en<70).sort((a,b)=>a.p.en-b.p.en);
   let n=0;
   for(const w of tired){
     if(n>=3)break;
@@ -10139,7 +10140,10 @@ const groupFlag=id=>id==='EU'?'<svg width="1em" height="1em" viewBox="0 0 24 24"
 const cname=id=>CLUBBY[id]?CLUBBY[id].name:id;
 /* fuerza de un club que no controlas (para ligas y copas que se simulan en modo ligero): se calcula igual
    que la de tu propio equipo, a partir de su once y su sistema reales, nunca de su renombre. */
-const virt=id=>strength(previewTeam(id));
+/* fuerza de un club rival: refresca su once (mejor disponible + rotación) una vez por jornada, para que no se use
+   un lineup cacheado con jugadores que luego se lesionan/sancionan (eso hacía que strength() los penalizara ×0.6 y el
+   rival pareciera mucho peor de lo que es). No toca el once del club del usuario. */
+const virt=id=>{const t=previewTeam(id);if(state&&id!==state.club&&t._lw!==state.week){const need=(FORMS[t.formation]||[]).length;if(t.players.filter(p=>!unav(p)).length>=need)t.lineup=aiLineup(t);t._lw=state.week}return strength(t)};
 const SQC={};
 /* registro interno: rehidrata las estadísticas de jugadores de ligas/copas simuladas en modo ligero.
    Esas stats se acumulan en las fichas de competición (state.others[*].sc y state.cups[*].sc, que SÍ se guardan)
@@ -10648,6 +10652,16 @@ function playCupRound(cup,ri,leg){
 }
 function advanceWorld(r){
   const mine=[];
+  /* mantenimiento semanal de los clubes que NO son de tu liga: les caducan lesiones y sanciones (antes se acumulaban
+     toda la temporada y degradaban al rival para siempre). Un guard evita repetirlo si advanceWorld se llama dos veces
+     en la misma jornada. Tu división ya lo maneja wear()/simMatch(). */
+  if(state._upk!==r){state._upk=r;
+    for(const id in CLUBBY){
+      if((state.teams&&state.teams[id])||id===state.club||(state.fam&&state.fam.id===id))continue;
+      const t=previewTeam(id);if(!t||!t.players)continue;
+      t.players.forEach(p=>{if(p.inj>0)p.inj--;if(p.sus>0)p.sus--});
+    }
+  }
   for(const k in state.others){const L=state.others[k];if(L.fx.length>r&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   for(const k in state.cups){
     const cup=state.cups[k];
