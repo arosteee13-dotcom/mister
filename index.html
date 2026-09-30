@@ -11194,7 +11194,7 @@ const ZONES_D2=[['#66bb6a','Ascenso'],['#26a69a','Playoff Ascenso'],['#9e9e9e','
 const ZONES_D2_18=ZONES_D2,ZONES_D2_20=ZONES_D2;
 /* ============ CLASIFICACIÓN / FIN DE TEMPORADA ============ */
 function leagueTable(key){
-  const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1';let ep=0;
+  const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const allZones=String(key).slice(0,2)==='PT'&&d==='1'?ZONES_PT1:String(key).slice(0,2)==='NL'&&d==='1'?ZONES_NL1:String(key).slice(0,2)==='BE'&&d==='1'?ZONES_BE1:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(String(key).slice(0,2)==='ES'&&(d==='5'||d==='6')?ZONES_ES5:null);
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
