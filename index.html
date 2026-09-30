@@ -10630,6 +10630,7 @@ function playCupRound(cup,ri,leg){
     }
   });
   if(!two||leg==null||leg===1)R.done=true;
+  out.forEach(t=>{if(t.w===state.club)awardRoundPrize(cup,ri)});
   if(last&&R.done){cup.champ=R.ties[0].w;recordHonors(false)}
   return out;
 }
@@ -10650,6 +10651,43 @@ function advanceWorld(r){
   }
   return mine;
 }
+/* ============ PREMIOS EN METÁLICO: títulos y avance de ronda ============ */
+/* Cifras ajustadas a los premios reales (UEFA, RFEF, FA...): una ronda de la Copa del Rey o la FA Cup se paga
+   en cientos de miles al principio y 1-2M en semis/final; una ronda de Champions se paga en varios millones
+   (UEFA: ronda previa ~1M, octavos ~11M, cuartos ~12.5M, semis ~15M, ganar la final ~20-25M). */
+/* premio (en M€) que paga la directiva SOLO a tu club por ganar el título de cada competición; se abona
+   en cuanto se suma el trofeo al palmarés (ver recordHonors). Es un extra sobre el dinero ya cobrado ronda
+   a ronda en las competiciones de copa, así que se mantiene modesto en esas. No incluye premios individuales. */
+const PRIZE_TITLE={league:20,d2:8,d3:3,d4:1.5,d5:.8,cup:1,sc:.5,lc:.3,ucl:10,uel:5,ecl:2.5,sce:1,ifc:1.5};
+/* premio (en M€) por eliminatoria superada en competiciones de copa, de la primera ronda a la final (último
+   valor). Si una copa tiene menos rondas que la tabla, las rondas que juegues se alinean por el final (la
+   final siempre paga el último valor; las rondas más tempranas, los primeros). */
+const PRIZE_ROUND_TABLE={
+  cup:[.1,.1,.2,.3,.6,1.2],lc:[.1,.1,.1,.2,.4],sc:[.8,1.5],
+  ucl:[1,8,10,13,20],uel:[.3,1.2,1.8,3,9],ecl:[.2,.6,1,1.8,5],sce:[3],ifc:[.5,1,1.5,3]
+};
+/* familia de premio de una copa a partir de su key ('ESC','ESSC','ENLC','UCL'...), igual criterio que compTrophyKey */
+function cupFamily(key){
+  if(key==='UCL')return'ucl';if(key==='UEL')return'uel';if(key==='ECL')return'ecl';
+  if(key==='SCE')return'sce';if(key==='IFC')return'ifc';
+  const suf=String(key).slice(2);
+  if(suf==='SC')return'sc';if(suf==='LC')return'lc';if(suf==='C')return'cup';
+  return'cup';
+}
+/* alinea la ronda con la tabla POR EL FINAL: la última ronda de la copa siempre cobra el último valor de la
+   tabla, y las rondas anteriores los valores previos (si hay menos rondas que la tabla, se saltan los primeros). */
+function roundPrizeAmount(cup,ri){
+  const t=PRIZE_ROUND_TABLE[cupFamily(cup.key)];if(!t)return 0;
+  const remaining=cup.rounds.length-1-ri,idx=Math.max(0,t.length-1-remaining);
+  return t[idx]||0;
+}
+/* abona el premio de ronda a la caja de tu club (solo se llama cuando el ganador de la eliminatoria eres tú) */
+function awardRoundPrize(cup,ri){
+  const prize=roundPrizeAmount(cup,ri);
+  if(!prize||!state.teams[state.club])return;
+  ensureFinTotal().prizes=r1(ensureFinTotal().prizes+prize);
+  state.teams[state.club].budget=r1(state.teams[state.club].budget+prize);
+}
 /* títulos de la temporada: ligas (1.ª y 2.ª división), copas nacionales y Champions. Se suman al palmarés de cada club una sola vez por temporada. */
 /* Los títulos se suman en cuanto se decide cada copa; los de liga, al acabar la temporada (final=true).
    state.honKeys evita contar dos veces la misma competición de la misma temporada. */
@@ -10666,6 +10704,10 @@ function recordHonors(final){
     state.honLog.push({s:state.season,id,k});if(id===state.club)mine.push(k);
     const T=squadFor(id);
     if(T&&T.length)T.forEach(pl=>{if(pl.st&&pl.st[id]>=1)(pl.trophies=pl.trophies||[]).push({s:state.season,k,club:id})});
+    if(id===state.club&&PRIZE_TITLE[k]&&state.teams[id]){
+      ensureFinTotal().prizes=r1(ensureFinTotal().prizes+PRIZE_TITLE[k]);
+      state.teams[id].budget=r1(state.teams[id].budget+PRIZE_TITLE[k]);
+    }
   };
   PLAYABLE.forEach(co=>{
     if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;const top=sortTable(L.tb)[0];if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
@@ -10683,7 +10725,7 @@ function recordHonors(final){
   if(state.cups&&state.cups.ECL&&state.cups.ECL.champ)add(state.cups.ECL.champ,'ecl','ECL');
   if(state.cups&&state.cups.SCE&&state.cups.SCE.champ)add(state.cups.SCE.champ,'sce','SCE');
   if(state.cups&&state.cups.IFC&&state.cups.IFC.champ)add(state.cups.IFC.champ,'ifc','IFC');
-  mine.forEach(k=>news(`Añades un título a tu palmarés: ${trophyName(CLUBBY[state.club],k)}.`));
+  mine.forEach(k=>{const pr=PRIZE_TITLE[k];news(`Añades un título a tu palmarés: ${trophyName(CLUBBY[state.club],k)}.${pr?` La directiva te premia con ${fmtM(pr)}.`:''}`)});
   if(mine.length){state.mgrLog=state.mgrLog||[];mine.forEach(k=>state.mgrLog.push({s:state.season,club:state.club,k}));}
   if(final){try{
     const aw=individualAwards();
@@ -10921,7 +10963,8 @@ function cupNews(x){
   }
   const won=t.w===state.club,fin=x.ri===x.cup.rounds.length-1;
   const res=two?`${cname(t.h)} ${t.l[0].hg}-${t.l[0].ag} / ${g.hg}-${g.ag}${g.agg?` (${g.agg.h}-${g.agg.a})`:''}${g.pen?' ('+g.pen[0]+'-'+g.pen[1]+' pen.)':''}`:`${cname(t.h)} ${g.hg}-${g.ag} ${cname(t.a)}${g.pen?' ('+g.pen[0]+'-'+g.pen[1]+' pen.)':''}`;
-  return `${x.cup.name}, ${R.n.toLowerCase()}${two?', vuelta':''}: ${res}. ${g.decided?(won?(fin?'¡Sois campeones!':'Pasáis de ronda.'):'Quedáis eliminados.'):'Se decide en la vuelta.'}`;
+  const prizeTxt=g.decided&&won?(()=>{const pr=roundPrizeAmount(x.cup,x.ri);return pr?` Ingresáis ${fmtM(pr)} en premios por avanzar de ronda.`:''})():'';
+  return `${x.cup.name}, ${R.n.toLowerCase()}${two?', vuelta':''}: ${res}. ${g.decided?(won?(fin?'¡Sois campeones!':'Pasáis de ronda.'):'Quedáis eliminados.'):'Se decide en la vuelta.'}${prizeTxt}`;
 }
 
 /* ===================== vistas de competiciones ===================== */
