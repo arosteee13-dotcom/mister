@@ -164,6 +164,10 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .repd-in{font:700 11px var(--display);margin-left:5px;white-space:nowrap}
 .repd-in.up{color:#66bb6a}
 .repd-in.dn{color:#e57373}
+/* pestaña Reputación: estrellas en una línea y "número + flecha" en la siguiente */
+.lrow .lstat .lrep-rep{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.lrow .lstat .lrep-rep .repline{display:inline-flex;align-items:center;white-space:nowrap}
+.lrow .lstat .lrep-rep .repb{display:inline;font:600 14px var(--display)}
 .lrow b{display:block;font:600 15px var(--display)}
 .lrow small{color:var(--muted);font-size:12.5px}
 .lrow[disabled]{--o:.35;opacity:.35;pointer-events:none}
@@ -2499,7 +2503,7 @@ ENT:[['Federico Del Frate','GK',1996,'IT',67,68,0.775,1.0,'POR'],['Simone Colomb
  ['Morten Frendrup','MD',2001,'DK',76,80,10.0,19,'MCD/MC'],['Lorenzo Venturino','MD',2006,'IT',65,76,1.5,5,'MD/MI/ED/EI'],['Amorim','MD',2005,'BR',67,75,2.2,7,'MC/MCD'],['Mikael Egill Ellertsson','MD',2002,'IS',71,76,2.8,13,'MC/LD/LI/MCO/MD/MI'],['Djibril Sow','MD',1997,'CH',76,80,9.5,24,'MC/MCD'],['Junior Messias','MD',1991,'BR',72,78,2.1,18,'MC/MCO'],['Samuel Wiafe','MD',2008,'IT',62,76,0.9,3,'MC/MCO'],['Tommaso Baldanzi','MD',2003,'IT',75,80,8.5,30,'MCO/MC'],['Stephan El Shaarawy','MD',1993,'IT',76,82,9.0,25,'MCO/MI/DC/EI'],['Franz-Ethan Meichtry','MD',2006,'CH',68,82,2.9,8,'MCO/MI/MD/MC/EI/ED'],
  ['Vitinha','FW',2000,'PT',75,76,7.0,23,'DC/MCO'],['Lorenzo Colombo','FW',2002,'IT',74,79,6.5,20,'DC'],['Milutin Osmajić','FW',2000,'ME',71,74,2.5,16,'DC'],['Joi Nuredini','FW',2008,'AL',60,76,0.625,2,'DC'],['Elias Havel','FW',2003,'AT',69,76,2.9,12,'DC/EI/MI'],['Adam Žulevic','FW',2008,'SK',56,75,0.35,2,'DC']],
  /* ---------- Alemania ---------- */
- BAY:[['Manuel Neuer','GK',1986,'DE',81,92,30.5,21,'POR'],['Jonas Urbig','GK',2004,'DE',79,86,30.5,22,'POR'],['Sven Ulreich','GK',1989,'DE',73,80,2.7,15,'POR'],
+ BAY:[['Manuel Neuer','GK',1986,'DE',81,92,28,21,'POR'],['Jonas Urbig','GK',2004,'DE',79,86,30.5,25,'POR'],['Sven Ulreich','GK',1989,'DE',73,80,2.9,15,'POR'],
    ['Konrad Laimer','DF',1997,'AT',85,86,53.5,98,'LD/LI/MCD/MD'],['Josip Stanišić','DF',2000,'HR',80,82,24.5,59,'LD/DFC/LI/MD'],['Sacha Boey','DF',2001,'FR',75,80,8.0,38,'LD/MD'],['Dayot Upamecano','DF',1999,'FR',87,88,82.5,110,'DFC'],['Jonathan Tah','DF',1996,'DE',87,87,66.5,115,'DFC'],['Kim Min Jae','DF',1997,'KR',83,84,34.5,82,'DFC'],['Hiroki Ito','DF',1999,'JP',78,81,16.5,53,'DFC/LI'],['Nathaniel Brown','DF',2003,'DE',81,86,37.0,57,'LI/MI'],['Alphonso Davies','DF',2001,'CA',82,84,36.5,62,'LI/MI'],
    ['Joshua Kimmich','MD',1995,'DE',88,89,84.0,125,'MCD/MC/LD'],['Aleksandar Pavlović','MD',2004,'DE',83,86,46.0,57,'MCD/MC'],['Santos Daiber','MD',2007,'PT',59,79,0.6,4,'MCD/MC'],['Lennart Karl','MD',2008,'DE',77,88,22.0,27,'MD/MCO/ED/MC'],['Michael Olise','MD',2002,'FR',90,92,155.0,130,'MD/ED/MCO'],['Maycon Cardozo','MD',2009,'BR',59,79,0.6,3,'MD/MI/ED'],['Tom Bischof','MD',2005,'DE',79,86,34.5,46,'MC/MCD/LI'],['Bara Sapoko Ndiaye','MD',2008,'SN',64,82,1.5,7,'MC/MCD'],['Luis Díaz','MD',1997,'CO',88,88,92.0,130,'MI/EI/DC'],['Jamal Musiala','MD',2003,'DE',87,92,122.5,100,'MCO/MI/EI'],['Ismael Saibari','MD',2001,'MA',83,87,52.0,73,'MCO/MC/DC/MCD'],['Serge Gnabry','MD',1996,'DE',83,86,43.5,87,'MCO/MI/DC/EI'],
    ['Harry Kane','FW',1994,'EN',90,90,101.0,170,'DC'],
@@ -5968,8 +5972,17 @@ function mkPerson(r,co,used,clubId){
 }
 /* factor de valor por edad: sube hasta la plenitud (hasta 28) y cae cada vez más rápido a partir de ahí */
 const AGE_VAL=a=>a<=21?1.35:a<=24?1.2:a<=28?1:a<=31?.7:a<=33?.5:a<=35?.3:.18;
-/* edad a la que un jugador se retira (deja de aparecer en las plantillas) */
-const RETIRE_AGE=36;
+/* edad máxima: nadie pasa de aquí (tope duro). La retirada NO es a una edad fija al empezar la partida:
+   cada temporada el veterano tiene una probabilidad creciente de retirarse según su edad y si juega o no,
+   así un Neuer de 40 años aún puede seguir 1-3 temporadas bajando GRL/valor y jugando menos. */
+const RETIRE_AGE=42;
+function retireChance(age,played){
+  if(age<34)return 0;
+  if(age>=RETIRE_AGE)return 1;
+  let p=(age-33)*.05;                 /* 34→0.05, 36→0.15, 38→0.25, 40→0.35, 41→0.40 */
+  if(!played)p+=.15;                  /* sin minutos, más probable que cuelgue las botas */
+  return clamp(p,0,.55);
+}
 function calcVal(p){
   let v=.08*Math.pow(1.17,p.ovr-50);
   v*=AGE_VAL(p.age);
@@ -9938,6 +9951,7 @@ function syncLeague(){
       if(arch&&arch.length)pl=arch.filter(p=>!taken.has(p.id)&&!(state.gone||{})[p.id]);
       if(!pl||!pl.length)pl=genSquad(c,state.seed).filter(p=>!taken.has(p.id));
     }
+    pl=restoreHistTrophies(pl);   /* recupera historial/palmarés aunque la plantilla se haya regenerado (sin tocar stats de la temporada) */
     const t={players:pl,budget:budgetFor(c),formation:formFor(id),lineup:[]};
     t.lineup=bestXI(t);state.teams[id]=t;
   });
@@ -10010,10 +10024,10 @@ function newSeason(){
       p.age++;const a=p.age,old=p.ovr,inNet=p.o0!=null?p.ovr-p.o0:0;
       const d=-(a>=34?2:a>=32?1:0);   /* el crecimiento ya ocurrió durante la temporada; los veteranos pierden GRL cada año */
       if(fil&&a>23)return null;   /* los filiales venden a los jugadores en cuanto superan los 23 años */
-      if(!fil&&p.age>=RETIRE_AGE&&id===state.club){
-        retired.push(Object.assign({},p,{cs:clubCareerStats(p,id)}));return null;
+      if(!fil&&a>=33&&(a>=RETIRE_AGE||r()<retireChance(a,(p.ap||0)>=10))){
+        if(id===state.club){retired.push(Object.assign({},p,{cs:clubCareerStats(p,id)}));return null;}
+        return mkPlayer(r,`${id}y${state.season}_${Math.floor(r()*1e6)}`,p.pos,clamp(Math.round(repOf(id)-14+r()*8),40,80),17+Math.floor(r()*3),club.co,used,id);
       }
-      if(!fil&&p.age>=RETIRE_AGE&&id!==state.club)return mkPlayer(r,`${id}y${state.season}_${Math.floor(r()*1e6)}`,p.pos,clamp(Math.round(repOf(id)-14+r()*8),40,80),17+Math.floor(r()*3),club.co,used,id);
       (p.hist=p.hist||[]).push({s:state.season,ap:p.ap,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'',yc:p.yc||0,rc:p.rc||0,tm:teamStats(p),loan:!!p._loanSeason});delete p._loanSeason;const base=p.o0!=null?p.o0:old;shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
       /* revisión anual del potencial: los ojeadores ajustan su estimación según el rendimiento real frente a un techo oculto (potReal), fijado al nacer con más varianza que el POT visible */
       {const prevPot=revisePot(p,old,a,r);
@@ -10033,6 +10047,11 @@ function newSeason(){
       news(`${p.n} cumple ${p.age} años y supera la edad límite del filial de ${cname(state.fam.id)}: decide si lo subes al primer equipo, lo vendes o lo cedes.`);
     });
   }
+  /* guarda el historial de TODOS los jugadores en un mapa persistente: si su ficha se regenera más adelante
+     (club fuera de la liga del usuario, plantilla archivada y luego descartada...), su historial no se pierde. */
+  state.liteHist=state.liteHist||{};
+  Object.values(state.teams).forEach(T=>(T.players||[]).forEach(p=>{if(p.hist&&p.hist.length)state.liteHist[p.id]=p.hist}));
+  if(state.fam)(state.fam.players||[]).forEach(p=>{if(p.hist&&p.hist.length)state.liteHist[p.id]=p.hist});
   state.academy=(state.academy||[]).filter(p=>{p.age++;return p.age<=19});
   applyMoves();syncLeague();state.po=null;
   if(myMove)news(myMove);
@@ -10679,7 +10698,7 @@ function progressTick(r){
     const a=p.age,pot=Math.round(Math.max(p.pot||p.ovr,p.ovr)),net=p.ovr-p.o0,played=ap>=2;
     const perf=played?rt/ap-((p.pos==='GK'?5.8:6.2)+(p.ovr-70)*.012):0;
     const fb=(trainLevel(tid)-1)/14;
-    let up=AGE_UP(a)+(a<=24?fb*.05:a<=29?fb*.01:0),dn=AGE_DN(a);
+    let up=AGE_UP(a)+(a<=24?fb*.10:a<=29?fb*.03:0),dn=AGE_DN(a);
     if(a<=24){if(p.ovr>=pot)up*=.35;else if(pot-p.ovr>=4)up*=1.3}
     else if(p.ovr>=pot&&a<=27)up*=.35;
     if(!played)up*=.6;
@@ -10696,7 +10715,7 @@ function progressTick(r){
 function trainingTick(){
   const fb=(state.fac.train-1)/14;
   me().players.forEach(p=>{
-    if(p.age<=23&&p.ovr<(p.pot||p.ovr)&&Math.random()<.008+.012*fb){const before=p.ovr;shiftOvr(p,1);bumpVal(p,before);news(`${p.n} mejora con los entrenamientos: GRL ${p.ovr}.`)}
+    if(p.age<=23&&p.ovr<(p.pot||p.ovr)&&Math.random()<.008+.03*fb){const before=p.ovr;shiftOvr(p,1);bumpVal(p,before);news(`${p.n} mejora con los entrenamientos: GRL ${p.ovr}.`)}
   });
 }
 function genIntake(){
@@ -10723,7 +10742,10 @@ function genIntake(){
 function advanceFacilities(){
   state.works=state.works.filter(w=>{w.left--;if(w.left<=0){state.fac[w.k]=w.to;news(`Terminan las obras: ${FAC_NAME[w.k].toLowerCase()} sube al nivel ${w.to}.`);return false}return true});
   trainingTick();
-  state.academy.forEach(p=>{if(p.ovr<p.pot&&Math.random()<.04)shiftOvr(p,1)});
+  /* desarrollo de los juveniles: depende de las instalaciones de ENTRENAMIENTO y CANTERA.
+     Antes era un 4 % fijo e ignoraba las instalaciones, por eso subirlas no aceleraba a los juveniles. */
+  const fb=(state.fac.train-1)/14,ab=(state.fac.acad-1)/14,chAcad=.02+.06*fb+.03*ab;
+  state.academy.forEach(p=>{if(p.ovr<(p.pot||p.ovr)&&Math.random()<chAcad){const before=p.ovr;shiftOvr(p,1);bumpVal(p,before)}});
   state.acadIn--;if(state.acadIn<=0){genIntake();state.acadIn=ACAD_EVERY}
 }
 function promoteYouth(id){
@@ -11135,7 +11157,7 @@ function rateXI(t,res,acc,clubId){
 }
 function ageUp(p,r){
   p.age++;const a=p.age,old=p.ovr;
-  if(a>=RETIRE_AGE)return null;   /* se retira */
+  if(a>=33&&(a>=RETIRE_AGE||r()<retireChance(a,(p.ap||0)>=10)))return null;   /* se retira */
   const d=-(a>=34?2:a>=32?1:0);   /* los veteranos pierden GRL cada temporada */
   (p.hist=p.hist||[]).push({s:state.season,ap:p.ap,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'',yc:p.yc||0,rc:p.rc||0,tm:teamStats(p),loan:!!p._loanSeason});delete p._loanSeason;
   const base=p.o0!=null?p.o0:old;shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
@@ -11498,11 +11520,21 @@ function liteStatsById(){
   if(state){Object.values(state.others||{}).forEach(L=>add(L.sc));Object.values(state.cups||{}).forEach(c=>add(c.sc));}
   return m;
 }
+/* recupera el historial de temporadas y el palmarés de una ficha a partir de los mapas persistentes */
+function restoreHistTrophies(players){
+  if(!state||!players)return players;
+  players.forEach(p=>{
+    if((!p.hist||!p.hist.length)&&state.liteHist&&state.liteHist[p.id])p.hist=state.liteHist[p.id];
+    if((!p.trophies||!p.trophies.length)&&state.playerTrophies&&state.playerTrophies[p.id])p.trophies=state.playerTrophies[p.id];
+  });
+  return players;
+}
 function rehydrateLiteStats(players){
   if(!state||!players||!players.length)return players;
   const m=liteStatsById();
   players.forEach(p=>{
     if(state.liteHist&&state.liteHist[p.id])p.hist=state.liteHist[p.id];
+    if(state.playerTrophies&&state.playerTrophies[p.id])p.trophies=state.playerTrophies[p.id];
     const s=m.get(p.id);if(!s)return;
     p.ap=s.ap;p.g=s.g;p.ge=s.ge;p.sv=s.sv;p.as=s.as;p.yc=s.yc;p.rc=s.rc;p.rt=s.rt;p.st=s.st;p.stD=s.stD;
   });
@@ -11905,7 +11937,9 @@ function playCupStage(){
   /* taquilla de los partidos de copa jugados en casa (misma fórmula que en liga, según tu reputación) */
   const F=ensureFinTotal();
 mine.forEach(x=>{
-    const g=cupLeg(x.t,x.cup.rounds[x.ri],x.leg);if(!g.played)return;
+    /* la fase de liga (Champions/Europa/Conference) no tiene ronda KO: el indice de jornada no sirve para rounds */
+    const g=x.league?{played:x.t.hg!==undefined,h:x.t.h,a:x.t.a}:cupLeg(x.t,x.cup.rounds[x.ri],x.leg);
+    if(!g.played)return;
     if(g.h===state.club){
       const gate=gateIncome(state.club);
       F.gate=r1(F.gate+gate);
@@ -12075,6 +12109,26 @@ function awardRoundPrize(cup,ri){
 /* Los títulos se suman en cuanto se decide cada copa; los de liga, al acabar la temporada (final=true).
    state.honKeys evita contar dos veces la misma competición de la misma temporada. */
 /* ============ PALMARÉS / TROFEOS ============ */
+/* títulos de un jugador: se guardan en un mapa persistente por id (state.playerTrophies) para que NO se pierdan
+   cuando su ficha se regenera (clubes fuera de la liga del usuario, plantillas archivadas, etc.). */
+function trophiesOf(p){
+  if(!state||!p)return[];
+  state.playerTrophies=state.playerTrophies||{};
+  let a=state.playerTrophies[p.id];
+  if(!a){a=p.trophies||[];state.playerTrophies[p.id]=a}   /* migra el palmarés que ya viniera en la ficha */
+  return a;
+}
+/* palmarés para mostrar: el guardado más los títulos de club que se pueden reconstruir del historial de
+   temporadas (p.hist, con los equipos de cada año) cruzado con los campeones de cada temporada (state.honLog).
+   Sirve para recuperar títulos de partidas antiguas que se perdieron al regenerar la ficha. */
+function allTrophiesOf(p){
+  const base=trophiesOf(p),log=state&&state.honLog||[];
+  if(!log.length||!p||!p.hist||!p.hist.length)return base;
+  const bySeason={};log.forEach(e=>{(bySeason[e.s]=bySeason[e.s]||[]).push(e)});
+  const seen=new Set(base.map(t=>t.s+'|'+t.k+'|'+t.club)),out=base.slice();
+  p.hist.forEach(h=>{const es=bySeason[h.s];if(!es)return;(h.tm||[]).forEach(t=>{if((t.ap||0)<1)return;es.forEach(e=>{if(e.id!==t.id)return;const key=h.s+'|'+e.k+'|'+t.id;if(seen.has(key))return;seen.add(key);out.push({s:h.s,k:e.k,club:t.id,derived:true})})})});
+  return out;
+}
 function recordHonors(final){
   if(!state||state.honSeason===state.season)return;
   if(final)state.honSeason=state.season;
@@ -12086,7 +12140,7 @@ function recordHonors(final){
     const h=(state.honors[id]=state.honors[id]||{});h[k]=(h[k]||0)+1;
     state.honLog.push({s:state.season,id,k});if(id===state.club)mine.push(k);
     const T=squadFor(id);
-    if(T&&T.length)T.forEach(pl=>{if(pl.st&&pl.st[id]>=1)(pl.trophies=pl.trophies||[]).push({s:state.season,k,club:id})});
+    if(T&&T.length)T.forEach(pl=>{if(pl.st&&pl.st[id]>=1)trophiesOf(pl).push({s:state.season,k,club:id})});
     if(id===state.club&&PRIZE_TITLE[k]&&state.teams[id]){
       ensureFinTotal().prizes=r1(ensureFinTotal().prizes+PRIZE_TITLE[k]);
       state.teams[id].budget=r1(state.teams[id].budget+PRIZE_TITLE[k]);
@@ -12114,7 +12168,7 @@ function recordHonors(final){
     const aw=individualAwards();
     Object.keys(INDIV_TROPHY_IMG).forEach(k=>{
       const w=aw[k];if(!w||!w.p)return;
-      (w.p.trophies=w.p.trophies||[]).push({s:state.season,k,club:w.clubId,indiv:true});
+      trophiesOf(w.p).push({s:state.season,k,club:w.clubId,indiv:true});
     });
   }catch(e){}}
 }
@@ -12482,7 +12536,7 @@ function repListHTML(key){
     return`<button class="lrow${id===state.club?' sel':''}" data-act="club-view" data-club="${id}">
       <span class="muted-s" style="width:22px;text-align:right">${i+1}</span>${crestHTML(c,32)}
       <span class="lt"><b>${esc(c.name)}</b><small>${esc(c.city)}</small></span>
-      <span class="lstat"><small class="lrep">${starsFracHTML(r)} <b>${r}</b>${repDeltaHTML(id)}</small></span>
+      <span class="lstat"><small class="lrep lrep-rep"><span class="repline">${starsFracHTML(r)}</span><span class="repline"><b class="repb">${r}</b>${repDeltaHTML(id)}</span></small></span>
       <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
   }).join('');
   return`<p class="hint" style="margin:2px 2px 10px">Reputación actual de cada club, de mayor a menor. Se actualiza al empezar la siguiente temporada según su posición final, títulos, ascensos y descensos (las flechas indican el último cambio).</p>
@@ -13884,7 +13938,7 @@ function pmHistoria(f){
   return`<div class="hcards">${row(cur,true)}${hist.map(x=>row(x,false)).join('')}</div>`;
 }
 function pmPalmares(f){
-  const p=f.p,tr=p.trophies||[];
+  const p=f.p,tr=allTrophiesOf(p);
   if(!tr.length)return'<p class="pm-note" style="margin:14px 0 0">Todavía no ha ganado ningún título.</p>';
   if(!ui.palSub)ui.palSub='general';
   const seg=`<div class="seg" style="margin-top:8px;margin-bottom:12px">${[['general','General'],['temp','Temporadas'],['club','Clubes']].map(([k,l])=>`<button class="${ui.palSub===k?'on':''}" data-act="pal-sub" data-k="${k}">${l}</button>`).join('')}</div>`;
@@ -14141,20 +14195,22 @@ home(){
     next=`<div class="card next"><div class="card-h"><h3>${esc(ct.cup.name)}</h3><span>${esc(RC.n)}</span></div>
     <div class="vs"><button class="tm" data-act="club-view" data-club="${c.id}">${crestHTML(c,52)}<span>${esc(c.name)}</span></button><div class="mid">${homeC?'en casa':'fuera'}</div><button class="tm" data-act="club-view" data-club="${oidC}">${crestHTML(ocC,52)}<span>${esc(ocC.name)}</span></button></div>
     <div class="cmp"><span>GRL del once titular: ${Math.round(s.ovr)} frente a ${ovC}. ${state.week>=state.fixtures.length?'La liga ya ha terminado.':'Esta semana juegas primero la copa y después la liga.'}</span><div class="bar"><i style="width:${pwC}%"></i><i style="width:${100-pwC}%"></i></div>${inj?`<span class="bad">Tienes ${inj} lesionado${inj>1?'s':''} en la plantilla.</span>`:''}</div>
-    <button class="btn primary" data-act="play">Jugar partido de copa</button></div>`;
-  }else if(state.phase==='play'){
+    <button class="btn primary" data-act="play">Jugar partido</button></div>`;
+  }else if(state.phase==='play'&&state.fixtures[state.week]){
     const m=state.fixtures[state.week].find(m=>m.h===state.club||m.a===state.club),home=m.h===state.club,oid=home?m.a:m.h,oc=CLUBBY[oid],os=strength(state.teams[oid]);
     const pw=Math.round(s.ovr/(s.ovr+os.ovr)*100);
     next=`<div class="card next"><div class="card-h"><h3>${esc(divName(state.country,state.div))}</h3><span>Jornada ${state.week+1} de ${total}</span></div>
     <div class="vs"><button class="tm" data-act="club-view" data-club="${c.id}">${crestHTML(c,52)}<span>${esc(c.name)}</span></button><div class="mid">${home?'en casa':'fuera'}</div><button class="tm" data-act="club-view" data-club="${oid}">${crestHTML(oc,52)}<span>${esc(oc.name)}</span></button></div>
     <div class="cmp"><span>GRL del once titular: ${Math.round(s.ovr)} frente a ${Math.round(os.ovr)}${state.cupWeek===state.week?'. Ya has jugado el partido de copa de esta semana':''}</span><div class="bar"><i style="width:${pw}%"></i><i style="width:${100-pw}%"></i></div>${inj?`<span class="bad">Tienes ${inj} lesionado${inj>1?'s':''} en la plantilla.</span>`:''}</div>
-    <button class="btn primary" data-act="play">Jugar jornada</button></div>`;
+    <button class="btn primary" data-act="play">Jugar partido</button></div>`;
+  }else if(state.phase==='play'){
+    next=`<div class="card next"><div class="card-h"><h3>Fin de liga</h3><span>Sin partidos pendientes</span></div><p class="muted-s" style="margin-bottom:14px">No queda jornada de liga esta semana.</p><button class="btn primary" data-act="play">Jugar partido</button></div>`;
   }else if(pt){
     const t2=pt.t,homeP=(pt.leg===0?t2.b:t2.a)===state.club,oidP=t2.a===state.club?t2.b:t2.a,ocP=CLUBBY[oidP],ovP=Math.round(virt(oidP).ovr),pwP=Math.round(s.ovr/(s.ovr+ovP)*100);
     next=`<div class="card next"><div class="card-h"><h3>${pt.it.kind==='promo'||pt.it.kind==='rfpo'?'Playoff de ascenso':(pt.it.kind==='nlpo'||pt.it.kind==='dkpo')?'Playoff por la Conference League':'Playoff de permanencia'}</h3><span>${esc(pt.R.n)}${pt.it.single?'':', '+(pt.leg===0?'ida':'vuelta')}</span></div>
     <div class="vs"><div class="tm">${crestHTML(c,52)}<span>${esc(c.name)}</span></div><div class="mid">${homeP?'en casa':'fuera'}</div><div class="tm">${crestHTML(ocP,52)}<span>${esc(ocP.name)}</span></div></div>
     <div class="cmp"><span>GRL del once titular: ${Math.round(s.ovr)} frente a ${ovP}. ${pt.it.kind==='promo'?'Ascenso a '+esc(divName(pt.it.co,1))+' en juego.':pt.it.kind==='rfpo'?'Ascenso a '+esc(divName('ES',2))+' en juego.':(pt.it.kind==='nlpo'||pt.it.kind==='dkpo')?'La plaza de la Conference League en juego.':'La permanencia en Primera en juego.'}${pt.leg===1?' Global: '+(t2.l[0]?(t2.a===state.club?t2.l[0].ag:t2.l[0].hg)+' - '+(t2.a===state.club?t2.l[0].hg:t2.l[0].ag):''):''}</span><div class="bar"><i style="width:${pwP}%"></i><i style="width:${100-pwP}%"></i></div>${inj?`<span class="bad">Tienes ${inj} lesionado${inj>1?'s':''} en la plantilla.</span>`:''}</div>
-    <button class="btn primary" data-act="play">Jugar partido de playoff</button></div>`;
+    <button class="btn primary" data-act="play">Jugar partido</button></div>`;
   }else{
     const st=standings();
     next=`<div class="card next"><div class="card-h"><h3>Temporada terminada</h3><span>Campeón: ${esc(CLUBBY[st[0].id].name)}</span></div><p class="muted-s" style="margin-bottom:14px">Has acabado ${pos}º. La directiva te ingresará ${fmtM(leaguePosPrize())} por la clasificación.</p><button class="btn primary" data-act="newseason">Empezar la temporada ${state.season+1}</button><button class="btn ghost" style="margin-top:8px;width:100%" data-act="season-summary">Resumen temporada</button></div>`;
@@ -14614,14 +14670,30 @@ const H={
   take(){takeControl()},
   tab(t){ui.tab=t.dataset.tab;ui.sel=null;renderGame();$('#gmain').scrollTop=0},
   play(){
-    const bad=lineupIssues(me());
-    if(bad.length){
-      openSheet(`<h3>Revisa tu once</h3><p>${bad.map(p=>esc(p.n)+' ('+(p.inj>0?'lesionado':'sancionado')+')').join(', ')} no puede${bad.length>1?'n':''} jugar. Sácalo${bad.length>1?'s':''} del once y del banquillo (a reservas) antes de jugar el partido.</p><div class="row-btns"><button class="btn ghost" data-act="fix-auto">Corregir automáticamente</button><button class="btn primary" data-act="go-tactics">Ir a Táctica</button></div>`);
-      return;
+    try{
+      const bad=lineupIssues(me());
+      if(bad.length){
+        openSheet(`<h3>Revisa tu once</h3><p>${bad.map(p=>esc(p.n)+' ('+(p.inj>0?'lesionado':'sancionado')+')').join(', ')} no puede${bad.length>1?'n':''} jugar. Sácalo${bad.length>1?'s':''} del once y del banquillo (a reservas) antes de jugar el partido.</p><div class="row-btns"><button class="btn ghost" data-act="fix-auto">Corregir automáticamente</button><button class="btn primary" data-act="go-tactics">Ir a Táctica</button></div>`);
+        return;
+      }
+      if(state.phase==='end'){const res=playPoStage();renderGame();if(res)poSheet(res);return}
+      if(userCupTie(state.week)){
+        const res=playCupStage();
+        renderGame();
+        if(res&&res.cups&&res.cups.length)cupSheet(res);
+        return;
+      }
+      if(!state.fixtures[state.week]){   /* sin jornada de liga esta semana: cierra la temporada */
+        if(typeof afterLeague==='function')afterLeague();
+        renderGame();
+        return;
+      }
+      const res=playLeagueStage();renderGame();if(res)roundSheet(res);
+    }catch(err){
+      /* nunca dejar el botón "muerto": si algo falla, se repinta y se avisa */
+      try{renderGame()}catch(e){}
+      try{toast('No se pudo jugar el partido. Vuelve a intentarlo.')}catch(e){}
     }
-    if(state.phase==='end'){const res=playPoStage();renderGame();if(res)poSheet(res);return}
-    if(userCupTie(state.week)){const res=playCupStage();renderGame();if(res)cupSheet(res);return}
-    const res=playLeagueStage();renderGame();if(res)roundSheet(res);
   },
   'go-tactics'(){closeSheet();ui.tab='tactics';ui.sel=null;renderGame();$('#gmain').scrollTop=0},
   'fix-auto'(){fixLineup(me(),true);saveGame();closeSheet();renderGame();toast('Once y convocatoria corregidos')},
@@ -14663,7 +14735,7 @@ const H={
   'pal-ico-info'(t){
     const f=pmFind();if(!f)return;
     const clubId=t.dataset.club,k=t.dataset.k,name=t.dataset.n;
-    const seasons=(f.p.trophies||[]).filter(x=>x.club===clubId&&x.k===k&&trophyName(CLUBBY[x.club],x.k)===name).map(x=>x.s).sort((a,b)=>b-a);
+    const seasons=allTrophiesOf(f.p).filter(x=>x.club===clubId&&x.k===k&&trophyName(CLUBBY[x.club],x.k)===name).map(x=>x.s).sort((a,b)=>b-a);
     const list=seasons.map(s=>`<p>Temporada ${s}</p>`).join('');
     openInfo(name,`<p>${seasons.length} título${seasons.length>1?'s':''} con ${esc(cname(clubId))}.</p>${list}`);
   },
