@@ -1042,7 +1042,7 @@ function shuffle(arr,r){for(let i=arr.length-1;i>0;i--){const j=Math.floor(r()*(
 function pick(arr,r){return arr[Math.floor(r()*arr.length)]}
 const lum=hex=>{const n=parseInt(hex.slice(1),16);return(.299*(n>>16&255)+.587*(n>>8&255)+.114*(n&255))/255};
 const Store={mem:{},warned:false,
-  get(k){let v=null;try{v=localStorage.getItem(k)}catch(e){}return v!==null?v:(this.mem[k]!==undefined?this.mem[k]:null)},
+  get(k){if(this.mem[k]!==undefined)return this.mem[k];let v=null;try{v=localStorage.getItem(k)}catch(e){}return v},
   set(k,v){try{localStorage.setItem(k,v);delete this.mem[k];return true}catch(e){this.mem[k]=v;return false}},
   del(k){try{localStorage.removeItem(k)}catch(e){}delete this.mem[k]}};
 /* almacenamiento durable en IndexedDB (cuota de cientos de MB): las partidas largas no dependen del límite
@@ -10335,6 +10335,15 @@ function saveGame(){
 function readMeta(n){try{const v=Store.get('mister.meta.'+n);return v?JSON.parse(v):null}catch(e){return null}}
 function readSlot(n){try{const v=Store.get('mister.slot.'+n);const s=v?JSON.parse(v):null;return s&&s.v===1&&s.teams?s:null}catch(e){return null}}
 function deleteSlot(n){Store.del('mister.slot.'+n);Store.del('mister.meta.'+n);IDB.del('slot.'+n);IDB.del('meta.'+n)}
+/* devuelve la copia MÁS RECIENTE de un slot entre localStorage y IndexedDB. Si localStorage se quedó sin cuota,
+   puede guardar una versión vieja; IndexedDB (que se escribe siempre) tiene la buena, así que se comparan por fecha. */
+async function bestSlotRaw(n){
+  const parse=x=>{try{return x?JSON.parse(x):null}catch(e){return null}};
+  const a=parse(Store.get('mister.slot.'+n));
+  let b=null;try{if(IDB.ok)b=parse(await IDB.get('slot.'+n))}catch(e){}
+  if(a&&b)return (b.saved||0)>=(a.saved||0)?b:a;
+  return a||b;
+}
 /* exportar/importar a archivo: no depende del localStorage del navegador, así que funciona aunque esté bloqueado
    (Safari con archivo local, modo privado...) y permite partidas que se guardan y restauran siempre. */
 function storageOK(){try{const k='mister._t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
@@ -12943,9 +12952,9 @@ home(){
     <button class="btn primary" data-act="play">Jugar jornada</button></div>`;
   }else if(pt){
     const t2=pt.t,homeP=(pt.leg===0?t2.b:t2.a)===state.club,oidP=t2.a===state.club?t2.b:t2.a,ocP=CLUBBY[oidP],ovP=Math.round(virt(oidP).ovr),pwP=Math.round(s.ovr/(s.ovr+ovP)*100);
-    next=`<div class="card next"><div class="card-h"><h3>${pt.it.kind==='promo'?'Playoff de ascenso':pt.it.kind==='nlpo'?'Playoff por la Conference League':'Playoff de permanencia'}</h3><span>${esc(pt.R.n)}${pt.it.single?'':', '+(pt.leg===0?'ida':'vuelta')}</span></div>
+    next=`<div class="card next"><div class="card-h"><h3>${pt.it.kind==='promo'||pt.it.kind==='rfpo'?'Playoff de ascenso':(pt.it.kind==='nlpo'||pt.it.kind==='dkpo')?'Playoff por la Conference League':'Playoff de permanencia'}</h3><span>${esc(pt.R.n)}${pt.it.single?'':', '+(pt.leg===0?'ida':'vuelta')}</span></div>
     <div class="vs"><div class="tm">${crestHTML(c,52)}<span>${esc(c.name)}</span></div><div class="mid">${homeP?'en casa':'fuera'}</div><div class="tm">${crestHTML(ocP,52)}<span>${esc(ocP.name)}</span></div></div>
-    <div class="cmp"><span>GRL del once titular: ${Math.round(s.ovr)} frente a ${ovP}. ${pt.it.kind==='promo'?'Ascenso a '+esc(divName(pt.it.co,1))+' en juego.':pt.it.kind==='nlpo'?'La plaza de la Conference League en juego.':'La permanencia en Primera en juego.'}${pt.leg===1?' Global: '+(t2.l[0]?(t2.a===state.club?t2.l[0].ag:t2.l[0].hg)+' - '+(t2.a===state.club?t2.l[0].hg:t2.l[0].ag):''):''}</span><div class="bar"><i style="width:${pwP}%"></i><i style="width:${100-pwP}%"></i></div>${inj?`<span class="bad">Tienes ${inj} lesionado${inj>1?'s':''} en la plantilla.</span>`:''}</div>
+    <div class="cmp"><span>GRL del once titular: ${Math.round(s.ovr)} frente a ${ovP}. ${pt.it.kind==='promo'?'Ascenso a '+esc(divName(pt.it.co,1))+' en juego.':pt.it.kind==='rfpo'?'Ascenso a '+esc(divName('ES',2))+' en juego.':(pt.it.kind==='nlpo'||pt.it.kind==='dkpo')?'La plaza de la Conference League en juego.':'La permanencia en Primera en juego.'}${pt.leg===1?' Global: '+(t2.l[0]?(t2.a===state.club?t2.l[0].ag:t2.l[0].hg)+' - '+(t2.a===state.club?t2.l[0].hg:t2.l[0].ag):''):''}</span><div class="bar"><i style="width:${pwP}%"></i><i style="width:${100-pwP}%"></i></div>${inj?`<span class="bad">Tienes ${inj} lesionado${inj>1?'s':''} en la plantilla.</span>`:''}</div>
     <button class="btn primary" data-act="play">Jugar partido de playoff</button></div>`;
   }else{
     const st=standings();
@@ -13269,12 +13278,11 @@ const H={
   },
   async 'slot-load'(t){
     const n=+t.dataset.n;
-    let raw=Store.get('mister.slot.'+n);
-    if(!raw)raw=await IDB.get('slot.'+n);
-    let s=null;try{s=raw?JSON.parse(raw):null}catch(e){s=null}
+    let s=null;try{s=await bestSlotRaw(n)}catch(e){s=null}
     if(!s||s.v!==1||!s.teams){toast('No se pudo leer esa partida');renderSlots();return}
     try{
       state=s;state.slot=n;migrateUclIfNeeded();ensureState();enterGame();
+      try{saveGame()}catch(e){}   /* sincroniza localStorage e IndexedDB con la copia más reciente (evita quedar con una vieja) */
     }catch(e){
       console.error('Error al cargar la partida',e);
       state=null;
@@ -13288,10 +13296,9 @@ const H={
   },
   async 'slot-export'(t){
     const n=+t.dataset.n;
-    let raw=Store.get('mister.slot.'+n);
-    if(!raw)raw=await IDB.get('slot.'+n);
-    if(!raw){toast('No hay guardado que exportar');return}
-    downloadSave(raw,'mister_slot_'+n+'.json');toast('Slot '+n+' exportado a archivo');
+    let s=null;try{s=await bestSlotRaw(n)}catch(e){s=null}
+    if(!s){toast('No hay guardado que exportar');return}
+    downloadSave(JSON.stringify(s),'mister_slot_'+n+'.json');toast('Slot '+n+' exportado a archivo');
   },
   'slot-import'(t){
     const n=t.dataset.n;
