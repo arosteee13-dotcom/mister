@@ -9607,7 +9607,7 @@ function startPosTraining(pid,pos){
   const p=me().players.concat(state.fam?state.fam.players:[]).find(x=>x.id===pid);
   if(!p)return'No se encuentra al jugador.';
   if(p.pos==='GK'||pos==='POR'||!POS_ATTR[pos])return'Los porteros no aprenden posiciones de campo, ni al revés.';
-  if(p.loanIn)return'Un jugador cedido no puede entrenar una posición.';
+  if(p.loanIn)return p.famDown?'Un jugador del primer equipo no puede entrenar una posición.':'Un jugador cedido no puede entrenar una posición.';
   if(p.tr)return'Ese jugador ya está aprendiendo una posición.';
   if(ppOf(p).includes(pos))return'Ya domina esa posición.';
   if(trainees().length>=trainSlots())return'No quedan plazas de entrenamiento. Mejora las instalaciones o cancela otro entrenamiento.';
@@ -9958,7 +9958,9 @@ function promoteStandout(parentId,mine){
     .sort((a,b)=>(b.rt||0)/Math.max(1,b.ap)-(a.rt||0)/Math.max(1,a.ap)||b.ovr-a.ovr);
   if(!cand.length||Math.random()>.25)return;
   const p=cand[0];if(p.ovr<52)return;
+  const wasInXI=(mine.lineup||[]).includes(p.id),wasInBn=(mine.bench||[]).includes(p.id);
   mine.players=mine.players.filter(x=>x.id!==p.id);
+  if(wasInXI||wasInBn)fixLineup(mine,false);   /* si estaba en el once/banquillo, se cubre su hueco con otro jugador en vez de dejarlo vacío */
   const pp=Object.assign({},p,{role:roleAt(p,parentId)});
   if(state.teams[parentId]){const T=state.teams[parentId];if(!T.players.some(x=>x.id===pp.id))T.players.push(pp);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)}
   else{state.arrivals=state.arrivals||{};(state.arrivals[parentId]=state.arrivals[parentId]||[]).push(pp)}
@@ -12090,7 +12092,7 @@ function playerCard(p,clubId,opts){
   const nat=natOf(p,clubId),pot=Math.max(p.pot||p.ovr,p.ovr),role=mk?'':(p.role||roleAt(p,clubId));
   const nm=cardName(p.n);
   return`<button class="pcard" data-act="${mk?'mkt-pl':'pl'}" data-id="${p.id}" data-club="${clubId}"${mk?` data-from="${mk.from}"`:''}>
-    <div class="pc-av">${p.loanIn?'<span class="tag ced">CED</span>':''}<div class="pc-photo">${avatarHTML(p)}</div></div>
+    <div class="pc-av">${p.loanIn&&!p.famDown?'<span class="tag ced">CED</span>':''}<div class="pc-photo">${avatarHTML(p)}</div></div>
     <div class="pc-main"><div class="pc-name"${nm!==p.n?` title="${esc(p.n)}"`:''}>${esc(nm)}${opts.starter?'<i class="tt" title="Titular"></i>':''}</div>
       <div class="pc-meta"><span class="pc-age">${p.age}a.</span>${ppOf(p).map((x,k)=>`<span class="pc-pos${k===0?' main':''}">${x}</span>`).join('')}${opts.tags?tagsHTML(p):''}</div>
       <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${mk?'Pide '+fmtM(mk.price):fmtW(p.wage)}</span></div></div>
