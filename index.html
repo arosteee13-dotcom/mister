@@ -11952,7 +11952,7 @@ function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,UEL_QUAL_REPLACE,
   return[...s]}
 function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,ECL_QUAL_REPLACE,8,12));if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);return[...s]}
 function champsLine(){
-  const parts=PLAYABLE.map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}return FLAG[co]+' '+cname(top.id)});
+  const parts=PLAYABLE.map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}return top?FLAG[co]+' '+cname(top.id):null}).filter(Boolean);
   const u=state.cups.UCL.champ;
   return 'Campeones de liga: '+parts.join(', ')+(u?'. Champions League: '+cname(u)+'.':'.');
 }
