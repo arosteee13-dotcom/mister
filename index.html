@@ -10476,6 +10476,10 @@ function applyMoves(){
   fixBTeams();
   Object.keys(state.divs).forEach(id=>{if(state.divs[id]===BASE_DIV[id])delete state.divs[id]});
   applyDivs();
+  /* refresca el reparto congelado de divisiones con los ascensos/descensos recién aplicados, para que
+     syncLeague() (que se ejecuta justo después, en la misma temporada) ya vea a los equipos en su división
+     nueva sin tener que recargar la partida. */
+  state.leagueTeams=captureLeagueTeams();
 }
 /* evita que un filial quede en la misma categoría (o por encima) de su primer equipo: lo baja de escalón y
    deja en su sitio al equipo que iba a descender de esa categoría (así no se rompen los tamaños).
@@ -11362,8 +11366,13 @@ function promoteYouth(id){
 function releaseYouth(id){state.academy=state.academy.filter(p=>p.id!==id);saveGame()}
 function ensureState(){
   if(!state.leagueConfig)state.leagueConfig=inferLegacyLeagueConfig();
-  if(!state.leagueTeams)state.leagueTeams=inferLegacyLeagueTeams();
   applyDivs();
+  /* el reparto de equipos de cada división (state.leagueTeams) antes se fotografiaba UNA sola vez al crear
+     la partida y nunca se volvía a actualizar. leagueClubs() exige pertenecer a esa foto congelada además
+     de a la división actual, así que cualquier ascenso/descenso posterior (o una ampliación del roster de un
+     grupo en el código) dejaba huecos o equipos fantasma para siempre. Se recalcula en cada carga a partir
+     de las divisiones reales de hoy (ya actualizadas por applyDivs, que incluye tus ascensos/descensos). */
+  state.leagueTeams=captureLeagueTeams();
   ensureWorld();
   if(state.phase==='end'&&!state.po)setupPlayoffs();
   if(!state.fac){state.fac=facLevels(state.club);state.works=[];state.academy=[];state.acadIn=ACAD_EVERY}
@@ -12992,9 +13001,37 @@ function initWorld(){
   if(ifcUefa&&CLUBBY[ifcUefa])state.cups.IFC=cupInitIFC(ifcUefa);
 }
 function ensureWorld(){
-  if(state.others&&state.cups)return;
+  if(state.others&&state.cups){reconcileOthers();return}
   initWorld();for(let r=0;r<state.week;r++)advanceWorld(r);
   if(state.phase==='end')finishAll();
+}
+/* Las ligas que NO diriges (state.others) se generan una sola vez al crear la partida, con el roster
+   que tenía el código en ese momento. Si más tarde se amplía o corrige el roster de un grupo (p. ej. se
+   añaden las plantillas reales de la Segunda Federación), las partidas ya guardadas seguían mostrando
+   la tabla vieja para siempre -> equipos fantasma o grupos con 3 clubes en vez de 18. Al cargar la
+   partida se compara el roster guardado de cada liga ajena con el roster actual; si no coincide se
+   regenera esa liga (fixtures + tabla vacía) con los equipos de hoy. No toca tu propia liga ni tu progreso. */
+function reconcileOthers(){
+  if(!state.others)return;
+  const lk=userKey();
+  Object.keys(state.others).forEach(key=>{
+    if(key===lk)return;
+    const L=state.others[key];if(!L)return;
+    let ids;
+    if(['ES5','ES6','ES7','ES8','ES9','ES10','ES11'].includes(key))ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
+    else ids=leagueClubs(key.slice(0,2),+key.slice(2)).map(c=>c.id);
+    if(ids.length<2){delete state.others[key];return}
+    const cur=new Set(ids),have=new Set(Object.keys(L.tb||{}));
+    const same=cur.size===have.size&&ids.every(id=>have.has(id));
+    if(!same)state.others[key]={fx:makeFixtures(ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
+  });
+  /* grupos de Segunda Federación que no existían como liga ajena en el momento de crear la partida
+     (p. ej. porque entonces tenían 0 o 1 equipo) pero que ahora sí tienen roster: se añaden. */
+  ['ES5','ES6','ES7','ES8','ES9','ES10','ES11'].forEach(key=>{
+    if(key===lk||state.others[key])return;
+    const ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
+    if(ids.length>1)state.others[key]={fx:makeFixtures(ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
+  });
 }
 function leagueData(key){
   if(key===userKey())return{key,fx:state.fixtures,tb:state.table,mine:true,split:state.split};
