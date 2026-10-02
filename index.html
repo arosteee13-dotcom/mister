@@ -10078,7 +10078,7 @@ function planPlayoffs(){
     if(elig.length>=2){
       up=elig.slice(0,2);
       if(n1===18){down=s1.slice(-2);if(elig[2])item={co,kind:'rel',seeds:[s1[n1-3],elig[2]]}}
-      else{down=s1.slice(-3);const seeds=elig.slice(2,2+(n2===20?6:4));if(seeds.length)item={co,kind:'promo',seeds}}
+      else{const seeds=elig.slice(2,2+(n2===20?6:4));if(seeds.length){item={co,kind:'promo',seeds};down=s1.slice(-3)}else{down=s1.slice(-2)}}
     }
     if(item){item.alive=item.seeds.slice();item.rounds=[];item.winner=item.seeds.length===1?item.seeds[0]:null;po.items.push(item)}
     po.dir[co]={up,down};
@@ -10168,6 +10168,16 @@ function poDecide(t,it,R){
   else if(it&&(it.kind==='rfpo'||it.kind==='esfpo')&&!isFinal)t.w=t.a;   /* Federación: en las rondas previas pasa el mejor clasificado; la final, a penaltis */
   else{const wa=Math.random()<.5+(virt(t.a).ovr-virt(t.b).ovr)*.004,k=3+Math.floor(Math.random()*3);t.pen=wa?[k+1,k]:[k,k+1];t.w=wa?t.a:t.b}
 }
+/* red de seguridad: el número de equipos que suben debe ser siempre igual al de los que bajan, o las dos ligas
+   implicadas cambian de tamaño temporada tras temporada hasta acabar con un número impar de equipos (lo que a
+   su vez provoca el bug de la jornada que "descansa"). Si por cualquier motivo (playoff sin ganador, equipos
+   elegibles insuficientes...) se desequilibran, se recorta la lista más larga por el extremo menos decisivo
+   (el ascenso añadido en último lugar, o el equipo menos hundido de la zona de descenso) para igualar ambas. */
+
+function balanceUpDown(up,down){
+  if(up.length>down.length)up.length=down.length;
+  else if(down.length>up.length)down.splice(0,down.length-up.length);
+}
 function poFinish(){
   const po=state.po;po.done=true;po.res={};
   gamePlayable().forEach(co=>{
@@ -10176,10 +10186,11 @@ function poFinish(){
       if(it.kind==='promo'){if(it.winner)up.push(it.winner)}
       else if(it.winner!==it.seeds[0]){up.push(it.winner);down.push(it.seeds[0])}
     }
+    balanceUpDown(up,down);
     po.res[co]={up,down};
   });
-  const rf=po.rf;if(rf){po.items.filter(x=>x.kind==='rfpo'&&x.winner).forEach(x=>rf.up.push(x.winner))}
-  const esf=po.esf;if(esf){po.items.filter(x=>x.kind==='esfpo'&&x.winner).forEach(x=>esf.up.push({id:x.winner,to:x.to,grp:x.grp}))}
+  const rf=po.rf;if(rf){po.items.filter(x=>x.kind==='rfpo'&&x.winner).forEach(x=>rf.up.push(x.winner));balanceUpDown(rf.up,rf.down2)}
+  const esf=po.esf;if(esf){po.items.filter(x=>x.kind==='esfpo'&&x.winner).forEach(x=>esf.up.push({id:x.winner,to:x.to,grp:x.grp}));balanceUpDown(esf.up,esf.down)}
   const nlpo=po.items.find(x=>x.kind==='nlpo');
   if(nlpo&&nlpo.winner)state.nlPoWinner=nlpo.winner;
   const dkpo=po.items.find(x=>x.kind==='dkpo');
