@@ -15141,7 +15141,7 @@ function roundSheet(res){
    (liga + todas las copas en las que participa), reutilizando myCupStatus/cupStatusText ya existentes */
 function seasonCompsSummary(){
   const st=standings(),pos=posOf(state.club),leagueWon=st[0].id===state.club;
-  const rows=[{name:divName(state.country,state.div),status:leagueWon?'Campeón':pos+'º',won:leagueWon,k:state.div===1?'league':(state.div===2?'d2':null)}];
+  const rows=[{name:divName(state.country,state.div),status:leagueWon?'Campeón':pos+'º',won:leagueWon,k:divTrophyKey(state.country,state.div)}];
   for(const key in state.cups){
     const cup=state.cups[key];
     if(!cup||!cup.ids||!cup.ids.includes(state.club))continue;
@@ -15155,8 +15155,13 @@ function seasonCompsSummary(){
    que son las que cuentan para el palmarés), primero muestra el pop-up de trofeo y luego el resumen */
 function seasonStartSequence(){
   const st=standings(),leagueWon=st[0].id===state.club;
-  if(leagueWon&&(state.div===1||state.div===2)){
-    openTrophyPop(state.div===1?'league':'d2',divName(state.country,state.div),seasonSheet);
+  /* antes solo celebraba el título si jugabas en 1ª o 2ª división: ganar un grupo de Primera o Segunda
+     Federación SÍ cuenta para el palmarés (recordHonors ya lo registra con la clave correcta, p. ej.
+     'd4' para Segunda Federación) pero aquí nunca salía el pop-up ni el icono correcto del trofeo.
+     divTrophyKey ya sabe resolver la clave de cualquier división (liga, d2, o el grupo de Federación
+     correspondiente), así que se usa ese mismo criterio aquí. */
+  if(leagueWon){
+    openTrophyPop(divTrophyKey(state.country,state.div),divName(state.country,state.div),seasonSheet);
   }else seasonSheet();
 }
 /* tarjetas de estadísticas del equipo al cierre de temporada: partidos, goles, asistencias,
