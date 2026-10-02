@@ -1177,6 +1177,59 @@ function flagColorAt(co,nx,ny){
 const LAND=[EURASIA,NAMER,SAMER,AFRICA,AUS,...ISLANDS,SICILY,SARDINIA,MALLORCA];
 /* ============ CONFIGURACIÓN / PAÍSES / MAPA ============ */
 const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL'];
+/* Configuración de ligas congelada por partida: una partida solo puede ver/simular las ligas y divisiones
+   que existían cuando se creó. Así añadir nuevas ligas al HTML no modifica partidas ya empezadas. */
+function captureLeagueConfig(){
+  const cfg={};
+  PLAYABLE.forEach(co=>{
+    const ds=[...new Set(CLUBS.filter(c=>c.co===co).map(c=>c.div||1))].sort((a,b)=>a-b);
+    if(ds.length)cfg[co]=ds;
+  });
+  return cfg;
+}
+function captureLeagueTeams(){
+  const teams={};
+  PLAYABLE.forEach(co=>{
+    const byDiv={};
+    CLUBS.filter(c=>c.co===co).forEach(c=>{const k=co+(c.div||1);(byDiv[k]||(byDiv[k]=[])).push(c.id)});
+    Object.keys(byDiv).forEach(k=>{teams[k]=byDiv[k].slice()});
+  });
+  return teams;
+}
+function inferLegacyLeagueConfig(){
+  const cfg={};
+  const keys=new Set();
+  if(state&&state.others)Object.keys(state.others).forEach(k=>keys.add(k));
+  if(state&&state.country)keys.add(state.country+(state.div||1));
+  PLAYABLE.forEach(co=>{
+    const ds=[];
+    for(let d=1;d<=11;d++)if(keys.has(co+d))ds.push(d);
+    if(ds.length)cfg[co]=ds;
+  });
+  /* Partidas antiguas sin mundo persistido: no hay forma de reconstruir el contenido histórico exacto. */
+  if(!Object.keys(cfg).length)return captureLeagueConfig();
+  return cfg;
+}
+function inferLegacyLeagueTeams(){
+  const teams={};
+  if(state&&state.others)Object.keys(state.others).forEach(k=>{
+    const tb=state.others[k]&&state.others[k].tb;
+    if(tb)teams[k]=Object.keys(tb);
+  });
+  if(state&&state.country){
+    const k=state.country+(state.div||1);
+    teams[k]=Object.keys(state.teams||{});
+  }
+  if(Object.keys(teams).length)return teams;
+  return captureLeagueTeams();
+}
+function gamePlayable(){return state&&state.leagueConfig?Object.keys(state.leagueConfig):PLAYABLE}
+function isLeagueEnabled(co,d){
+  if(!state||!state.leagueConfig)return true;
+  const ds=state.leagueConfig[co];
+  return !!ds&&ds.includes(d||1);
+}
+function gameClub(c){return !c||isLeagueEnabled(c.co,c.div||1)}
 const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}',NL:'\u{1F1F3}\u{1F1F1}',AT:'\u{1F1E6}\u{1F1F9}',UA:'\u{1F1FA}\u{1F1E6}',NO:'\u{1F1F3}\u{1F1F4}',BE:'\u{1F1E7}\u{1F1EA}',SK:'\u{1F1F8}\u{1F1F0}',GR:'\u{1F1EC}\u{1F1F7}',AM:'\u{1F1E6}\u{1F1F2}',BA:'\u{1F1E7}\u{1F1E6}',XK:'\u{1F1FD}\u{1F1F0}',EE:'\u{1F1EA}\u{1F1EA}',MK:'\u{1F1F2}\u{1F1F0}',MT:'\u{1F1F2}\u{1F1F9}',HU:'\u{1F1ED}\u{1F1FA}',AD:'\u{1F1E6}\u{1F1E9}',KZ:'\u{1F1F0}\u{1F1FF}',AL:'\u{1F1E6}\u{1F1F1}',FI:'\u{1F1EB}\u{1F1EE}',NIR:'\u{1F1EC}\u{1F1E7}',GI:'\u{1F1EC}\u{1F1EE}',BY:'\u{1F1E7}\u{1F1FE}',LV:'\u{1F1F1}\u{1F1FB}',IE:'\u{1F1EE}\u{1F1EA}',ME:'\u{1F1F2}\u{1F1EA}',WAL:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',SM:'\u{1F1F8}\u{1F1F2}',RO:'\u{1F1F7}\u{1F1F4}',IS:'\u{1F1EE}\u{1F1F8}',DK:'\u{1F1E9}\u{1F1F0}',PL:'\u{1F1F5}\u{1F1F1}',SE:'\u{1F1F8}\u{1F1EA}',SI:'\u{1F1F8}\u{1F1EE}',HR:'\u{1F1ED}\u{1F1F7}'};
 const CANARIAS={center:[-15.8,28.45],to:[-7.75,34.85],f:.6,ex:1.15,frame:[-9.65,34.12,-5.85,35.6],minLat:33.85,label:'Canarias',polys:[
  P(`-16.92,28.33 -16.7,28 -16.35,28 -16.12,28.35 -16.4,28.6 -16.85,28.55`),P(`-15.83,28.05 -15.6,28.18 -15.38,28 -15.42,27.8 -15.7,27.75 -15.8,27.85`),
@@ -1206,7 +1259,7 @@ const COUNTRIES={
    SA:{name:'Arabia Saudí',league:'Saudi Pro League',divs:['Saudi Pro League'],pin:[45.0,23.9],polys:[]}
 };
 function divName(co,d){const C=COUNTRIES[co];const groups=DIV_GROUPS[co]||[];for(const grp of groups){const s=grp.subs.find(x=>x[0]===d);if(s)return grp.label+' ('+s[1]+')'}if(d===2)return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1. Liga'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
-function leagueClubs(co,d){return CLUBS.filter(c=>c.co===co&&c.div===(d||1))}
+function leagueClubs(co,d){d=d||1;if(!isLeagueEnabled(co,d))return [];const k=co+d;const frozen=state&&state.leagueTeams&&state.leagueTeams[k];return CLUBS.filter(c=>c.co===co&&c.div===d&&(!frozen||frozen.includes(c.id)))}
 const LOCKED=[];
 
 /* ===================== clubes (reales), jugadores ficticios ===================== */
@@ -6264,7 +6317,7 @@ const budgetFor=c=>{
   return clamp(Math.round(base*factor*1000)/1000,.04,300);
 };
 function objective(id){
-  const c=CLUBBY[id],list=CLUBS.filter(x=>x.co===c.co&&x.div===c.div).sort((a,b)=>repOf(b.id)-repOf(a.id)),n=list.length||1,rank=list.findIndex(x=>x.id===id)+1||n;
+  const c=CLUBBY[id],list=CLUBS.filter(x=>gameClub(x)&&x.co===c.co&&x.div===c.div).sort((a,b)=>repOf(b.id)-repOf(a.id)),n=list.length||1,rank=list.findIndex(x=>x.id===id)+1||n;
   if(c.div===2)return rank<=2?'Ascenso directo':rank<=Math.ceil(n*.4)?'Clasificar a Playoffs de Ascenso':'Terminar en la zona media de la tabla';
   if(c.div>=7&&c.div<=11)return rank<=1?'Ascender a Primera Federación':rank<=5?'Clasificar al playoff de ascenso':'Permanencia';
   return rank<=2?'Ganar la Liga':rank<=Math.ceil(n*.35)?'Clasificar para competición europea':rank<=Math.ceil(n*.7)?'Permanencia':'Evitar el descenso';
@@ -9800,7 +9853,7 @@ function genMarketGen(){
   const avg=t.players.reduce((s,p)=>s+p.ovr,0)/t.players.length;
   return mktPlan().map((pos,i)=>{
     const p=mkPlayer(r,`m${state.season}_${state.week}_${i}`,pos,clamp(Math.round(avg-8+r()*22),45,90),Math.round(19+r()*14),state.country,new Set());
-    p.price=Math.round(p.val*(1.05+r()*.3)*10)/10;p.from=pick(CLUBS.filter(c=>c.id!==state.club),r).id;return p;
+    p.price=Math.round(p.val*(1.05+r()*.3)*10)/10;p.from=pick(CLUBS.filter(c=>gameClub(c)&&c.id!==state.club),r).id;return p;
   });
 }
 /* ---------- filtros del mercado ---------- */
@@ -9838,6 +9891,7 @@ const mktPrice=p=>Math.round(p.val*(1.05+rng(hashStr('pr'+p.id+'|'+state.seed))(
 function mktEntries(f){
   const out=[],wk=mktWk(),fam=state.fam?state.fam.id:null;
   CLUBS.forEach(c=>{
+    if(!gameClub(c))return;
     if((f.country!=='ALL'&&c.co!==f.country)||c.id===state.club||c.id===fam)return;
     if(f.league!=='ALL'&&c.co+(c.div||1)!==f.league)return;
     if(f.team!=='ALL'&&c.id!==f.team)return;
@@ -9855,9 +9909,9 @@ const MKT_POS=[['Porteros',[['POR','Portero (POR)']]],['Defensas',[['LI','Latera
 function mktSheetHTML(){
   const f=ui.mkt,fam=state.fam?state.fam.id:null;
   /* país de la liga -> liga -> equipo: cada nivel solo se activa cuando se ha elegido el anterior */
-  const countries=PLAYABLE.filter(c=>CLUBS.some(x=>x.co===c));
+  const countries=gamePlayable().filter(c=>CLUBS.some(x=>x.co===c));
   const leagues=f.country==='ALL'?[]:COUNTRIES[f.country].divs.map((n,i)=>[f.country+(i+1),n,i+1]).filter(([k,n,d])=>CLUBS.some(x=>x.co===f.country&&(x.div||1)===d)&&k!=='PT2');
-  const teamOpts=f.league==='ALL'?[]:CLUBS.filter(x=>x.co+(x.div||1)===f.league&&x.id!==state.club&&x.id!==fam).map(x=>x.id).sort((a,b)=>cname(a).localeCompare(cname(b)));
+  const teamOpts=f.league==='ALL'?[]:CLUBS.filter(x=>gameClub(x)&&x.co+(x.div||1)===f.league&&x.id!==state.club&&x.id!==fam).map(x=>x.id).sort((a,b)=>cname(a).localeCompare(cname(b)));
   const nats=[...new Set(state.market.map(p=>p.nat).filter(Boolean).concat(f.country==='ALL'&&!f.q?[]:mktEntries(Object.assign({},f,{nat:'ALL'})).map(e=>e.p.nat).filter(Boolean)))].sort((a,b)=>(NATNAME[a]||a).localeCompare(NATNAME[b]||b));
   const opts=(o,cur)=>o.map(([v,l])=>`<option value="${v}"${v===cur?' selected':''}>${esc(l)}</option>`).join('');
   const sel=(k,o,cur,dis)=>`<select data-mkt="${k}"${dis?' disabled':''}>${opts(o,cur)}</select>`;
@@ -9916,7 +9970,10 @@ function newGame(slot,clubId){
     t.lineup=bestXI(t);if(c.id===clubId)t.bench=autoBench(t);teams[c.id]=t;
   });
   const ids=Object.keys(teams);
+  const leagueConfig=captureLeagueConfig();
+  const leagueTeams=captureLeagueTeams();
   state={v:1,slot,created:Date.now(),saved:Date.now(),seed,mode:ui.gmode||'fict',country:co,div:club.div,club:clubId,season:1,week:0,phase:'play',teams,
+    leagueConfig,leagueTeams,
     fixtures:makeFixtures(ids,rng(seed^0x9e37)),table:emptyTable(ids),news:[],market:[],fin:null,loans:[],loansOut:[],
     mgrStints:[{club:clubId,from:1}],mgrLog:[],jobOffers:[],split:null,ageNorm:1};
   news(`La directiva de ${club.name} te presenta como nuevo míster. Objetivo: ${objective(clubId)}.`);
@@ -9947,7 +10004,7 @@ function filialCanBeIn(id,to){
 /* ============ ASCENSOS / DESCENSOS / PLAYOFFS ============ */
 function planPlayoffs(){
   const po={items:[],dir:{},round:0,leg:0,done:false,res:null};
-  PLAYABLE.forEach(co=>{
+  gamePlayable().forEach(co=>{
     const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id)),n1=s1.length,n2=s2.length;
     let down=[],up=[],item=null;
     if(elig.length>=2){
@@ -10045,7 +10102,7 @@ function poDecide(t,it,R){
 }
 function poFinish(){
   const po=state.po;po.done=true;po.res={};
-  PLAYABLE.forEach(co=>{
+  gamePlayable().forEach(co=>{
     const d=po.dir[co],it=po.items.find(x=>x.co===co),up=d.up.slice(),down=d.down.slice();
     if(it){
       if(it.kind==='promo'){if(it.winner)up.push(it.winner)}
@@ -10155,7 +10212,7 @@ function movesHTML(){
   const esfHTML=esf?`
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('ES',5))}</b>${teamsHTML(esf.up.map(x=>x.id))}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a Segunda Federación</b>${teamsHTML(esf.down.map(x=>x.id))}</div></div>`:'';
-  return PLAYABLE.map(co=>{const r=po.res[co],up=r&&r.up||[],down=r&&r.down||[];
+  return gamePlayable().map(co=>{const r=po.res[co],up=r&&r.up||[],down=r&&r.down||[];
     return`<div class="subh">${FLAG[co]} ${esc(COUNTRIES[co].name)}</div>
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName(co,1))}</b>${teamsHTML(up)}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML+esfHTML:''}`}).join('');
@@ -10171,7 +10228,7 @@ function myMoveTxt(){
 }
 function applyMoves(){
   const res=state.po.res;state.divs=state.divs||{};state.relegated=state.relegated||{};
-  PLAYABLE.forEach(co=>{
+  gamePlayable().forEach(co=>{
     const r=res[co];if(!r)return;
     (r.up||[]).forEach(id=>{state.divs[id]=1;delete state.relegated[id]});
     (r.down||[]).forEach(id=>{state.divs[id]=2;const c=CLUBBY[id];if(c&&c.div===1)state.relegated[id]=1});
@@ -10280,7 +10337,7 @@ function newSeason(){
   const champs=champsLine();state.qual=qualifiers();state.qualEL=qualifiersEL();state.qualEC=qualifiersEC();state.copaQual=computeCopaQual();
   { const prevSC={};
     archiveLiteHist();
-    PLAYABLE.forEach(co=>{
+    gamePlayable().forEach(co=>{
       const need=SC_TEAMS[co]||2;
       const L=leagueData(co+'1'),st=L&&L.tb?sortTable(L.tb):[];
       const cup=state.cups&&state.cups[co+'C'],cupChamp=cup&&cup.champ;
@@ -10395,7 +10452,7 @@ function mgrRating(){
    de tu nivel actual (mgrRating); un club muy por encima de tu palmares casi nunca llama a tu puerta */
 function genJobOffers(){
   const mr=mgrRating(),mine=state.club,famId=state.fam&&state.fam.id;
-  const cand=CLUBS.filter(c=>c.id!==mine&&c.id!==famId&&!isB(c.id)&&PLAYABLE.includes(c.co));
+  const cand=CLUBS.filter(c=>gameClub(c)&&c.id!==mine&&c.id!==famId&&!isB(c.id)&&gamePlayable().includes(c.co));
   const r=rng(hashStr('jobs'+state.seed+'_'+state.season));
   let ws=cand.map(c=>{const diff=repOf(c.id)-mr;return Math.exp(-Math.abs(diff)/9)*(diff>6?.25:1)});
   const n=Math.min(cand.length,1+Math.floor(r()*3));
@@ -10453,14 +10510,14 @@ function offersSheet(){
 /* buscador de ligas del mundo: pais -> clubes con su reputacion, con opcion de solicitar ser su entrenador */
 function worldBrowserSheet(co){
   if(!co){
-    const rows=PLAYABLE.map(cc=>{
-      const best=CLUBS.filter(c=>c.co===cc).sort((a,b)=>repOf(b.id)-repOf(a.id))[0];
+    const rows=gamePlayable().map(cc=>{
+      const best=CLUBS.filter(c=>gameClub(c)&&c.co===cc).sort((a,b)=>repOf(b.id)-repOf(a.id))[0];
       return`<button class="mrow" data-act="wb-country" data-co="${cc}" style="grid-template-columns:28px 1fr auto;width:100%;text-align:left">${FLAG[cc]||''}<span class="pname">${esc((COUNTRIES[cc]&&COUNTRIES[cc].name)||NATNAME[cc]||cc)}</span><span class="muted-s">${best?starsFracHTML(xiAvgOvr(previewTeam(best.id))):''}</span></button>`;
     }).join('');
     openSheet(`<div class="res-top"><h3>Ligas del mundo</h3><p class="muted-s" style="margin-bottom:6px">Elige un país para ver sus clubes y su reputación.</p></div><div class="res-scroll">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="wb-back">Volver a las ofertas</button></div>`);
     return;
   }
-  const clubs=CLUBS.filter(c=>c.co===co).sort((a,b)=>a.div-b.div||repOf(b.id)-repOf(a.id));
+  const clubs=CLUBS.filter(c=>gameClub(c)&&c.co===co).sort((a,b)=>a.div-b.div||repOf(b.id)-repOf(a.id));
   const rows=clubs.map(c=>{
     const mine=c.id===state.club,fam=state.fam&&state.fam.id===c.id,canApply=!mine&&!fam&&!isB(c.id);
     return`<div class="mrow" style="grid-template-columns:26px 1fr auto">${crestHTML(c,26)}<span class="pname">${esc(c.name)}<small>${esc(divName(c.co,c.div))}</small><small>${starsFracHTML(xiAvgOvr(previewTeam(c.id)))} ${xiAvgOvr(previewTeam(c.id))}</small></span>${mine?'<span class="muted-s">Tu club</span>':canApply?`<button class="btn ghost sm" data-act="wb-apply" data-id="${c.id}">Solicitar</button>`:''}</div>`;
@@ -11066,6 +11123,8 @@ function promoteYouth(id){
 }
 function releaseYouth(id){state.academy=state.academy.filter(p=>p.id!==id);saveGame()}
 function ensureState(){
+  if(!state.leagueConfig)state.leagueConfig=inferLegacyLeagueConfig();
+  if(!state.leagueTeams)state.leagueTeams=inferLegacyLeagueTeams();
   applyDivs();
   ensureWorld();
   if(state.phase==='end'&&!state.po)setupPlayoffs();
@@ -11519,7 +11578,7 @@ function roleAt(p,clubId){
 const tierOf=r=>isStarterRole(r)?'top':(r==='Rotación'||r==='Joven promesa')?'mid':'low';
 /* elige un club: casi siempre uno donde tendría protagonismo, a veces uno donde rotaría */
 function pickClub(p,exclude,targetRep,tight){
-  const cand=CLUBS.filter(c=>c.id!==state.club&&c.id!==FAMILY[state.club]&&!exclude.includes(c.id)&&canJoin(c.id,p));
+  const cand=CLUBS.filter(c=>gameClub(c)&&c.id!==state.club&&c.id!==FAMILY[state.club]&&!exclude.includes(c.id)&&canJoin(c.id,p));
   const tiers={top:[],mid:[],low:[]};
   cand.forEach(c=>tiers[tierOf(roleAt(p,c.id))].push(c));
   const base={top:.8,mid:.17,low:.03},names=Object.keys(base).filter(k=>tiers[k].length);
@@ -12031,7 +12090,7 @@ function sortTable(tb){
 function evolveReputations(){
   state.rep=state.rep||{};state.repDelta={};
   const ids=new Set();
-  PLAYABLE.forEach(co=>[1,2].forEach(d=>{
+  gamePlayable().forEach(co=>[1,2].forEach(d=>{
     const key=co+d;
     if(key==='PT2'||key==='NL2'||key==='BE2'||key==='AT2'||key==='DK2'||key==='NO2'||key==='PL2')return;
     leagueClubs(co,d).forEach(c=>ids.add(c.id));
@@ -12056,7 +12115,7 @@ function raidRelegated(){
   state.gone=state.gone||{};state.arrivals=state.arrivals||{};
   const res=state.po.res;
   const rel=[];
-  PLAYABLE.forEach(co=>{const r=res[co];if(!r)return;(r.down||[]).forEach(id=>{const c=CLUBBY[id];if(c&&c.div===1)rel.push(id)})});
+  gamePlayable().forEach(co=>{const r=res[co];if(!r)return;(r.down||[]).forEach(id=>{const c=CLUBBY[id];if(c&&c.div===1)rel.push(id)})});
   if(!rel.length)return;
   rel.forEach(id=>{if(state.teams[id])state.teams[id].budget=Math.max(.1,r1(state.teams[id].budget*.5))});
   const ai=rel.filter(id=>id!==state.club);
@@ -12516,7 +12575,7 @@ function recordHonors(final){
       state.teams[id].budget=r1(state.teams[id].budget+PRIZE_TITLE[k]);
     }
   };
-  PLAYABLE.forEach(co=>{
+  gamePlayable().forEach(co=>{
     if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
     const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,'cup',co+'C');
     const scup=state.cups&&state.cups[co+'SC'];if(scup&&scup.champ)add(scup.champ,'sc',co+'SC');
@@ -12624,7 +12683,7 @@ function runQualifying(key,ids){
 }
 function initWorld(){
   state.lk=userKey();state.others={};state.cups={};
-  PLAYABLE.forEach(co=>[1,2].forEach(d=>{
+  gamePlayable().forEach(co=>[1,2].forEach(d=>{
     const key=co+d;if(key===state.lk)return;
     if(key==='PT2'||key==='NL2'||key==='BE2'||key==='AT2'||key==='DK2'||key==='NO2'||key==='PL2')return;
     const ids=leagueClubs(co,d).map(c=>c.id);
@@ -12637,15 +12696,15 @@ function initWorld(){
     const ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:makeFixtures(ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
   });
-  PLAYABLE.forEach(co=>{
+  gamePlayable().forEach(co=>{
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
-    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>c.co===co&&!isB(c.id)).map(c=>c.id);
+    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)).map(c=>c.id);
     if(CLUBBY[state.club]&&CLUBBY[state.club].co===co&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
     state.cups[co+'C']=cupInit(co+'C',CUPNAME[co],ids);
   });
   /* Supercopas: campeón y subcampeón de liga contra campeón y subcampeón de copa de la temporada anterior.
      En España se juega a 4 (semifinal y final) en enero; en el resto, partido único al arrancar la temporada. */
-  PLAYABLE.forEach(co=>{
+  gamePlayable().forEach(co=>{
     if(SC_SKIP[co])return;
     const need=SC_TEAMS[co]||2;
     let scIds=[...new Set(((state.prevSC&&state.prevSC[co]&&state.prevSC[co].ids)||[]).filter(id=>id&&CLUBBY[id]&&!isB(id)))];
@@ -12654,7 +12713,7 @@ function initWorld(){
       if(fix.length)scIds=[...new Set(fix)].slice(0,need);
     }
     if(scIds.length<need){
-      const alt=CLUBS.filter(c=>c.co===co&&!isB(c.id)).sort((a,b)=>repOf(b.id)-repOf(a.id)).map(c=>c.id).filter(id=>!scIds.includes(id));
+      const alt=CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)).sort((a,b)=>repOf(b.id)-repOf(a.id)).map(c=>c.id).filter(id=>!scIds.includes(id));
       while(scIds.length<need&&alt.length)scIds.push(alt.shift());
     }
     if(scIds.length>=2){
@@ -12665,7 +12724,7 @@ function initWorld(){
       }
     }
   });
-  /* Portugal: la liga (PT1) y la Supertaça (PTSC) ya las crea el bucle PLAYABLE; aquí se añade
+  /* Portugal: la liga (PT1) y la Supertaça (PTSC) ya las crea el bucle gamePlayable(); aquí se añade
      la Taça de Portugal con TODOS los clubes (incluidos los de LEGACY) y la Taça da Liga */
   {
     const pt1=Object.values(CLUBBY).filter(c=>c.co==='PT'&&c.div===1&&!isB(c.id)).map(c=>c.id);
@@ -12675,7 +12734,7 @@ function initWorld(){
   }
   /* EFL Cup: segunda copa inglesa, con calendario propio para no chocar con la FA Cup */
   {
-    const ids=CLUBS.filter(c=>c.co==='EN'&&!isB(c.id)).map(c=>c.id);
+    const ids=CLUBS.filter(c=>gameClub(c)&&c.co==='EN'&&!isB(c.id)).map(c=>c.id);
     if(CLUBBY[state.club]&&CLUBBY[state.club].co==='EN'&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
     state.cups.ENLC=cupInit('ENLC','EFL Cup',ids,CUP_W6.map(w=>w-2));
   }
@@ -12712,13 +12771,13 @@ function leagueScorers(key){
 }
 function euroSlots(prevQual,replaceSet,posFrom,posTo){
   const out=[];
-  PLAYABLE.forEach(co=>{if(co==='DK')return;const L=leagueData(co+'1');out.push(...sortTable(L.tb).slice(posFrom,posTo).map(r=>r.id).filter(id=>!isB(id)))});
+  gamePlayable().forEach(co=>{if(co==='DK')return;const L=leagueData(co+'1');out.push(...sortTable(L.tb).slice(posFrom,posTo).map(r=>r.id).filter(id=>!isB(id)))});
   /* los clubes de ligas que el juego no simula (Turquía, Países Bajos, Ucrania...) no tienen clasificación
      que consultar: siguen en la competición la temporada siguiente tal cual, en vez de recalcularse.
      Portugal sí se simula: su campeón de liga y el de la Taça de Portugal se suman en qualifiers()/qualifiersEL().
      Los equipos de replaceSet quedan fuera de este reparto automático porque a partir de la temporada 2
      esas plazas se juegan cada año en la fase previa (ver runQualifying). */
-  const carry=(prevQual||[]).filter(id=>{const c=CLUBBY[id];return c&&!PLAYABLE.includes(c.co)&&!replaceSet.includes(id)&&!isB(id)});
+  const carry=(prevQual||[]).filter(id=>{const c=CLUBBY[id];return c&&!gamePlayable().includes(c.co)&&!replaceSet.includes(id)&&!isB(id)});
   return[...out,...carry];
 }
 /* ---- Cableado europeo de Dinamarca: 1º a Champions, 2º a Europa League, 3º a Conference, y el playoff
@@ -12746,7 +12805,7 @@ function computeCopaQual(){
   return [...new Set(out)];
 }
 function champsLine(){
-  const parts=PLAYABLE.map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}return FLAG[co]+' '+cname(top.id)});
+  const parts=gamePlayable().map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}return FLAG[co]+' '+cname(top.id)});
   const u=state.cups.UCL.champ;
   return 'Campeones de liga: '+parts.join(', ')+(u?'. Champions League: '+cname(u)+'.':'.');
 }
@@ -13374,7 +13433,7 @@ function hexDots(v,step,groups){
   return res;
 }
 function dotLayers(v,step){
-  const groups=PLAYABLE.map(id=>{
+  const groups=gamePlayable().map(id=>{
     const shapes=COUNTRIES[id].polys.map(p=>projShape(p,v));
     const bbox=[Math.min(...shapes.map(s=>s.x0)),Math.max(...shapes.map(s=>s.x1)),Math.min(...shapes.map(s=>s.y0)),Math.max(...shapes.map(s=>s.y1))];
     return{key:id,shapes,bbox};
@@ -13392,7 +13451,7 @@ function getWorld(){if(!WORLD){const v=makeView(-180,180,-56,84,1000,1);WORLD={v
 function getEU(){if(!EU){const v=makeView(-11,25.5,34,71.5,1000);EU={v,step:14.5,dots:dotLayers(v,14.5)}}return EU}
 function worldSVG(){
   const W=getWorld(),sw=(W.step*.58).toFixed(1);
-  return`<svg viewBox="0 0 ${W.v.W} ${W.v.H.toFixed(1)}" aria-hidden="true"><path class="d-land" stroke-width="${sw}" d="${W.dots.land}"/>${PLAYABLE.map(id=>dotsPaths(W.dots[id],sw,'soft')).join('')}</svg>`;
+  return`<svg viewBox="0 0 ${W.v.W} ${W.v.H.toFixed(1)}" aria-hidden="true"><path class="d-land" stroke-width="${sw}" d="${W.dots.land}"/>${gamePlayable().map(id=>dotsPaths(W.dots[id],sw,'soft')).join('')}</svg>`;
 }
 
 /* ===================== pantalla de slots ===================== */
@@ -13433,8 +13492,8 @@ function buildMap(){
   const W=getWorld(),[hx,hy]=W.v.pct(8,48);
   $('#L0').innerHTML=`<div class="mapbox" style="--ar:${(W.v.W/W.v.H).toFixed(4)};--z:${innerWidth<640?2.4:1}">${worldSVG()}<button class="hotspot" data-act="hotspot" style="left:${hx}%;top:${hy}%" aria-label="Explorar Europa"><span>Europa</span></button></div>`;
   const E=getEU(),v=E.v,sw=(E.step*.6).toFixed(1);
-  const groups=PLAYABLE.map(id=>`<g class="cty" data-act="country" data-c="${id}">${dotsPaths(E.dots[id],sw)}<path class="hit" d="${polyPath(COUNTRIES[id].polys.map(p=>projShape(p,v)))}"/></g>`).join('');
-  const pins=PLAYABLE.map(id=>{const C=COUNTRIES[id],[x,y]=v.pct(C.pin[0],C.pin[1]);return`<button class="cpin" data-act="country" data-c="${id}" style="left:${x}%;top:${y}%"><span class="dot"></span><span class="lbl">${C.name}</span></button>`}).join('')
+  const groups=gamePlayable().map(id=>`<g class="cty" data-act="country" data-c="${id}">${dotsPaths(E.dots[id],sw)}<path class="hit" d="${polyPath(COUNTRIES[id].polys.map(p=>projShape(p,v)))}"/></g>`).join('');
+  const pins=gamePlayable().map(id=>{const C=COUNTRIES[id],[x,y]=v.pct(C.pin[0],C.pin[1]);return`<button class="cpin" data-act="country" data-c="${id}" style="left:${x}%;top:${y}%"><span class="dot"></span><span class="lbl">${C.name}</span></button>`}).join('')
    +LOCKED.filter(l=>l.id!=='PT').map(l=>{const [x,y]=v.pct(l.pin[0],l.pin[1]);return`<div class="cpin locked" style="left:${x}%;top:${y}%"><span class="dot"></span><span class="lbl">${l.name}</span></div>`}).join('');
   $('#L1').innerHTML=`<div class="mapbox" style="--ar:${(v.W/v.H).toFixed(4)};--z:${ui.zoomEU||1}"><svg viewBox="0 0 ${v.W} ${v.H.toFixed(1)}" aria-hidden="true"><path class="d-land" stroke-width="${sw}" d="${E.dots.land}"/>${groups}</svg>${pins}</div>`;
 }
@@ -13484,11 +13543,11 @@ function renderList(){
       {id:'oceania',name:'Oceanía'}
     ];
     l.innerHTML=CONTS.map(c=>c.avail
-      ?`<button class="lrow" data-act="hotspot"><img class="fl-img" src="${CONT_FLAGS[c.id]}" alt=""><span class="lt"><b>${c.name}</b><small>${PLAYABLE.length} países disponibles</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`
+      ?`<button class="lrow" data-act="hotspot"><img class="fl-img" src="${CONT_FLAGS[c.id]}" alt=""><span class="lt"><b>${c.name}</b><small>${gamePlayable().length} países disponibles</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`
       :`<button class="lrow" disabled><img class="fl-img" src="${CONT_FLAGS[c.id]}" alt=""><span class="lt"><b>${c.name}</b><small>Próximamente</small></span></button>`
     ).join('');
   }else if(ui.level===1){
-    const cs=PLAYABLE.slice().sort((a,b)=>divAvgOvr(b,1)-divAvgOvr(a,1));
+    const cs=gamePlayable().slice().sort((a,b)=>divAvgOvr(b,1)-divAvgOvr(a,1));
     l.innerHTML=cs.map(id=>{const C=COUNTRIES[id],v=divAvgOvr(id,1);return`<button class="lrow cco" data-act="country" data-c="${id}"><span class="fl">${FLAG[id]}</span><span class="lt"><b>${C.name}</b></span><span class="lstat"><small class="lrep">${starsFracHTML(v)} ${v}</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`}).join('')
      +LOCKED.slice().sort((a,b)=>a.name.localeCompare(b.name,'es')).map(lc=>`<button class="lrow cco" disabled><span class="fl">${FLAG[lc.id]}</span><span class="lt"><b>${lc.name}</b></span><span class="lstat"><small class="lrep">Próximamente</small></span></button>`).join('');
   }else{
@@ -14846,7 +14905,7 @@ function individualAwards(){
   };
   const pool=[];
   CLUBS.forEach(c=>{
-    if(!PLAYABLE.includes(c.co)||c.div!==1)return;
+    if(!gameClub(c)||!gamePlayable().includes(c.co)||c.div!==1)return;
     let players;try{players=squadFor(c.id)}catch(e){players=null}
     if(players)players.forEach(p=>pool.push({p,clubId:c.id}));
   });
