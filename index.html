@@ -14170,13 +14170,13 @@ function askMode(n){
   openSheet(`<h3>Modo de juego</h3><p>Elige cómo quieres empezar esta partida. La elección se guarda junto al slot ${n}.</p>
   <button class="mode-card" data-act="mode-kind" data-k="normal">${ICO_DB}<span><b>Modo carrera normal</b><small>Coge las riendas de un club ya existente, de la división que elijas.</small></span></button>
   <button class="mode-card" data-act="mode-kind" data-k="custom">${ICO_CUSTOM}<span><b>Club personalizado</b><small>Elige un país, sustituye a uno de sus tres equipos peor valorados por tu propio club y personalízalo a tu gusto.</small></span></button>
-  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Volver</button></div>`);
 }
 function askDataMode(){
   openSheet(`<h3>Datos de los futbolistas</h3><p>Elige cómo se generan los jugadores de esta partida.</p>
   <button class="mode-card" data-act="mode-pick" data-m="fict">${ICO_DICE}<span><b>Jugadores ficticios</b><small>Nombres, GRL, potenciales y sueldos aleatorios: cambian cada vez que empiezas una partida nueva.</small></span></button>
   <button class="mode-card" data-act="mode-pick" data-m="real">${ICO_DB}<span><b>Base de datos (jugadores reales)</b><small>Futbolistas reales de ${Object.keys(REAL_DB).filter(id=>(REAL_DB[id]||[]).length>=16).length} clubes, con GRL y potencial estimados. El resto de plantillas se completa con jugadores generados.</small></span></button>
-  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+  <div class="row-btns"><button class="btn ghost" data-act="data-back">Volver</button></div>`);
 }
 /* ============ CLUB PERSONALIZADO (Fase 1: elegir país y equipo al que sustituir) ============ */
 /* escalones de divisiones realmente jugables de un país, de arriba a abajo: solo las que están en COUNTRIES[co].divs
@@ -14200,7 +14200,7 @@ function startCustomFlow(){
 function openCustomCountrySheet(){
   const cs=gamePlayable().slice().sort((a,b)=>COUNTRIES[a].name.localeCompare(COUNTRIES[b].name,'es'));
   const rows=cs.map(id=>`<button class="lrow cco" data-act="custom-country" data-c="${id}"><span class="fl">${FLAG[id]}</span><span class="lt"><b>${esc(COUNTRIES[id].name)}</b></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`).join('');
-  openSheet(`<h3>Crear club personalizado</h3><p>Elige el país donde quieres fundar tu club. Sustituirás a uno de los tres equipos peor valorados de su división más baja.</p><div class="res-scroll">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+  openSheet(`<div class="sec-h" style="margin-bottom:0"><h3 style="margin:0">Crear club personalizado</h3><button class="ibtn" data-act="cc-info" aria-label="Información">i</button></div><div class="res-scroll" style="margin-top:5px">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="custom-data-back">Volver</button></div>`);
 }
 function openCustomTeamSheet(co){
   const C=COUNTRIES[co];
@@ -15836,8 +15836,10 @@ const H={
   'to-title'(){go('title')},
   'slot-new'(t){askMode(+t.dataset.n)},
   'mode-kind'(t){ui.customFlow=t.dataset.k==='custom';$('#sheet').classList.remove('open');askDataMode()},
+  'data-back'(){askMode(ui.slot)},
   'mode-pick'(t){ui.gmode=t.dataset.m;$('#sheet').classList.remove('open');if(ui.customFlow){startCustomFlow()}else{startMap()}},
   'custom-country'(t){openCustomTeamSheet(t.dataset.c)},
+  'custom-data-back'(){askDataMode()},
   'custom-back-country'(){openCustomCountrySheet()},
   'custom-team'(t){ui.custom.baseId=t.dataset.club;openCustomConfirm()},
   'custom-back-team'(){openCustomTeamSheet(ui.custom.country)},
@@ -16006,6 +16008,7 @@ const H={
   },
   'pt-info'(){openInfo('Aprender posiciones','<p>Con más nivel de instalaciones hay más plazas y se tarda menos. Mientras aprende, el jugador entrena los atributos de esa posición.</p>')},
   'acad-info'(){openInfo('Hornada de la academia',`<p>Cada ${ACAD_EVERY} jornadas llega una nueva hornada de juveniles. Cuando llegue la próxima jornada, los juveniles aparecerán aquí.</p>`)},
+  'cc-info'(){openInfo('Crear club personalizado','<p>Elige el país donde quieres fundar tu club. Sustituirás a uno de los tres equipos peor valorados de su división más baja.</p>')},
   'cv-close'(){closeCV()},
   'ip-close'(){closeInfo()},
   pl(t){openPlayer(t.dataset.id,t.dataset.club)},
