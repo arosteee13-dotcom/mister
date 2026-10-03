@@ -1574,11 +1574,9 @@ K2('MARD','Mardin 1969','Mardin','Mardin','TR','#d4192b','#1a1a1a',44),
 K2('CRV','Crvena Zvezda','Crvena Zvezda','Belgrado','RS','#d4192b','#f4f4f4',70),
 K2('CHOJ','Chojniczanka Chojnice','Chojniczanka','Chojnice','PL','#f4f4f4','#1a1a1a',44),];
 const CLUBBY=Object.fromEntries([...CLUBS,...LEGACY].map(c=>[c.id,c]));
-/* copia "de fábrica" de los datos de cada club, tomada antes de que ninguna partida los pueda personalizar:
-   sirve para deshacer la personalización de un club creado por el usuario al cargar OTRA partida en la misma
-   pestaña, para que un club sustituido en el slot 1 no "contamine" el slot 2 sin recargar la página */
-const CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
+let CLUB_DEFAULTS=null;   /* se rellena más abajo, después de asignar los escudos reales (ver CLUB_LOGO) */
 function resetClubOverrides(){
+  if(!CLUB_DEFAULTS)return;
   for(const id in CLUB_DEFAULTS){
     const c=CLUBBY[id],d=CLUB_DEFAULTS[id];
     if(c.name===d.name&&c.short===d.short&&c.city===d.city&&c.rep===d.rep&&c.stadium===d.stadium&&c.logo===d.logo)continue;
@@ -1849,6 +1847,10 @@ const CLUB_LOGO={
  ATAL:'https://cdn.resfu.com/img_data/equipos/141.png?size=120x&lossy=1',ATCV:'https://cdn.resfu.com/img_data/equipos/4264.png?size=120x&lossy=1',ATOR:'https://cdn.resfu.com/img_data/equipos/383.png?size=120x&lossy=1',PASO:'https://cdn.resfu.com/img_data/equipos/9629.png?size=120x&lossy=1',GUA:'https://cdn.resfu.com/img_data/equipos/11825.png?size=120x&lossy=1',NAV:'https://cdn.resfu.com/img_data/equipos/268.png?size=120x&lossy=1',TALV:'https://cdn.resfu.com/img_data/equipos/6159.png?size=120x&lossy=1',PUER:'https://cdn.resfu.com/img_data/equipos/66462.png?size=120x&lossy=1',GSE:'https://cdn.resfu.com/img_data/equipos/5715.png?size=120x&lossy=1',RAVI:'https://cdn.resfu.com/img_data/equipos/2094.png?size=120x&lossy=1',ALCH:'https://cdn.resfu.com/img_data/equipos/150.png?size=120x&lossy=1',SALU:'https://cdn.resfu.com/img_data/equipos/2212.png?size=120x&lossy=1',CONQ:'https://cdn.resfu.com/img_data/equipos/2554.png?size=120x&lossy=1',SANS:'https://cdn.resfu.com/img_data/equipos/2570.png?size=120x&lossy=1'
 };
 Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+/* copia "de fábrica" de los datos de cada club (con sus escudos reales ya asignados arriba): sirve para
+   deshacer la personalización de un club creado por el usuario al cargar OTRA partida en la misma pestaña,
+   para que un club sustituido en el slot 1 no "contamine" el slot 2 sin recargar la página */
+CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 if(CLUBBY.CHOJ)CLUBBY.CHOJ.logo='https://cdn.resfu.com/img_data/escudos/medium/13369.jpg?size=120x&lossy=1';
 if(CLUBBY.CQTL)CLUBBY.CQTL.logo='https://cdn.resfu.com/img_data/equipos/157061.png?size=120x&lossy=1';
 if(CLUBBY.JUVD)CLUBBY.JUVD.logo='https://cdn.resfu.com/img_data/equipos/1426.png?size=120x&lossy=1';
