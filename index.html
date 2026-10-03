@@ -14544,7 +14544,7 @@ const ICO_GLOBE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const TROPHY_ICO={league:ICO_TROPHY,cup:ICO_CUP,sc:ICO_SHIELD,lc:ICO_CUP,ucl:ICO_STAR,uel:ICO_CUP,ecl:ICO_CUP,cwc:ICO_SHIELD,sce:ICO_SHIELD,wc:ICO_GLOBE,ic:ICO_GLOBE,cf:ICO_CUP,d2:ICO_TROPHY,d3:ICO_TROPHY,d4:ICO_TROPHY,eflt:ICO_CUP,fat:ICO_CUP,scc:ICO_CUP,lp2:ICO_CUP,cisc:ICO_CUP};
 const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Copa de Turquía',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski'};
 const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski'};
-const TROPHY_ORDER=['league','cup','sc','lc','ucl','uel','ecl','cwc','sce','wc','ic','ifc','cf','cofed','d2','d3','d4','d5','eflt','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
+const TROPHY_ORDER=['league','cup','sc','lc','ucl','uel','ecl','cwc','sce','wc','ic','ifc','cf','cofed','d2','d3','d3b','d4','d4t','d5','eflt','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
 function trophyName(club,k){
   const co=club.co;
   if(k==='league')return(COUNTRIES[co]&&COUNTRIES[co].divs[0])||'Liga';
@@ -14554,6 +14554,8 @@ function trophyName(club,k){
   if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1. Liga'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
   if(k==='d3')return{ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2. Liga'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
   if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3. Liga'}[co]||'Cuarta categoría';
+  if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
+  if(k==='d4t')return co==='ES'?'Tercera División':'Cuarta categoría';
   if(k==='d5')return{ES:'Tercera Federación',DE:'Oberliga',EN:'National League',FR:'National 3'}[co]||'Quinta categoría';
   if(k==='eflt')return'EFL Trophy';
   if(k==='fat')return'FA Trophy';
@@ -14637,7 +14639,9 @@ const PALMARES={
  RSB:{d4:5},
  CFO:{d4:3},
  ZAR:{cup:6,cwc:1,cf:1,d2:1,d4:2,sc:1},
-  HUE:{d2:1,d4:6},REC:{d2:1},HER:{d2:3,d4:5},CUL:{d2:1,d3:2,d4:4},RMU:{d2:9,d3:2,cofed:1,d4:3},ACOY:{d2:3},MER:{d4:2},XER:{d2:1},NUM:{d2:1},LLE:{d2:1},RBUR:{d2:1},CDM:{d2:1},ADA:{d2:1},PONV:{d2:2,d3:2,d4:10,cofed:2},
+   HUE:{d2:1,d4:6},REC:{d2:1,d5:1,d4t:9},HER:{d2:3,d4:5},CUL:{d2:1,d3:2,d4:4},RMU:{d2:9,d3:2,cofed:1,d4:3},ACOY:{d2:3,d4t:6},MER:{d4:2},XER:{d2:1,d3b:2,d5:1,d4t:5},NUM:{d2:1,d4:1,d4t:4},LLE:{d2:1},RBUR:{d2:1},CDM:{d2:1},ADA:{d2:1},PONV:{d2:2,d3:2,d4:10,cofed:2},
+  /* Tercera/Segunda Federación y clubes de grupos (palmarés BeSoccer) */
+  BER:{d5:1,d4t:1},AST:{d5:1},BASC:{d5:1,d4t:4},DAB:{d5:1,d4t:1},AROS:{d5:1,d4t:1},GTO:{d3b:1,d5:2,d4t:12},MDL:{d4t:3},POR:{d5:1,d4t:5},ORCF:{cofed:1,d4:1},RCT:{d4t:3},OVIB:{d5:2,d4t:3},SDC:{d4t:6},SES:{d4:1,d4t:2},GER:{d4t:1},LLA:{d5:2},BRB:{d4t:2},ARN:{d5:1},EBR:{d5:1,d4t:1},CAL:{d5:1},FCBB:{d3b:4,d4t:2},MRE:{d5:2,d4t:1},ESB:{d4t:3},PSP:{d5:1,d4t:11},OSAP:{d4:1,d4t:4},NAX:{d5:2,d4t:1},REU:{d5:1},SDLO:{d4t:2},OLO:{d5:1,d4t:5},TERR:{d4t:3},TUD:{d4t:4},LOGB:{d5:2},UTE:{d4t:1},CASB:{d5:1},ATBA:{cofed:1,d3b:1,d4t:9},CIE:{d5:1,d4t:2},DMI:{d5:1},INTC:{d4:1},ILI:{d5:1,d4t:3},LORD:{d5:1,d4t:3},MLLB:{d5:2,d4t:9},POB:{d5:1,d4t:4},ORI:{d3b:1,d5:1,d4t:7},PDE:{d4t:4},UCAM:{d3b:1,d4t:1},CTE:{d5:1},MURI:{d4t:1},VALB:{d5:1,d4t:7},YEC:{d5:1,d4t:4},SANL:{d4t:1},ANTO:{d5:1},BAD:{d3b:1},BETD:{d4t:6},DBE:{d5:2,d4t:8},LUC:{d5:1},LIND:{d3b:1,d4t:2},LPAB:{d5:1,d4t:8},MIJ:{d5:1},MFC:{d5:1,d4t:2},SEVB:{d3b:2,d4:1,d4t:9},SPG:{d5:1},TAMA:{d4t:1},TENB:{d5:1,d4t:2},ATCV:{d5:1},ATOR:{d5:1},PASO:{d5:2},ATAL:{d4t:1},NAV:{d4t:1},GUA:{d4:1,d5:1},TALV:{d4t:2},PUER:{d5:1},GTB:{d4t:1},GSE:{d4:1,d4t:4},RAVI:{d5:1,d4t:1},ALCH:{d5:1,d4t:3},VLP:{d4t:7},RMC3:{d5:1},CONQ:{d5:1,d4t:3},SANS:{d4t:3},
  /* Alemania (2. Bundesliga) */
  F95:{d2:2,cup:2},WMA:{d2:1},M60:{league:1,d2:1,cup:2},FCI:{d2:1},HRO:{d2:1},SKI:{d2:1},HOM:{d2:1,cup:1},TEB:{d2:1},
  FCN:{league:1,cup:4,d2:2,d4:2,d5:4},
@@ -14891,7 +14895,7 @@ USG:{league:12,cup:2,sc:2,d2:1,d3:1},
   UNI:{d4:1},
   OUR:{d5:1},
   ZAM:{d4:7},
-  AMO:{d3:1},
+  AMO:{d3:1,d4t:1},
   /* Primera RFEF (Grupo 2) */
   AMM:{d3:3,d5:1,d4:1},
   ALG:{d3:1,d4:7},
