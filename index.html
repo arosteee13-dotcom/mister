@@ -257,6 +257,10 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .pos2-row{display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--line);text-align:left;margin-top:8px;color:var(--text)}
 .pos2-row span:not(.pos2-dot){flex:1}
 .pos2-row.on{border-color:var(--accent-line);background:var(--accent-soft)}
+.imp-pcard{cursor:pointer}
+.imp-pcard.on{border-color:var(--accent);background:linear-gradient(180deg,rgba(159,230,189,.12),rgba(159,230,189,.03))}
+.imp-check{position:absolute;top:-6px;left:-6px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.imp-check svg{width:14px;height:14px}
 .pos2-row svg{color:var(--accent);flex:none}
 .pos2-dot{width:11px;height:11px;border-radius:50%;flex:none}
 .nat-fl{font-size:20px;flex:none}
@@ -1570,6 +1574,18 @@ K2('MARD','Mardin 1969','Mardin','Mardin','TR','#d4192b','#1a1a1a',44),
 K2('CRV','Crvena Zvezda','Crvena Zvezda','Belgrado','RS','#d4192b','#f4f4f4',70),
 K2('CHOJ','Chojniczanka Chojnice','Chojniczanka','Chojnice','PL','#f4f4f4','#1a1a1a',44),];
 const CLUBBY=Object.fromEntries([...CLUBS,...LEGACY].map(c=>[c.id,c]));
+/* copia "de fábrica" de los datos de cada club, tomada antes de que ninguna partida los pueda personalizar:
+   sirve para deshacer la personalización de un club creado por el usuario al cargar OTRA partida en la misma
+   pestaña, para que un club sustituido en el slot 1 no "contamine" el slot 2 sin recargar la página */
+const CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
+function resetClubOverrides(){
+  for(const id in CLUB_DEFAULTS){
+    const c=CLUBBY[id],d=CLUB_DEFAULTS[id];
+    if(c.name===d.name&&c.short===d.short&&c.city===d.city&&c.rep===d.rep&&c.stadium===d.stadium&&c.logo===d.logo)continue;
+    Object.assign(c,{name:d.name,short:d.short,city:d.city,rep:d.rep,stadium:d.stadium});
+    if(d.logo)c.logo=d.logo;else delete c.logo;
+  }
+}
 /* reputación efectiva de un club dentro de la partida actual: usa el valor evolucionado si existe (ver evolveReputations), si no el de base */
 function repOf(id){return(state&&state.rep&&state.rep[id]!=null)?state.rep[id]:(CLUBBY[id]?CLUBBY[id].rep:55)}
 /* filiales con entidad propia en el juego: nunca generan jugadores ficticios, solo llevan los reales que se les asignen */
@@ -6720,7 +6736,11 @@ ATAL:0.045,ATCV:0.045,ATOR:0.09,PASO:0.14,GUA:0.165,NAV:0.125,TALV:0.185,PUER:0.
    actual (10% más por cada punto ganado o perdido). Así un club que sube de reputación de verdad gana recursos de
    verdad, y uno que se hunde los pierde, sea cual sea su fama de partida. */
 const BASE_BUDGET=c=>{
-  const base=BUDGET[c.id]!=null?BUDGET[c.id]:Math.round(18+Math.max(0,c.rep-55)*2.4);
+  /* un club sin presupuesto explícito en BUDGET (sobre todo los que tú mismo creas) recibe uno que escala de
+     forma exponencial con su reputación, igual que el dinero real del fútbol: unos 50.000 € en el fondo de la
+     tabla (rep 30) hasta unos 120 M€ al nivel de los grandes de Europa (rep 90). Antes esta rama daba 18 M€
+     fijos a cualquier reputación de 55 o menos, lo que no tenía sentido para un club de reputación baja. */
+  const base=BUDGET[c.id]!=null?BUDGET[c.id]:Math.round(.05*Math.pow(2400,(c.rep-30)/60)*1000)/1000;
   /* un club que ha descendido de 1ª a 2ª genera mucho menos: su presupuesto base se reduce a la mitad hasta que ascienda */
   return state&&state.relegated&&state.relegated[c.id]?Math.max(.1,Math.round(base*.5*100)/100):base;
 };
@@ -10468,6 +10488,7 @@ function mktMatch(p,f,from){
 /* ============ NUEVA PARTIDA / NUEVA TEMPORADA ============ */
 function newGame(slot,clubId){
   famQueue=[];famAfter=null;
+  resetClubOverrides();
   resetDivs();
   const club=CLUBBY[clubId],co=club.co,seed=ui.seed,teams={};
   BENCH_N=benchLimit(clubId);
@@ -12363,7 +12384,10 @@ function saveGame(){
   if(!state)return true;
   state.saved=Date.now();
   const c=CLUBBY[state.club];
-  const meta={club:state.club,name:c.name,country:state.country,div:state.div||1,mode:state.mode||'fict',season:state.season,week:state.week,total:state.fixtures.length,pos:posOf(state.club),saved:state.saved};
+  /* name/short/logo se copian aquí (y no solo se leen de CLUBBY al mostrar la lista de partidas) porque, tras
+     recargar la página, CLUBBY vuelve a sus datos originales hasta que se carga la partida: la pantalla de
+     slots necesita su propia copia para mostrar el club personalizado sin tener que cargar la partida primero */
+  const meta={club:state.club,name:c.name,short:c.short,logo:c.logo||null,custom:!!state.customClub,country:state.country,div:state.div||1,mode:state.mode||'fict',season:state.season,week:state.week,total:state.fixtures.length,pos:posOf(state.club),saved:state.saved};
   let json=JSON.stringify(state),mjson=JSON.stringify(meta);
   let ok=Store.set('mister.slot.'+state.slot,json);
   if(!ok){   /* cuota de localStorage llena: se recorta el historial al mínimo y se reintenta */
@@ -12410,8 +12434,9 @@ async function downloadSave(json,name){
 function importJSON(text,slotN){
   let s;try{s=JSON.parse(text)}catch(e){s=null}
   if(!s||s.v!==1||!s.teams||!s.club||!CLUBBY[s.club]){toast('El archivo no es una partida válida.');return}
-  const c=CLUBBY[s.club],total=(s.fixtures&&s.fixtures.length)||38,wk=Math.min((s.week||0)+1,total);
-  const meta={club:s.club,name:c.name,country:s.country||c.co,div:s.div||1,mode:s.mode||'fict',season:s.season||1,week:s.week||0,total,pos:1,saved:s.saved||Date.now()};
+  const base=CLUBBY[s.club],ov=s.customClub&&s.clubOverride,c=ov?Object.assign({},base,{name:ov.name,short:ov.short||base.short,logo:ov.logo||null}):base;
+  const total=(s.fixtures&&s.fixtures.length)||38,wk=Math.min((s.week||0)+1,total);
+  const meta={club:s.club,name:c.name,short:c.short,logo:c.logo||null,custom:!!ov,country:s.country||c.co,div:s.div||1,mode:s.mode||'fict',season:s.season||1,week:s.week||0,total,pos:1,saved:s.saved||Date.now()};
   if(slotN!=null){
     const n=+slotN;
     const doIt=()=>storeImport(n,s,meta);
@@ -12420,7 +12445,7 @@ function importJSON(text,slotN){
     return;
   }
   ui.importing={s,meta};
-  openSheet(`<h3>Importar partida</h3><p style="margin-bottom:10px">${esc(c.name)} · ${esc(divName(ui.importing.meta.country,ui.importing.meta.div))} · Temp. ${ui.importing.meta.season} · Semana ${wk}. ¿En qué slot lo pongo?</p><div class="res-scroll">${[1,2,3].map(n=>{const m=readMeta(n);return`<button class="lrow" data-act="imp-slot" data-n="${n}"><span class="lt"><b>Slot ${n}</b><small>${m&&CLUBBY[m.club]?esc(CLUBBY[m.club].name):'Vacío'}</small></span></button>`}).join('')}</div><div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+  openSheet(`<h3>Importar partida</h3><p style="margin-bottom:10px">${esc(c.name)} · ${esc(divName(ui.importing.meta.country,ui.importing.meta.div))} · Temp. ${ui.importing.meta.season} · Semana ${wk}. ¿En qué slot lo pongo?</p><div class="res-scroll">${[1,2,3].map(n=>{const m=readMeta(n);return`<button class="lrow" data-act="imp-slot" data-n="${n}"><span class="lt"><b>Slot ${n}</b><small>${m&&CLUBBY[m.club]?esc(m.name):'Vacío'}</small></span></button>`}).join('')}</div><div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
 }
 function storeImport(n,s,meta){
   const json=JSON.stringify(s),mjson=JSON.stringify(meta);
@@ -14076,7 +14101,7 @@ function renderSlots(){
   $('#slots').innerHTML=bar+[1,2,3].map(n=>{
     const m=readMeta(n);
     if(!m||!readSlot(n))return`<div class="slot empty"><div class="slot-ico">+</div><div class="slot-info"><div class="slot-h">Slot ${n}</div><div class="slot-l">Vacío</div></div><div class="slot-act"><button class="btn primary sm" data-act="slot-new" data-n="${n}">Nueva partida aquí</button><button class="btn ghost sm" data-act="slot-import" data-n="${n}">Importar aquí</button></div></div>`;
-    const c=CLUBBY[m.club],C=COUNTRIES[m.country],sy=BASE_YEAR+m.season-1,syTxt=`${sy}/${String((sy+1)%100).padStart(2,'0')}`;
+    const base=CLUBBY[m.club],c=m.custom?Object.assign({},base,{name:m.name,short:m.short||base.short,logo:m.logo||null}):base,C=COUNTRIES[m.country],sy=BASE_YEAR+m.season-1,syTxt=`${sy}/${String((sy+1)%100).padStart(2,'0')}`;
     return`<div class="slot">${crestHTML(c,52,m.mode)}<div class="slot-info"><div class="slot-h">${esc(c.name)}</div><div class="slot-l">${FLAG[m.country]} ${divName(m.country,m.div)}</div><div class="slot-l">Temp. ${m.season} (${syTxt}) - Semana ${Math.min(m.week+1,m.total)}${m.week?`, vas ${m.pos}º`:''}</div><div class="slot-l"><span class="tag" style="margin-left:0">${modeName(m.mode)}</span></div><div class="slot-l">Guardada el ${fmtDate(m.saved)}</div></div>
       <div class="slot-act">${nw?`<button class="btn ghost sm" data-act="slot-over" data-n="${n}">Sobrescribir</button>`:`<button class="btn primary sm" data-act="slot-load" data-n="${n}">Cargar</button>`}<button class="btn ghost sm" data-act="slot-export" data-n="${n}">Exportar</button><button class="btn danger sm" data-act="slot-del" data-n="${n}">Borrar</button></div></div>`;
   }).join('');
@@ -14376,6 +14401,41 @@ function buildCustomPlayer(e,clubId,idx){
   p.val=calcVal(p);p.wage=Math.round(p.val*4);p.at=e.at?Object.assign({},e.at):genAttrs(p);
   return p;
 }
+/* ============ IMPORTAR JUGADORES EN PARTIDA (solo clubes creados por el usuario) ============ */
+/* misma tarjeta que playerCard (pcard), convertida en botón-interruptor de selección: marca con un
+   check sobre el avatar en vez de abrir la ficha del jugador */
+function imRowHTML(p,i,on,role,dup){
+  const pot=Math.round(Math.max(p.pot||p.ovr,p.ovr));
+  return`<button type="button" class="pcard imp-pcard${on?' on':''}" data-act="imp-toggle" data-i="${i}">
+    <div class="pc-av">${on?`<span class="imp-check">${checkIcon}</span>`:''}<div class="pc-photo">${avatarHTML(p)}</div></div>
+    <div class="pc-main"><div class="pc-name">${esc(p.n)}</div>
+      <div class="pc-meta"><span class="pc-age">${p.age}a.</span>${ppOf(p).map((x,k)=>`<span class="pc-pos${k===0?' main':''}">${x}</span>`).join('')}${dup?' <span class="tag">Ya en tu plantilla</span>':''}</div>
+      <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${fmtW(p.wage)}</span></div></div>
+    <div class="pc-right">
+      <div class="pc-num"><div><b style="color:${ratingColor(p.ovr)}">${p.ovr}</b><small>GRL</small></div><div><b style="color:${ratingColor(pot)}">${pot}</b><small>POT</small></div></div>
+      <div class="pc-role">${roleChip(role)}</div>
+      <div class="pc-nat">${FLAG[p.nat]||''} <span>${esc(NATNAME[p.nat]||'')}</span></div></div>
+  </button>`;
+}
+function imPlayersHTML(){
+  const im=ui.pimp;
+  if(!im)return'<h3>Importar jugadores</h3><p>Elige un archivo de plantilla exportado.</p>';
+  const curSquad=(state.teams[state.club]&&state.teams[state.club].players)||[];
+  const rows=im.players.map((p,i)=>imRowHTML(p,i,im.picked.has(i),roleIn(p,curSquad),im.dupSet.has(normTxt(p.n)))).join('');
+  const n=im.picked.size;
+  return`<h3>Importar jugadores</h3><p>Plantilla <b>${esc(im.name||'importada')}</b>. Elige qué jugadores quieres añadir a tu plantilla actual (llevas ${n} seleccionados).</p>
+  <div class="row-btns"><button class="btn ghost" data-act="imp-pick-all">Marcar todos</button><button class="btn ghost" data-act="imp-pick-none">Ninguno</button></div>
+  <div class="res-scroll"><div class="sq-list">${rows||'<p class="muted-s">Ese archivo no tiene jugadores.</p>'}</div></div>
+  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button><button class="btn primary"${n?'':' disabled'} data-act="imp-confirm">Añadir ${n} jugador${n===1?'':'es'}</button></div>`;
+}
+/* reaplica al club sustituido el nombre/escudo que el usuario le puso al crearlo: necesario cada vez que se
+   carga una partida, porque CLUBBY se reconstruye desde los datos originales en cada recarga de la página */
+function applyClubOverride(s){
+  if(!s||!s.customClub||!s.clubOverride||!CLUBBY[s.club])return;
+  const base=CLUBBY[s.club],o=s.clubOverride;
+  Object.assign(base,{name:o.name,short:o.short,city:o.city,rep:o.rep,stadium:o.stadium});
+  if(o.logo)base.logo=o.logo;else delete base.logo;
+}
 function finalizeCustomGame(){
   const baseId=ui.custom.baseId,base=CLUBBY[baseId],cc=ui.custom.club;
   Object.assign(base,{name:cc.name,short:cc.short,city:cc.city,rep:cc.rep,stadium:cc.stadium});
@@ -14392,6 +14452,12 @@ function finalizeCustomGame(){
     t.lineup=bestXI(t);t.bench=autoBench(t);
     invalidateSquads([baseId]);
   }
+  state.customClub=true;   /* marca la partida como "club creado por el usuario": habilita importar jugadores desde el menú durante la carrera */
+  /* el nombre/escudo personalizados se aplican al objeto CLUBBY en memoria (arriba), pero ese objeto se
+     reconstruye desde cero cada vez que se recarga la página: sin guardar aquí una copia de la personalización,
+     al volver a abrir la partida (o solo al ver la lista de partidas) reaparecería el club original que se
+     sustituyó. applyClubOverride() usa este campo para reaplicarla cada vez que se carga la partida. */
+  state.clubOverride={name:cc.name,short:cc.short,city:cc.city,rep:cc.rep,stadium:cc.stadium,logo:cc.logo||null};
   saveGame();
   ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';
   renderGame();go('game');toast(`Ya eres el míster de ${base.name}`);
@@ -15935,6 +16001,55 @@ const H={
     };
     inp.click();
   },
+  'imp-players-open'(){
+    const inp=document.createElement('input');
+    inp.type='file';inp.accept='.json,application/json';
+    inp.onchange=()=>{
+      const file=inp.files&&inp.files[0];if(!file)return;
+      const r=new FileReader();
+      r.onload=()=>{
+        let data;try{data=JSON.parse(String(r.result||''))}catch(e){data=null}
+        if(!data||data.kind!=='misterSquad'||!Array.isArray(data.players)||!data.players.length){toast('Ese archivo no es una plantilla válida');return}
+        const mine=(state.teams[state.club]&&state.teams[state.club].players)||[];
+        const dupSet=new Set(mine.map(p=>normTxt(p.n)));
+        const stamp=Date.now();
+        const built=data.players.map((p,i)=>buildCustomPlayer(p,state.club,'prev'+stamp+'_'+i));
+        const picked=new Set();
+        built.forEach((p,i)=>{if(!dupSet.has(normTxt(p.n)))picked.add(i)});
+        ui.pimp={name:data.name,players:built,dupSet,picked};
+        openSheet(imPlayersHTML(),true);
+      };
+      r.readAsText(file);
+    };
+    inp.click();
+  },
+  'imp-toggle'(t){
+    const i=+t.dataset.i,im=ui.pimp;if(!im)return;
+    if(im.picked.has(i))im.picked.delete(i);else im.picked.add(i);
+    openSheet(imPlayersHTML(),true);
+  },
+  'imp-pick-all'(){const im=ui.pimp;if(!im)return;im.players.forEach((p,i)=>im.picked.add(i));openSheet(imPlayersHTML(),true)},
+  'imp-pick-none'(){const im=ui.pimp;if(!im)return;im.picked.clear();openSheet(imPlayersHTML(),true)},
+  async 'imp-confirm'(){
+    const im=ui.pimp;if(!im||!im.picked.size)return;
+    const t=state.teams[state.club];
+    const room=30-t.players.length;
+    if(room<=0){toast('La plantilla está completa (máximo 30).');return}
+    let list=Array.from(im.picked).map(i=>im.players[i]);
+    if(list.length>room){
+      const ok=await confirmBox('Plantilla casi completa',`Solo caben ${room} jugador${room===1?'':'es'} más (máximo 30 en total). Se añadirán los primeros ${room} de los ${list.length} que elegiste.`,'Añadir',true);
+      if(!ok)return;
+      list=list.slice(0,room);
+    }
+    t.players=t.players.concat(list);
+    t.lineup=bestXI(t);t.bench=autoBench(t);
+    invalidateSquads([state.club]);
+    saveGame();
+    ui.pimp=null;
+    closeSheet();
+    toast(`${list.length} jugador${list.length===1?'':'es'} importado${list.length===1?'':'s'}`);
+    renderGame();
+  },
   async 'slot-over'(t){
     const n=+t.dataset.n;
     if(await confirmBox('¿Sobrescribir el slot '+n+'?','Se perderá la partida guardada en este slot.','Sobrescribir',true)){deleteSlot(n);askMode(n)}
@@ -15944,7 +16059,7 @@ const H={
     let s=null;try{s=await bestSlotRaw(n)}catch(e){s=null}
     if(!s||s.v!==1||!s.teams){toast('No se pudo leer esa partida');renderSlots();return}
     try{
-      state=s;state.slot=n;migrateUclIfNeeded();ensureState();enterGame();
+      state=s;state.slot=n;resetClubOverrides();applyClubOverride(state);migrateUclIfNeeded();ensureState();enterGame();
       try{saveGame()}catch(e){}   /* sincroniza localStorage e IndexedDB con la copia más reciente (evita quedar con una vieja) */
     }catch(e){
       console.error('Error al cargar la partida',e);
@@ -16219,7 +16334,7 @@ const H={
   ptop(t){openTop10(t.dataset.k,t.dataset.s)},
   crv(t){const L=leagueData(ui.cc),total=L.fx.length;ui.rvs=ui.rvs||{};ui.rvs[ui.cc]=clamp(leagueRv(ui.cc)+(+t.dataset.d),0,total-1);renderGame()},
   uclrv(t){const key=t.dataset.k,total=state.cups[key].league.fx.length;ui.rvs=ui.rvs||{};ui.rvs[key+'_L']=clamp(uclLeagueRv(key)+(+t.dataset.d),0,total-1);renderGame()},
-  menu(){openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="export-save">Exportar a archivo</button><button class="btn ghost" data-act="mgr-profile">Perfil de entrenador</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
+  menu(){const impBtn=state&&state.customClub?'<button class="btn ghost" data-act="imp-players-open">Importar jugadores</button>':'';openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="export-save">Exportar a archivo</button>${impBtn}<button class="btn ghost" data-act="mgr-profile">Perfil de entrenador</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
   'mgr-profile'(){mgrProfileSheet()},
   'save-now'(){saveGame();closeSheet();toast('Partida guardada')},
   exit(){saveGame();closeSheet();state=null;resetDivs();go('title')},
