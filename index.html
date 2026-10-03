@@ -217,6 +217,48 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .cc-stars5{position:relative;display:inline-block;color:rgba(233,238,233,.22);letter-spacing:1px;font-size:10.5px;vertical-align:middle}
 .cc-stars5::before{content:'★★★★★';position:absolute;left:0;top:0;width:var(--p);overflow:hidden;color:var(--amber);white-space:nowrap}
 .mode-card{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;padding:16px;margin-top:12px;border-radius:18px;background:rgba(220,240,228,.045);border:1px solid var(--line);transition:border-color .25s,background .25s,transform .2s var(--ease)}
+.cc-team{display:flex;align-items:center;gap:14px;width:100%;height:68px;padding:0 16px;margin-top:10px;border-radius:16px;background:var(--surface);border:1px solid var(--line);text-align:left;transition:border-color .25s,background .25s,transform .2s var(--ease)}
+.cc-team:hover,.cc-team.hov{border-color:var(--accent-line);background:var(--surface2)}
+.cc-team:active{transform:scale(.98)}
+.cc-team .crest{flex:none}
+.cc-team .cc-lt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.cc-team .cc-lt b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 15px var(--display)}
+.cc-team .cc-lt small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:12.5px}
+.cc-team .lstat{flex:none;width:72px;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.cform{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.cform label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+.cform label.full{grid-column:1/-1}
+.cform input{width:100%;height:42px;padding:0 12px;border-radius:12px;background:var(--surface2);color:var(--text);border:1px solid var(--line2);font:500 15px var(--ui);outline:none}
+.cform input:focus{border-color:var(--accent-line)}
+.cform input::placeholder{color:var(--muted)}
+.cform label b{color:var(--text);font-weight:600}
+@media(max-width:520px){.cform{grid-template-columns:1fr}}
+.cform-crest-row{display:flex;align-items:center;gap:14px;margin-top:4px}
+.cform-crest-row .crest.logo img{object-fit:contain;background:var(--surface2)}
+.cform-title{display:block;width:100%;background:transparent;border:none;outline:none;color:var(--text);font:600 20px/1.15 var(--display);letter-spacing:-.01em;padding:0;margin:0}
+.cform-title::placeholder{color:var(--muted);font-weight:600}
+.cform-city{background:transparent;border:none;outline:none;color:var(--muted);font:500 13.5px var(--ui);padding:0;max-width:160px}
+.cform-city::placeholder{color:var(--muted)}
+.defs.edit div{align-items:center}
+.defs.edit input{flex:1;max-width:62%;text-align:right;background:transparent;border:none;color:var(--text);font:600 14.5px var(--ui);padding:0;outline:none}
+.defs.edit input::placeholder{color:var(--muted);font-weight:500}
+.defs.edit input:focus{color:var(--accent)}
+.cform-rep-rng{width:100%;margin:2px 0 18px}
+.cform-logo-btns{margin:10px 0 16px}
+.sq-list{display:flex;flex-direction:column;gap:10px;padding-top:12px}
+.sq-pcard{position:relative}
+.sq-pcard .pc-edit-ov{position:absolute;inset:0;border:none;background:transparent;padding:0;border-radius:18px;z-index:1;cursor:pointer}
+.sq-pcard .sq-del{position:absolute;top:-10px;right:-10px;z-index:2;background:var(--bg,#0b1210);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.pos2-btn{background:transparent;border:none;color:var(--text);font:600 14.5px var(--ui);padding:0;text-align:right}
+.pos2-row{display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--line);text-align:left;margin-top:8px;color:var(--text)}
+.pos2-row span:not(.pos2-dot){flex:1}
+.pos2-row.on{border-color:var(--accent-line);background:var(--accent-soft)}
+.pos2-row svg{color:var(--accent);flex:none}
+.pos2-dot{width:11px;height:11px;border-radius:50%;flex:none}
+.nat-fl{font-size:20px;flex:none}
+button.pm-photo{cursor:pointer;padding:0}
+.pform-name{display:block;flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--text);font:700 22px/1.15 var(--display);letter-spacing:-.02em;padding:0}
+.pform-name::placeholder{color:var(--muted);font-weight:700}
 .mode-card:hover{border-color:var(--accent-line);background:var(--accent-soft)}
 .mode-card:active{transform:scale(.99)}
 .mode-card svg{flex:none;width:34px;height:34px;color:var(--accent);margin-top:2px}
@@ -6445,6 +6487,26 @@ Object.assign(NATNAME,{NL:'Países Bajos',BE:'Bélgica',HR:'Croacia',UY:'Uruguay
 const isoFlag=c=>String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);
 Object.assign(FLAG,{SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',WA:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',NIR:'\u{1F1EC}\u{1F1E7}'});
 Object.keys(NATNAME).forEach(c=>{if(!FLAG[c])FLAG[c]=isoFlag(c)});Object.assign(NATNAME,{GY:'Guyana'});if(!FLAG.GY)FLAG.GY=isoFlag('GY');
+/* resto de selecciones reconocidas por la FIFA/UEFA/CAF/AFC/CONCACAF/CONMEBOL/OFC que todavía no estaban */
+Object.assign(NATNAME,{
+ CN:'China',IN:'India',PK:'Pakistán',BD:'Bangladés',VN:'Vietnam',MN:'Mongolia',MM:'Myanmar',LK:'Sri Lanka',
+ NP:'Nepal',BT:'Bután',AF:'Afganistán',KW:'Kuwait',BH:'Baréin',OM:'Omán',YE:'Yemen',JO:'Jordania',PS:'Palestina',
+ KG:'Kirguistán',TJ:'Tayikistán',TM:'Turkmenistán',BN:'Brunéi',KH:'Camboya',LA:'Laos',TW:'Taiwán',HK:'Hong Kong',
+ MO:'Macao',KP:'Corea del Norte',SG:'Singapur',MY:'Malasia',TL:'Timor Oriental',LI:'Liechtenstein',MC:'Mónaco',
+ VA:'Ciudad del Vaticano',LS:'Lesoto',SZ:'Esuatini',BW:'Botsuana',NA:'Namibia',ZW:'Zimbabue',MW:'Malaui',
+ TZ:'Tanzania',UG:'Uganda',RW:'Ruanda',SD:'Sudán',SS:'Sudán del Sur',LY:'Libia',NE:'Níger',DJ:'Yibuti',
+ MG:'Madagascar',MU:'Mauricio',SL:'Sierra Leona',LR:'Liberia',BJ:'Benín',TT:'Trinidad y Tobago',HT:'Haití',
+ CU:'Cuba',PA:'Panamá',BZ:'Belice',GT:'Guatemala',SV:'El Salvador',NI:'Nicaragua',PY:'Paraguay',
+ FJ:'Fiyi',PG:'Papúa Nueva Guinea',SB:'Islas Salomón',VU:'Vanuatu',WS:'Samoa',TO:'Tonga',NC:'Nueva Caledonia',
+ PF:'Tahití',AS:'Samoa Americana',GU:'Guam',KI:'Kiribati',FM:'Micronesia',PW:'Palaos',CK:'Islas Cook',
+ BS:'Bahamas',BB:'Barbados',GD:'Granada',LC:'Santa Lucía',VC:'San Vicente y las Granadinas',AG:'Antigua y Barbuda',
+ DM:'Dominica',KN:'San Cristóbal y Nieves',BM:'Bermudas',KY:'Islas Caimán',VG:'Islas Vírgenes Británicas',
+ VI:'Islas Vírgenes de EE.UU.',AW:'Aruba',SX:'San Martín',AI:'Anguila',TC:'Turcas y Caicos',MS:'Montserrat',
+ GL:'Groenlandia',FK:'Islas Malvinas',GF:'Guayana Francesa',BL:'San Bartolomé',GP:'Guadalupe',
+ BQ:'Bonaire',EH:'Sáhara Occidental',GB:'Reino Unido',
+ PE:'Perú',ZA:'Sudáfrica',ET:'Etiopía',MV:'Maldivas',MH:'Islas Marshall',NR:'Nauru',TV:'Tuvalu'
+});
+Object.keys(NATNAME).forEach(c=>{if(!FLAG[c])FLAG[c]=isoFlag(c)});
 const curMode=()=>state?(state.mode||'fict'):(ui.gmode||'fict');
 const modeName=m=>m==='real'?'Base de datos (jugadores reales)':'Jugadores ficticios';
 const modeChip=id=>curMode()==='real'?`<span class="cc-div src">${REAL_DB[id]?'Plantilla real':'Plantilla generada'}</span>`:'';
@@ -12259,10 +12321,20 @@ async function bestSlotRaw(n){
 /* exportar/importar a archivo: no depende del localStorage del navegador, así que funciona aunque esté bloqueado
    (Safari con archivo local, modo privado...) y permite partidas que se guardan y restauran siempre. */
 function storageOK(){try{const k='mister._t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
-function downloadSave(json,name){
+async function downloadSave(json,name){
   const blob=new Blob([json],{type:'application/json'});
+  /* en móvil (sobre todo iOS) un <a download> con un blob de texto muchas veces no descarga nada visible:
+     o no pasa nada, o se abre como texto plano en una pestaña. Si el navegador soporta compartir archivos,
+     se usa eso primero (ahí sí aparece el cuadro de "Guardar en Archivos" / compartir) */
+  if(navigator.share&&navigator.canShare){
+    try{
+      const file=new File([blob],name,{type:'application/json'});
+      if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return}
+    }catch(e){if(e&&e.name==='AbortError')return}   /* canceló el cuadro de compartir: no seguir con el método de respaldo */
+  }
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=name;a.click();
+  const a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
 function importJSON(text,slotN){
@@ -14027,12 +14099,232 @@ function renderList(){
 }
 const ICO_DICE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r=".9" fill="currentColor"/><circle cx="15.5" cy="8.5" r=".9" fill="currentColor"/><circle cx="12" cy="12" r=".9" fill="currentColor"/><circle cx="8.5" cy="15.5" r=".9" fill="currentColor"/><circle cx="15.5" cy="15.5" r=".9" fill="currentColor"/></svg>';
 const ICO_DB='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6"/><path d="M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3"/></svg>';
+const ICO_CUSTOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.6-3 8.3-7 9.5-4-1.2-7-4.9-7-9.5V6l7-3Z"/><path d="M9 12.3l2 2 4-4.3"/></svg>';
 function askMode(n){
-  ui.slot=n;
-  openSheet(`<h3>Modo de juego</h3><p>Elige cómo se generan los futbolistas de esta partida. La elección se guarda junto al slot ${n}.</p>
+  ui.slot=n;ui.customFlow=false;
+  openSheet(`<h3>Modo de juego</h3><p>Elige cómo quieres empezar esta partida. La elección se guarda junto al slot ${n}.</p>
+  <button class="mode-card" data-act="mode-kind" data-k="normal">${ICO_DB}<span><b>Modo carrera normal</b><small>Coge las riendas de un club ya existente, de la división que elijas.</small></span></button>
+  <button class="mode-card" data-act="mode-kind" data-k="custom">${ICO_CUSTOM}<span><b>Club personalizado</b><small>Elige un país, sustituye a uno de sus tres equipos peor valorados por tu propio club y personalízalo a tu gusto.</small></span></button>
+  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+}
+function askDataMode(){
+  openSheet(`<h3>Datos de los futbolistas</h3><p>Elige cómo se generan los jugadores de esta partida.</p>
   <button class="mode-card" data-act="mode-pick" data-m="fict">${ICO_DICE}<span><b>Jugadores ficticios</b><small>Nombres, GRL, potenciales y sueldos aleatorios: cambian cada vez que empiezas una partida nueva.</small></span></button>
   <button class="mode-card" data-act="mode-pick" data-m="real">${ICO_DB}<span><b>Base de datos (jugadores reales)</b><small>Futbolistas reales de ${Object.keys(REAL_DB).filter(id=>(REAL_DB[id]||[]).length>=16).length} clubes, con GRL y potencial estimados. El resto de plantillas se completa con jugadores generados.</small></span></button>
   <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+}
+/* ============ CLUB PERSONALIZADO (Fase 1: elegir país y equipo al que sustituir) ============ */
+/* escalones de divisiones realmente jugables de un país, de arriba a abajo: solo las que están en COUNTRIES[co].divs
+   o en DIV_GROUPS (p. ej. Primera/Segunda Federación en España). Deja fuera filiales/reservas y clubes de cesión
+   (array LEGACY) cuyo "div" es solo un número interno y no corresponde a ninguna liga real seleccionable. */
+function legitDivSteps(co){
+  const C=COUNTRIES[co],groups=DIV_GROUPS[co]||[],steps=[],used=new Set();
+  for(let i=1;i<=C.divs.length;i++){
+    if(used.has(i))continue;
+    const g=groups.find(gr=>gr.subs.some(s=>s[0]===i));
+    if(g){steps.push({divs:g.subs.map(s=>s[0]),label:g.label});g.subs.forEach(s=>used.add(s[0]))}
+    else{steps.push({divs:[i],label:divName(co,i)});used.add(i)}
+  }
+  groups.forEach(g=>{if(g.subs.every(s=>!used.has(s[0]))){steps.push({divs:g.subs.map(s=>s[0]),label:g.label});g.subs.forEach(s=>used.add(s[0]))}});
+  return steps;
+}
+function startCustomFlow(){
+  ui.custom={};
+  openCustomCountrySheet();
+}
+function openCustomCountrySheet(){
+  const cs=gamePlayable().slice().sort((a,b)=>COUNTRIES[a].name.localeCompare(COUNTRIES[b].name,'es'));
+  const rows=cs.map(id=>`<button class="lrow cco" data-act="custom-country" data-c="${id}"><span class="fl">${FLAG[id]}</span><span class="lt"><b>${esc(COUNTRIES[id].name)}</b></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`).join('');
+  openSheet(`<h3>Crear club personalizado</h3><p>Elige el país donde quieres fundar tu club. Sustituirás a uno de los tres equipos peor valorados de su división más baja.</p><div class="res-scroll">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button></div>`);
+}
+function openCustomTeamSheet(co){
+  const C=COUNTRIES[co];
+  const byRepAsc=(a,b)=>a.rep-b.rep||a.name.localeCompare(b.name,'es');
+  const steps=legitDivSteps(co).filter(st=>st.divs.some(d=>CLUBS.some(c=>c.co===co&&(c.div||1)===d&&isLeagueEnabled(co,d))));
+  if(!steps.length){toast('Ese país no tiene equipos disponibles para sustituir todavía');openCustomCountrySheet();return}
+  /* los 3 peor valorados de la división más baja; si esa división no llega a 3 equipos (datos incompletos),
+     se sube a la siguiente división más baja, nunca a equipos sueltos de cualquier parte del país */
+  let idx=steps.length-1,cands=[];
+  while(cands.length<3&&idx>=0){
+    const pool=CLUBS.filter(c=>c.co===co&&steps[idx].divs.includes(c.div||1)&&isLeagueEnabled(co,c.div||1)&&!cands.includes(c)).sort(byRepAsc);
+    cands=cands.concat(pool.slice(0,3-cands.length));
+    idx--;
+  }
+  const tier=steps[steps.length-1];
+  cands=cands.sort((a,b)=>b.rep-a.rep||a.name.localeCompare(b.name,'es'));   /* en pantalla: de más a menos reputación */
+  ui.custom={country:co,divs:tier.divs,tierLabel:tier.label};
+  const rows=cands.map(c=>`<button class="cc-team" data-act="custom-team" data-club="${c.id}">${crestHTML(c,34)}<span class="cc-lt"><b>${esc(c.name)}</b><small>${esc(c.city)}</small></span><span class="lstat"><small class="lrep">${starsFracHTML(c.rep)} ${c.rep}</small></span></button>`).join('');
+  openSheet(`<h3>${FLAG[co]} ${esc(C.name)}</h3><p>Estos son los tres equipos peor valorados de ${esc(tier.label)}. Elige a cuál quieres sustituir con tu club.</p>${rows}<div class="row-btns"><button class="btn ghost" data-act="custom-back-country">Otro país</button></div>`);
+}
+function openCustomConfirm(){
+  const base=CLUBBY[ui.custom.baseId],co=ui.custom.country;
+  openSheet(`<h3>Confirmar sustitución</h3><p>Tu club nuevo ocupará el puesto de <b>${esc(base.name)}</b> en ${esc(ui.custom.tierLabel)} (${FLAG[co]} ${esc(COUNTRIES[co].name)}). ${esc(base.name)} no volverá a aparecer en el modo carrera.</p><p class="muted-s">Siguiente paso: personalizar el nombre, escudo, estadio y plantilla de tu club.</p><div class="row-btns"><button class="btn ghost" data-act="custom-back-team">Atrás</button><button class="btn primary" data-act="custom-continue">Continuar</button></div>`);
+}
+/* ============ CLUB PERSONALIZADO (Fase 2: ficha del club) ============ */
+function cformCrestHTML(f){
+  const fake={short:(f.short||'?').slice(0,4)||'?',c1:'#1c3f94',c2:'#f4f4f4',logo:(f.logo||'').trim()};
+  return crestHTML(fake,56,fake.logo?'real':'fict');
+}
+function openCustomClubForm(){
+  const base=CLUBBY[ui.custom.baseId];
+  ui.custom.form=ui.custom.form||{name:'',short:'',city:base.city,stadium:'',logo:'',rep:base.rep,squadMode:'auto'};
+  openSheet(customClubFormHTML());
+}
+function customClubFormHTML(){
+  const f=ui.custom.form,co=ui.custom.country;
+  return`<div class="cc-head"><span id="cform-crest">${cformCrestHTML(f)}</span><div>
+    <input class="cform-title" type="text" data-cform="name" maxlength="40" value="${esc(f.name)}" placeholder="Nombre del club" autocomplete="off">
+    <div class="cc-row"><input class="cform-city" type="text" data-cform="city" maxlength="30" value="${esc(f.city)}" placeholder="Ciudad" autocomplete="off"><span class="cc-div">${FLAG[co]} ${esc(ui.custom.tierLabel)}</span></div>
+  </div></div>
+  <div class="defs sm edit">
+    <div><i>Abreviatura</i><input type="text" data-cform="short" maxlength="4" value="${esc(f.short)}" placeholder="DRCF" autocomplete="off" style="text-transform:uppercase"></div>
+    <div><i>Estadio</i><input type="text" data-cform="stadium" maxlength="40" value="${esc(f.stadium)}" placeholder="Estadio Municipal" autocomplete="off"></div>
+    <div><i>Reputación</i><b id="cform-rep-val">${starsFracHTML(f.rep)} ${f.rep}</b></div>
+  </div>
+  <div class="row-btns cform-logo-btns"><button type="button" class="btn ghost" data-act="cform-logo-pick">${f.logo?'Cambiar escudo':'Subir escudo desde el móvil'}</button>${f.logo?'<button type="button" class="btn ghost" data-act="cform-logo-clear">Quitar</button>':''}</div>
+  <input type="file" id="cform-logo-input" accept="image/*" style="display:none">
+  <input class="cform-rep-rng" type="range" data-cform="rep" min="30" max="90" step="1" value="${f.rep}">
+  <p class="muted-s" style="margin:0 0 8px">Plantilla</p>
+  <div class="seg">
+    <button class="${f.squadMode==='auto'?'on':''}" data-act="cform-squadmode" data-m="auto">Plantilla genérica</button>
+    <button class="${f.squadMode==='custom'?'on':''}" data-act="cform-squadmode" data-m="custom">Plantilla personalizada</button>
+  </div>
+  <div class="row-btns"><button class="btn ghost" data-act="custom-back-team">Atrás</button><button class="btn primary" data-act="cform-continue">Continuar</button></div>`;
+}
+/* ============ CLUB PERSONALIZADO (Fase 3: plantilla jugador a jugador) ============ */
+const SQ_MIN=11,SQ_MAX=25;
+/* fila de la plantilla con el mismo diseño que la tarjeta de un jugador real (.pcard), pero como div con
+   un botón-overlay para editar y un botón de borrar aparte, en vez del <button> único que usa playerCard
+   (ese iría a parar al modal del jugador real, que aquí todavía no existe) */
+function sqCardHTML(e,i){
+  const broad=POS_G[e.pos]||'MD',pot=Math.max(e.pot,e.ovr);
+  const tp={pos:broad,pp:[e.pos].concat((e.pos2s||[]).filter(x=>x!==e.pos)),photo:e.photo};
+  const val=calcVal({ovr:e.ovr,age:e.age}),wage=Math.round(val*4);
+  return`<div class="pcard sq-pcard">
+    <button type="button" class="pc-edit-ov" data-act="squad-edit" data-i="${i}" aria-label="Editar a ${esc(e.name)}"></button>
+    <div class="pc-av"><div class="pc-photo">${avatarHTML(tp)}</div></div>
+    <div class="pc-main"><div class="pc-name">${esc(e.name)}</div>
+      <div class="pc-meta"><span class="pc-age">${e.age}a.</span>${ppOf(tp).map((x,k)=>`<span class="pc-pos${k===0?' main':''}">${x}</span>`).join('')}</div>
+      <div class="pc-fin"><span>${fmtV(val)}</span><span>${fmtW(wage)}</span></div></div>
+    <div class="pc-right">
+      <div class="pc-num"><div><b style="color:${ratingColor(e.ovr)}">${e.ovr}</b><small>GRL</small></div><div><b style="color:${ratingColor(pot)}">${pot}</b><small>POT</small></div></div>
+      <div class="pc-nat">${FLAG[e.nat]||''} <span>${esc(NATNAME[e.nat]||'')}</span></div></div>
+    <button type="button" class="cc-x sq-del" data-act="squad-del" data-i="${i}" aria-label="Quitar">${xIcon}</button>
+  </div>`;
+}
+function squadEditorHTML(){
+  const list=ui.custom.squad||[],n=list.length;
+  const rows=list.map((p,i)=>sqCardHTML(p,i)).join('');
+  return`<h3>Plantilla personalizada</h3><p>Añade entre ${SQ_MIN} y ${SQ_MAX} jugadores, con al menos un portero. Llevas <b>${n}</b>.</p>
+  <div class="row-btns"><button class="btn ghost"${n?'':' disabled'} data-act="squad-export">Exportar a archivo</button><button class="btn ghost" data-act="squad-import">Importar de archivo</button></div>
+  <div class="res-scroll"><div class="sq-list">${rows||'<p class="muted-s">Todavía no has añadido jugadores.</p>'}</div></div>
+  <div class="row-btns"><button class="btn ghost" data-act="custom-back-club">Atrás</button><button class="btn primary"${n>=SQ_MAX?' disabled':''} data-act="squad-add">Añadir jugador</button></div>
+  <div class="row-btns one"><button class="btn primary" data-act="squad-finish">Crear plantilla y empezar (${n}/${SQ_MIN})</button></div>`;
+}
+const PFORM_POS=[['POR','Portero'],['LI','Lateral izquierdo'],['DFC','Defensa central'],['LD','Lateral derecho'],['MCD','Mediocentro defensivo'],['MC','Mediocentro'],['MCO','Mediapunta'],['MI','Medio izquierdo'],['MD','Medio derecho'],['EI','Extremo izquierdo'],['ED','Extremo derecho'],['DC','Delantero centro']];
+const PFORM_NATS=Object.keys(NATNAME).sort((a,b)=>NATNAME[a].localeCompare(NATNAME[b],'es'));
+function natRowsHTML(){
+  const f=ui.custom.pform,q=normTxt(ui.custom.natQ||'');
+  const list=q?PFORM_NATS.filter(c=>normTxt(NATNAME[c]).includes(q)):PFORM_NATS;
+  if(!list.length)return'<p class="muted-s">Sin resultados.</p>';
+  return list.map(c=>{
+    const on=f.nat===c;
+    return`<button type="button" class="pos2-row${on?' on':''}" data-act="pform-nat-pick" data-v="${c}"><span class="nat-fl">${FLAG[c]||''}</span><span>${esc(NATNAME[c])}</span>${on?checkIcon:''}</button>`;
+  }).join('');
+}
+function natSheetHTML(){
+  return`<h3>Nacionalidad</h3>
+  <div class="mkt-q"><input type="search" data-natq="1" value="${esc(ui.custom.natQ||'')}" placeholder="Buscar país" aria-label="Buscar país" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" onkeydown="if(event.key==='Enter')this.blur()"></div>
+  <div class="res-scroll" id="nat-list" style="margin-top:12px">${natRowsHTML()}</div>`;
+}
+function pformAvatarHTML(f){
+  return`<img src="${f.photo?esc(f.photo):NOFOTO}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+}
+function playerFormHTML(){
+  const f=ui.custom.pform;
+  const isGK=f.pos==='POR',atKeys=isGK?ATTR_GK:ATTR_OUT;
+  if(!f.at)f.at=genAttrs({pos:isGK?'GK':(POS_G[f.pos]||'MD'),ovr:f.ovr,id:'tmp'+(f.name||'x')});
+  const pot=Math.max(f.pot,f.ovr),val=calcVal({ovr:f.ovr,age:f.age});
+  return`<div class="res-scroll"><div class="pm-head"><span class="pb" style="color:${posCol(f.pos)};background:${posCol(f.pos)}26">${f.pos}</span><span class="tag">${esc(f.foot)}</span></div>
+  <div class="pm-top"><button type="button" class="pm-photo" data-act="pform-avatar-pick" aria-label="Cambiar foto">${pformAvatarHTML(f)}</button><input class="pform-name" type="text" data-pform="name" maxlength="40" value="${esc(f.name)}" placeholder="Nombre y apellido" autocomplete="off"></div>
+  <input type="file" id="pform-avatar-input" accept="image/*" style="display:none">
+  <div class="row-btns cform-logo-btns"><button type="button" class="btn ghost" data-act="pform-avatar-pick">${f.photo?'Cambiar foto':'Subir foto desde el móvil'}</button>${f.photo?'<button type="button" class="btn ghost" data-act="pform-avatar-clear">Sin foto</button>':''}</div>
+  <div class="pm-nums">
+    <div><small>GRL</small><b id="pform-ovr-num" style="color:${ratingColor(f.ovr)}">${f.ovr}</b><div class="meter"><i id="pform-ovr-bar" style="width:${f.ovr}%;background:${ratingColor(f.ovr)}"></i></div></div>
+    <div><small>POT</small><b id="pform-pot-num" style="color:${ratingColor(pot)}">${pot}</b><div class="meter dual"><i class="pot" id="pform-pot-bar" style="width:${pot}%;background:${ratingColor(pot)}55"></i><i id="pform-pot-bar2" style="width:${f.ovr}%;background:${ratingColor(f.ovr)}"></i></div></div>
+  </div>
+  <input type="range" class="cform-rep-rng" data-pform="ovr" min="1" max="99" step="1" value="${f.ovr}">
+  <input type="range" class="cform-rep-rng" data-pform="pot" min="${f.ovr}" max="99" step="1" value="${pot}">
+  <div class="subh">Atributos</div>
+  <div class="attrgrid${atKeys.length>6?' a7':''}">${atKeys.map(k=>`<div class="attr"><small>${k}</small><b id="pform-at-${k}-num" style="color:${ratingColor(f.at[k])}">${f.at[k]}</b></div>`).join('')}</div>
+  ${atKeys.map(k=>`<input type="range" class="cform-rep-rng" data-pform-at="${k}" min="1" max="99" step="1" value="${f.at[k]}">`).join('')}
+  <div class="defs sm">
+    <div><i>Posición principal</i><button type="button" class="pos2-btn" data-act="pform-pos1-open">${esc((PFORM_POS.find(x=>x[0]===f.pos)||[,f.pos])[1])} (${f.pos})</button></div>
+    <div><i>Posiciones secundarias</i><button type="button" class="pos2-btn" data-act="pform-pos2-open">${(f.pos2s||[]).length?esc(f.pos2s.join(', ')):'Ninguna'}</button></div>
+  </div>
+  <div class="defs sm edit">
+    <div><i>Edad</i><b id="pform-age-val">${f.age} años</b></div>
+  </div>
+  <input type="range" class="cform-rep-rng" data-pform="age" min="14" max="45" step="1" value="${f.age}">
+  <div class="defs sm edit">
+    <div><i>Nacionalidad</i><button type="button" class="pos2-btn" data-act="pform-nat-open">${FLAG[f.nat]||''} ${esc(NATNAME[f.nat]||f.nat)}</button></div>
+    <div><i>Valor de mercado</i><b id="pform-val-val">${fmtV(val)}</b></div>
+  </div>
+  <p class="muted-s" style="margin:12px 0 8px">Pie dominante</p>
+  <div class="seg">
+    <button class="${f.foot==='Derecha'?'on':''}" data-act="pform-foot" data-f="Derecha">Diestro</button>
+    <button class="${f.foot==='Izquierda'?'on':''}" data-act="pform-foot" data-f="Izquierda">Zurdo</button>
+    <button class="${f.foot==='Ambas'?'on':''}" data-act="pform-foot" data-f="Ambas">Ambidiestro</button>
+  </div></div>
+  <div class="row-btns"><button class="btn ghost" data-act="pform-cancel">Cancelar</button><button class="btn primary" data-act="pform-save">Guardar jugador</button></div>`;
+}
+const pos2RowDot=c=>{const col=posCol(c);return`<span class="pos2-dot" style="background:${col}"></span>`};
+function pos1SheetHTML(){
+  const f=ui.custom.pform;
+  const rows=PFORM_POS.map(([c,l])=>{
+    const on=f.pos===c,col=posCol(c);
+    return`<button type="button" class="pos2-row${on?' on':''}" data-act="pform-pos1-pick" data-v="${c}" style="--pc:${col}">${pos2RowDot(c)}<span>${l} (${c})</span>${on?checkIcon:''}</button>`;
+  }).join('');
+  return`<h3>Posición principal</h3><p>Elige la posición principal de ${esc(f.name||'tu jugador')}.</p>
+  <div class="res-scroll">${rows}</div>
+  <div class="row-btns"><button class="btn ghost" data-act="pform-pos2-done">Cancelar</button></div>`;
+}
+function pos2SheetHTML(){
+  const f=ui.custom.pform,sel=f.pos2s||[];
+  const rows=PFORM_POS.filter(([c])=>c!==f.pos).map(([c,l])=>{
+    const on=sel.includes(c),col=posCol(c);
+    return`<button type="button" class="pos2-row${on?' on':''}" data-act="pform-pos2-toggle" data-v="${c}" style="--pc:${col}">${pos2RowDot(c)}<span>${l} (${c})</span>${on?checkIcon:''}</button>`;
+  }).join('');
+  return`<h3>Posiciones secundarias</h3><p>Elige todas las que sepa jugar ${esc(f.name||'tu jugador')} además de su posición principal (${f.pos}).</p>
+  <div class="res-scroll">${rows}</div>
+  <div class="row-btns"><button class="btn primary" data-act="pform-pos2-done">Listo</button></div>`;
+}
+function buildCustomPlayer(e,clubId,idx){
+  const broad=POS_G[e.pos]||'MD',pp=[e.pos].concat((e.pos2s||[]).filter(x=>x!==e.pos));
+  const p={id:clubId+'_cc'+idx,n:e.name,nat:e.nat||ui.custom.country,pos:broad,pp,age:e.age,ovr:e.ovr,pot:Math.max(e.pot,e.ovr),en:100,inj:0,g:0,ap:0,foot:e.foot||'Derecha'};
+  if(e.photo)p.photo=e.photo;
+  p.val=calcVal(p);p.wage=Math.round(p.val*4);p.at=e.at?Object.assign({},e.at):genAttrs(p);
+  return p;
+}
+function finalizeCustomGame(){
+  const baseId=ui.custom.baseId,base=CLUBBY[baseId],cc=ui.custom.club;
+  Object.assign(base,{name:cc.name,short:cc.short,city:cc.city,rep:cc.rep,stadium:cc.stadium});
+  if(cc.logo)base.logo=cc.logo;else delete base.logo;
+  delete BUDGET[baseId];   /* el presupuesto pasa a derivarse de la reputación elegida, no del club real original */
+  const savedRealDB=REAL_DB[baseId];
+  if(cc.squadMode==='auto')delete REAL_DB[baseId];   /* plantilla genérica: nunca tira de la base de datos del club real al que sustituye */
+  closeSheet();
+  newGame(ui.slot,baseId);
+  if(savedRealDB)REAL_DB[baseId]=savedRealDB;
+  if(cc.squadMode==='custom'&&Array.isArray(ui.custom.squad)&&ui.custom.squad.length){
+    const t=state.teams[baseId];
+    t.players=ui.custom.squad.map((p,i)=>buildCustomPlayer(p,baseId,i));
+    t.lineup=bestXI(t);t.bench=autoBench(t);
+    invalidateSquads([baseId]);
+  }
+  saveGame();
+  ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';
+  renderGame();go('game');toast(`Ya eres el míster de ${base.name}`);
 }
 function startMap(){
   ui.seed=(Math.random()*4294967296)>>>0;ui.preview={};ui.zoom=1;ui.zoomEU=1;ui.div=1;ui.club=null;ui.country=null;ui.origins=['50% 50%','50% 50%'];ui.vmode=Store.get('mister.vmode')==='list'?'list':'map';$('#s-map').dataset.view=ui.vmode;
@@ -14215,6 +14507,7 @@ const starsValTxt=v=>'★'.repeat(starsVal(v))+'☆'.repeat(5-starsVal(v));
    de las competiciones. */
 function xiAvgOvr(t){const ids=bestXI(t,t.formation),m=new Map(t.players.map(p=>[p.id,p]));return ids.length?Math.round(ids.reduce((a,id)=>a+(m.get(id)?m.get(id).ovr:0),0)/ids.length):0}
 const xIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const checkIcon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
 function cardHTML(id){
   const c=CLUBBY[id],t=previewTeam(id),top=[...t.players].sort((a,b)=>b.ovr-a.ovr).slice(0,3),rep=xiAvgOvr(t),fl=facLevels(id);
   return`<div class="cc-head">${crestHTML(c,54)}<div><h3>${esc(c.name)}</h3><div class="muted-s">${esc(c.city)}, ${esc((COUNTRIES[c.co]&&COUNTRIES[c.co].name)||NATNAME[c.co]||c.co)}</div><div class="cc-row"><span class="cc-div">${FLAG[c.co]} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="card-close" aria-label="Cerrar">${xIcon}</button></div>
@@ -15473,7 +15766,99 @@ const H={
   load(){ui.mode='load';renderSlots();go('slots')},
   'to-title'(){go('title')},
   'slot-new'(t){askMode(+t.dataset.n)},
-  'mode-pick'(t){ui.gmode=t.dataset.m;$('#sheet').classList.remove('open');startMap()},
+  'mode-kind'(t){ui.customFlow=t.dataset.k==='custom';$('#sheet').classList.remove('open');askDataMode()},
+  'mode-pick'(t){ui.gmode=t.dataset.m;$('#sheet').classList.remove('open');if(ui.customFlow){startCustomFlow()}else{startMap()}},
+  'custom-country'(t){openCustomTeamSheet(t.dataset.c)},
+  'custom-back-country'(){openCustomCountrySheet()},
+  'custom-team'(t){ui.custom.baseId=t.dataset.club;openCustomConfirm()},
+  'custom-back-team'(){openCustomTeamSheet(ui.custom.country)},
+  'custom-continue'(){openCustomClubForm()},
+  'cform-squadmode'(t){ui.custom.form.squadMode=t.dataset.m;const b=$('#sheet-body');if(b)b.innerHTML=customClubFormHTML()},
+  'cform-logo-pick'(){const i=document.getElementById('cform-logo-input');if(i)i.click()},
+  'cform-logo-clear'(){ui.custom.form.logo='';const b=$('#sheet-body');if(b)b.innerHTML=customClubFormHTML()},
+  'cform-continue'(){
+    const f=ui.custom.form||{},base=CLUBBY[ui.custom.baseId];
+    const name=(f.name||'').trim(),short=(f.short||'').trim().toUpperCase();
+    if(!name){toast('Ponle un nombre a tu club');return}
+    if(!short){toast('Añade una abreviatura (2 a 4 letras)');return}
+    ui.custom.club={name,short,city:(f.city||'').trim()||base.city,stadium:(f.stadium||'').trim(),logo:(f.logo||'').trim(),rep:f.rep||base.rep,squadMode:f.squadMode||'auto'};
+    if(ui.custom.club.squadMode==='custom'){ui.custom.squad=ui.custom.squad||[];openSheet(squadEditorHTML(),true)}
+    else finalizeCustomGame();
+  },
+  'custom-back-club'(){openCustomClubForm()},
+  'squad-add'(){ui.custom.editIdx=null;ui.custom.pform={name:'',pos:'DC',pos2s:[],nat:ui.custom.country,foot:'Derecha',age:24,ovr:60,pot:60,photo:''};openSheet(playerFormHTML(),true)},
+  'squad-edit'(t){const i=+t.dataset.i;ui.custom.editIdx=i;ui.custom.pform=Object.assign({pos2s:[],foot:'Derecha',photo:''},ui.custom.squad[i]);openSheet(playerFormHTML(),true)},
+  'pform-pos1-open'(){openSheet(pos1SheetHTML(),true)},
+  'pform-pos1-pick'(t){
+    const f=ui.custom.pform,wasGK=f.pos==='POR';
+    f.pos=t.dataset.v;
+    if((f.pos==='POR')!==wasGK)f.at=null;
+    if(f.pos2s)f.pos2s=f.pos2s.filter(x=>x!==f.pos);
+    openSheet(playerFormHTML(),true);
+  },
+  'pform-pos2-open'(){openSheet(pos2SheetHTML(),true)},
+  'pform-pos2-toggle'(t){
+    /* se toca el estado del propio botón en el DOM, sin redibujar toda la hoja: así no se pierde la
+       posición de scroll (antes, al reabrir el modal entero, siempre volvía arriba del todo) */
+    const v=t.dataset.v,f=ui.custom.pform;f.pos2s=f.pos2s||[];
+    const i=f.pos2s.indexOf(v);if(i>=0)f.pos2s.splice(i,1);else f.pos2s.push(v);
+    const on=f.pos2s.includes(v);
+    t.classList.toggle('on',on);
+    const ic=t.querySelector('svg');if(ic)ic.remove();
+    if(on)t.insertAdjacentHTML('beforeend',checkIcon);
+  },
+  'pform-pos2-done'(){openSheet(playerFormHTML(),true)},
+  'pform-nat-open'(){ui.custom.natQ='';openSheet(natSheetHTML(),true)},
+  'pform-nat-pick'(t){ui.custom.pform.nat=t.dataset.v;openSheet(playerFormHTML(),true)},
+  'squad-del'(t){const i=+t.dataset.i;ui.custom.squad.splice(i,1);openSheet(squadEditorHTML(),true)},
+  'squad-back'(){openSheet(squadEditorHTML(),true)},
+  'pform-cancel'(){openSheet(squadEditorHTML(),true)},
+  'pform-foot'(t){ui.custom.pform.foot=t.dataset.f;const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML()},
+  'pform-avatar-pick'(){const i=document.getElementById('pform-avatar-input');if(i)i.click()},
+  'pform-avatar-clear'(){ui.custom.pform.photo='';const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML()},
+  'pform-save'(){
+    const f=ui.custom.pform,name=(f.name||'').trim();
+    if(!name){toast('Ponle un nombre al jugador');return}
+    const entry={name,pos:f.pos,pos2s:(f.pos2s||[]).filter(x=>x!==f.pos),nat:f.nat,foot:f.foot,photo:f.photo||'',age:f.age,ovr:f.ovr,pot:Math.max(f.pot,f.ovr),at:f.at?Object.assign({},f.at):null};
+    if(ui.custom.editIdx!=null)ui.custom.squad[ui.custom.editIdx]=entry;else ui.custom.squad.push(entry);
+    openSheet(squadEditorHTML(),true);
+  },
+  'squad-finish'(){
+    const sq=ui.custom.squad||[];
+    if(sq.length<SQ_MIN){toast(`Necesitas al menos ${SQ_MIN} jugadores`);return}
+    if(!sq.some(p=>p.pos==='POR')){toast('Tu plantilla necesita al menos un portero');return}
+    finalizeCustomGame();
+  },
+  'squad-export'(){
+    const sq=ui.custom.squad||[];
+    if(!sq.length){toast('Añade algún jugador primero');return}
+    const name=(ui.custom.club&&ui.custom.club.name)||'Mi club';
+    const payload={v:1,kind:'misterSquad',name,savedAt:Date.now(),players:sq};
+    const slug=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'plantilla';
+    downloadSave(JSON.stringify(payload),'plantilla_'+slug+'.json');
+    toast('Plantilla exportada a archivo');
+  },
+  async 'squad-import'(){
+    const inp=document.createElement('input');
+    inp.type='file';inp.accept='.json,application/json';
+    inp.onchange=()=>{
+      const file=inp.files&&inp.files[0];if(!file)return;
+      const r=new FileReader();
+      r.onload=async()=>{
+        let data;try{data=JSON.parse(String(r.result||''))}catch(e){data=null}
+        if(!data||data.kind!=='misterSquad'||!Array.isArray(data.players)||!data.players.length){toast('Ese archivo no es una plantilla válida');return}
+        if((ui.custom.squad||[]).length){
+          const ok=await confirmBox('¿Importar esta plantilla?','Se sustituirá la plantilla que tengas ahora mismo en este club.','Importar',true);
+          if(!ok)return;
+        }
+        ui.custom.squad=data.players;
+        toast('Plantilla importada desde el archivo');
+        openSheet(squadEditorHTML(),true);
+      };
+      r.readAsText(file);
+    };
+    inp.click();
+  },
   async 'slot-over'(t){
     const n=+t.dataset.n;
     if(await confirmBox('¿Sobrescribir el slot '+n+'?','Se perderá la partida guardada en este slot.','Sobrescribir',true)){deleteSlot(n);askMode(n)}
@@ -15780,11 +16165,109 @@ const H={
 };
 function bindEvents(){
   document.addEventListener('input',e=>{const t=e.target;
+    if(t&&t.dataset&&t.dataset.cform&&ui.custom){
+      const k=t.dataset.cform,f=ui.custom.form=ui.custom.form||{};
+      f[k]=k==='short'?t.value.toUpperCase().slice(0,4):(k==='rep'?+t.value:t.value);
+      if(k==='rep'){const b=document.getElementById('cform-rep-val');if(b)b.innerHTML=starsFracHTML(f.rep)+' '+f.rep}
+      if(k==='short'){const p=document.getElementById('cform-crest');if(p)p.innerHTML=cformCrestHTML(f)}
+      return;
+    }
+    if(t&&t.dataset&&t.dataset.pform&&ui.custom&&ui.custom.pform){
+      const k=t.dataset.pform,f=ui.custom.pform;
+      if(k==='name'){f.name=t.value;return}
+      f[k]=+t.value;
+      if(k==='age'){
+        const b=document.getElementById('pform-age-val');if(b)b.textContent=f.age+' años';
+        const vb=document.getElementById('pform-val-val');if(vb)vb.textContent=fmtV(calcVal({ovr:f.ovr,age:f.age}));
+      }
+      if(k==='ovr'){
+        if(f.pot<f.ovr)f.pot=f.ovr;
+        const potRng=document.querySelector('[data-pform="pot"]');if(potRng){potRng.min=f.ovr;if(+potRng.value<f.ovr)potRng.value=f.ovr}
+        const on=document.getElementById('pform-ovr-num'),ob=document.getElementById('pform-ovr-bar');
+        if(on){on.textContent=f.ovr;on.style.color=ratingColor(f.ovr)}
+        if(ob){ob.style.width=f.ovr+'%';ob.style.background=ratingColor(f.ovr)}
+        const pb2=document.getElementById('pform-pot-bar2');if(pb2){pb2.style.width=f.ovr+'%';pb2.style.background=ratingColor(f.ovr)}
+        const pn=document.getElementById('pform-pot-num'),pb=document.getElementById('pform-pot-bar');
+        if(pn){pn.textContent=f.pot;pn.style.color=ratingColor(f.pot)}
+        if(pb){pb.style.width=f.pot+'%';pb.style.background=ratingColor(f.pot)+'55'}
+        const vb=document.getElementById('pform-val-val');if(vb)vb.textContent=fmtV(calcVal({ovr:f.ovr,age:f.age}));
+      }
+      if(k==='pot'){
+        const pn=document.getElementById('pform-pot-num'),pb=document.getElementById('pform-pot-bar');
+        if(pn){pn.textContent=f.pot;pn.style.color=ratingColor(f.pot)}
+        if(pb){pb.style.width=f.pot+'%';pb.style.background=ratingColor(f.pot)+'55'}
+      }
+      return;
+    }
+    if(t&&t.dataset&&t.dataset.natq!==undefined&&ui.custom){
+      ui.custom.natQ=t.value;
+      const r=document.getElementById('nat-list');if(r)r.innerHTML=natRowsHTML();
+      return;
+    }
+    if(t&&t.dataset&&t.dataset.pformAt&&ui.custom&&ui.custom.pform){
+      const k=t.dataset.pformAt,f=ui.custom.pform;
+      f.at=f.at||{};f.at[k]=+t.value;
+      const b=document.getElementById('pform-at-'+k+'-num');if(b){b.textContent=f.at[k];b.style.color=ratingColor(f.at[k])}
+      return;
+    }
     if(t&&t.dataset&&t.dataset.mktq&&ui.mkt&&typeof ui.mkt==='object'){ui.mkt.q=t.value;ui.mkt.page=0;clearTimeout(ui.mktT);ui.mktT=setTimeout(()=>{const r=document.getElementById('mkt-res');if(r)r.innerHTML=mktResHTML();refreshMktSheet()},120);return}
     if(t&&t.dataset&&t.dataset.ccoq!==undefined){ui.ccoQ=t.value;const r=document.getElementById('cco-list');if(r)r.innerHTML=ccoRowsHTML();return}
     if(t&&t.dataset&&t.dataset.lsl&&ui.pm){const id=t.dataset.lsl,v=+t.value,f=pmFind();(ui.pm.ls=ui.pm.ls||{})[id]=v;const l=document.getElementById('lo-l-'+id),h=document.getElementById('lo-t-'+id);if(l&&f)l.textContent=lsText(f.p,v);if(h)h.textContent=(100-v)+'%';return}
     if(t&&t.dataset&&t.dataset.rng&&ui.pm){ui.pm[t.dataset.rng]=+t.value;updateNegLabels()}});
-  document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.mkt&&ui.mkt&&typeof ui.mkt==='object'){ui.mkt[t.dataset.mkt]=t.value;ui.mkt.page=0;if(t.dataset.mkt==='country'){ui.mkt.league='ALL';ui.mkt.team='ALL'}if(t.dataset.mkt==='league')ui.mkt.team='ALL';renderGame();refreshMktSheet()}
+  document.addEventListener('change',e=>{const t=e.target;
+    if(t&&t.tagName==='SELECT'&&t.dataset&&t.dataset.pform&&ui.custom&&ui.custom.pform){
+      const k=t.dataset.pform,f=ui.custom.pform,wasGK=f.pos==='POR';
+      f[k]=t.value;
+      if(k==='pos'){
+        if((f.pos==='POR')!==wasGK)f.at=null;
+        if(f.pos2s)f.pos2s=f.pos2s.filter(x=>x!==f.pos);
+        const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML();
+      }
+      return;
+    }
+    if(t&&t.id==='pform-avatar-input'&&t.files&&t.files[0]&&ui.custom&&ui.custom.pform){
+      const file=t.files[0];
+      if(!file.type.startsWith('image/')){toast('Elige un archivo de imagen');return}
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const img=new Image();
+        img.onload=()=>{
+          const max=200,sc=Math.min(1,max/Math.max(img.width,img.height));
+          const w=Math.max(1,Math.round(img.width*sc)),h=Math.max(1,Math.round(img.height*sc));
+          const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+          cv.getContext('2d').drawImage(img,0,0,w,h);
+          ui.custom.pform.photo=cv.toDataURL('image/jpeg',.85);
+          const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML();
+        };
+        img.onerror=()=>toast('No se pudo leer esa imagen');
+        img.src=ev.target.result;
+      };
+      reader.onerror=()=>toast('No se pudo leer esa imagen');
+      reader.readAsDataURL(file);
+      return;
+    }
+    if(t&&t.id==='cform-logo-input'&&t.files&&t.files[0]&&ui.custom){
+      const file=t.files[0];
+      if(!file.type.startsWith('image/')){toast('Elige un archivo de imagen');return}
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const img=new Image();
+        img.onload=()=>{
+          const max=160,sc=Math.min(1,max/Math.max(img.width,img.height));
+          const w=Math.max(1,Math.round(img.width*sc)),h=Math.max(1,Math.round(img.height*sc));
+          const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+          cv.getContext('2d').drawImage(img,0,0,w,h);
+          ui.custom.form.logo=cv.toDataURL('image/png');
+          const b=$('#sheet-body');if(b)b.innerHTML=customClubFormHTML();
+        };
+        img.onerror=()=>toast('No se pudo leer esa imagen');
+        img.src=ev.target.result;
+      };
+      reader.onerror=()=>toast('No se pudo leer esa imagen');
+      reader.readAsDataURL(file);
+      return;
+    }
+    if(t&&t.dataset&&t.dataset.mkt&&ui.mkt&&typeof ui.mkt==='object'){ui.mkt[t.dataset.mkt]=t.value;ui.mkt.page=0;if(t.dataset.mkt==='country'){ui.mkt.league='ALL';ui.mkt.team='ALL'}if(t.dataset.mkt==='league')ui.mkt.team='ALL';renderGame();refreshMktSheet()}
     if(t&&t.dataset&&t.dataset.ccview){ui.cc=t.dataset.ccview;ui.ct=t.value;renderGame()}});
   window.addEventListener('resize',()=>{if(ui.level===2)layoutPins()});
   document.addEventListener('dblclick',e=>{e.preventDefault()});
