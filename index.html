@@ -10361,6 +10361,14 @@ const BASE_DIV=Object.fromEntries(CLUBS.map(c=>[c.id,c.div]));
 function applyDivs(){CLUBS.forEach(c=>{c.div=(state&&state.divs&&state.divs[c.id])||BASE_DIV[c.id]})}
 function resetDivs(){CLUBS.forEach(c=>{c.div=BASE_DIV[c.id]})}
 const poOrder=(co,d)=>sortTable(leagueData(co+d).tb).map(r=>r.id);
+/* división actual de un club (aplica el ascenso/descenso ya registrado en state.divs, o la de catálogo si no hay
+   ninguno) y tamaño actual de un grupo: se usan para repartir los movimientos entre grupos hermanos (p. ej. los
+   5 grupos de Segunda Federación) de forma equilibrada, en vez de volcarlos siempre sobre el primer grupo de la
+   lista, que es lo que con el tiempo descuadraba el número de equipos de cada grupo. */
+const curDiv=id=>(state&&state.divs&&state.divs[id]!=null)?state.divs[id]:BASE_DIV[id];
+const divSize=d=>{let n=0;for(const id in CLUBBY)if(curDiv(id)===d)n++;return n};
+/* de entre varios grupos candidatos de un mismo escalón, el que menos equipos tiene ahora mismo */
+const smallestGroup=cands=>cands.reduce((best,d)=>divSize(d)<divSize(best)?d:best,cands[0]);
 /* ===== escalones reales de España (para el techo de los filiales) =====
    Div. 1 (tier 1) > Div. 2 (tier 2) > Primera Fed 5/6 (tier 3) > Segunda Fed 7-11 (tier 4). */
 const TIER_OF=d=>d===1?1:d===2?2:(d===5||d===6)?3:4;
@@ -10496,7 +10504,16 @@ function poFinish(){
     po.res[co]={up,down};
   });
   const rf=po.rf;if(rf){po.items.filter(x=>x.kind==='rfpo'&&x.winner).forEach(x=>rf.up.push(x.winner));balanceUpDown(rf.up,rf.down2)}
-  const esf=po.esf;if(esf){po.items.filter(x=>x.kind==='esfpo'&&x.winner).forEach(x=>esf.up.push({id:x.winner,to:x.to,grp:x.grp}));balanceUpDown(esf.up,esf.down)}
+  const esf=po.esf;if(esf){
+    po.items.filter(x=>x.kind==='esfpo'&&x.winner).forEach(x=>esf.up.push({id:x.winner,to:x.to,grp:x.grp}));
+    /* el ascenso/descenso con Segunda Federación se equilibra por separado para el lado del grupo 5 (alimentado
+       por ES7/ES8) y el del grupo 6 (alimentado por ES9/ES10/ES11): si un conflicto de filiales deja a un lado
+       corto de ascensos, el recorte de bajas debe aplicarse a ESE lado, no al otro (que iba bien). */
+    const up5=esf.up.filter(x=>x.to===5),up6=esf.up.filter(x=>x.to===6);
+    const down5=esf.down.filter(x=>x.to===7||x.to===8),down6=esf.down.filter(x=>x.to===9||x.to===10||x.to===11);
+    balanceUpDown(up5,down5);balanceUpDown(up6,down6);
+    esf.up=up5.concat(up6);esf.down=down5.concat(down6);
+  }
   const nlpo=po.items.find(x=>x.kind==='nlpo');
   if(nlpo&&nlpo.winner)state.nlPoWinner=nlpo.winner;
   const dkpo=po.items.find(x=>x.kind==='dkpo');
@@ -10663,10 +10680,10 @@ function fixBTeams(){
       if(TIER_OF(nd(pid))===4)continue;
       const fd=nd(id),pd=nd(pid),co=CLUBBY[id].co;
       if(TIER_OF(fd)<=TIER_OF(pd)){
-        const tt=Math.min(TIER_OF(pd)+1,4),target=(TIERS[tt]||[]).find(d=>d!==pd);
+        const tt=Math.min(TIER_OF(pd)+1,4),ttCands=(TIERS[tt]||[]).filter(d=>d!==pd),target=ttCands.length?smallestGroup(ttCands):undefined;
         if(target&&TIER_OF(fd)<tt){cancelRel(TIER_OF(fd),co,id);state.divs[id]=target;changed=true}
         else{
-          const pt=CLUBBY[pid].div,ptarget=(TIERS[Math.min(TIER_OF(pt)+1,4)]||[]).find(d=>d!==pt);
+          const pt=CLUBBY[pid].div,ptCands=(TIERS[Math.min(TIER_OF(pt)+1,4)]||[]).filter(d=>d!==pt),ptarget=ptCands.length?smallestGroup(ptCands):undefined;
           if(ptarget&&pushDown(TIER_OF(pt),co,ptarget,pid)){delete state.divs[pid];changed=true}
         }
       }
