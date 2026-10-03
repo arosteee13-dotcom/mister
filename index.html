@@ -10488,7 +10488,6 @@ function mktMatch(p,f,from){
 /* ============ NUEVA PARTIDA / NUEVA TEMPORADA ============ */
 function newGame(slot,clubId){
   famQueue=[];famAfter=null;
-  resetClubOverrides();
   resetDivs();
   const club=CLUBBY[clubId],co=club.co,seed=ui.seed,teams={};
   BENCH_N=benchLimit(clubId);
@@ -14438,13 +14437,15 @@ function applyClubOverride(s){
 }
 function finalizeCustomGame(){
   const baseId=ui.custom.baseId,base=CLUBBY[baseId],cc=ui.custom.club;
+  resetClubOverrides();   /* por si quedó algún club personalizado de otra partida cargada antes en esta misma pestaña */
   Object.assign(base,{name:cc.name,short:cc.short,city:cc.city,rep:cc.rep,stadium:cc.stadium});
   if(cc.logo)base.logo=cc.logo;else delete base.logo;
   delete BUDGET[baseId];   /* el presupuesto pasa a derivarse de la reputación elegida, no del club real original */
   const savedRealDB=REAL_DB[baseId];
   if(cc.squadMode==='auto')delete REAL_DB[baseId];   /* plantilla genérica: nunca tira de la base de datos del club real al que sustituye */
   closeSheet();
-  newGame(ui.slot,baseId);
+  newGame(ui.slot,baseId);   /* ya con el club personalizado aplicado, así que el presupuesto inicial se calcula
+    con la reputación elegida, no con la del club original */
   if(savedRealDB)REAL_DB[baseId]=savedRealDB;
   if(cc.squadMode==='custom'&&Array.isArray(ui.custom.squad)&&ui.custom.squad.length){
     const t=state.teams[baseId];
@@ -15472,6 +15473,7 @@ function closeCard(){
 function takeControl(){
   const id=ui.club;if(!id)return;
   closePlayer();closeCV();
+  resetClubOverrides();   /* por si quedó algún club personalizado de otra partida cargada antes en esta misma pestaña */
   newGame(ui.slot,id);saveGame();closeCard();
   ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';
   renderGame();go('game');toast(`Ya eres el míster de ${CLUBBY[id].name}`);
