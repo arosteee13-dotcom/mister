@@ -13379,9 +13379,9 @@ function ccListHTML(){
 }
 function ccViewOpts(key){
   const cup=isCup(key);
-  if(key==='UCL'||key==='UEL'||key==='ECL')return[['lg','Clasificación'],['ko','Eliminatorias'],['cal','Calendario'],['stats','Estadísticas'],['rep','Reputación'],['pal','Palmarés']];
-  if(key==='UCLQ'||key==='UELQ'||key==='ECLQ')return[['table','Resultado'],['cal','Calendario'],['stats','Estadísticas'],['rep','Reputación']];
-  return[['table',cup?'Cuadro':'Clasificación'],['cal','Calendario'],['stats','Estadísticas'],['rep','Reputación'],['pal','Palmarés']];
+  if(key==='UCL'||key==='UEL'||key==='ECL')return[['lg','Clasificación'],['ko','Eliminatorias'],['cal','Calendario'],['stats','Estadísticas'],['rep','Prestigio'],['pal','Palmarés']];
+  if(key==='UCLQ'||key==='UELQ'||key==='ECLQ')return[['table','Resultado'],['cal','Calendario'],['stats','Estadísticas'],['rep','Prestigio']];
+  return[['table',cup?'Cuadro':'Clasificación'],['cal','Calendario'],['stats','Estadísticas'],['rep','Prestigio'],['pal','Palmarés']];
 }
 function uclQualHTML(key){
   const eq=state.euroQual&&state.euroQual[key];
@@ -13429,7 +13429,7 @@ function qualRepHTML(key){
       <span class="lstat"><small class="lrep">${starsFracHTML(r)} ${r}</small></span>
       <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
   }).join('');
-  return`<p class="hint" style="margin:2px 2px 10px">Reputación actual de los clubes que disputan esta fase previa, de mayor a menor.</p><div style="display:flex;flex-direction:column;gap:10px">${rows}</div>`;
+  return`<p class="hint" style="margin:2px 2px 10px">Prestigio actual de los clubes que disputan esta fase previa, de mayor a menor.</p><div style="display:flex;flex-direction:column;gap:10px">${rows}</div>`;
 }
 /* Reputación de los clubes de una competición (liga: los que están ahora en esa división; copa: los participantes).
    La reputación se recalcula al empezar cada temporada según posición final, títulos, ascensos y descensos.
@@ -13440,6 +13440,9 @@ function repListHTML(key){
   let ids=cupObj?(cupObj.ids||[]):leagueClubs(String(key).slice(0,2),+String(key).slice(2)||1).map(c=>c.id);
   ids=[...new Set(ids)].filter(id=>CLUBBY[id]);
   if(!ids.length)return'<div class="card"><p class="muted-s">No hay clubes que mostrar.</p></div>';
+  /* esta pestaña usa su propia métrica (repOf: prestigio del club, que mueve presupuestos/objetivos de la IA),
+     distinta de la "Reputación" que se ve en la ficha del club (xiAvgOvr, el GRL medio del mejor once). Al
+     mostrarse bajo el nombre "Prestigio" en vez de "Reputación" queda claro que son dos cosas distintas. */
   const list=ids.slice().sort((a,b)=>repOf(b)-repOf(a)||cname(a).localeCompare(cname(b)));
   const rows=list.map((id,i)=>{
     const c=CLUBBY[id],r=repOf(id);
@@ -13449,7 +13452,7 @@ function repListHTML(key){
       <span class="lstat"><small class="lrep lrep-rep"><span class="repline">${starsFracHTML(r)}</span><span class="repline"><b class="repb">${r}</b>${repDeltaHTML(id)}</span></small></span>
       <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
   }).join('');
-  return`<p class="hint" style="margin:2px 2px 10px">Reputación actual de cada club, de mayor a menor. Se actualiza al empezar la siguiente temporada según su posición final, títulos, ascensos y descensos (las flechas indican el último cambio).</p>
+  return`<p class="hint" style="margin:2px 2px 10px">Prestigio actual de cada club, de mayor a menor. Se actualiza al empezar la siguiente temporada según su posición final, títulos, ascensos y descensos (las flechas indican el último cambio).</p>
   <div style="display:flex;flex-direction:column;gap:10px">${rows}</div>`;
 }
 function ccViewSheetHTML(key){
@@ -15666,7 +15669,7 @@ const H={
   newseason(){
     closeSheet();newSeason();ui.rv=null;ui.cc=null;ui.cco=null;renderGame();
     const d=state.repDelta&&state.repDelta[state.club];
-    toast('Nueva temporada: '+state.season+(d?` · Reputación ${repOf(state.club)-d}→${repOf(state.club)} (${d>0?'+':''}${d})`:''));
+    toast('Nueva temporada: '+state.season+(d?` · Prestigio ${repOf(state.club)-d}→${repOf(state.club)} (${d>0?'+':''}${d})`:''));
     genJobOffers();
     setTimeout(offersSheet,350);
   },
