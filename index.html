@@ -1194,6 +1194,7 @@ const FRANCE=P(`2.3,51.05 4.2,50.3 6,49.5 7.6,49 7.6,47.6 6.8,46 7,45 7.6,44 7.6
 const PORTUGAL=P(`-8.85,41.87 -8.72,41.5 -8.75,41.15 -8.87,40.7 -8.9,40.3 -8.86,40.15 -9.2,39.6 -9.38,39.36 -9.5,38.78 -9.4,38.6 -8.9,38.52 -8.93,38.0 -8.97,37.5 -8.97,37.02 -8.5,37.05 -7.93,37.02 -7.42,37.19 -7.55,37.5 -7.66,37.64 -7.5,38.15 -7.16,38.88 -7.0,39.0 -7.3,39.3 -6.85,39.7 -6.9,40.15 -6.9,40.5 -6.85,41.0 -6.75,41.4 -6.75,41.8 -7.3,41.92 -8.1,41.9 -8.85,41.87`);
 const POLAND=P(`14.1,53.9 14.3,54.5 16.4,54.8 18.7,54.8 19.7,54.4 20.9,54.3 22.7,54.4 23.5,53.9 23.9,53.1 23.6,52.3 24.1,51.6 23.9,50.9 22.9,49.1 22.5,49.0 20.9,49.4 19.8,49.4 19.0,49.4 18.9,49.9 18.4,49.9 17.6,50.2 16.9,50.4 16.0,50.4 15.0,50.8 14.6,51.6 14.1,52.2 14.5,52.9`);
 const NORWAY=P(`5.0,58.0 5.3,59.0 5.0,60.3 5.9,61.0 6.8,62.1 7.0,62.8 8.0,63.0 9.0,63.7 10.0,63.0 10.7,63.5 11.3,64.5 12.0,65.5 13.0,66.3 14.0,67.0 14.5,67.9 16.0,68.5 17.5,69.0 19.0,69.7 20.5,69.9 21.0,70.1 23.0,70.3 25.5,71.0 28.0,70.5 29.9,69.7 29.0,69.0 27.0,68.6 25.0,67.0 23.5,65.9 23.0,64.0 21.3,63.0 20.1,62.0 18.0,61.0 16.5,60.6 14.5,60.0 12.5,59.0 11.9,59.0 11.0,58.9 9.0,58.1`);
+const SWITZERLAND=P(`6.1,46.2 6.0,46.6 6.5,47.1 7.0,47.45 7.6,47.6 8.2,47.6 8.6,47.65 9.0,47.6 9.5,47.55 9.6,47.3 9.6,47.05 9.9,46.85 10.5,46.5 10.0,46.2 9.2,46.0 8.95,45.85 8.3,46.15 7.7,45.95 7.0,45.85 6.8,45.9 6.3,46.0`);
 const SCOTLAND=P(`-2.0,55.77 -3.2,55.98 -2.8,56.2 -2.9,56.45 -2.2,56.85 -2.08,57.15 -1.78,57.5 -2.1,57.65 -2.5,57.7 -3.3,57.65 -4.0,57.6 -4.2,57.5 -3.9,58.0 -4.0,58.3 -4.6,58.55 -5.0,58.6 -4.75,58.57 -5.0,58.3 -5.3,58.1 -5.16,57.9 -5.6,57.6 -5.8,57.4 -5.7,57.1 -5.83,57.0 -5.6,56.85 -5.1,56.82 -5.3,56.6 -5.47,56.4 -5.6,56.1 -5.6,55.7 -5.6,55.4 -5.4,55.3 -4.9,55.4 -4.9,55.75 -4.6,55.95 -4.3,55.86 -4.75,55.6 -4.63,55.46 -4.9,55.1 -4.9,54.9 -4.3,54.85 -3.6,54.85 -2.5,55.3`);
 const IRELAND=P(`-6.24,53.35 -6.13,53.29 -6.03,52.98 -6.15,52.79 -6.46,52.34 -6.37,52.25 -6.95,52.17 -7.62,52.09 -7.85,51.95 -8.3,51.85 -8.53,51.70 -8.86,51.62 -9.82,51.45 -9.75,51.68 -9.58,51.80 -10.35,51.93 -10.47,52.12 -9.9,52.27 -9.65,52.58 -9.93,52.57 -9.7,53.1 -9.05,53.27 -9.9,53.45 -10.02,53.49 -10.15,53.97 -10.05,54.1 -8.6,54.27 -8.5,54.5 -8.68,54.63 -7.4,55.3 -7.3,55.05 -6.5,55.22 -6.15,55.22 -5.8,54.85 -5.7,54.65 -5.47,54.4 -5.57,54.37 -6.2,54.0 -6.25,53.9`);
 const DENMARK_J=P(`8.1,56.8 8.6,57.1 9.9,57.2 10.5,57.4 10.9,57.2 10.6,56.9 10.3,56.5 10.9,56.4 10.6,55.9 10.2,55.3 9.9,55.0 9.3,54.85 8.7,54.9 8.5,55.5 8.1,55.9 8.15,56.3`);
@@ -1219,6 +1220,7 @@ const FLAG_PATTERN={
   PL:{type:'hstripe',colors:['#FFFFFF','#DC143C']},
   IE:{type:'vstripe',colors:['#169B62','#FFFFFF','#FF883E']},
   SC:{type:'saltire',bg:'#0065BD',cross:'#FFFFFF',arm:.12},
+  CH:{type:'cross',offset:.5,arm:.14,cross:'#FFFFFF',bg:'#D52B1E'},
 };
 function flagColorAt(co,nx,ny){
   const f=FLAG_PATTERN[co];if(!f)return null;
@@ -1247,7 +1249,7 @@ function flagColorAt(co,nx,ny){
 }
 const LAND=[EURASIA,NAMER,SAMER,AFRICA,AUS,...ISLANDS,SICILY,SARDINIA,MALLORCA];
 /* ============ CONFIGURACIÓN / PAÍSES / MAPA ============ */
-const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC'];
+const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH'];
 /* Configuración de ligas congelada por partida: una partida solo puede ver/simular las ligas y divisiones
    que existían cuando se creó. Así añadir nuevas ligas al HTML no modifica partidas ya empezadas. */
 function captureLeagueConfig(){
@@ -1349,6 +1351,7 @@ const COUNTRIES={
    PL:{name:'Polonia',league:'Ekstraklasa',divs:['Ekstraklasa'],pin:[19.5,52.0],polys:[POLAND]},
    IE:{name:'República\nde Irlanda',league:'League of Ireland Premier Division',divs:['League of Ireland Premier Division'],pin:[-8.0,53.3],polys:[IRELAND]},
    SC:{name:'Escocia',league:'Scottish Premiership',divs:['Scottish Premiership'],pin:[-4.5,56.6],polys:[SCOTLAND]},
+   CH:{name:'Suiza',league:'Credit Suisse Super League',divs:['Credit Suisse Super League'],pin:[8.2,46.8],polys:[SWITZERLAND]},
    AE:{name:'Emiratos Árabes Unidos',league:'UAE Pro League',divs:['UAE Pro League'],pin:[55.7,24.2],polys:[]},
    GR:{name:'Grecia',league:'Super League Griega',divs:['Super League Griega','Super League Griega'],pin:[22.9,40.6],polys:[]},
    HU:{name:'Hungría',league:'NB I',divs:['NB I'],pin:[19.0,47.5],polys:[]},
@@ -1513,6 +1516,13 @@ K('FALK','Falkirk','Falkirk','Falkirk','SC','#1c3f94','#f4f4f4',44,1),K('HEMO','
 K('HIBE','Hibernian FC','Hibernian','Edimburgo','SC','#1c8f3f','#f4f4f4',52,1),K('KILM','Kilmarnock','Kilmarnock','Kilmarnock','SC','#1c3f94','#f4f4f4',46,1),
 K('MWEL','Motherwell','Motherwell','Motherwell','SC','#f2d31b','#8b1a1a',46,1),K('RNGR','Rangers','Rangers','Glasgow','SC','#1c3f94','#f4f4f4',64,1),
 K('SJOH','St. Johnstone','St Johnstone','Perth','SC','#1c3f94','#f4f4f4',44,1),K('SMIR','St. Mirren','St Mirren','Paisley','SC','#1a1a1a','#f4f4f4',44,1),
+/* Credit Suisse Super League (Suiza, división 1) */
+K('BASL','Basel','Basel','Basilea','CH','#d4192b','#f4f4f4',58,1),K('LUGA','FC Lugano','Lugano','Lugano','CH','#1a1a1a','#f4f4f4',50,1),
+K('WINT','Winterthur','Winterthur','Winterthur','CH','#d4192b','#1a1a1a',40,1),K('GRAS','Grasshopper','Grasshopper','Zúrich','CH','#1c3f94','#f4f4f4',46,1),
+K('LSNE','Lausanne Sports','Lausanne','Lausana','CH','#1c3f94','#f4f4f4',44,1),K('LUZN','Luzern','Luzern','Lucerna','CH','#f4f4f4','#003580',48,1),
+K('SRVT','Servette','Servette','Ginebra','CH','#8b1a1a','#f4f4f4',48,1),K('SION','Sion','Sion','Sion','CH','#d4192b','#f4f4f4',46,1),
+K('STGL','St. Gallen','St. Gallen','San Galo','CH','#0a8a4a','#f4f4f4',48,1),K('THUN','Thun','Thun','Thun','CH','#d4192b','#1a1a1a',42,1),
+K('YBOY','Young Boys','Young Boys','Berna','CH','#f2d31b','#1a1a1a',60,1),K('FCZH','Zurich','Zürich','Zúrich','CH','#1c3f94','#f4f4f4',52,1),
 ];
 const LEGACY=[/* destinos de cesion (Betclic 1. Liga y II liga, temporada 2026/27). Van aqui y no en CLUBS a proposito:
    leagueClubs() deriva las ligas de CLUBS, y meterlos crearia divisiones polacas ficticias. */
@@ -2050,7 +2060,10 @@ Object.assign(CITY,{
  'Dublín':{ll:[-6.26,53.35]},'Derry':{ll:[-7.31,54.99]},'Drogheda':{ll:[-6.35,53.72]},'Dundalk':{ll:[-6.40,54.00]},
  'Galway':{ll:[-9.05,53.27]},'Sligo':{ll:[-8.47,54.27]},'Waterford':{ll:[-7.11,52.26]},
  'Glasgow':{ll:[-4.25,55.86]},'Edimburgo':{ll:[-3.19,55.95]},'Aberdeen':{ll:[-2.10,57.15]},'Dundee':{ll:[-2.97,56.46]},
- 'Falkirk':{ll:[-3.78,56.00]},'Kilmarnock':{ll:[-4.50,55.61]},'Motherwell':{ll:[-3.99,55.79]},'Perth':{ll:[-3.43,56.40]},'Paisley':{ll:[-4.43,55.85]}
+ 'Falkirk':{ll:[-3.78,56.00]},'Kilmarnock':{ll:[-4.50,55.61]},'Motherwell':{ll:[-3.99,55.79]},'Perth':{ll:[-3.43,56.40]},'Paisley':{ll:[-4.43,55.85]},
+ 'Basilea':{ll:[7.59,47.56]},'Lugano':{ll:[8.95,46.00]},'Vaduz':{ll:[9.52,47.14]},'Zúrich':{ll:[8.54,47.37]},'Lausana':{ll:[6.63,46.52]},
+ 'Lucerna':{ll:[8.31,47.05]},'Ginebra':{ll:[6.14,46.20]},'Sion':{ll:[7.36,46.23]},'San Galo':{ll:[9.38,47.42]},'Thun':{ll:[7.63,46.76]},'Berna':{ll:[7.45,46.95]},
+ 'Winterthur':{ll:[8.72,47.50]}
 });
 const NAMES={
  ES:{f:['Álvaro','Iker','Dani','Sergio','Marcos','Adrián','Hugo','Jorge','Pablo','Rubén','Nacho','Óscar','Javi','Raúl','Iván','Unai','Mario','Ismael','Bruno','Lucas','Gonzalo','Aitor','Diego','Ángel'],l:['Moreno','Ortega','Vidal','Castro','Navarro','Santana','Ibáñez','Cordero','Lozano','Pastor','Ferrer','Bravo','Soler','Aranda','Quintana','Rojas','Mendoza','Salas','Cabrera','Herrera','Prieto','Campos','Villalba','Marín','Serrano']},
@@ -7204,7 +7217,7 @@ function realSquad(club){
     /* si el jugador real ya tendría la edad de retiro, se cubre su hueco con un juvenil generado
        (así los clubes regenerados nunca sacan jugadores de 40+ años) */
     if(age>=RETIRE_AGE)return mkPlayer(gen,club.id+'r'+i,r[1],clamp(Math.round(repOf(club.id)-14+gen()*10),42,80),17+Math.floor(gen()*3),c0?c0.co:'ES',used,club.id);
-    const p={id:club.id+i,n:r[0],nat:r[3],pos:r[1],age,ovr:r[4],pot:youngPotOf(age,r[4],r[5],club.id+'_'+r[0]),en:100,inj:0,g:0,ap:0,real:1};
+    const p={id:club.id+'_'+i,n:r[0],nat:r[3],pos:r[1],age,ovr:r[4],pot:youngPotOf(age,r[4],r[5],club.id+'_'+r[0]),en:100,inj:0,g:0,ap:0,real:1};
     p.val=r[6]!=null?r[6]:calcVal(p);
     p.wage=(club.div===5||club.div===6)?Math.max(r[7]||0,calcWage(p)):(r[7]!=null?r[7]:Math.round(p.val*4));
     if(r[8])p.pp=r[8].split('/');p.at=fixAt(p,REAL_ATTR[p.n]);const ph=photoFor(p.n,club.id);if(ph)p.photo=ph;if(club.id==='ATH')p.eus=1;return p;
@@ -10680,10 +10693,17 @@ function buildRawFixtures(ids,r){
 /* número de "vueltas dobles" (ida+vuelta) que juega cada liga; 1 = formato estándar. La Premier Division
    irlandesa juega contra cada rival 4 veces (2 vueltas dobles) en vez de las 2 habituales. */
 const MULTI_ROUND={IE1:2};
+/* ligas que, además de la vuelta doble (ida+vuelta) estándar, juegan una vuelta sencilla extra: la
+   Super League suiza se juega a triple vuelta (33 jornadas con 12 equipos = 22 + 11) antes del split. */
+const EXTRA_LEG={CH1:true};
 function multiFixtures(key,ids,r){
   let out=makeFixtures(ids,r);
   const mult=MULTI_ROUND[key]||1;
   for(let i=1;i<mult;i++)out=out.concat(makeFixtures(ids,r));
+  if(EXTRA_LEG[key]){
+    const raw=buildRawFixtures(ids,r);
+    out=out.concat(raw.slice(0,ids.length-1));
+  }
   return out;
 }
 function makeFixtures(ids,r){
@@ -10698,11 +10718,22 @@ function makeFixtures(ids,r){
   return best.all;
 }
 /* ---- Ligas con split: fase regular y después dos grupos (campeonato / descenso). Dinamarca ---- */
-const SPLITS={DK1:{size:12,reg:22,top:6,upper:'Grupo Campeonato',lower:'Grupo Descenso'}};
+const SPLITS={DK1:{size:12,reg:22,top:6,upper:'Grupo Campeonato',lower:'Grupo Descenso'},CH1:{size:12,reg:33,top:6,upper:'Grupo Campeonato',lower:'Grupo Descenso'}};
 const DK_TITLE='#49CB2B',DK_REL='#FCA6A1';
+/* ligas cuyo split juega solo una vuelta sencilla dentro de cada grupo (5 jornadas con 6 equipos) en vez de
+   ida y vuelta completa como Dinamarca (10 jornadas) */
+const SPLIT_SINGLE_LEG={CH1:true};
 /* emparejamientos de cada grupo (ida y vuelta dentro del grupo) fusionados jornada a jornada */
 function buildSplitFx(top,bot,seedStr){
   const rt=buildRawFixtures(top.slice(),rng(hashStr(seedStr+'|T'))),rb=buildRawFixtures(bot.slice(),rng(hashStr(seedStr+'|B')));
+  const n=Math.max(rt.length,rb.length),out=[];
+  for(let i=0;i<n;i++)out.push([...(rt[i]||[]),...(rb[i]||[])]);
+  return out;
+}
+/* variante a vuelta sencilla: cada equipo del grupo se enfrenta una sola vez a cada rival del mismo grupo */
+function buildSplitFxSingle(top,bot,seedStr){
+  const rt=buildRawFixtures(top.slice(),rng(hashStr(seedStr+'|T'))).slice(0,Math.max(0,top.length-1));
+  const rb=buildRawFixtures(bot.slice(),rng(hashStr(seedStr+'|B'))).slice(0,Math.max(0,bot.length-1));
   const n=Math.max(rt.length,rb.length),out=[];
   for(let i=0;i<n;i++)out.push([...(rt[i]||[]),...(rb[i]||[])]);
   return out;
@@ -10712,7 +10743,8 @@ function splitIfDue(fx,tb,key,r){
   const cfg=SPLITS[key];if(!cfg||r!==cfg.reg)return null;
   const st=sortTable(tb);if(st.length!==cfg.size)return null;
   const top=st.slice(0,cfg.top).map(x=>x.id),bot=st.slice(cfg.top).map(x=>x.id);
-  buildSplitFx(top,bot,'split|'+key+'|'+state.seed+'|'+state.season).forEach(rd=>fx.push(rd));
+  const builder=SPLIT_SINGLE_LEG[key]?buildSplitFxSingle:buildSplitFx;
+  builder(top,bot,'split|'+key+'|'+state.seed+'|'+state.season).forEach(rd=>fx.push(rd));
   return{top,bot};
 }
 const emptyTable=ids=>Object.fromEntries(ids.map(id=>[id,{p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}]));
@@ -10938,7 +10970,7 @@ function bqSurname(w){
 const isBasqueName=n=>normTxt(n).split(' ').some(w=>BQ_F.has(w)||bqSurname(w));
 /* jugador vasco: nombre o apellido vasco (y español o francés, para no contar a un extranjero con un nombre parecido);
    eus=1 lo marca como vasco de origen (plantilla real del Athletic, cantera vasca) */
-const isBasque=p=>!!p&&(p.eus===1||/^ATH\d+$/.test(String(p.id))||((p.nat==='ES'||p.nat==='FR')&&isBasqueName(p.n)));
+const isBasque=p=>!!p&&(p.eus===1||/^ATH_?\d+$/.test(String(p.id))||((p.nat==='ES'||p.nat==='FR')&&isBasqueName(p.n)));
 /* Athletic Club solo ficha jugadores vascos: no puede comprar ni recibir cedidos a quien no lo sea
    (los de su plantilla real, ids ATH1, ATH2..., cuentan como vascos aunque su nombre no lo parezca) */
 const BASQUE_ONLY=new Set(['ATH','BIL']);   /* Athletic y su filial: solo fichan jugadores vascos */
@@ -10947,10 +10979,10 @@ const signBlock=p=>state&&BASQUE_ONLY.has(state.club)&&!isBasque(p)?`${cname(sta
 const mktPrice=p=>Math.round(p.val*(1.05+rng(hashStr('pr'+p.id+'|'+state.seed))()*.3)*10)/10;
 /* siempre se recorren todos los clubes del juego (con o sin filtros), así aparecen absolutamente todos los jugadores y se pagina entre todos */
 function mktEntries(f){
-  const out=[],wk=mktWk(),fam=state.fam?state.fam.id:null;
+  const out=[],wk=mktWk(),fams=new Set(famIds());
   CLUBS.forEach(c=>{
     if(!gameClub(c))return;
-    if((f.country!=='ALL'&&c.co!==f.country)||c.id===state.club||c.id===fam)return;
+    if((f.country!=='ALL'&&c.co!==f.country)||c.id===state.club||fams.has(c.id))return;
     if(f.league!=='ALL'&&c.co+(c.div||1)!==f.league)return;
     if(f.team!=='ALL'&&c.id!==f.team)return;
     const sq=squadFor(c.id);if(sq.length<=18)return;
@@ -10965,11 +10997,11 @@ function mktEntries(f){
 }
 const MKT_POS=[['Porteros',[['POR','Portero (POR)']]],['Defensas',[['LI','Lateral izquierdo (LI)'],['DFC','Defensa central (DFC)'],['LD','Lateral derecho (LD)']]],['Centrocampistas',[['MCD','Mediocentro defensivo (MCD)'],['MC','Mediocentro (MC)'],['MCO','Mediapunta (MCO)'],['MI','Medio izquierdo (MI)'],['MD','Medio derecho (MD)']]],['Delanteros',[['EI','Extremo izquierdo (EI)'],['ED','Extremo derecho (ED)'],['DC','Delantero centro (DC)']]]];
 function mktSheetHTML(){
-  const f=ui.mkt,fam=state.fam?state.fam.id:null;
+  const f=ui.mkt,fams=new Set(famIds());
   /* país de la liga -> liga -> equipo: cada nivel solo se activa cuando se ha elegido el anterior */
   const countries=gamePlayable().filter(c=>CLUBS.some(x=>x.co===c));
   const leagues=f.country==='ALL'?[]:COUNTRIES[f.country].divs.map((n,i)=>[f.country+(i+1),n,i+1]).filter(([k,n,d])=>CLUBS.some(x=>x.co===f.country&&(x.div||1)===d)&&k!=='PT2');
-  const teamOpts=f.league==='ALL'?[]:CLUBS.filter(x=>gameClub(x)&&x.co+(x.div||1)===f.league&&x.id!==state.club&&x.id!==fam).map(x=>x.id).sort((a,b)=>cname(a).localeCompare(cname(b)));
+  const teamOpts=f.league==='ALL'?[]:CLUBS.filter(x=>gameClub(x)&&x.co+(x.div||1)===f.league&&x.id!==state.club&&!fams.has(x.id)).map(x=>x.id).sort((a,b)=>cname(a).localeCompare(cname(b)));
   const nats=[...new Set(state.market.map(p=>p.nat).filter(Boolean).concat(f.country==='ALL'&&!f.q?[]:mktEntries(Object.assign({},f,{nat:'ALL'})).map(e=>e.p.nat).filter(Boolean)))].sort((a,b)=>(NATNAME[a]||a).localeCompare(NATNAME[b]||b));
   const opts=(o,cur)=>o.map(([v,l])=>`<option value="${v}"${v===cur?' selected':''}>${esc(l)}</option>`).join('');
   const sel=(k,o,cur,dis)=>`<select data-mkt="${k}"${dis?' disabled':''}>${opts(o,cur)}</select>`;
@@ -11130,7 +11162,7 @@ function planPlayoffs(){
     d6.forEach((id,i)=>po.esf.down.push({id,to:9+Math.floor(i/2)}));
     /* proyección de la división de cada primer equipo tras los movimientos ya planificados, para el techo de filiales */
     const proj={};
-    if(po.rf)po.rf.down2.forEach(id=>{proj[id]=5});
+    if(po.rf){po.rf.down2.forEach(id=>{proj[id]=5});po.rf.up.forEach(id=>{proj[id]=2})}
     po.esf.down.forEach(x=>{proj[x.id]=x.to});
     const pDiv=id=>proj[id]!=null?proj[id]:(CLUBBY[id]?CLUBBY[id].div:BASE_DIV[id]);
     const canUp=(id,to)=>(!isB(id))||(()=>{const pid=FAMILY[id];if(!pid||!CLUBBY[pid])return true;return TIER_OF(to)>=TIER_OF(pDiv(pid))+1})();
@@ -11378,10 +11410,13 @@ function applyMoves(){
 function fixBTeams(){
   const nd=id=>state.divs[id]!=null?state.divs[id]:CLUBBY[id].div;
   const cancelRel=(tier,co,except)=>{for(const id in state.divs){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co)continue;if(TIER_OF(c.div)===tier&&TIER_OF(state.divs[id])>tier){delete state.divs[id];return true}}return false};
-  /* cuando el filial ya está en el último escalón y no puede bajar más (p. ej. Segunda Federación, que no
-     tiene categoría inferior), en vez de bajarlo se evita que el PRIMER EQUIPO descienda a esa categoría,
-     y para no descuadrar el número de equipos baja en su lugar otro club de esa misma categoría y país que
-     se hubiera salvado (mismo mecanismo que cancelRel, pero en sentido inverso). */
+  /* último equipo que se salvó (el que marca justo el límite de la permanencia) del grupo `div`: el mejor
+     clasificado de la tabla que no desciende y que todavía no se ha movido en el reparto. */
+  const lastSaved=(co,div,except)=>{let o=[];try{o=poOrder(co,div)}catch(e){o=[]}
+    if(!o.length)return null;
+    const down=new Set(((state.po&&state.po.esf&&state.po.esf.down)||[]).map(x=>x.id));
+    for(let i=o.length-1;i>=0;i--){const x=o[i];if(x===except||isB(x))continue;if(down.has(x))continue;if(state.divs[x]!=null)continue;return x}
+    return null};
   const pushDown=(tier,co,target,except)=>{for(const id in CLUBBY){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co||isB(id))continue;if(state.divs[id]!=null)continue;if(TIER_OF(c.div)===tier){state.divs[id]=target;return true}}return false};
   for(let pass=0;pass<5;pass++){
     let changed=false;
@@ -11391,16 +11426,22 @@ function fixBTeams(){
          en otros países (p. ej. los U21/B ingleses, que además son solo destinos de cesión) no aplica y
          llegaba a borrar ascensos/descensos ajenos. */
       if(CLUBBY[id].co!=='ES')continue;
-      /* si el primer equipo ya está en la categoría más baja (Segunda Federación, tier 4), su filial no tiene
-         categoría inferior donde competir: se deja fuera de las ligas en vez de meterlo en un grupo */
-      if(TIER_OF(nd(pid))===4)continue;
       const fd=nd(id),pd=nd(pid),co=CLUBBY[id].co;
       if(TIER_OF(fd)<=TIER_OF(pd)){
         const tt=Math.min(TIER_OF(pd)+1,4),ttCands=(TIERS[tt]||[]).filter(d=>d!==pd),target=ttCands.length?smallestGroup(ttCands):undefined;
         if(target&&TIER_OF(fd)<tt){cancelRel(TIER_OF(fd),co,id);state.divs[id]=target;changed=true}
         else{
+          /* el filial ya está en la última categoría (Segunda Federación) y no puede bajar más. Si el primer
+             equipo ha descendido hasta esa categoría, se anula su descenso y baja en su lugar el último equipo
+             que se había salvado (el que marca justo el límite de la permanencia) de su grupo. Solo aplica si
+             el primer equipo realmente venía de descender: si ya estaba ahí, no hay nada que anular. */
+          const descended=state.divs[pid]!=null&&TIER_OF(state.divs[pid])>TIER_OF(CLUBBY[pid].div);
+          if(!descended)continue;
           const pt=CLUBBY[pid].div,ptCands=(TIERS[Math.min(TIER_OF(pt)+1,4)]||[]).filter(d=>d!==pt),ptarget=ptCands.length?smallestGroup(ptCands):undefined;
-          if(ptarget&&pushDown(TIER_OF(pt),co,ptarget,pid)){delete state.divs[pid];changed=true}
+          if(!ptarget)continue;
+          const repl=lastSaved(co,pt,pid);
+          if(repl){state.divs[repl]=ptarget;delete state.divs[pid];changed=true}
+          else if(pushDown(TIER_OF(pt),co,ptarget,pid)){delete state.divs[pid];changed=true}
         }
       }
     }
@@ -11418,11 +11459,11 @@ function archiveSquads(){
   const arch=state.squadArchive||{};
   const put=(id,pl)=>{if(id&&pl&&pl.length)arch[id]=pl.slice()};
   Object.keys(state.teams).forEach(id=>put(id,state.teams[id].players));
-  if(state.fam&&state.fam.id)put(state.fam.id,state.fam.players);
+  famList().forEach(f=>{if(f.id)put(f.id,f.players)});
   /* el archivo se limita a un máximo de plantillas para que el guardado no crezca sin control con los ascensos */
   const keys=Object.keys(arch);
   if(keys.length>SQUAD_ARCHIVE_MAX){
-    const live=new Set(Object.keys(state.teams).concat(state.fam&&state.fam.id?[state.fam.id]:[]));
+    const live=new Set(Object.keys(state.teams).concat(famIds()));
     const rest=keys.filter(k=>!live.has(k)).sort();
     while(Object.keys(arch).length>SQUAD_ARCHIVE_MAX&&rest.length)delete arch[rest.shift()];
   }
@@ -11438,7 +11479,7 @@ function syncLeague(){
     /* un club que vuelve a la liga no recupera a jugadores que ya juegan en otro equipo (fichajes, cesiones) */
     const c=CLUBBY[id];
     /* el propio filial juega en la liga con la plantilla de la familia (misma referencia), no con una generada */
-    let pl=state.fam&&state.fam.id===id?state.fam.players:null;
+    const _f=famOf(id);let pl=_f?_f.players:null;
     if(!pl){
       const taken=new Set();Object.values(state.teams).forEach(T=>T.players.forEach(p=>taken.add(p.id)));
       (state.loansAbroad||[]).forEach(l=>taken.add(l.p.id));(state.loansOut||[]).forEach(l=>taken.add(l.p.id));
@@ -11536,14 +11577,14 @@ function newSeason(){
   /* se guardan las plantillas ya evolucionadas ANTES de que applyMoves/syncLeague cambien los miembros de la liga,
      para que ningún club pierda los GRL ganados al ascender o bajar de división */
   archiveSquads();
-  if(state.fam){
-    const aged=state.fam.players.map(p=>ageUp(p,r)).filter(Boolean);
-    state.fam.players=aged;
+  famList().forEach(f=>{
+    const aged=f.players.map(p=>ageUp(p,r)).filter(Boolean);
+    f.players=aged;
     aged.filter(p=>p.age>23&&!p.list).forEach(p=>{
       p.list=true;genOfferFor(p,true);genOfferFor(p,true);
-      news(`${p.n} cumple ${p.age} años y supera la edad límite del filial de ${cname(state.fam.id)}: decide si lo subes al primer equipo, lo vendes o lo cedes.`);
+      news(`${p.n} cumple ${p.age} años y supera la edad límite del filial de ${cname(f.id)}: decide si lo subes al primer equipo, lo vendes o lo cedes.`);
     });
-  }
+  });
   /* el guardado no puede crecer sin límite: se recorta el historial de los jugadores simulados (miles por temporada). */
   pruneLiteHist();
   state.academy=(state.academy||[]).filter(p=>{p.age++;return p.age<=19});
@@ -11552,7 +11593,8 @@ function newSeason(){
   state.season++;state.week=0;state.phase='play';state.famPromo=0;
   state.fixtures=multiFixtures(state.country+state.div,Object.keys(state.teams),r);state.table=emptyTable(Object.keys(state.teams));state.split=null;
   /* ingresos de los rivales: cada temporada recuperan parte de su presupuesto para poder seguir fichando */
-  Object.keys(state.teams).forEach(id=>{if(id===state.club||(state.fam&&state.fam.id===id))return;const T=state.teams[id],base=budgetFor(CLUBBY[id]);T.budget=r1(Math.min(base*1.8,T.budget+Math.max(3,base*.45)))});
+  const famIdSet=new Set(famIds());
+  Object.keys(state.teams).forEach(id=>{if(id===state.club||famIdSet.has(id))return;const T=state.teams[id],base=budgetFor(CLUBBY[id]);T.budget=r1(Math.min(base*1.8,T.budget+Math.max(3,base*.45)))});
   aiMarket('summer');aiIdle('summer');aiPoach('summer');aiYouth('summer');
   state.market=genMarket();
   initWorld();
@@ -11587,8 +11629,8 @@ function mgrRating(){
 /* genera entre 1 y 3 ofertas para ser entrenador de otro club, mas probables cuanto mas cerca esta su reputacion
    de tu nivel actual (mgrRating); un club muy por encima de tu palmares casi nunca llama a tu puerta */
 function genJobOffers(){
-  const mr=mgrRating(),mine=state.club,famId=state.fam&&state.fam.id;
-  const cand=CLUBS.filter(c=>gameClub(c)&&c.id!==mine&&c.id!==famId&&!isB(c.id)&&gamePlayable().includes(c.co));
+  const mr=mgrRating(),mine=state.club,famIdSet=new Set(famIds());
+  const cand=CLUBS.filter(c=>gameClub(c)&&c.id!==mine&&!famIdSet.has(c.id)&&!isB(c.id)&&gamePlayable().includes(c.co));
   const r=rng(hashStr('jobs'+state.seed+'_'+state.season));
   let ws=cand.map(c=>{const diff=repOf(c.id)-mr;return Math.exp(-Math.abs(diff)/9)*(diff>6?.25:1)});
   const n=Math.min(cand.length,1+Math.floor(r()*3));
@@ -11655,7 +11697,7 @@ function worldBrowserSheet(co){
   }
   const clubs=CLUBS.filter(c=>gameClub(c)&&c.co===co).sort((a,b)=>a.div-b.div||repOf(b.id)-repOf(a.id));
   const rows=clubs.map(c=>{
-    const mine=c.id===state.club,fam=state.fam&&state.fam.id===c.id,canApply=!mine&&!fam&&!isB(c.id);
+    const mine=c.id===state.club,fam=!!famOf(c.id),canApply=!mine&&!fam&&!isB(c.id);
     return`<div class="mrow" style="grid-template-columns:26px 1fr auto">${crestHTML(c,26)}<span class="pname">${esc(c.name)}<small>${esc(divName(c.co,c.div))}</small><small>${starsFracHTML(xiAvgOvr(previewTeam(c.id)))} ${xiAvgOvr(previewTeam(c.id))}</small></span>${mine?'<span class="muted-s">Tu club</span>':canApply?`<button class="btn ghost sm" data-act="wb-apply" data-id="${c.id}">Solicitar</button>`:''}</div>`;
   }).join('');
   openSheet(`<div class="res-top"><h3>${flagHTML(co)} ${esc((COUNTRIES[co]&&COUNTRIES[co].name)||NATNAME[co]||co)}</h3></div><div class="res-scroll">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="wb-list">Otro país</button><button class="btn primary" data-act="wb-back">Volver a las ofertas</button></div>`);
@@ -11771,10 +11813,14 @@ function sellPlayer(id){
 const fmtM=v=>{const s=v<0?'-':'',a=Math.abs(v);return s+'€'+(a<1?Math.round(a*1000)+'K':(a>=100?Math.round(a):a.toFixed(1))+'M')};
 
 /* ===================== filiales, ofertas y cesiones ===================== */
-const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'GRAB',GRAB:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMC',RMC:'RMA',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL',FAM:'FAMB',FAMB:'FAM',GIL:'GILB',GILB:'GIL',MAR:'MARB',MARB:'MAR',MOR:'MORB',MORB:'MOR',RAVE:'RAVEB',RAVEB:'RAVE',VIT:'VITB',VITB:'VIT',JUV:'JNG',JNG:'JUV',AJA:'JAJ',JAJ:'AJA',AZA:'AZB',AZB:'AZA',FEY:'FEYB',FEYB:'FEY',FCP:'FCPB',FCPB:'FCP',UTR:'UTRB',UTRB:'UTR',MUN:'MUNB',MUNB:'MUN',AVL:'AVLB',AVLB:'AVL',CHE:'CHEB',CHEB:'CHE',MER:'MERB',MERB:'MER',BARA:'BARAB',BARAB:'BARA',ZAR:'ZARB',ZARB:'ZAR',LPA:'LPAB',LPAB:'LPA',VAL:'VALB',VALB:'VAL',NAS:'NASB',NASB:'NAS',DEP:'FAB',FAB:'DEP',AVIL:'AVILB',AVILB:'AVIL',FER:'SOM',SOM:'FER',PONV:'PONVB',PONVB:'PONV',PON:'PONB',PONB:'PON',MIR:'MIRB',MIRB:'MIR',CUL:'JUP',JUP:'CUL',OSA:'OSAP',OSAP:'OSA',LOG:'LOGB',LOGB:'LOG',UNI:'UNIB',UNIB:'UNI',RMU:'MURI',MURI:'RMU',LEV:'LEVB',LEVB:'LEV',CAD:'CADM',CADM:'CAD',MOL:'MOLB',MOLB:'MOL',SDLO:'CENI',CENI:'SDLO',POB:'POBB',POBB:'POB',SANL:'SANLB',SANLB:'SANL',ATBA:'ATBAB',ATBAB:'ATBA',NUC:'NUCB',NUCB:'NUC',MAL:'MALB',MALB:'MAL',ALC:'ALCB',ALCB:'ALC'};
+const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'GRAB',GRAB:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMC',RMC:'RMA',RMC3:'RMC',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL',FAM:'FAMB',FAMB:'FAM',GIL:'GILB',GILB:'GIL',MAR:'MARB',MARB:'MAR',MOR:'MORB',MORB:'MOR',RAVE:'RAVEB',RAVEB:'RAVE',VIT:'VITB',VITB:'VIT',JUV:'JNG',JNG:'JUV',AJA:'JAJ',JAJ:'AJA',AZA:'AZB',AZB:'AZA',FEY:'FEYB',FEYB:'FEY',FCP:'FCPB',FCPB:'FCP',UTR:'UTRB',UTRB:'UTR',MUN:'MUNB',MUNB:'MUN',AVL:'AVLB',AVLB:'AVL',CHE:'CHEB',CHEB:'CHE',MER:'MERB',MERB:'MER',BARA:'BARAB',BARAB:'BARA',ZAR:'ZARB',ZARB:'ZAR',LPA:'LPAB',LPAB:'LPA',VAL:'VALB',VALB:'VAL',NAS:'NASB',NASB:'NAS',DEP:'FAB',FAB:'DEP',AVIL:'AVILB',AVILB:'AVIL',FER:'SOM',SOM:'FER',PONV:'PONVB',PONVB:'PONV',PON:'PONB',PONB:'PON',MIR:'MIRB',MIRB:'MIR',CUL:'JUP',JUP:'CUL',OSA:'OSAP',OSAP:'OSA',LOG:'LOGB',LOGB:'LOG',UNI:'UNIB',UNIB:'UNI',RMU:'MURI',MURI:'RMU',LEV:'LEVB',LEVB:'LEV',CAD:'CADM',CADM:'CAD',MOL:'MOLB',MOLB:'MOL',SDLO:'CENI',CENI:'SDLO',POB:'POBB',POBB:'POB',SANL:'SANLB',SANLB:'SANL',ATBA:'ATBAB',ATBAB:'ATBA',NUC:'NUCB',NUCB:'NUC',MAL:'MALB',MALB:'MAL',ALC:'ALCB',ALCB:'ALC'};
 /* los filiales sin escudo propio usan el del primer equipo */
 Object.keys(CLUBBY).forEach(id=>{if(!CLUBBY[id].logo){const p=FAMILY[id];if(p&&CLUBBY[p]&&CLUBBY[p].logo)CLUBBY[id].logo=CLUBBY[p].logo}});
 const isB=id=>id==='RSB'||id==='CFO'||!!(CLUBBY[id]&&CLUBBY[id].bTeam);
+/* filiales directos (hijos) de un club dentro de FAMILY */
+function famChildren(id){const out=[];for(const k in FAMILY)if(FAMILY[k]===id&&CLUBBY[k]&&isB(k))out.push(k);return out}
+/* cadena de filiales por debajo de un club, de más cercano a más lejano (B, C, ...) */
+function filialDescendants(id){const out=[],q=[id];while(q.length){const x=q.shift();for(const y of famChildren(x)){out.push(y);q.push(y)}}return out}
 /* crea (si hace falta) el club B de un primer equipo "pid" y lo registra en CLUBBY/FAMILY; el filial siempre hereda el escudo del primer equipo salvo que ya tenga uno propio */
 function makeBTeam(pid){
   const c=CLUBBY[pid];if(!c)return null;
@@ -11803,7 +11849,11 @@ function filialFor(id){
   return makeBTeam(id);
 }
 /* ============ FILIAL / JUVENILES ============ */
-function initFam(){const f=filialFor(state.club);state.fam=f&&CLUBBY[f]?{id:f,players:genSquad(CLUBBY[f],state.seed)}:null;state.loansOut=[]}
+function initFam(){const ds=filialDescendants(state.club);state.fam=ds[0]&&CLUBBY[ds[0]]?{id:ds[0],players:genSquad(CLUBBY[ds[0]],state.seed)}:null;state.fam2=ds[1]&&CLUBBY[ds[1]]?{id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)}:null;state.loansOut=[]}
+/* filiales gestionables del club del usuario (B, C...), con su plantilla real */
+const famList=()=>[state.fam,state.fam2].filter(Boolean);
+const famIds=()=>famList().map(f=>f.id);
+const famOf=id=>famList().find(f=>f.id===id);
 /* ===================== instalaciones y academia (niveles 1-15) ===================== */
 const FAC_MAX=15,ACAD_EVERY=8;
 const FAC_NAME={train:'Instalaciones de entrenamiento',acad:'Academia de juveniles',zone:'Zona del club'};
@@ -11862,7 +11912,7 @@ const AI_MAXSQ=40;
 /* ============ IA DE MERCADO (OFERTAS / FICHAJES) ============ */
 function aiMarket(kind){
   if(!state)return;
-  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!(state.fam&&state.fam.id===id));
+  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!famOf(id));
   if(ids.length<2)return;
   state.loansAbroad=state.loansAbroad||[];state.loans=state.loans||[];state.gone=state.gone||{};
   const cnt=id=>{const c={GK:0,DF:0,MD:0,FW:0};state.teams[id].players.forEach(p=>c[p.pos]++);return c};
@@ -11954,7 +12004,7 @@ function aiMarket(kind){
    Solo sobran los que exceden la plantilla ideal de su posición (los jóvenes con mucho potencial se quedan a formarse), y como mucho 3 por equipo y ventana. */
 function aiIdle(kind){
   if(!state||kind==='start')return;
-  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!(state.fam&&state.fam.id===id));
+  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!famOf(id));
   if(ids.length<2)return;
   state.loans=state.loans||[];state.loansAbroad=state.loansAbroad||[];
   const cnt=id=>{const c={GK:0,DF:0,MD:0,FW:0};state.teams[id].players.forEach(p=>c[p.pos]++);return c};
@@ -12014,7 +12064,7 @@ function aiFillMin(id){
 }
 function aiPoach(kind){
   if(!state)return;
-  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!(state.fam&&state.fam.id===id));
+  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!famOf(id));
   if(ids.length<2)return;
   state.arrivals=state.arrivals||{};state.gone=state.gone||{};
   const avgTop=T=>{const o=T.players.map(p=>p.ovr).sort((a,b)=>b-a).slice(0,11);return o.reduce((a,b)=>a+b,0)/Math.max(1,o.length)};
@@ -12053,7 +12103,7 @@ function aiPoach(kind){
     }
   });
   /* salidas y entradas con clubes de otras ligas */
-  const outside=Object.keys(CLUBBY).filter(id=>!state.teams[id]&&id!==state.club&&!(state.fam&&state.fam.id===id)&&!isB(id));
+  const outside=Object.keys(CLUBBY).filter(id=>!state.teams[id]&&id!==state.club&&!famOf(id)&&!isB(id));
   ids.forEach(sid=>{
     const S=state.teams[sid],sc=CLUBBY[sid];
     if(S.players.length<=21||Math.random()>=(kind==='winter'?.08:.22))return;
@@ -12084,7 +12134,7 @@ function aiPoach(kind){
    Prefieren cubrir las posiciones en las que van cortos. */
 function aiYouth(kind){
   if(!state)return;
-  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!(state.fam&&state.fam.id===id));
+  const ids=Object.keys(state.teams).filter(id=>id!==state.club&&!famOf(id));
   const notable=[];
   ids.forEach(id=>{
     const T=state.teams[id],club=CLUBBY[id],L=facLevels(id).acad;
@@ -12142,7 +12192,7 @@ function loanInterest(){
    Mientras tanto entrena los atributos de ese puesto y va rindiendo mejor en él. Al acabar, pasa a ser una posición aprendida (sin penalización). */
 const POSNAME=Object.fromEntries(MKT_POS.flatMap(g=>g[1].map(([k,v])=>[k,v.replace(/ \(.*\)$/,'')])));
 const trainSlots=()=>1+Math.floor((state.fac?state.fac.train:1)/4);
-const trainees=()=>me().players.concat(state.fam?state.fam.players:[]).filter(p=>p.tr);
+const trainees=()=>me().players.concat(...famList().map(f=>f.players)).filter(p=>p.tr);
 function trainWeeks(p,pos){
   let sim=0;ppOf(p).forEach(q=>{sim=Math.max(sim,simPos(q,pos))});
   const base=sim>=.92?6:sim>=.85?10:sim>=.75?16:24,L=state.fac?state.fac.train:1;
@@ -12150,7 +12200,7 @@ function trainWeeks(p,pos){
   return Math.max(3,Math.round(w));
 }
 function startPosTraining(pid,pos){
-  const p=me().players.concat(state.fam?state.fam.players:[]).find(x=>x.id===pid);
+  const p=me().players.concat(...famList().map(f=>f.players)).find(x=>x.id===pid);
   if(!p)return'No se encuentra al jugador.';
   if(p.pos==='GK'||pos==='POR'||!POS_ATTR[pos])return'Los porteros no aprenden posiciones de campo, ni al revés.';
   if(p.loanIn)return p.famDown?'Un jugador del primer equipo no puede entrenar una posición.':'Un jugador cedido no puede entrenar una posición.';
@@ -12182,7 +12232,7 @@ function positionTick(){
 /* hoja: elegir la posición que aprenderá el jugador abierto desde su ficha (ui.pt={pid,pos}) */
 function ptSheetHTML(){
   const st=ui.pt||{};
-  const p=me().players.concat(state.fam?state.fam.players:[]).find(x=>x.id===st.pid);if(!p)return'<p>Jugador no disponible.</p>';
+  const p=me().players.concat(...famList().map(f=>f.players)).find(x=>x.id===st.pid);if(!p)return'<p>Jugador no disponible.</p>';
   const learned=ppOf(p),opts=Object.keys(POS_ATTR).filter(q=>!learned.includes(q));
   const sel=st.pos;
   const list=opts.map(q=>{const w=trainWeeks(p,q),pen=Math.round((1-Math.pow(Math.max(...learned.map(l=>simPos(l,q))),OUT_EXP))*100);
@@ -12203,7 +12253,7 @@ function progressTick(r){
   const list=[],seen=new Set(),add=(p,tid)=>{if(!seen.has(p.id)){seen.add(p.id);list.push({p,tid})}};
   for(const id in state.teams)state.teams[id].players.forEach(p=>add(p,id));
   (state.loansOut||[]).forEach(l=>add(l.p,state.club));
-  if(state.fam)state.fam.players.forEach(p=>add(p,state.fam.id));
+  famList().forEach(f=>f.players.forEach(p=>add(p,f.id)));
   (state.loansAbroad||[]).forEach(l=>add(l.p,l.from));
   const ch=[];
   list.forEach(({p,tid})=>{
@@ -12295,7 +12345,11 @@ function ensureState(){
   if(state.phase==='end'&&!state.po)setupPlayoffs();
   if(!state.fac){state.fac=facLevels(state.club);state.works=[];state.academy=[];state.acadIn=ACAD_EVERY}
   if(!me().bench)me().bench=autoBench(me());
-  if(!state.fam){const f=filialFor(state.club);state.fam=f&&CLUBBY[f]?{id:f,players:genSquad(CLUBBY[f],state.seed)}:null;if(state.fam&&state.teams[state.fam.id])state.teams[state.fam.id].players=state.fam.players}
+  if(!state.fam||!state.fam2){const ds=filialDescendants(state.club);
+    if(!state.fam&&ds[0]&&CLUBBY[ds[0]])state.fam={id:ds[0],players:genSquad(CLUBBY[ds[0]],state.seed)};
+    if(!state.fam2&&ds[1]&&CLUBBY[ds[1]])state.fam2={id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)};
+    if(state.fam&&state.teams[state.fam.id])state.teams[state.fam.id].players=state.fam.players;
+  }
   if(!state.loansOut)state.loansOut=[];
   if(!state.loans)state.loans=[];
   /* partidas creadas por versiones anteriores podían guardar GRL o potencial con decimales (p. ej. POT 80.8):
@@ -12303,7 +12357,7 @@ function ensureState(){
   const rNum=p=>{if(!p)return;if(typeof p.ovr==='number')p.ovr=Math.round(p.ovr);if(typeof p.pot==='number')p.pot=Math.round(p.pot);if(typeof p.potReal==='number')p.potReal=Math.round(p.potReal)};
   Object.values(state.teams||{}).forEach(T=>(T.players||[]).forEach(rNum));
   (state.academy||[]).forEach(rNum);
-  if(state.fam&&state.fam.players)state.fam.players.forEach(rNum);
+  famList().forEach(f=>f.players&&f.players.forEach(rNum));
   (state.market||[]).forEach(rNum);
   ['loans','loansOut','loansAbroad'].forEach(k=>(state[k]||[]).forEach(l=>rNum(l&&l.p)));
   Object.values(state.arrivals||{}).forEach(a=>(a||[]).forEach(rNum));
@@ -12327,7 +12381,7 @@ function ensureState(){
       else{T.lineup=bestXI(T,T.formation);T.bench=autoBench(T)}
     });
     const clean=p=>{if(p&&p.age>=RETIRE_AGE)return false;adj(p);return true};
-    if(state.fam&&state.fam.players)state.fam.players=state.fam.players.filter(clean);
+    famList().forEach(f=>{if(f.players)f.players=f.players.filter(clean)});
     state.market=(state.market||[]).filter(clean);
     (state.academy||[]).forEach(adj);
     ['loans','loansOut','loansAbroad'].forEach(k=>{state[k]=(state[k]||[]).filter(l=>l&&l.p&&l.p.age<RETIRE_AGE);(state[k]||[]).forEach(l=>adj(l.p))});
@@ -12340,7 +12394,7 @@ function ensureState(){
   if(!state.potNorm){
     const fixPot=p=>{if(p&&typeof p.ovr==='number'&&p.age!=null)p.pot=youngPotOf(p.age,p.ovr,p.pot==null?p.ovr:p.pot,p.id||p.n)};
     Object.values(state.teams||{}).forEach(T=>(T.players||[]).forEach(fixPot));
-    if(state.fam&&state.fam.players)state.fam.players.forEach(fixPot);
+    famList().forEach(f=>f.players&&f.players.forEach(fixPot));
     (state.market||[]).forEach(fixPot);
     ['loans','loansOut','loansAbroad'].forEach(k=>(state[k]||[]).forEach(l=>fixPot(l&&l.p)));
     Object.values(state.arrivals||{}).forEach(a=>(a||[]).forEach(fixPot));
@@ -12351,20 +12405,22 @@ function ensureState(){
   BENCH_N=benchLimit(state.club);
 }
 const famInfo=()=>state.fam?{id:state.fam.id,mineIsB:isB(state.club)}:null;
+/* equipos vinculados que el usuario puede ver/gestionar: su primer equipo (si dirige un filial) y sus
+   filiales (B, C...), cada uno con su plantilla real. */
+function linkedSquads(){
+  const out=[];
+  if(isB(state.club)){const pid=FAMILY[state.club];if(pid&&CLUBBY[pid]){const T=state.teams[pid]||previewTeam(pid);if(T)out.push({id:pid,players:T.players,mine:false,parent:true})}}
+  famList().forEach(f=>out.push({id:f.id,players:f.players,mine:false,fam:f}));
+  return out;
+}
 function squadObj(kind){
-  const mineIsB=isB(state.club),mine={id:state.club,players:me().players,mine:true};
-  /* si diriges un filial, el "otro" equipo es el primer equipo (su matriz); si diriges un primer
-     equipo, el "otro" es el filial. Así se puede ir y volver entre ambos sin que el juego se bloquee. */
-  let other=null;
-  if(mineIsB){const pid=FAMILY[state.club],pt=pid&&CLUBBY[pid]?previewTeam(pid):null;if(pt)other={id:pid,players:pt.players,mine:false};}
-  else if(state.fam)other={id:state.fam.id,players:state.fam.players,mine:false};
-  if(kind==='first')return mineIsB?other:mine;
-  if(kind==='b')return mineIsB?mine:other;
-  return null;
+  if(kind==null||kind==='first')return{id:state.club,players:me().players,mine:true};
+  const e=linkedSquads().find(x=>x.id===kind);
+  return e||{id:state.club,players:me().players,mine:true};
 }
 function locate(pid){
   let p=me().players.find(x=>x.id===pid);if(p)return{p,where:'mine'};
-  if(state.fam){p=state.fam.players.find(x=>x.id===pid);if(p)return{p,where:'fam'}}
+  for(const f of famList()){p=f.players.find(x=>x.id===pid);if(p)return{p,where:'fam',fam:f}}
   const l=(state.loansOut||[]).find(x=>x.p.id===pid);if(l)return{p:l.p,where:'loan',loan:l};
   const g=(state.loans||[]).find(x=>x.p.id===pid);if(g)return{p:g.p,where:'loan',loan:g};
   return null;
@@ -12418,7 +12474,7 @@ function applyInitialLoans(){
     if(state.teams[to]){const H=state.teams[to].players.find(x=>x.n===name);
       if(H&&H!==p){
         if(state.teams[from])state.teams[from].players=state.teams[from].players.filter(x=>x.n!==name);
-        if(state.fam&&state.fam.id===from)state.fam.players=state.fam.players.filter(x=>x.n!==name);
+        const _ff=famOf(from);if(_ff)_ff.players=_ff.players.filter(x=>x.n!==name);
         p=H;
       }
     }
@@ -12428,8 +12484,8 @@ function applyInitialLoans(){
     const mineFrom=from===state.club,mineTo=to===state.club;
     if(state.teams[from]){const T=state.teams[from];T.players=T.players.filter(x=>x.id!==p.id)}
     if(state.teams[to]){const T=state.teams[to];if(!T.players.some(x=>x.id===p.id))T.players.push(p)}
-    else if(state.fam&&state.fam.id===to){if(!state.fam.players.some(x=>x.id===p.id))state.fam.players.push(p)}
-    if(state.fam&&state.fam.id===from){state.fam.players=state.fam.players.filter(x=>x.id!==p.id)}
+    else if(famOf(to)){const _ft=famOf(to);if(!_ft.players.some(x=>x.id===p.id))_ft.players.push(p)}
+    const _ff2=famOf(from);if(_ff2)_ff2.players=_ff2.players.filter(x=>x.id!==p.id)
     reline(from);reline(to);
     if(mineFrom)state.loansOut.push({p,to,season:state.season,share:sh,role:role||undefined,from});
     else if(mineTo){if(!me().players.some(x=>x.id===p.id))me().players.push(p)}
@@ -12442,31 +12498,38 @@ function canLeaveTeam(players,p,isFirst){
   return null;
 }
 /* subir / bajar entre primer equipo y filial (sin compra ni venta) */
-function moveFamily(pid){
-  const L=locate(pid);if(!L||L.where==='loan'||!state.fam||L.p.loanIn)return'No se puede mover a este jugador.';
-  const mineIsB=isB(state.club),fromMine=L.where==='mine',fromIsB=fromMine?mineIsB:!mineIsB;
-  const src=fromMine?me().players:state.fam.players,dst=fromMine?state.fam.players:me().players;
-  const err=canLeaveTeam(src,L.p,!fromIsB);if(err)return err;
-  if(fromIsB&&dst.length>=30)return'El primer equipo está completo (máximo 30).';
-  src.splice(src.indexOf(L.p),1);dst.push(L.p);L.p.list=false;L.p.offers=[];fixLineup(me());
-  const firstId=mineIsB?state.fam.id:state.club,bId=mineIsB?state.club:state.fam.id;
-  news(fromIsB?`Subes a ${L.p.n} al primer equipo (${cname(firstId)}).`:`Bajas a ${L.p.n} al filial (${cname(bId)}).`);
-  saveGame();return null;
+function moveFamily(pid,toId){
+  const L=locate(pid);if(!L||L.where==='loan'||L.p.loanIn)return'No se puede mover a este jugador.';
+  if(L.where==='mine'){
+    const t=famOf(toId)||famList()[0];if(!t)return'No tienes ningún filial con el que mover jugadores.';
+    const err=canLeaveTeam(me().players,L.p,!isB(state.club));if(err)return err;
+    me().players.splice(me().players.indexOf(L.p),1);t.players.push(L.p);
+    L.p.list=false;L.p.offers=[];fixLineup(me());
+    news(`Bajas a ${L.p.n} a ${cname(t.id)}.`);saveGame();return null;
+  }
+  if(L.where==='fam'){
+    const err=canLeaveTeam(L.fam.players,L.p,false);if(err)return err;
+    if(!isB(state.club)&&me().players.length>=30)return'El primer equipo está completo (máximo 30).';
+    L.fam.players.splice(L.fam.players.indexOf(L.p),1);me().players.push(L.p);
+    L.p.list=false;L.p.offers=[];fixLineup(me());
+    news(`Subes a ${L.p.n} al ${cname(state.club)} desde ${cname(L.fam.id)}.`);saveGame();return null;
+  }
+  return'No se puede mover a este jugador.';
 }
 /* cesiones */
 /* plantilla a la que vuelve un cedido: la de origen; si es del filial y ya supera la edad, sube al primer equipo */
-function loanSquad(id){if(id===state.club)return me().players;if(state.fam&&id===state.fam.id)return state.fam.players;return null}
+function loanSquad(id){if(id===state.club)return me().players;const f=famOf(id);if(f)return f.players;return null}
 function loanReturn(l,age){
   const from=l.from||state.club,a=age==null?l.p.age:age;
-  const id=(isB(from)&&a>23)?((from===state.club)?(state.fam?state.fam.id:from):state.club):from;
+  const id=(isB(from)&&a>23)?((from===state.club)?(FAMILY[state.club]||from):state.club):from;
   return{arr:loanSquad(id)||me().players,isFirst:!isB(id)};
 }
 function loanOut(pid,toId,share,role){
   const L=locate(pid);if(!L||(L.where!=='mine'&&L.where!=='fam')||L.p.loanIn)return'No se puede ceder a este jugador.';
-  const mineIsB=isB(state.club),fromMine=L.where==='mine',src=fromMine?me().players:state.fam.players;
+  const mineIsB=isB(state.club),fromMine=L.where==='mine',src=fromMine?me().players:L.fam.players;
   const err=fromMine?canLeaveTeam(src,L.p,!mineIsB):(L.p.pos==='GK'&&src.filter(x=>x.pos==='GK').length<=1?'El filial necesita al menos un portero.':null);
   if(err)return err;
-  const sh=share==null?1:share,rl=role||roleAt(L.p,toId),fromClub=fromMine?state.club:state.fam.id;
+  const sh=share==null?1:share,rl=role||roleAt(L.p,toId),fromClub=fromMine?state.club:L.fam.id;
   src.splice(src.indexOf(L.p),1);if(fromMine)fixLineup(me());delete L.p.tr;L.p.list=false;L.p.offers=[];L.p.loanList=false;L.p.loanOffers=[];
   L.p.loanIn={from:fromClub,season:state.season,share:sh};
   (L.p.career=L.p.career||[]).push({s:state.season,ev:'loan_out',from:fromClub,to:toId});
@@ -12526,25 +12589,26 @@ function filialXI(t,form){
   return out.map(p=>p?p.id:null);
 }
 function advanceFilial(){
-  if(!state.fam)return;
-  /* si el filial juega en la liga del usuario, sus partidos ya los simula la liga */
-  if(state.teams[state.fam.id])return;
-  const key=state.fam.id,pl=state.fam.players;
-  if(pl.length<1)return;
-  const form=formFor(key),T={players:pl,formation:FORMS[form]?form:'4-3-3'};
-  pl.forEach(p=>{if(p.en==null)p.en=100});
-  const xiIds=filialXI(T,T.formation).filter(Boolean),map=new Map(pl.map(p=>[p.id,p])),xiSet=new Set(xiIds);
-  pl.forEach(p=>{
-    p.en=xiSet.has(p.id)?clamp(p.en-(8+Math.random()*8),20,100):clamp(p.en+(12+Math.random()*8),20,100);
-  });
-  xiIds.forEach(id=>{
-    const p=map.get(id);if(!p)return;
-    p.ap=(p.ap||0)+1;p.st=p.st||{};p.st[key]=(p.st[key]||0)+1;let g=0,a=0;
-    let _ga=0,_sv=0;
-    if(p.pos==='GK'){_ga=poisson(1.3);_sv=svLite(_ga);p.ge=(p.ge||0)+_ga;p.sv=(p.sv||0)+_sv;bumpStat(p,key,'ge',_ga);bumpStat(p,key,'sv',_sv)}
-    if(Math.random()<({GK:0,DF:.05,MD:.13,FW:.3}[p.pos])*(p.ovr/70)){g=1;p.g=(p.g||0)+1;bumpStat(p,key,'g',1)}
-    if(Math.random()<.14){a=1;p.as=(p.as||0)+1;bumpStat(p,key,'as',1)}
-    const _rr=matchRating({pos:p.pos,ovr:p.ovr,gd:0,g,a,ga:_ga,sv:_sv});p.rt=(p.rt||0)+_rr;bumpStat(p,key,'rt',_rr);bumpStat(p,key,'rtN',1);
+  /* cada filial gestionable (B, C...) que no juegue en la liga del usuario simula aquí sus partidos */
+  famList().forEach(f=>{
+    if(state.teams[f.id])return;
+    const key=f.id,pl=f.players;
+    if(pl.length<1)return;
+    const form=formFor(key),T={players:pl,formation:FORMS[form]?form:'4-3-3'};
+    pl.forEach(p=>{if(p.en==null)p.en=100});
+    const xiIds=filialXI(T,T.formation).filter(Boolean),map=new Map(pl.map(p=>[p.id,p])),xiSet=new Set(xiIds);
+    pl.forEach(p=>{
+      p.en=xiSet.has(p.id)?clamp(p.en-(8+Math.random()*8),20,100):clamp(p.en+(12+Math.random()*8),20,100);
+    });
+    xiIds.forEach(id=>{
+      const p=map.get(id);if(!p)return;
+      p.ap=(p.ap||0)+1;p.st=p.st||{};p.st[key]=(p.st[key]||0)+1;let g=0,a=0;
+      let _ga=0,_sv=0;
+      if(p.pos==='GK'){_ga=poisson(1.3);_sv=svLite(_ga);p.ge=(p.ge||0)+_ga;p.sv=(p.sv||0)+_sv;bumpStat(p,key,'ge',_ga);bumpStat(p,key,'sv',_sv)}
+      if(Math.random()<({GK:0,DF:.05,MD:.13,FW:.3}[p.pos])*(p.ovr/70)){g=1;p.g=(p.g||0)+1;bumpStat(p,key,'g',1)}
+      if(Math.random()<.14){a=1;p.as=(p.as||0)+1;bumpStat(p,key,'as',1)}
+      const _rr=matchRating({pos:p.pos,ovr:p.ovr,gd:0,g,a,ga:_ga,sv:_sv});p.rt=(p.rt||0)+_rr;bumpStat(p,key,'rt',_rr);bumpStat(p,key,'rtN',1);
+    });
   });
 }
 /* interacción primer equipo <-> filial cuando el usuario entrena a un FILIAL: la IA del primer equipo puede
@@ -12576,14 +12640,17 @@ function famMoveSheet(list){
 function famAlert(title,msg,p,clubId){
   openSheet(`<h3>${esc(title)}</h3><p style="margin:0 0 12px">${msg}</p>${playerCard(p,clubId)}<div class="row-btns" style="margin-top:12px"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`);
 }
+/* cadena de equipos por encima de un filial (filial inmediato, luego su matriz, ...) */
+function famAncestors(id){const out=[];let x=id;while(FAMILY[x]&&CLUBBY[FAMILY[x]]){x=FAMILY[x];out.push(x);if(!isB(x))break}return out}
 function famInteract(){
   if(!state||!isB(state.club))return;
-  const parentId=FAMILY[state.club];if(!parentId||!CLUBBY[parentId])return;
+  const anc=famAncestors(state.club);if(!anc.length)return;
   const mine=me();
-  /* 1) El primer equipo (IA) reclama a un canterano que destaca o supera las expectativas */
-  promoteStandout(parentId,mine);
-  /* 2) El primer equipo baja temporalmente a un joven (<=23) que necesite minutos */
-  if(state.week%3===0)sendDownYouth(parentId,mine);
+  /* 1) Los equipos de arriba (el filial inmediato y su matriz) pueden reclamar a un canterano que destaque.
+        Es progresivo: el más cercano lo hace con normalidad, y el de más arriba, más raramente. */
+  anc.forEach((aid,i)=>{if(i>0&&Math.random()>.4)return;promoteStandout(aid,mine)});
+  /* 2) El filial inmediato baja temporalmente a un joven (<=23) que necesite minutos */
+  if(state.week%3===0)sendDownYouth(anc[0],mine);
 }
 function weakOf(T,pos){
   const n=FORMS[T.formation].filter(x=>x[0]===pos).length,o=T.players.filter(p=>p.pos===pos).map(p=>p.ovr).sort((a,b)=>b-a);
@@ -12601,6 +12668,7 @@ function promoteStandout(parentId,mine){
     .sort((a,b)=>(b.rt||0)/Math.max(1,b.ap)-(a.rt||0)/Math.max(1,a.ap)||b.ovr-a.ovr);
   if(!cand.length||Math.random()>.25)return;
   const p=cand[0];if(p.ovr<52)return;
+  if(canLeaveTeam(mine.players,p,false))return;   /* nunca dejarte la plantilla por debajo del mínimo */
   const wasInXI=(mine.lineup||[]).includes(p.id),wasInBn=(mine.bench||[]).includes(p.id);
   mine.players=mine.players.filter(x=>x.id!==p.id);
   if(wasInXI||wasInBn)fixLineup(mine,false);   /* si estaba en el once/banquillo, se cubre su hueco con otro jugador en vez de dejarlo vacío */
@@ -12772,7 +12840,7 @@ function updateMood(){
     if(p.disc>=6&&!p.list&&!p.loanIn){p.list=true;p.disc=0;news(`${p.n} exige salir: le prometieron ser ${p.role.toLowerCase()} y no juega. Queda en la lista de traspasos.`)}
   });
 }
-function genOffers(){me().players.concat(state.fam?state.fam.players:[]).forEach(p=>genOfferFor(p))}
+function genOffers(){me().players.concat(...famList().map(f=>f.players)).forEach(p=>genOfferFor(p))}
 function genOfferFor(p,force){
   {
     if(p.offers&&!p.list)p.offers=p.offers.filter(o=>o.exp>state.week);
@@ -12796,7 +12864,7 @@ function toggleLoanList(pid){
   if(L.p.loanList){genLoanOfferFor(L.p,true);genLoanOfferFor(L.p,true)}
   saveGame();return null;
 }
-function genLoanOffers(){me().players.concat(state.fam?state.fam.players:[]).forEach(p=>genLoanOfferFor(p))}
+function genLoanOffers(){me().players.concat(...famList().map(f=>f.players)).forEach(p=>genLoanOfferFor(p))}
 function genLoanOfferFor(p,force){
   {
     if(p.loanOffers&&!p.loanList)p.loanOffers=p.loanOffers.filter(o=>o.exp>state.week);
@@ -12827,7 +12895,7 @@ const wageBill=()=>wageK(me().players)+(state.loansOut||[]).reduce((s,l)=>s+l.p.
 function pmRole(f){
   const p=f.p;
   if(f.ctx==='mine')return p.role||roleIn(p,me().players);
-  if(f.ctx==='fam')return p.role||roleIn(p,state.fam.players);
+  if(f.ctx==='fam')return p.role||roleIn(p,squadObj(f.club).players);
   if(f.ctx==='loan')return f.loan.role||roleAt(p,f.loan.to);
   if(f.ctx==='market')return roleAt(p,p.from);
   if(f.ctx==='academy')return roleAt(p,state.club);
@@ -13039,9 +13107,9 @@ function storeImport(n,s,meta){
 }
 
 /* ===================== mundo: otras ligas y torneos ===================== */
-const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia'};
+const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Copa Suiza'};
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC','ATSC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC','SCSC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC','ATSC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC','SCSC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHSC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4};
 const SC_SKIP={AT:1,DK:1};
@@ -13142,7 +13210,7 @@ function pruneTrophies(){
   const pt=state&&state.playerTrophies;if(!pt)return;
   const active=new Set(Object.keys(state.liteHist||{}));
   Object.values(state.teams||{}).forEach(T=>(T.players||[]).forEach(p=>active.add(p.id)));
-  if(state.fam)(state.fam.players||[]).forEach(p=>active.add(p.id));
+  famList().forEach(f=>(f.players||[]).forEach(p=>active.add(p.id)));
   (state.market||[]).forEach(p=>active.add(p.id));
   for(const pid in pt){const a=pt[pid];if(a&&a.length>40)pt[pid]=a.slice(-40);}
   for(const pid in pt)if(!active.has(pid))delete pt[pid];
@@ -13154,7 +13222,7 @@ function emergencyTrim(){
     for(const pid in lh){const a=lh[pid];if(a&&a.length>6)lh[pid]=a.slice(-6)}
     const keys=Object.keys(lh);if(keys.length>250){keys.sort((x,y)=>{const lx=lh[x],ly=lh[y];return ((ly[ly.length-1]||{}).s||0)-((lx[lx.length-1]||{}).s||0)});for(const pid of keys.slice(250))delete lh[pid]}
     Object.values(state.teams||{}).forEach(T=>(T.players||[]).forEach(p=>{if(p.hist&&p.hist.length>8)p.hist=p.hist.slice(-8)}));
-    if(state.fam)(state.fam.players||[]).forEach(p=>{if(p.hist&&p.hist.length>8)p.hist=p.hist.slice(-8)});
+    famList().forEach(f=>(f.players||[]).forEach(p=>{if(p.hist&&p.hist.length>8)p.hist=p.hist.slice(-8)}));
     const arch=state.squadArchive;if(arch){const ae=Object.keys(arch);if(ae.length>6)ae.slice(6).forEach(k=>delete arch[k])}
     const pt=state.playerTrophies;if(pt){for(const pid in pt){const a=pt[pid];if(a&&a.length>12)pt[pid]=a.slice(-12)}}
     if(state.honLog&&state.honLog.length>300)state.honLog=state.honLog.slice(-300);
@@ -13194,7 +13262,7 @@ function archiveLiteHist(){
 }
 function squadFor(id){
   if(state.teams&&state.teams[id])return state.teams[id].players;
-  if(state.fam&&state.fam.id===id)return state.fam.players;
+  const _fr=famOf(id);if(_fr)return _fr.players;
   if(!CLUBBY[id])return[];   /* ids de plantillas reales sin club definido: no rompen la generación */
   const k=id+'|'+state.seed+'|'+curMode();if(!SQC[k]){const gone=state.gone||{},arr=(state.arrivals&&state.arrivals[id])||[];SQC[k]=genSquad(CLUBBY[id],state.seed).filter(p=>!gone[p.id]).concat(arr.filter(p=>!gone[p.id]));rehydrateLiteStats(SQC[k])}return applyLoans(id,SQC[k]);
 }
@@ -13666,7 +13734,7 @@ function advanceWorld(r){
      en la misma jornada. Tu división ya lo maneja wear()/simMatch(). */
   if(state._upk!==r){state._upk=r;
     for(const id in CLUBBY){
-      if((state.teams&&state.teams[id])||id===state.club||(state.fam&&state.fam.id===id))continue;
+      if((state.teams&&state.teams[id])||id===state.club||famOf(id))continue;
       const t=previewTeam(id);if(!t||!t.players)continue;
       t.players.forEach(p=>{if(p.inj>0)p.inj--;if(p.sus>0)p.sus--});
     }
@@ -14417,8 +14485,29 @@ function dkLeagueTable(key){
   return tbl(SPLITS.DK1.upper,topList,champZone,[['#49CB2B','Previa de Champions'],['#38D996','Previa de Europa League'],['#5694D8','Fase Previa Conference League'],['#79B9DE','Playoffs'],['#9e9e9e','Permanencia']])
        + tbl(SPLITS.DK1.lower,botList,relZone,[['#49CB2B','Playoffs'],['#9e9e9e','Permanencia'],['#e53935','Descenso']]);
 }
+/* misma mecánica que dkLeagueTable pero con las zonas/leyenda de la Super League suiza (ver captura:
+   Grupo Campeonato da previa de Champions/Europa League/Conference; Grupo Descenso tiene playoff y descenso) */
+function chLeagueTable(key){
+  const L=leagueData(key),st=sortTable(L.tb),me=state.club;
+  const tbl=(title,list,zoneFn,legend)=>{
+    const rows=list.map((r,i)=>{const c=CLUBBY[r.id],dg=r.gf-r.ga,z=zoneFn(i+1,list.length);
+      return`<tr class="${r.id===me?'me':''}"><td class="pos"${z?` style="--zc:${z}"`:''}>${z?'<i></i>':''}<span>${i+1}</span></td><td class="tm"><button class="tmbtn" data-act="club-view" data-club="${r.id}">${crestHTML(c,24)}<span class="nl">${esc(c.name)}</span><span class="ns">${esc(short3(c))}</span></button></td><td class="pts">${r.pts}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${dg>0?'+':''}${dg}</td></tr>`}).join('');
+    const used=new Set(list.map((r,i)=>zoneFn(i+1,list.length)));
+    const lg=(legend||[]).filter(([c])=>used.has(c));
+    const legendHTML=lg.length?`<div class="legend2"><b>LEYENDA</b><div class="lg-grid">${lg.map(([c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div></div>`:'';
+    return`<div class="card">${title?`<h3>${esc(title)}</h3>`:''}<div class="tblwrap"><table class="tbl abbtbl"><thead><tr><th>#</th><th>Club</th><th>Pts</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th></tr></thead><tbody>${rows}</tbody></table></div>${legendHTML}</div>`;
+  };
+  const split=L.split&&L.fx.length>SPLITS.CH1.reg;
+  if(!split)return tbl('',st,pos=>pos<=6?DK_TITLE:DK_REL,[[DK_TITLE,'Playoffs para el título'],[DK_REL,'Playoff Descenso']]);
+  const topList=st.filter(r=>L.split.top.includes(r.id)),botList=st.filter(r=>L.split.bot.includes(r.id));
+  const champZone=pos=>pos===1?'#49CB2B':pos===2?'#38D996':pos===3?'#5694D8':null;
+  const relZone=pos=>pos<=4?'#9e9e9e':pos===5?'#ef9a9a':'#e53935';
+  return tbl(SPLITS.CH1.upper,topList,champZone,[['#49CB2B','Previa de Champions'],['#38D996','Previa de Europa League'],['#5694D8','Fase Previa Conference League']])
+       + tbl(SPLITS.CH1.lower,botList,relZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']]);
+}
 function leagueTable(key){
   if(key==='DK1')return dkLeagueTable(key);
+  if(key==='CH1')return chLeagueTable(key);
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=String(key).slice(0,2)==='ES'?+String(key).slice(2):null;
@@ -15290,7 +15379,7 @@ const ICO_SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const ICO_STAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z"/></svg>';
 const ICO_GLOBE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>';
 const TROPHY_ICO={league:ICO_TROPHY,cup:ICO_CUP,sc:ICO_SHIELD,lc:ICO_CUP,ucl:ICO_STAR,uel:ICO_CUP,ecl:ICO_CUP,cwc:ICO_SHIELD,sce:ICO_SHIELD,wc:ICO_GLOBE,ic:ICO_GLOBE,cf:ICO_CUP,d2:ICO_TROPHY,d3:ICO_TROPHY,d4:ICO_TROPHY,eflt:ICO_CUP,fat:ICO_CUP,scc:ICO_CUP,lp2:ICO_CUP,cisc:ICO_CUP};
-const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Copa de Turquía',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia'};
+const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Copa de Turquía',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Copa Suiza'};
 const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski',IE:'Supercopa de Irlanda'};
 const TROPHY_ORDER=['league','cup','sc','lc','leinster','munster','challenge','ucl','uel','ecl','cwc','sce','wc','ic','ifc','cf','cofed','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
 function trophyName(club,k){
@@ -15772,7 +15861,7 @@ function previewLoans(id){
     });
   }else{
     (state.loans||[]).forEach(l=>{if(l.from===id)out.push(l);else if(l.to===id)inn.push(l)});
-    if(state.club===id||(state.fam&&state.fam.id===id)){
+    if(state.club===id||famOf(id)){
       (state.loansOut||[]).forEach(l=>{if((l.from||state.club)===id)out.push({p:l.p,from:id,to:l.to,share:l.share,role:l.role})});
     }
     if(state.club===id)me().players.forEach(p=>{if(p.loanIn)inn.push({p,from:p.loanIn.from,to:id,share:p.loanIn.share})});
@@ -15845,7 +15934,7 @@ function loanView(lo,li,stats){
 /* ---------- ficha de jugador ---------- */
 function pmFind(){
   const id=ui.pm.id;
-  if(state){const L=locate(id);if(L)return{p:L.p,ctx:L.where,club:L.where==='mine'?state.club:L.where==='fam'?state.fam.id:L.loan.to,loan:L.loan}}
+  if(state){const L=locate(id);if(L)return{p:L.p,ctx:L.where,club:L.where==='mine'?state.club:L.where==='fam'?L.fam.id:L.loan.to,loan:L.loan}}
   if(state&&state.market){const m=state.market.find(x=>x.id===id);if(m)return{p:m,ctx:'market',club:m.from}}
   if(state&&state.academy){const y=state.academy.find(x=>x.id===id);if(y)return{p:y,ctx:'academy',club:state.club}}
   const cid=ui.pm.club;
@@ -15877,7 +15966,7 @@ function posChips(f){
 const posNote=f=>((f.ctx==='mine'||f.ctx==='fam')&&ppOf(f.p).length>1)?'<p class="pm-note">La primera es su posición principal. Juega igual de bien en todas las que tiene aprendidas: toca otra para hacerla principal.</p>':'';
 function roleManager(f){
   const p=f.p,own=f.ctx==='mine'||f.ctx==='fam',cur=pmRole(f);
-  const auto=f.ctx==='mine'?roleIn(p,me().players):f.ctx==='fam'?roleIn(p,state.fam.players):cur;
+  const auto=f.ctx==='mine'?roleIn(p,me().players):f.ctx==='fam'?roleIn(p,squadObj(f.club).players):cur;
   const chips=ROLES.map(r=>`<button class="role ${ROLE_CLS[r]}${r===cur?' sel':''}" ${own?`data-act="set-role" data-r="${r}"`:'disabled'}>${r}</button>`).join('');
   const note=own?`<p class="pm-note">Sugerido por su GRL y su posición: ${roleChip(auto)}${p.role?' <button class="lnk" data-act="set-role" data-r="">Usar el sugerido</button>':''}</p>`:'';
   return`<div class="subh sec-h" style="margin:16px 0 4px"><span>Rol en la plantilla</span><button class="ibtn" data-act="role-info" aria-label="Información">i</button></div><div class="rolepick">${chips}</div>${note}`;
@@ -15919,7 +16008,7 @@ function pmHistoria(f){
     <div class="hcard-clubs">${clubsHTML(x.tm)}</div>
     <div class="hcard-stats">${stats}</div></div>`;
   };
-  const curId=f.ctx==='mine'?state.club:f.ctx==='fam'?(state.fam&&state.fam.id):f.ctx==='loan'?(f.loan&&f.loan.to):f.ctx==='market'?p.from:f.club;
+  const curId=f.ctx==='mine'?state.club:f.ctx==='fam'?f.club:f.ctx==='loan'?(f.loan&&f.loan.to):f.ctx==='market'?p.from:f.club;
   const curTm=teamStats(p),cur={s:state?state.season:1,ap:p.ap||0,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,yc:p.yc||0,rc:p.rc||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'—',loan:!!p.loanIn,tm:curTm.length?curTm:(curId&&CLUBBY[curId]?[{id:curId,ap:0}]:[])};
   return`<div class="hcards">${row(cur,true)}${hist.map(x=>row(x,false)).join('')}</div>`;
 }
@@ -15982,7 +16071,7 @@ function pmInfo(f){
   const p=f.p,nat=natOf(p,f.club),pot=Math.round(Math.max(p.pot||p.ovr,p.ovr)),own=f.ctx==='mine'||f.ctx==='fam';
   const extra=(own?`<div><i>Energía</i><b>${Math.round(p.en)}%</b></div><div><i>Estado</i><b>${p.inj>0?`Lesionado, ${p.inj} jornada${p.inj>1?'s':''}`:p.sus>0?`Sancionado, ${p.sus} partido${p.sus>1?'s':''}`:p.disc>=3?'Descontento':'Disponible'}</b></div>`:'')
    +(f.ctx==='academy'?`<div><i>Origen</i><b>Academia de ${esc(cname(state.club))}</b></div><div><i>Rol en tu equipo</i><b>${roleChip(pmRole(f))}</b></div>`:'')+(f.ctx==='market'?`<div><i>Club actual</i><b>${esc(cname(p.from))}</b></div><div><i>Precio</i><b>${fmtV(p.price)}</b></div>`:'');
-  const loanBox=p.loanIn?(()=>{const from=p.loanIn.from,to=f.ctx==='loan'?(f.loan&&f.loan.to)||f.club:f.ctx==='mine'?(state&&state.club):f.ctx==='fam'?(state&&state.fam&&state.fam.id):f.club;const a=esc(cname(from)),b=esc(cname(to));return`<div class="pm-loanbox"><div class="pm-loan-team">${crestHTML(CLUBBY[from]||ensureClub(from),30)}<div><small>${p.famDown?'Del primer equipo':'Cedido por'}</small><b title="${a}">${a}</b></div></div><span class="pm-loan-arrow">→</span><div class="pm-loan-team">${crestHTML(CLUBBY[to]||ensureClub(to),30)}<div><small>${p.famDown?'En el filial':'Cedido a'}</small><b title="${b}">${b}</b></div></div></div>`})():'';
+  const loanBox=p.loanIn?(()=>{const from=p.loanIn.from,to=f.ctx==='loan'?(f.loan&&f.loan.to)||f.club:f.ctx==='mine'?(state&&state.club):f.club;const a=esc(cname(from)),b=esc(cname(to));return`<div class="pm-loanbox"><div class="pm-loan-team">${crestHTML(CLUBBY[from]||ensureClub(from),30)}<div><small>${p.famDown?'Del primer equipo':'Cedido por'}</small><b title="${a}">${a}</b></div></div><span class="pm-loan-arrow">→</span><div class="pm-loan-team">${crestHTML(CLUBBY[to]||ensureClub(to),30)}<div><small>${p.famDown?'En el filial':'Cedido a'}</small><b title="${b}">${b}</b></div></div></div>`})():'';
   const at=attrsOf(p),akeys=p.pos==='GK'?ATTR_GK:ATTR_OUT;
   const attrBox=`<div class="subh">Atributos</div><div class="attrgrid${akeys.length>6?' a7':''}">${akeys.map(k=>`<div class="attr" title="${ATTR_NAME[k]}"><small>${k}</small><b style="color:${ratingColor(at[k])}">${at[k]}${atDl(p,k)}</b></div>`).join('')}</div>`;
   return`${loanBox}<div class="pm-nums"><div><small>GRL</small><b style="color:${ratingColor(p.ovr)}">${p.ovr}${dlHTML(p)}</b><div class="meter"><i style="width:${p.ovr}%;background:${ratingColor(p.ovr)}"></i></div></div><div><small>POT</small><b style="color:${ratingColor(pot)}">${pot}</b><div class="meter dual"><i class="pot" style="width:${pot}%;background:${ratingColor(pot)}55"></i><i style="width:${p.ovr}%;background:${ratingColor(p.ovr)}"></i></div></div></div>${attrBox}
@@ -15990,7 +16079,7 @@ function pmInfo(f){
 }
 function pmStats(f){
   const p=f.p,ap=p.ap||0,gk=p.pos==='GK',g=gk?(p.ge||0):(p.g||0),a=p.as||0;
-  const curId=f.ctx==='mine'?state.club:f.ctx==='fam'?(state.fam&&state.fam.id):f.ctx==='loan'?(f.loan&&f.loan.to):f.ctx==='market'?p.from:f.club;
+  const curId=f.ctx==='mine'?state.club:f.ctx==='fam'?f.club:f.ctx==='loan'?(f.loan&&f.loan.to):f.ctx==='market'?p.from:f.club;
   const curTm=teamStats(p),cur={s:state?state.season:1,tm:curTm.length?curTm:(curId&&CLUBBY[curId]?[{id:curId,ap:0}]:[])};
   const clubsHTML=tm=>(tm||[]).length?tm.map(t=>{const c=CLUBBY[t.id]||ensureClub(t.id);return c?`<span class="htm">${crestHTML(c,18)}<em>${esc(c.name)}</em></span>`:`<span class="htm"><em>${esc(cname(t.id))}</em></span>`}).join(''):'—';
   const statItem=(lbl,val)=>`<div><small>${lbl}</small><b>${val}</b></div>`;
@@ -16009,7 +16098,7 @@ function offerHTML(p,o){
   return`<div class="offer">${head}<div class="offer-b"><button class="btn primary sm" data-act="of-acc" data-p="${p.id}" data-o="${o.id}">Aceptar</button><button class="btn danger sm" data-act="of-rej" data-p="${p.id}" data-o="${o.id}">Rechazar</button>${o.final?'':`<button class="btn ghost sm" data-act="of-ctr" data-p="${p.id}" data-o="${o.id}">Contraoferta</button>`}</div>${o.final?'<p class="pm-note" style="margin:10px 0 0">Oferta final: solo puedes aceptarla o rechazarla.</p>':''}</div>`;
 }
 function pmActions(f){
-  const p=f.p,fi=famInfo(),back='<div class="pm-back"><button class="btn ghost sm" data-act="pm-back">Volver a la ficha</button></div>';
+  const p=f.p,back='<div class="pm-back"><button class="btn ghost sm" data-act="pm-back">Volver a la ficha</button></div>';
   if(ui.pm.sub==='loan'){
     return back+`<div class="subh" style="margin-top:6px">Ceder a otro club</div><p class="pm-note">Se marcha hasta final de temporada y vuelve después. El club receptor asume su sueldo. Estos clubes lo quieren para jugar.</p>`+(ui.pm.cands||[]).map(x=>`<button class="act-b" data-act="pm-loan-to" data-to="${x.club.id}"><span class="act-c">${crestHTML(x.club,30)}<span>${esc(x.club.name)}<small>${esc(divName(x.club.co,x.club.div))}</small><small>Le prometen: ${roleChip(x.role)}</small></span></span></button>`).join('');
   }
@@ -16022,9 +16111,11 @@ function pmActions(f){
   }
   if(f.ctx==='mine'&&p.loanIn)h+=`<p class="pm-note">Cedido por ${esc(cname(p.loanIn.from))} hasta final de temporada. No se puede vender ni ceder.</p>`;
   if(f.ctx==='loan')h+=`<button class="act-b" data-act="pm-recall">Recuperar de la cesión<small>Vuelve ahora a su plantilla</small></button>`;
-  if(fi&&(f.ctx==='fam'||(f.ctx==='mine'&&!p.loanIn))){
-    const mineIsB=isB(state.club),inB=f.ctx==='mine'?mineIsB:!mineIsB,firstId=mineIsB?state.fam.id:state.club,bId=mineIsB?state.club:state.fam.id;
-    h+=`<button class="act-b" data-act="pm-move">${inB?'Subir al primer equipo':'Bajar al filial'}<small>${inB?'Pasa a la plantilla de '+esc(cname(firstId)):'Pasa a la plantilla de '+esc(cname(bId))}. Entre equipos vinculados no hay compra ni venta.</small></button>`;
+  if(f.ctx==='fam'&&!p.loanIn){
+    h+=`<button class="act-b" data-act="pm-move">Subir a ${esc(cname(state.club))}<small>Pasa a la plantilla de ${esc(cname(state.club))}. Entre equipos vinculados no hay compra ni venta.</small></button>`;
+  }
+  if(f.ctx==='mine'&&!p.loanIn&&famList().length){
+    famList().forEach(fm=>{h+=`<button class="act-b" data-act="pm-move" data-fam="${fm.id}">Bajar a ${esc(cname(fm.id))}<small>Pasa a la plantilla de ${esc(cname(fm.id))}. Entre equipos vinculados no hay compra ni venta.</small></button>`});
   }
   if(f.ctx==='mine'&&!p.loanIn){
     const offs=p.offers||[];
@@ -16037,7 +16128,7 @@ function pmActions(f){
 /* se puede ofrecer por cualquier jugador de otro club (no del tuyo, tu filial ni cedidos), venga de donde venga la ficha */
 function canOfferOther(f){
   if(!state||!f||f.ctx!=='other'||!f.club||!CLUBBY[f.club])return false;
-  return f.club!==state.club&&!(state.fam&&state.fam.id===f.club)&&!f.p.loanIn;
+  return f.club!==state.club&&!famOf(f.club)&&!f.p.loanIn;
 }
 const PM_TABS=[
   ['info','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".2" fill="currentColor" stroke-width="2.4"/></svg>','Información'],
@@ -16131,7 +16222,7 @@ function migrateWagesIfNeeded(){
     const c=CLUBBY[id];if(!c||(c.div!==5&&c.div!==6))return;
     (state.teams[id].players||[]).forEach(bump);
   });
-  if(state.fam){const fc=CLUBBY[state.fam.id];if(fc&&(fc.div===5||fc.div===6))(state.fam.players||[]).forEach(bump)}
+  famList().forEach(f=>{const fc=CLUBBY[f.id];if(fc&&(fc.div===5||fc.div===6))(f.players||[]).forEach(bump)});
 }
 function enterGame(){ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';_gTab=null;migrateUclIfNeeded();migrateWagesIfNeeded();renderGame();go('game')}
 let _gTab=null;
@@ -16145,7 +16236,7 @@ function renderGame(){
   $$('#gnav [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===ui.tab));
   $('#gnav [data-tab=club]').classList.toggle('has',!!state.acadNew);
   $('#gnav [data-tab=tactics]').classList.toggle('has',lineupIssues(me()).length>0);
-  $('#gnav [data-tab=squad]').classList.toggle('has',me().players.some(p=>(p.offers||[]).length>0||(p.loanOffers||[]).length>0)||!!(state.fam&&state.fam.players.some(p=>(p.loanOffers||[]).length>0)));
+  $('#gnav [data-tab=squad]').classList.toggle('has',me().players.some(p=>(p.offers||[]).length>0||(p.loanOffers||[]).length>0)||famList().some(f=>f.players.some(p=>(p.loanOffers||[]).length>0)));
   /* nunca dejar una pestaña "muerta" si su vista falla: se muestra un aviso y el resto sigue funcionando */
   try{$('#gcontent').innerHTML=(VIEWS[ui.tab]||VIEWS.home)()}
   catch(err){$('#gcontent').innerHTML='<div class="card"><p class="muted-s">No se pudo mostrar esta sección. Cambia de pestaña y vuelve a intentarlo.</p></div>'}
@@ -16219,7 +16310,7 @@ home(){
   const finInc=FT.gate+FT.transferIn+FT.prizes,finExp=FT.wages+FT.transferOut+FT.facilities,finBal=finInc-finExp;
   const fin=`<div class="card"><button class="card-h fin-h" data-act="fin-detail"><h3>Finanzas</h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button><div class="stats" style="border:0;margin:0;padding:0"><div><small>Ingresos</small><b class="good fin-amt">${fmtM(finInc)}</b></div><div><small>Gastos</small><b class="bad fin-amt">${fmtM(finExp)}</b></div><div><small>Balance</small><b class="fin-amt ${finBal<0?'bad':'good'}">${fmtM(finBal)}</b></div><div><small>Caja</small><b class="fin-amt">${fmtM(t.budget)}</b></div></div></div>`;
   const cl=Object.keys(state.cups||{}).map(k=>{const c=state.cups[k],st=myCupStatus(c);return st?`<div class="cupline"><b>${esc(c.name)}</b><span class="${st.out?'bad':''}">${esc(cupStatusText(st))}</span></div>`:''}).join('');
-  const offs=[];me().players.forEach(p=>{(p.offers||[]).forEach(o=>offs.push({p,o}));(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1}))});if(state.fam)state.fam.players.forEach(p=>(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1})));
+  const offs=[];me().players.forEach(p=>{(p.offers||[]).forEach(o=>offs.push({p,o}));(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1}))});famList().forEach(f=>f.players.forEach(p=>(p.loanOffers||[]).forEach(o=>offs.push({p,o,loan:1}))));
   const offCard=offs.length?`<div class="card"><div class="card-h"><h3>Ofertas de traspaso</h3><span>${offs.length} pendiente${offs.length>1?'s':''}</span></div>${offs.slice(0,5).map(x=>`<button class="cupline" style="width:100%;text-align:left" data-act="pl-act" data-id="${x.p.id}"><b>${esc(x.p.n)}</b><span>${x.loan?'Cesión en '+esc(cname(x.o.to))+', '+esc(x.o.role.toLowerCase()):esc(cname(x.o.from))+': '+fmtM(x.o.amt)}</span></button>`).join('')}</div>`:'';
   const cupsCard=cl?`<div class="card"><div class="card-h"><h3>Torneos</h3></div>${cl}</div>`:'';
   return`<div class="hero"><div class="hero-top">${crestHTML(c,60)}<div><h2>${esc(c.name)}</h2><div class="sub">${flagHTML(state.country)} ${divName(state.country,state.div)}</div></div></div>
@@ -16229,16 +16320,15 @@ home(){
   <div class="card"><div class="card-h"><h3>Noticias</h3></div><div class="news">${state.news.slice(0,7).map(n=>`<div><small>J${n.w}</small><span>${esc(n.t)}</span></div>`).join('')}</div></div>`;
 },
 squad(){
-  const fi=famInfo(),mineIsB=isB(state.club);
-  const otherId=mineIsB?FAMILY[state.club]:(state.fam?state.fam.id:null);
-  const hasOther=!!(otherId&&CLUBBY[otherId]);
-  if(!ui.sq||(ui.sq==='b'&&!hasOther))ui.sq=mineIsB?'b':'first';
+  const linked=linkedSquads();
   if(!ui.sqv)ui.sqv='info';
-  const fam=!mineIsB&&fi?state.fam:null,famLoans=fam?fam.players.filter(p=>p.loanIn):[];
-  famLoans.forEach(p=>{p._owner=fam.id});
+  if(ui.sq&&ui.sq!=='first'&&ui.sq!=='loan'&&!linked.some(x=>x.id===ui.sq))ui.sq=null;
+  if(!ui.sq)ui.sq='first';
+  const famLoans=[];
+  famList().forEach(f=>f.players.filter(p=>p.loanIn).forEach(p=>{p._owner=f.id;famLoans.push(p)}));
   const lo=state.loansOut||[],li=me().players.filter(p=>p.loanIn&&!p.famDown).concat(famLoans),nl=lo.length+li.length;
-  const tabs=(mineIsB?(hasOther?[['b','Filial'],['first','Primer equipo']]:[['b','Filial']]):[['first','Primer equipo']].concat(fi?[['b','Filial']]:[])).concat([['loan','Cedidos'+(nl?' ('+nl+')':'')]]);
-  const seg=`<div class="seg">${tabs.map(([k,l])=>`<button class="${ui.sq===k?'on':''}" data-act="sq" data-k="${k}">${l}</button>`).join('')}</div>`;
+  const tabs=[['first','Tu equipo']].concat(linked.map(x=>[x.id,CLUBBY[x.id].short||CLUBBY[x.id].name])).concat([['loan','Cedidos'+(nl?' ('+nl+')':'')]]);
+  const seg=`<div class="seg">${tabs.map(([k,l])=>`<button class="${ui.sq===k?'on':''}" data-act="sq" data-k="${k}">${esc(l)}</button>`).join('')}</div>`;
   if(ui.sq==='loan'){
     const vseg=`<div class="seg">${[['info','Información'],['stats','Estadísticas']].map(([k,l])=>`<button class="${ui.sqv===k?'on':''}" data-act="sqv" data-v="${k}">${l}</button>`).join('')}</div>`;
     return`<div class="sec-h"><h2>Plantilla</h2><span>Cedidos</span></div>${seg}${vseg}${loanView(lo,li,ui.sqv==='stats')}`;
@@ -16251,8 +16341,8 @@ squad(){
   const head=`<div class="sqhead">${crestHTML(c,40)}<div class="grow"><b>${esc(c.name)}</b><small>${esc(divName(c.co,c.div))}</small></div>${S.mine?'<span class="tag off">Tu club</span>':'<span class="tag">Equipo vinculado</span>'}</div>`;
   const vseg=`<div class="seg">${[['info','Información'],['stats','Estadísticas']].map(([k,l])=>`<button class="${ui.sqv===k?'on':''}" data-act="sqv" data-v="${k}">${l}</button>`).join('')}</div>`;
   const th=st?'<div class="prow-b sts th"><span></span><span>Jugador</span><span>PJ</span><span title="Goles (porteros: goles encajados)">G</span><span>A</span><span>TA</span><span>TR</span><span>Nota</span></div>':'';
-  const note=hasOther?'<p class="hint">Primer equipo y filial están vinculados: sus jugadores se suben y se bajan desde la ficha (Acciones), pero no se compran ni se venden entre ellos.</p>':'';
-  const empty=list.length?'':`<p class="hint" style="margin:10px 0">${esc(c.name)} no tiene jugadores todavía${S.mine?'':': este club no cuenta con plantilla real de filial'}. Puedes bajar jugadores del primer equipo desde su ficha (Acciones).</p>`;
+  const note=linked.length?'<p class="hint">Los equipos vinculados suben y bajan jugadores desde la ficha (Acciones), pero no se compran ni se venden entre ellos.</p>':'';
+  const empty=list.length?'':`<p class="hint" style="margin:10px 0">${esc(c.name)} no tiene jugadores todavía${S.mine?'':': este club no cuenta con plantilla real de filial'}.${S.mine&&linked.length?' Puedes bajar jugadores desde la ficha de cada jugador (Acciones).':''}</p>`;
   const body=list.length?(st?`<div class="card list">${th}${rows}</div>`:rows):empty;
   return`<div class="sec-h"><h2>Plantilla</h2><span>GRL medio ${avg}, edad media ${age}</span></div>${seg}${head}${vseg}${body}${note}<p class="hint">Toca un jugador para ver su ficha.</p>`;
 },
@@ -16807,7 +16897,7 @@ const H={
   },
   'pm-loan-to'(t){const e=loanOut(ui.pm.id,t.dataset.to);if(e){toast(e);return}toast('Cesión completada');closePlayer();renderGame()},
   'pm-recall'(){const e=recallLoan(ui.pm.id);if(e){toast(e);return}toast('Jugador recuperado');closePlayer();renderGame()},
-  'pm-move'(){const e=moveFamily(ui.pm.id);if(e){toast(e);return}toast('Movimiento realizado');renderPM();renderGame()},
+  'pm-move'(t){const e=moveFamily(ui.pm.id,t.dataset.fam);if(e){toast(e);return}toast('Movimiento realizado');renderPM();renderGame()},
   'of-acc'(t){const e=acceptOffer(t.dataset.p,t.dataset.o);if(e){toast(e);renderPM();return}toast('Traspaso completado');closePlayer();renderGame()},
   'of-rej'(t){rejectOffer(t.dataset.p,t.dataset.o);ui.pm.cnt=null;renderPM();renderGame()},
   'of-ctr'(t){ui.pm.cnt=t.dataset.o;renderPM()},
