@@ -79,6 +79,9 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 
 /* escudos */
 .crest{width:var(--cs,32px);height:var(--cs,32px);flex:none;border-radius:50%;display:inline-grid;place-items:center;background:var(--c1);color:var(--tx);font:700 calc(var(--cs,32px)*.31)/1 var(--display);letter-spacing:-.02em;box-shadow:inset 0 0 0 calc(var(--cs,32px)*.085) var(--c2),0 6px 16px rgba(0,0,0,.45);text-transform:uppercase}
+.crest-wrap{position:relative;display:inline-flex;flex:none;width:var(--cs,32px);height:var(--cs,32px)}
+.crest-flag{position:absolute;top:calc(var(--cs,32px)*-.08);right:calc(var(--cs,32px)*-.18);width:calc(var(--cs,32px)*.46);height:calc(var(--cs,32px)*.46);border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:calc(var(--cs,32px)*.34);line-height:1}
+.crest-flag img.flag-i{width:100%;height:100%;object-fit:cover}
 .crest.logo{background:transparent;box-shadow:none;overflow:visible}
 .crest.logo img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 5px 12px rgba(0,0,0,.5))}
 
@@ -1327,6 +1330,11 @@ function gameClub(c){return !c||isLeagueEnabled(c.co,c.div||1)}
 const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}',NL:'\u{1F1F3}\u{1F1F1}',AT:'\u{1F1E6}\u{1F1F9}',UA:'\u{1F1FA}\u{1F1E6}',NO:'\u{1F1F3}\u{1F1F4}',BE:'\u{1F1E7}\u{1F1EA}',SK:'\u{1F1F8}\u{1F1F0}',GR:'\u{1F1EC}\u{1F1F7}',AM:'\u{1F1E6}\u{1F1F2}',BA:'\u{1F1E7}\u{1F1E6}',XK:'\u{1F1FD}\u{1F1F0}',EE:'\u{1F1EA}\u{1F1EA}',MK:'\u{1F1F2}\u{1F1F0}',MT:'\u{1F1F2}\u{1F1F9}',HU:'\u{1F1ED}\u{1F1FA}',AD:'\u{1F1E6}\u{1F1E9}',KZ:'\u{1F1F0}\u{1F1FF}',AL:'\u{1F1E6}\u{1F1F1}',FI:'\u{1F1EB}\u{1F1EE}',NIR:'\u{1F1EC}\u{1F1E7}',GI:'\u{1F1EC}\u{1F1EE}',BY:'\u{1F1E7}\u{1F1FE}',LV:'\u{1F1F1}\u{1F1FB}',IE:'\u{1F1EE}\u{1F1EA}',ME:'\u{1F1F2}\u{1F1EA}',WAL:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',SM:'\u{1F1F8}\u{1F1F2}',RO:'\u{1F1F7}\u{1F1F4}',IS:'\u{1F1EE}\u{1F1F8}',DK:'\u{1F1E9}\u{1F1F0}',PL:'\u{1F1F5}\u{1F1F1}',SE:'\u{1F1F8}\u{1F1EA}',SI:'\u{1F1F8}\u{1F1EE}',HR:'\u{1F1ED}\u{1F1F7}',GW:'\u{1F1EC}\u{1F1FC}',US:'\u{1F1FA}\u{1F1F8}',SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',CA:'\u{1F1E8}\u{1F1E6}',HT:'\u{1F1ED}\u{1F1F9}',CV:'\u{1F1E8}\u{1F1FB}',CM:'\u{1F1E8}\u{1F1F2}',GH:'\u{1F1EC}\u{1F1ED}'};
 const FLAG_IMG={NIR:'https://i.redd.it/n32kgopqgwr51.png'};
 const flagHTML=nat=>FLAG_IMG[nat]?`<img class="flag-i" src="${FLAG_IMG[nat]}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:(FLAG[nat]||'');
+/* clubes que juegan en la liga de un país pero pertenecen a otro (p. ej. FC Vaduz, de Liechtenstein, en Suiza):
+   se usa su bandera real sin cambiar su liga */
+const CLUB_NAT={VADU:'LI'};
+const natOfClub=c=>c?(CLUB_NAT[c.id]||c.co):null;
+const countryNameOf=c=>{const n=natOfClub(c);return(COUNTRIES[n]&&COUNTRIES[n].name)||NATNAME[n]||n};
 const CANARIAS={center:[-15.8,28.45],to:[-7.75,34.85],f:.6,ex:1.15,frame:[-9.65,34.12,-5.85,35.6],minLat:33.85,label:'Canarias',polys:[
  P(`-16.92,28.33 -16.7,28 -16.35,28 -16.12,28.35 -16.4,28.6 -16.85,28.55`),P(`-15.83,28.05 -15.6,28.18 -15.38,28 -15.42,27.8 -15.7,27.75 -15.8,27.85`),
  P(`-17.95,28.6 -17.8,28.85 -17.72,28.6 -17.85,28.45 -18,28.5`),P(`-17.35,28.1 -17.15,28.2 -17.1,28.05 -17.25,27.98`),P(`-18.15,27.75 -17.95,27.85 -17.85,27.7 -18.05,27.65`),
@@ -1531,7 +1539,7 @@ K('MWEL','Motherwell','Motherwell','Motherwell','SC','#f2d31b','#8b1a1a',46,1),K
 K('SJOH','St. Johnstone','St Johnstone','Perth','SC','#1c3f94','#f4f4f4',44,1),K('SMIR','St. Mirren','St Mirren','Paisley','SC','#1a1a1a','#f4f4f4',44,1),
 /* Credit Suisse Super League (Suiza, división 1) */
 K('BASL','Basel','Basel','Basilea','CH','#d4192b','#f4f4f4',58,1),K('LUGA','FC Lugano','Lugano','Lugano','CH','#1a1a1a','#f4f4f4',50,1),
-K('WINT','Winterthur','Winterthur','Winterthur','CH','#d4192b','#1a1a1a',40,1),K('GRAS','Grasshopper','Grasshopper','Zúrich','CH','#1c3f94','#f4f4f4',46,1),
+K('WINT','Winterthur','Winterthur','Winterthur','CH','#d4192b','#1a1a1a',38,2),K('VADU','FC Vaduz','Vaduz','Vaduz','CH','#d4192b','#f4f4f4',52,1),K('GRAS','Grasshopper','Grasshopper','Zúrich','CH','#1c3f94','#f4f4f4',46,1),
 K('LSNE','Lausanne Sports','Lausanne','Lausana','CH','#1c3f94','#f4f4f4',44,1),K('LUZN','Luzern','Luzern','Lucerna','CH','#f4f4f4','#003580',48,1),
 K('SRVT','Servette','Servette','Ginebra','CH','#8b1a1a','#f4f4f4',48,1),K('SION','Sion','Sion','Sion','CH','#d4192b','#f4f4f4',46,1),
 K('STGL','St. Gallen','St. Gallen','San Galo','CH','#0a8a4a','#f4f4f4',48,1),K('THUN','Thun','Thun','Thun','CH','#d4192b','#1a1a1a',42,1),
@@ -1625,7 +1633,7 @@ K2('DES','Defensor Sporting','Defensor','Montevideo','UY','#8b1a1a','#1a1a1a',52
  K2('SPA','Sparta Praha','Sparta Praha','Praga','CZ','#8b1a1a','#f4f4f4',68),K2('HBS','Hapoel Beer Sheva','Hapoel B. Sheva','Beer Sheva','IL','#d4192b','#f4f4f4',58),
  K2('AFC','AFC Wimbledon','AFC Wimbledon','Londres','EN','#1c3f94','#f2d31b',52),K2('SYD','Sydney FC','Sydney FC','Sídney','AU','#1c6fd1','#f4f4f4',62),
  K2('LFD','Linfield','Linfield','Belfast','NIR','#1c3f94','#f4f4f4',52),
- K2('WIG','Wigan Athletic','Wigan','Wigan','EN','#1c3f94','#f4f4f4',54),K2('FGR','Forest Green Rovers','Forest Green','Nailsworth','EN','#0a8a4a','#f4f4f4',50),K2('WLS','Walsall','Walsall','Walsall','EN','#d4192b','#f4f4f4',50),K2('COLR','Coleraine','Coleraine','Coleraine','NIR','#1c3f94','#f4f4f4',54),K2('FHA','Finn Harps','Finn Harps','Ballybofey','IE','#1c3f94','#f4f4f4',46),K2('TRU','Treaty United','Treaty United','Limerick','IE','#d4192b','#f4f4f4',46),K2('RANH','Ranheim','Ranheim','Trondheim','NO','#1c3f94','#f4f4f4',54),K2('FLTW','Fleetwood Town','Fleetwood','Fleetwood','EN','#d4192b','#f4f4f4',50),K2('CBRM','Cobh Ramblers','Cobh','Cobh','IE','#1c3f94','#f4f4f4',46),K2('CORK','Cork City','Cork City','Cork','IE','#d4192b','#f4f4f4',52),K2('UCD','UC Dublin','UC Dublin','Dublín','IE','#1c8f3f','#f4f4f4',46),K2('LONF','Longford Town','Longford','Longford','IE','#d4192b','#1a1a1a',46),K2('SFIN','Sporting Fingal','Fingal','Fingal','IE','#1c3f94','#f4f4f4',44),K2('DMBT','Dumbarton','Dumbarton','Dumbarton','SC','#f4f4f4','#1a3a8a',50),K2('TLAN','Third Lanark','Third Lanark','Glasgow','SC','#d4192b','#f4f4f4',44),K2('EFIF','East Fife','East Fife','Methil','SC','#f4a01c','#1a1a1a',46),K2('RCOU','Ross County','Ross County','Dingwall','SC','#1c3f94','#d4192b',52),K2('ICT','Inverness CT','Inverness CT','Inverness','SC','#1c3f94','#d4192b',50),K2('LIVI','Livingston','Livingston','Livingston','SC','#f2d31b','#1a1a1a',50),K2('TAW','Al-Taawoun','Al-Taawoun','Buraidah','SA','#f2d31b','#1a1a1a',54),K2('DUNF','Dunfermline Athletic','Dunfermline','Dunfermline','SC','#f4f4f4','#1a1a1a',48),K2('ZIL','Žilina','Žilina','Žilina','SK','#f2d31b','#0a8a3a',56),K2('AYR','Ayr United','Ayr','Ayr','SC','#1a1a1a','#f4f4f4',46),K2('ATX','Austin FC','Austin','Austin','US','#0a8a4a','#1a1a1a',54),K2('PGL','Perth Glory','Perth Glory','Perth','AU','#6b1d8b','#f4a01c',52),K2('ARBR','Arbroath','Arbroath','Arbroath','SC','#8b1a1a','#f4f4f4',46),K2('RAITH','Raith Rovers','Raith','Kirkcaldy','SC','#1c3f94','#f4f4f4',48),K2('QPARK','Queen\'s Park','Queen\'s Park','Glasgow','SC','#1a1a1a','#f4f4f4',48),K2('GLEN','Glentoran','Glentoran','Belfast','NIR','#1c8f3f','#d4192b',48),K2('EMEL','CS Emelec','Emelec','Guayaquil','EC','#1c3f94','#f2d31b',56),K2('STEN','Stenhousemuir','Stenhousemuir','Stenhousemuir','SC','#8b1a1a','#f4f4f4',42),K2('ARS2','Arsenal U23','Arsenal U23','Londres','EN','#d4192b','#f4f4f4',40),K2('RFC2','Rangers FC II','Rangers II','Glasgow','SC','#1c3f94','#f4f4f4',38),K2('PLAT','Platense','Platense','Vicente López','AR','#6b4423','#f4f4f4',52),K2('RAPP','Rapperswil-Jona','Rapperswil','Rapperswil-Jona','CH','#d4192b','#f4f4f4',38),K2('KRIN','SC Kriens','Kriens','Kriens','CH','#1c3f94','#f4f4f4',38),K2('VADU','FC Vaduz','Vaduz','Vaduz','CH','#d4192b','#f4f4f4',46),K2('DUT','Dundee United','Dundee Utd','Dundee','SC','#f4a01c','#1a1a1a',54),
+ K2('WIG','Wigan Athletic','Wigan','Wigan','EN','#1c3f94','#f4f4f4',54),K2('FGR','Forest Green Rovers','Forest Green','Nailsworth','EN','#0a8a4a','#f4f4f4',50),K2('WLS','Walsall','Walsall','Walsall','EN','#d4192b','#f4f4f4',50),K2('COLR','Coleraine','Coleraine','Coleraine','NIR','#1c3f94','#f4f4f4',54),K2('FHA','Finn Harps','Finn Harps','Ballybofey','IE','#1c3f94','#f4f4f4',46),K2('TRU','Treaty United','Treaty United','Limerick','IE','#d4192b','#f4f4f4',46),K2('RANH','Ranheim','Ranheim','Trondheim','NO','#1c3f94','#f4f4f4',54),K2('FLTW','Fleetwood Town','Fleetwood','Fleetwood','EN','#d4192b','#f4f4f4',50),K2('CBRM','Cobh Ramblers','Cobh','Cobh','IE','#1c3f94','#f4f4f4',46),K2('CORK','Cork City','Cork City','Cork','IE','#d4192b','#f4f4f4',52),K2('UCD','UC Dublin','UC Dublin','Dublín','IE','#1c8f3f','#f4f4f4',46),K2('LONF','Longford Town','Longford','Longford','IE','#d4192b','#1a1a1a',46),K2('SFIN','Sporting Fingal','Fingal','Fingal','IE','#1c3f94','#f4f4f4',44),K2('DMBT','Dumbarton','Dumbarton','Dumbarton','SC','#f4f4f4','#1a3a8a',50),K2('TLAN','Third Lanark','Third Lanark','Glasgow','SC','#d4192b','#f4f4f4',44),K2('EFIF','East Fife','East Fife','Methil','SC','#f4a01c','#1a1a1a',46),K2('RCOU','Ross County','Ross County','Dingwall','SC','#1c3f94','#d4192b',52),K2('ICT','Inverness CT','Inverness CT','Inverness','SC','#1c3f94','#d4192b',50),K2('LIVI','Livingston','Livingston','Livingston','SC','#f2d31b','#1a1a1a',50),K2('TAW','Al-Taawoun','Al-Taawoun','Buraidah','SA','#f2d31b','#1a1a1a',54),K2('DUNF','Dunfermline Athletic','Dunfermline','Dunfermline','SC','#f4f4f4','#1a1a1a',48),K2('ZIL','Žilina','Žilina','Žilina','SK','#f2d31b','#0a8a3a',56),K2('AYR','Ayr United','Ayr','Ayr','SC','#1a1a1a','#f4f4f4',46),K2('ATX','Austin FC','Austin','Austin','US','#0a8a4a','#1a1a1a',54),K2('PGL','Perth Glory','Perth Glory','Perth','AU','#6b1d8b','#f4a01c',52),K2('ARBR','Arbroath','Arbroath','Arbroath','SC','#8b1a1a','#f4f4f4',46),K2('RAITH','Raith Rovers','Raith','Kirkcaldy','SC','#1c3f94','#f4f4f4',48),K2('QPARK','Queen\'s Park','Queen\'s Park','Glasgow','SC','#1a1a1a','#f4f4f4',48),K2('GLEN','Glentoran','Glentoran','Belfast','NIR','#1c8f3f','#d4192b',48),K2('EMEL','CS Emelec','Emelec','Guayaquil','EC','#1c3f94','#f2d31b',56),K2('STEN','Stenhousemuir','Stenhousemuir','Stenhousemuir','SC','#8b1a1a','#f4f4f4',42),K2('ARS2','Arsenal U23','Arsenal U23','Londres','EN','#d4192b','#f4f4f4',40),K2('RFC2','Rangers FC II','Rangers II','Glasgow','SC','#1c3f94','#f4f4f4',38),K2('PLAT','Platense','Platense','Vicente López','AR','#6b4423','#f4f4f4',52),K2('RAPP','Rapperswil-Jona','Rapperswil','Rapperswil-Jona','CH','#d4192b','#f4f4f4',38),K2('KRIN','SC Kriens','Kriens','Kriens','CH','#1c3f94','#f4f4f4',38),K2('DUT','Dundee United','Dundee Utd','Dundee','SC','#f4a01c','#1a1a1a',54),
  K2('GOZ','Göztepe','Göztepe','Esmirna','TR','#f4d31b','#d4192b',58),K2('LUD','Ludogorets II','Ludogorets II','Razgrad','BG','#1c8f3f','#f4f4f4',50),K2('BPV','Botev Plovdiv','Botev Plovdiv','Plovdiv','BG','#f4d31b','#1a1a1a',54),
  K2('SLC','St. Louis City','St. Louis City','San Luis','US','#d4192b','#1c3f94',58),
  K2('WYC','Wycombe Wanderers','Wycombe','High Wycombe','EN','#1c3f94','#f4f4f4',52),K2('HIB','Hibernian','Hibernian','Edimburgo','SC','#1c8f3f','#f4f4f4',60),
@@ -1743,6 +1751,14 @@ function realAffilFor(id){
   for(const hub in REAL_AFFIL_HUBS)if(hub!==id&&REAL_AFFIL_HUBS[hub].includes(id)&&CLUBBY[hub])out.push({id:hub,dir:'up'});
   return out;
 }
+/* al empezar partida (o fichar) por un club con red real conocida, esas afiliaciones nacen ya acordadas
+   del todo (las dos cláusulas concedidas), como punto de partida de tu mandato */
+function seedRealAffiliations(){
+  const real=realAffilFor(state.club);
+  if(!real.length)return;
+  const list=affList();
+  real.forEach(a=>{if(!list.some(x=>x.id===a.id))list.push({id:a.id,dir:a.dir,since:state.season,loanFree:true,buyDiscount:true})});
+}
 function endAffiliation(id){const list=affList();const ix=list.findIndex(a=>a.id===id);if(ix>=0){const c=cname(id);list.splice(ix,1);news(`Rompéis la afiliación con ${c}.`);saveGame()}}
 /* jugador elegible al descuento de afiliación: que no sea importante para su club actual (joven o veterano) */
 function affEligibleRole(role){return role==='Reserva'||role==='No necesario'||role==='Joven promesa'}
@@ -1751,7 +1767,7 @@ function affilHTML(){
   const row=(id,rel,breakable,kind)=>{
     const c=CLUBBY[id];if(!c)return'';
     return`<div class="cupline" style="align-items:center">
-      <button class="sqhead" data-act="club-view" data-club="${id}" style="flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;margin:0">${crestHTML(c,40)}<div class="grow"><b>${esc(c.name)} ${flagHTML(c.co)}</b><small>${esc(divName(c.co,c.div))}</small></div></button>
+      <button class="sqhead" data-act="club-view" data-club="${id}" style="flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;margin:0">${crestFlagHTML(c,40)}<div class="grow"><b>${esc(c.name)}</b><small>${esc(divName(c.co,c.div))}</small></div></button>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
         <button class="tag off" data-act="affil-tag-info" data-id="${id}" data-kind="${kind}" style="border:0;cursor:pointer">${esc(rel)}</button>
         ${breakable?`<button class="muted-s" data-act="affil-end" data-id="${id}" style="border:0;background:none;cursor:pointer;font-size:11px;padding:0;text-decoration:underline">Romper</button>`:''}
@@ -1764,7 +1780,7 @@ function affilHTML(){
   <div class="fac-sub" style="margin-top:10px;padding-top:10px">${secHead('Tus clubes afiliados','down')}${downRows||'<p class="muted-s" style="padding:4px 2px">Sin afiliaciones de este tipo.</p>'}</div>`;
 }
 /* buscador de afiliaciones: país -> clubes, o búsqueda por nombre, con elección de dirección */
-function affilCandRow(c){return`<button class="mrow" data-act="affil-pick" data-id="${c.id}" style="grid-template-columns:26px 1fr auto;width:100%;text-align:left">${crestHTML(c,26)}<span class="pname">${esc(c.name)} ${flagHTML(c.co)}<small>${esc(divName(c.co,c.div))}</small></span><span class="muted-s">${starsFracHTML(c.rep)}</span></button>`}
+function affilCandRow(c){return`<button class="mrow" data-act="affil-pick" data-id="${c.id}" style="grid-template-columns:26px 1fr auto;width:100%;text-align:left">${crestHTML(c,26)}<span class="pname">${esc(c.name)} ${flagHTML(natOfClub(c))}<small>${esc(divName(c.co,c.div))}</small></span><span class="muted-s">${starsFracHTML(c.rep)}</span></button>`}
 function affilResHTML(){
   const q=(ui.affQ||'').trim().toLowerCase(),list=affList();
   if(q.length<2)return`<div class="res-scroll"><p class="muted-s" style="padding:6px 2px">Escribe al menos 2 letras, o elige un país.</p><div class="subh" style="margin-top:4px">Países</div>${gamePlayable().map(cc=>`<button class="mrow" data-act="affil-co" data-co="${cc}" style="grid-template-columns:28px 1fr auto;width:100%;text-align:left">${flagHTML(cc)}<span class="pname">${esc((COUNTRIES[cc]&&COUNTRIES[cc].name)||NATNAME[cc]||cc)}</span></button>`).join('')}</div>`;
@@ -2078,7 +2094,7 @@ if(CLUBBY.SSM)CLUBBY.SSM.logo='https://cdn.resfu.com/img_data/equipos/4415.png?s
 /* escudos de los clubes origen/destino de cesión del AFC Wimbledon (IDs de BeSoccer) */
 [['NFO21',148449],['COBH',60341],['CRAW',4463],['BAR',9203],['SPEN',10849],['YEOV',9188]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/escudos/medium/'+n+'.jpg?size=120x&lossy=1'});
 /* escudos de clubes de cesión, filiales, históricos y ligas de Irlanda/Escocia (IDs de BeSoccer) */
-[['FGR',4466],['WLS',9174],['FLTW',4536],['BHA21',60358],['AVL21',60357],['SUN23',102922],['EVE21',60342],['CRY21',60381],['CHE23',102918],['LEE21',138261],['FHA',1141],['TRU',142216],['CBRM',803],['CORK',838],['UCD',2614],['LONF',3055],['SFIN',4434],['COLR',9993],['RANH',12720],['ABDN',9927],['CELC',716],['DNDE',9934],['DNUT',943],['FALK',1028],['HEMO',6030],['HIBE',1323],['KILM',1459],['MWEL',9930],['RNGR',1241],['SJOH',2415],['SMIR',2416],['PRTC',1929],['DMBT',3005],['TLAN',85297],['EFIF',3006],['RCOU',2182],['ICT',9932],['LIVI',1565],['TAW',6444],['DUNF',946],['ZIL',10006],['AYR',9943],['ATX',137675],['PGL',1953],['ARBR',2998],['RAITH',2066],['QPARK',6499],['GLEN',4012],['EMEL',980],['STEN',3001],['ARS2',102915],['RFC2',143174],['BASL',10035],['THUN',3042],['GRAS',10036],['SRVT',3041],['LUGA',3036],['LSNE',5804],['SION',10037],['STGL',3040],['LUZN',10038],['YBOY',554],['FCZH',4089],['VADU',1116],['WINT',11576],['PLAT',9691],['RAPP',12876],['KRIN',4603]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
+[['FGR',4466],['WLS',9174],['FLTW',4536],['BHA21',60358],['AVL21',60357],['SUN23',102922],['EVE21',60342],['CRY21',60381],['CHE23',102918],['LEE21',138261],['FHA',1141],['TRU',142216],['CBRM',803],['CORK',838],['UCD',2614],['LONF',3055],['SFIN',4434],['COLR',9993],['RANH',12720],['ABDN',9927],['CELC',716],['DNDE',9934],['DNUT',943],['FALK',1028],['HEMO',6030],['HIBE',1323],['KILM',1459],['MWEL',9930],['RNGR',1241],['SJOH',2415],['SMIR',2416],['PRTC',1929],['DMBT',3005],['TLAN',85297],['EFIF',3006],['RCOU',2182],['ICT',9932],['LIVI',1565],['TAW',6444],['DUNF',946],['ZIL',10006],['AYR',9943],['ATX',137675],['PGL',1953],['ARBR',2998],['RAITH',2066],['QPARK',6499],['GLEN',4012],['EMEL',980],['STEN',3001],['ARS2',102915],['RFC2',143174],['BASL',10035],['THUN',3042],['GRAS',10036],['SRVT',3041],['LUGA',3036],['LSNE',5804],['SION',10037],['STGL',3040],['LUZN',10038],['YBOY',554],['FCZH',4089],['VADU',1116],['PLAT',9691],['RAPP',12876],['KRIN',4603]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
 /* clubes de solo referencia (relaciones reales de City Football Group / V Sports / Red Bull / etc. fuera de las ligas modeladas):
    sin escudo real ni liga jugable, solo sirven para que puedan aparecer citados por nombre, país y división si se referencian. */
 Object.assign(CLUBBY,{
@@ -2092,7 +2108,6 @@ Object.assign(CLUBBY,{
   SZPC:K('SZPC','Shenzhen Peng City','Shenzhen Peng City','Shenzhen','CN','#d4192b','#f4f4f4',40),
   MUMC:K('MUMC','Mumbai City FC','Mumbai City','Bombay','IN','#1c3f94','#f2d31b',42)
 });
-[['NYCFC',59736],['BAHI',3910],['MCTO',11246],['BOLI',11369],['MELC',18574],['YOKO',2778],['SZPC',110681],['MUMC',25008]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 /* ciudades reales (lon,lat); o = desplazamiento en px del grupo de escudos para evitar solapes */
 const CITY={
@@ -11217,6 +11232,7 @@ function newGame(slot,clubId){
     leagueConfig,leagueTeams,
     fixtures:multiFixtures(co+club.div,ids,rng(seed^0x9e37)),table:emptyTable(ids),news:[],market:[],fin:null,loans:[],loansOut:[],
     mgrStints:[{club:clubId,from:1}],mgrLog:[],jobOffers:[],split:null,ageNorm:1,affiliations:[]};
+  seedRealAffiliations();
   news(`La directiva de ${club.name} te presenta como nuevo míster. Objetivo: ${objective(clubId)}.`);
   initWorld();initFam();initFacilities();
   invalidateSquads();applyInitialLoans();aiMarket('start');   /* primero las cesiones reales: así los cedidos no se venden ni se duplican */
@@ -11824,7 +11840,8 @@ function switchClub(newId){
   const ids=Object.keys(teams);
   state.country=co;state.div=club.div;state.club=newId;state.teams=teams;
   state.fixtures=multiFixtures(co+club.div,ids,rng(seed^0x9e37^state.season));state.table=emptyTable(ids);state.split=null;
-  state.market=[];state.loans=[];state.loansOut=[];state.jobOffers=[];
+  state.market=[];state.loans=[];state.loansOut=[];state.jobOffers=[];state.affiliations=[];
+  seedRealAffiliations();
   state.mgrStints.push({club:newId,from:state.season});
   initWorld();initFam();initFacilities();
   invalidateSquads();applyInitialLoans();aiMarket('start');
@@ -14897,6 +14914,8 @@ function confirmBox(title,text,ok,danger){
   });
 }
 const crestHTML=(c,s,mode)=>{const real=mode?mode==='real':curMode()==='real';return real&&c.logo?`<span class="crest logo" style="--cs:${s||32}px"><img src="${esc(c.logo)}" alt="${esc(c.short)}" loading="lazy"></span>`:`<span class="crest" style="--cs:${s||32}px;--c1:${c.c1};--c2:${c.c2};--tx:${lum(c.c1)>.58?'#0b1310':'#fff'}">${c.short}</span>`};
+/* escudo con la bandera del país del club superpuesta en una chapita, arriba a la derecha */
+const crestFlagHTML=(c,s,mode)=>`<span class="crest-wrap" style="--cs:${s||32}px">${crestHTML(c,s,mode)}<span class="crest-flag">${flagHTML(natOfClub(c))}</span></span>`;
 const fmtDate=ts=>new Date(ts).toLocaleString('es-ES',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 /* equipo con escudo y abreviatura para filas de resultados/eliminatorias */
 const teamCell=(id,cls,right)=>{const c=CLUBBY[id];return`<button class="tmside${right?' r':''}${cls?' '+cls:''}" data-act="club-view" data-club="${id}">${crestHTML(c,22)}<span class="tmtxt"><b>${esc(c.name)}</b><em>${esc(c.short)}</em></span></button>`};
@@ -15526,7 +15545,7 @@ const xIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke=
 const checkIcon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
 function cardHTML(id){
   const c=CLUBBY[id],t=previewTeam(id),top=[...t.players].sort((a,b)=>b.ovr-a.ovr).slice(0,3),rep=xiAvgOvr(t),fl=facLevels(id);
-  return`<div class="cc-head">${crestHTML(c,54)}<div><h3>${esc(c.name)}</h3><div class="muted-s">${esc(c.city)}, ${esc((COUNTRIES[c.co]&&COUNTRIES[c.co].name)||NATNAME[c.co]||c.co)}</div><div class="cc-row"><span class="cc-div">${flagHTML(c.co)} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="card-close" aria-label="Cerrar">${xIcon}</button></div>
+  return`<div class="cc-head">${crestFlagHTML(c,54)}<div><h3>${esc(c.name)}</h3><div class="muted-s">${esc(c.city)}, ${esc(countryNameOf(c))}</div><div class="cc-row"><span class="cc-div">${flagHTML(natOfClub(c))} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="card-close" aria-label="Cerrar">${xIcon}</button></div>
   <div class="defs sm"><div><i>Estadio</i><b>${esc(stadiumOf(id))}</b></div><div><i>Presupuesto</i><b>${fmtM(budgetFor(c))}</b></div><div><i>Reputación</i><b>${starsFracHTML(rep)} ${rep}${repDeltaHTML(id)}</b></div><div><i>Instalaciones de entrenamiento</i><b>Nivel ${fl.train}</b></div><div><i>Academia de juveniles</i><b>Nivel ${fl.acad}</b></div></div>
   <div class="cc-players">${top.map(p=>`<button class="cc-p" data-act="pl" data-id="${p.id}" data-club="${id}"><b>${esc(shortName(p.n))}</b><span>${ppOf(p)[0]} <em style="font-style:normal;font-weight:700;color:${ratingColor(p.ovr)}">${p.ovr}</em></span></button>`).join('')}</div>
   <div class="cc-btns"><button class="btn ghost" data-act="cv-open">Ver más información</button><button class="btn primary" data-act="take">Tomar Control del Club</button></div>`;
@@ -16080,7 +16099,7 @@ function clubViewHTML(id){
   const sub=[['first','Primer equipo',squad.length],['ced','Cedidos',hasCed?(loans.out.length+loans.inn.length):null],['affil','Afiliaciones',affCount||null]];
   if(!sub.some(([k])=>k===ui.cvSub))ui.cvSub='first';
   const subSeg=`<div class="seg" style="margin-top:14px">${sub.map(([k,l,n])=>`<button class="${ui.cvSub===k?'on':''}" data-act="cv-sub" data-k="${k}">${l}${n!=null?` (${n})`:''}</button>`).join('')}</div>`;
-  const affRow=(cid,rel,kind,lookupId)=>{const cc=CLUBBY[cid];if(!cc)return'';return`<div class="cupline" style="align-items:center"><button class="sqhead" data-act="club-view" data-club="${cid}" style="flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;margin:0">${crestHTML(cc,40)}<div class="grow"><b>${esc(cc.name)} ${flagHTML(cc.co)}</b><small>${esc(divName(cc.co,cc.div))}</small></div></button><button class="tag off" data-act="affil-tag-info" data-id="${lookupId||cid}" data-kind="${kind}" style="border:0;cursor:pointer">${esc(rel)}</button></div>`};
+  const affRow=(cid,rel,kind,lookupId)=>{const cc=CLUBBY[cid];if(!cc)return'';return`<div class="cupline" style="align-items:center"><button class="sqhead" data-act="club-view" data-club="${cid}" style="flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;margin:0">${crestFlagHTML(cc,40)}<div class="grow"><b>${esc(cc.name)}</b><small>${esc(divName(cc.co,cc.div))}</small></div></button><button class="tag off" data-act="affil-tag-info" data-id="${lookupId||cid}" data-kind="${kind}" style="border:0;cursor:pointer">${esc(rel)}</button></div>`};
   const secHead2=(title,dir)=>`<div class="fac-head"><h3>${title}</h3><button class="ibtn" data-act="affil-info" data-dir="${dir}" aria-label="Información">i</button></div>`;
   /* vista recíproca: si el club que estás viendo tiene una afiliación con tu club (desde la perspectiva de tu club), se muestra aquí al revés */
   const recip=(state&&id!==state.club)?affiliationWith(id):null;
@@ -16107,7 +16126,7 @@ function clubViewHTML(id){
   if(!top.some(([k])=>k===ui.cvTab))ui.cvTab='squad';
   const topSeg=`<div class="seg" style="margin-top:14px">${top.map(([k,l])=>`<button class="${ui.cvTab===k?'on':''}" data-act="cv-tab" data-k="${k}">${l}</button>`).join('')}</div>`;
   const content=ui.cvTab==='info'?infoBody:ui.cvTab==='palmares'?palBody:`${subSeg}${squadBody}`;
-  return`<div class="cv-scroll"><div class="cv-top">${crestHTML(c,64)}<div class="grow"><h2>${esc(c.name)}</h2><div class="muted-s">${esc(c.city)}, ${esc((COUNTRIES[c.co]&&COUNTRIES[c.co].name)||NATNAME[c.co]||c.co)}</div><div class="cc-row"><span class="cc-div">${flagHTML(c.co)} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="cv-close" aria-label="Cerrar">${xIcon}</button></div>
+  return`<div class="cv-scroll"><div class="cv-top">${crestFlagHTML(c,64)}<div class="grow"><h2>${esc(c.name)}</h2><div class="muted-s">${esc(c.city)}, ${esc(countryNameOf(c))}</div><div class="cc-row"><span class="cc-div">${flagHTML(natOfClub(c))} ${esc(divName(c.co,c.div))}</span>${modeChip(id)}</div></div><button class="cc-x" data-act="cv-close" aria-label="Cerrar">${xIcon}</button></div>
   ${topSeg}${content}</div>
   ${state?'':`<div class="cv-foot"><button class="btn primary" data-act="take">Tomar Control del Club</button></div>`}`;
 }
@@ -16547,7 +16566,7 @@ squad(){
   const rows=st
     ? list.map(p=>`<button class="prow-b sts" data-act="pl" data-id="${p.id}" data-club="${S.id}">${posChip(p)}<span class="pname">${esc(p.n)}<small>${p.age} años ${roleChip(p.role||roleIn(p,S.players))}${tagsHTML(p)}</small></span><span>${p.ap||0}</span><span${p.pos==='GK'?' title="Goles encajados"':''}>${p.pos==='GK'?`${p.ge||0}<em class="ge">e</em>`:(p.g||0)}</span><span>${p.as||0}</span><span>${p.yc||0}</span><span>${p.rc||0}</span><span>${ratOf(p)}</span></button>`).join('')
     : `<div class="pcs">${list.map(p=>playerCard(p,S.id,{starter:S.mine&&xi.has(p.id),tags:true})).join('')}</div>`;
-  const head=`<div class="sqhead">${crestHTML(c,40)}<div class="grow"><b>${esc(c.name)} ${flagHTML(c.co)}</b><small>${esc(divName(c.co,c.div))}</small></div>${S.mine?'<span class="tag off">Tu club</span>':'<span class="tag">Equipo vinculado</span>'}</div>`;
+  const head=`<div class="sqhead">${crestFlagHTML(c,40)}<div class="grow"><b>${esc(c.name)}</b><small>${esc(divName(c.co,c.div))}</small></div>${S.mine?'<span class="tag off">Tu club</span>':'<span class="tag">Equipo vinculado</span>'}</div>`;
   const vseg=`<div class="seg">${[['info','Información'],['stats','Estadísticas']].map(([k,l])=>`<button class="${ui.sqv===k?'on':''}" data-act="sqv" data-v="${k}">${l}</button>`).join('')}</div>`;
   const th=st?'<div class="prow-b sts th"><span></span><span>Jugador</span><span>PJ</span><span title="Goles (porteros: goles encajados)">G</span><span>A</span><span>TA</span><span>TR</span><span>Nota</span></div>':'';
   const note=linked.length?'<p class="hint">Los equipos vinculados suben y bajan jugadores desde la ficha (Acciones), pero no se compran ni se venden entre ellos.</p>':'';
