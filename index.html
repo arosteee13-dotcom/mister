@@ -85,6 +85,42 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .crest.logo{background:transparent;box-shadow:none;overflow:visible}
 .crest.logo img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 5px 12px rgba(0,0,0,.5))}
 
+/* museo de trofeos */
+.museum-filters{flex:none;display:flex;gap:8px;padding:2px 18px 12px;flex-wrap:wrap}
+.mfdrop{position:relative;flex:1;min-width:140px}
+.mfdrop-btn{width:100%;display:flex;align-items:center;gap:8px;background:rgba(220,240,228,.05);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:10px 12px;font:600 13px var(--display);text-align:left}
+.mfdrop-btn span.mfdrop-flag{flex:none;font-size:15px;line-height:1;width:18px;display:inline-flex;align-items:center;justify-content:center}
+.mfdrop-btn span.mfdrop-flag img.flag-i{width:16px;height:16px;border-radius:50%;object-fit:cover;display:block}
+.mfdrop-btn span.mfdrop-flag.sq img.flag-i,.mfdrop-row span.mfdrop-flag.sq img.flag-i{width:18px;height:13px;border-radius:2px}
+.mfdrop-btn b{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mfdrop-btn i.mfdrop-car{flex:none;width:16px;height:16px;color:var(--dim);transition:transform .2s}
+.mfdrop.open .mfdrop-btn i.mfdrop-car{transform:rotate(180deg)}
+.mfdrop-btn i.mfdrop-car svg{width:100%;height:100%;display:block}
+.mfdrop-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:20;max-height:260px;overflow:auto;background:var(--bg2);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.5);padding:6px;display:none}
+.mfdrop.open .mfdrop-list{display:block}
+.mfdrop-row{width:100%;display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;font:600 13px var(--display);text-align:left;color:var(--tx)}
+.mfdrop-row:hover{background:rgba(220,240,228,.06)}
+.mfdrop-row.sel{background:var(--accent-soft);color:var(--accent)}
+.mfdrop-row span.mfdrop-flag{flex:none;font-size:15px;line-height:1;width:18px;display:inline-flex;align-items:center;justify-content:center}
+.mfdrop-row span.mfdrop-flag img.flag-i{width:16px;height:16px;border-radius:50%;object-fit:cover;display:block}
+.museum-pct{padding:0 18px 10px;font-size:12.5px;color:var(--muted)}
+.museum-grid{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));align-content:start;gap:9px;padding:0 18px 30px}
+.museum-group-h{grid-column:1/-1;font:700 13px var(--display);color:var(--muted);letter-spacing:.01em;padding:14px 2px 2px;margin:0}
+.museum-group-h:first-child{padding-top:0}
+.mtrophy{display:flex;flex-direction:column;align-items:center;padding:9px 5px 7px;border-radius:16px;background:var(--surface);border:1px solid var(--line);text-align:center;height:108px}
+.mtrophy-wrap{position:relative;width:32px;display:grid;place-items:center;flex:0 0 62%}
+.mtrophy-wrap img,.mtrophy-wrap i{width:100%;height:100%;object-fit:contain;display:block;color:var(--amber)}
+.mtrophy-wrap i svg{width:100%;height:100%;display:block}
+.mtrophy.locked .mtrophy-wrap img,.mtrophy.locked .mtrophy-wrap i{filter:grayscale(1) brightness(.55);opacity:.55}
+.mtrophy-flag{position:absolute;top:-4px;right:-6px;width:14px;height:14px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:10px;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.mtrophy-flag img.flag-i{width:100%;height:100%;object-fit:cover}
+.mtrophy-flag.sq{width:20px;height:14px;border-radius:3px}
+.mtrophy-flag.sq img.flag-i{border-radius:2px}
+.mtrophy.locked .mtrophy-flag{filter:grayscale(1) brightness(.7);opacity:.7}
+.mtrophy-n{flex:0 0 38%;display:flex;align-items:center;justify-content:center;width:100%}
+.mtrophy-n span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font:600 8.5px/1.18 var(--display)}
+.mtrophy.locked .mtrophy-n{color:var(--muted)}
+
 /* mapa */
 #s-map .mapstage{position:relative;flex:1;min-height:0;container-type:size;overflow:hidden}
 .layer{position:absolute;inset:0;display:flex;padding:6px 16px;transition:transform .85s var(--ease),opacity .6s var(--ease),padding-bottom .55s var(--ease),padding-right .55s var(--ease)}
@@ -1032,6 +1068,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
       <div class="title-actions">
         <button class="btn primary big" data-act="new">Nueva Partida</button>
         <button class="btn ghost big" data-act="load">Cargar Partida</button>
+        <button class="btn ghost big" data-act="museum">Museo</button>
       </div>
       <p class="fine">Tus partidas se guardan en este navegador.</p>
     </div>
@@ -1044,6 +1081,16 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
       <div class="grow"><div class="h-title" id="slots-title">Nueva partida</div><div class="muted-s" id="slots-sub"></div></div>
     </div>
     <div class="slots" id="slots"></div>
+  </section>
+
+  <!-- Museo -->
+  <section id="s-museum" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" data-act="to-title" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="grow"><div class="h-title">Museo de trofeos</div><div class="muted-s" id="museum-sub"></div></div>
+    </div>
+    <div class="museum-filters" id="museum-filters"></div>
+    <div class="museum-grid" id="museum-grid"></div>
   </section>
 
   <!-- Mapa -->
@@ -7906,7 +7953,7 @@ const modeName=m=>m==='real'?'Base de datos (jugadores reales)':'Jugadores ficti
 const modeChip=id=>curMode()==='real'?`<span class="cc-div src">${REAL_DB[id]?'Plantilla real':'Plantilla generada'}</span>`:'';
 /* ===================== estado global ===================== */
 let state=null;
-const ui={gmode:'fict',screen:'title',mode:'new',slot:1,level:0,club:null,seed:1,preview:{},zoom:1,tab:'home',sel:null,mkt:null,rv:null,origins:['50% 50%','50% 50%'],cf:null,mapBuilt:false,country:null,cvId:null,cvTab:'squad',cvSub:'first',clubTab:'info',vmode:'map',trophyPending:null,trophyCb:null,ssTab:'general',mgrTab:'general'};
+const ui={gmode:'fict',screen:'title',mode:'new',slot:1,level:0,club:null,seed:1,preview:{},zoom:1,tab:'home',sel:null,mkt:null,rv:null,origins:['50% 50%','50% 50%'],cf:null,mapBuilt:false,country:null,cvId:null,cvTab:'squad',cvSub:'first',clubTab:'info',vmode:'map',trophyPending:null,trophyCb:null,ssTab:'general',mgrTab:'general',museum:{co:'ALL',cont:'ALL'}};
 const me=()=>state.teams[state.club];
 
 /* ===================== jugadores ===================== */
@@ -14069,10 +14116,10 @@ function storeImport(n,s,meta){
 /* ===================== mundo: otras ligas y torneos ===================== */
 const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Copa Suiza',AR:'Copa Argentina'};
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC','ATSC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC','SCSC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHSC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC','SCSC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4};
-const SC_SKIP={AT:1,DK:1};
+const SC_SKIP={AT:1,DK:1,CH:1};
 const SC_WEEKS={ES:[20,21]};
 const userKey=()=>state.country+(state.div||1);
 const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k.endsWith('C');
@@ -14951,7 +14998,7 @@ function recordHonors(final){
   if(state.cups&&state.cups.ECL&&state.cups.ECL.champ)add(state.cups.ECL.champ,'ecl','ECL');
   if(state.cups&&state.cups.SCE&&state.cups.SCE.champ)add(state.cups.SCE.champ,'sce','SCE');
   if(state.cups&&state.cups.IFC&&state.cups.IFC.champ)add(state.cups.IFC.champ,'ifc','IFC');
-  mine.forEach(k=>{const pr=PRIZE_TITLE[k];news(`Añades un título a tu palmarés: ${trophyName(CLUBBY[state.club],k)}.${pr?` La directiva te premia con ${fmtM(pr)}.`:''}`)});
+  mine.forEach(k=>{const pr=PRIZE_TITLE[k];news(`Añades un título a tu palmarés: ${trophyName(CLUBBY[state.club],k)}.${pr?` La directiva te premia con ${fmtM(pr)}.`:''}`);const mc=CLUBBY[state.club];if(mc)museumUnlock(mc.co,k)});
   if(mine.length){state.mgrLog=state.mgrLog||[];mine.forEach(k=>state.mgrLog.push({s:state.season,club:state.club,k}));}
   if(final){try{
     const aw=individualAwards();
@@ -16700,6 +16747,126 @@ function trophyIcon(club,k){
   const u=trophyImg(club,k);
   return u?`<img src="${u}" alt="" loading="lazy">`:(TROPHY_ICO[k]||ICO_TROPHY);
 }
+/* ===================== Museo de trofeos (desbloqueo permanente, independiente de las partidas) ===================== */
+/* a qué continente pertenece cada trofeo "global" (sin país propio: continentales/mundiales) */
+/* solo las competiciones continentales que de verdad se pueden jugar y ganar en la partida
+   (coinciden con las que recordHonors registra): el resto (Recopa de Europa, Copa de Ferias,
+   Mundial de Clubes, Copa Intercontinental, Copa Interamericana, Copa Federación, torneos de la
+   Serie C italiana...) no están implementadas todavía, así que no se listan como desbloqueables.
+   La Copa Intercontinental de la FIFA (ifc) se juega dentro del circuito europeo, así que cuenta
+   como trofeo de Europa. */
+const MUSEUM_ANY_CONT={ucl:'EU',uel:'EU',ecl:'EU',sce:'EU',ifc:'EU',lib:'SA',sud:'SA',recs:'SA'};
+const MUSEUM_CONT_NAME={EU:'Europa',SA:'Sudamérica'};
+/* orden propio del museo: primero las divisiones de la liga (de la 1ª a la más baja) y luego el
+   resto de competiciones nacionales (copa, supercopa, copa de liga, torneos argentinos...) */
+/* algunas fotos de trofeo tienen mucho margen vacío alrededor y se ven pequeñas dentro de la
+   tarjeta; aquí se les da un empujón extra de tamaño caso por caso */
+const MUSEUM_IMG_SCALE={'ES|d4':1.35,'CH|liechtenstein':1.35};
+const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d5','d6','d7','cup','sc','lc','apertura','clausura','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','eflt','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs'];
+/* las competiciones que de verdad salen en cada país se sacan directamente de la pantalla de
+   Competiciones del juego (GROUPS), quitando las fases previas (…Q). Así el museo nunca muestra
+   nada que no se pueda ganar todavía en la partida. */
+const MUSEUM_COMP_KEY={1:'league',2:'d2',3:'d3',4:'d4',5:'d5',6:'d6',7:'d7',C:'cup',SC:'sc',LC:'lc',RF:'d3',FR:'d4',LIC:'liechtenstein',AK:'apertura',LK:'clausura',TK:'trofeo',GISC:'sint'};
+function museumKeysOf(co){
+  const g=GROUPS.find(x=>x.id===co);
+  if(!g)return[];
+  return g.comps.filter(c=>!c.endsWith('Q')).map(c=>{
+    const suf=c.slice(co.length);
+    return MUSEUM_COMP_KEY[suf]||null;
+  }).filter(Boolean);
+}
+/* catálogo completo: un item por cada trofeo de club que realmente se puede ganar en la partida
+   (país+competición, según GROUPS, o competición continental) */
+function museumCatalog(){
+  const out=[];
+  PLAYABLE.forEach(co=>{
+    const cdef=COUNTRIES[co];
+    museumKeysOf(co).forEach(k=>{
+      /* la Copa de Liechtenstein se agrupa dentro de Suiza (así la juega el juego), pero es un
+         trofeo de Liechtenstein: lleva su propia bandera, no la suiza */
+      const flagCo=k==='liechtenstein'?'LI':co;
+      out.push({id:co+'|'+k,co,k,flagCo,cont:regionOf(co),name:trophyName({co},k),countryName:(cdef&&cdef.name)||NATNAME[co]||co,img:trophyImg({co},k)});
+    });
+  });
+  Object.keys(MUSEUM_ANY_CONT).forEach(k=>{
+    const cont=MUSEUM_ANY_CONT[k];
+    out.push({id:'ANY|'+k,co:'ANY',k,cont,name:trophyName({co:null},k),countryName:MUSEUM_CONT_NAME[cont],img:trophyImg({co:null},k)});
+  });
+  return out;
+}
+function museumData(){
+  let d=null;try{d=JSON.parse(Store.get('mister.museum')||'null')}catch(e){d=null}
+  return d&&typeof d==='object'?d:{};
+}
+function museumSave(d){Store.set('mister.museum',JSON.stringify(d))}
+/* marca un trofeo como desbloqueado para siempre: con que se gane una vez, queda guardado
+   aunque luego se borre la partida que lo consiguió */
+function museumUnlock(co,k){
+  if(!museumKeysOf(co).includes(k))co='ANY';
+  const d=museumData();
+  d[co]=d[co]||{};
+  if(d[co][k])return;
+  d[co][k]=1;
+  museumSave(d);
+}
+function museumIsUnlocked(co,k){const d=museumData();return!!(d[co]&&d[co][k])}
+const ICO_WORLDBALL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.2 2-3.6 5.3-3.6 9s1.4 7 3.6 9c2.2-2 3.6-5.3 3.6-9s-1.4-7-3.6-9z"/><path d="M3.3 9h17.4M3.3 15h17.4"/></svg>';
+function museumContFlagHTML(cont){
+  if(cont==='EU')return `<img class="flag-i" src="${CONT_FLAGS.europe}" alt="">`;
+  if(cont==='SA')return `<img class="flag-i" src="${CONT_FLAGS.samerica}" alt="">`;
+  return `<i style="width:15px;height:15px;display:block">${ICO_WORLDBALL}</i>`;
+}
+function museumFlagHTML(it){
+  if(it.co==='ANY')return museumContFlagHTML(it.cont);
+  return `<span>${flagHTML(it.flagCo||it.co)}</span>`;
+}
+const museumFlagCls=it=>(it.co==='ANY'&&(it.cont==='EU'||it.cont==='SA'))?' sq':'';
+const MFDROP_CAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+/* dropdown pequeño y anclado al botón, con bandera delante del nombre (país o continente) */
+function museumDropHTML(f,cur,label,rows){
+  const open=ui.museum.open===f;
+  const curRow=rows.find(r=>r.v===cur);
+  return `<div class="mfdrop${open?' open':''}">
+    <button type="button" class="mfdrop-btn" data-act="museum-drop-toggle" data-f="${f}">${curRow&&curRow.flag||''}<b>${esc(curRow?curRow.n:label)}</b><i class="mfdrop-car">${MFDROP_CAR}</i></button>
+    <div class="mfdrop-list">${rows.map(r=>`<button type="button" class="mfdrop-row${r.v===cur?' sel':''}" data-act="museum-drop-pick" data-f="${f}" data-v="${r.v}">${r.flag||''}<span>${esc(r.n)}</span></button>`).join('')}</div>
+  </div>`;
+}
+function renderMuseum(){
+  const all=museumCatalog();
+  const unlockedAll=all.filter(it=>museumIsUnlocked(it.co,it.k)).length;
+  const pct=all.length?Math.round(unlockedAll/all.length*100):0;
+  $('#museum-sub').textContent=`${unlockedAll} / ${all.length} trofeos · ${pct}%`;
+  const countries=[...new Set(all.filter(it=>it.co!=='ANY').map(it=>it.co))]
+    .sort((a,b)=>((COUNTRIES[a]&&COUNTRIES[a].name)||NATNAME[a]||a).localeCompare((COUNTRIES[b]&&COUNTRIES[b].name)||NATNAME[b]||b));
+  const conts=[...new Set(all.map(it=>it.cont))];
+  const coRows=[{v:'ALL',n:'Todos los países',flag:''},...countries.map(co=>({v:co,n:(COUNTRIES[co]&&COUNTRIES[co].name)||NATNAME[co]||co,flag:`<span class="mfdrop-flag">${flagHTML(co)}</span>`}))];
+  const contRows=[{v:'ALL',n:'Todos los continentes',flag:''},...conts.map(c=>({v:c,n:MUSEUM_CONT_NAME[c]||c,flag:`<span class="mfdrop-flag${(c==='EU'||c==='SA')?' sq':''}">${museumContFlagHTML(c)}</span>`}))];
+  $('#museum-filters').innerHTML=museumDropHTML('co',ui.museum.co,'Todos los países',coRows)+museumDropHTML('cont',ui.museum.cont,'Todos los continentes',contRows);
+  let list=all;
+  if(ui.museum.co!=='ALL')list=list.filter(it=>it.co===ui.museum.co);
+  if(ui.museum.cont!=='ALL')list=list.filter(it=>it.cont===ui.museum.cont);
+  const MUSEUM_CONT_ORDER={EU:0,SA:1};
+  list=list.slice().sort((a,b)=>{
+    const pa=a.co==='ANY'?0:1,pb=b.co==='ANY'?0:1;
+    if(pa!==pb)return pa-pb;
+    if(pa===0){
+      const ca=MUSEUM_CONT_ORDER[a.cont]!==undefined?MUSEUM_CONT_ORDER[a.cont]:9,cb=MUSEUM_CONT_ORDER[b.cont]!==undefined?MUSEUM_CONT_ORDER[b.cont]:9;
+      if(ca!==cb)return ca-cb;
+      return MUSEUM_KEY_ORDER.indexOf(a.k)-MUSEUM_KEY_ORDER.indexOf(b.k);
+    }
+    return a.countryName.localeCompare(b.countryName)||MUSEUM_KEY_ORDER.indexOf(a.k)-MUSEUM_KEY_ORDER.indexOf(b.k);
+  });
+  const byCountry=ui.museum.co==='ALL';
+  let lastGroup=null,html='';
+  list.forEach(it=>{
+    if(byCountry&&it.countryName!==lastGroup){lastGroup=it.countryName;html+=`<div class="museum-group-h">${esc(it.countryName)}</div>`}
+    const on=museumIsUnlocked(it.co,it.k);
+    const scale=MUSEUM_IMG_SCALE[it.co+'|'+it.k]||1;
+    const img=it.img?`<img src="${it.img}" alt="" loading="lazy"${scale!==1?` style="transform:scale(${scale})"`:''}>`:`<i>${TROPHY_ICO[it.k]||ICO_TROPHY}</i>`;
+    html+=`<div class="mtrophy${on?'':' locked'}"><div class="mtrophy-wrap">${img}<div class="mtrophy-flag${museumFlagCls(it)}">${museumFlagHTML(it)}</div></div><div class="mtrophy-n"><span>${esc(it.name)}</span></div></div>`;
+  });
+  $('#museum-grid').innerHTML=html;
+}
 /* deduce la clave de "palmarés" (league/cup/sc/lc/ucl/uel/ecl/sce/ifc) a partir de la clave interna de la copa
    (state.cups[...]), con el mismo criterio que recordHonors, para poder mostrar el trofeo correcto en el pop-up */
 function honorKindForCup(key){
@@ -17994,6 +18161,9 @@ function seasonSheet(){
 const H={
   new(){ui.mode='new';renderSlots();go('slots')},
   load(){ui.mode='load';renderSlots();go('slots')},
+  museum(){ui.museum.open=null;renderMuseum();go('museum')},
+  'museum-drop-toggle'(t){ui.museum.open=ui.museum.open===t.dataset.f?null:t.dataset.f;renderMuseum()},
+  'museum-drop-pick'(t){ui.museum[t.dataset.f]=t.dataset.v;ui.museum.open=null;renderMuseum()},
   'to-title'(){go('title')},
   'slot-new'(t){askMode(+t.dataset.n)},
   'mode-kind'(t){ui.customFlow=t.dataset.k==='custom';$('#sheet').classList.remove('open');askDataMode()},
@@ -18596,8 +18766,13 @@ function bindEvents(){
   document.addEventListener('click',e=>{
     if(dragMoved){dragMoved=false;return}
     const t=e.target.closest&&e.target.closest('[data-act]');
-    if(!t){if(ui.styleOpen&&!(e.target.closest&&e.target.closest('.fdrop'))){ui.styleOpen=false;renderGame()}return}
+    if(!t){
+      if(ui.styleOpen&&!(e.target.closest&&e.target.closest('.fdrop'))){ui.styleOpen=false;renderGame()}
+      if(ui.museum.open&&!(e.target.closest&&e.target.closest('.mfdrop'))){ui.museum.open=null;renderMuseum()}
+      return;
+    }
     if(ui.styleOpen&&!['style-menu','style-pick'].includes(t.dataset.act)){ui.styleOpen=false}
+    if(ui.museum.open&&!['museum-drop-toggle','museum-drop-pick'].includes(t.dataset.act)){ui.museum.open=null}
     const f=H[t.dataset.act];if(f)f(t,e);
   });
   function syncCountryHover(c){
