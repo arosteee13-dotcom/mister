@@ -16664,7 +16664,10 @@ function openCustomCountrySheet(){
 }
 function openCustomTeamSheet(co){
   const C=COUNTRIES[co];
-  const byRepAsc=(a,b)=>a.rep-b.rep||a.name.localeCompare(b.name,'es');
+  /* La "Reputación" que muestra el juego es el GRL medio del mejor once (xiAvgOvr). No usar c.rep/repOf,
+     que es la reputación de juego (presupuesto/objetivos) y en la pestaña de la competición figura como "Prestigio". */
+  const repM=c=>xiAvgOvr(previewTeam(c.id));
+  const byRepAsc=(a,b)=>repM(a)-repM(b)||a.name.localeCompare(b.name,'es');
   const steps=legitDivSteps(co).filter(st=>st.divs.some(d=>CLUBS.some(c=>c.co===co&&(c.div||1)===d&&isLeagueEnabled(co,d))));
   if(!steps.length){toast('Ese país no tiene equipos disponibles para sustituir todavía');openCustomCountrySheet();return}
   /* los 3 peor valorados de la división más baja; si esa división no llega a 3 equipos (datos incompletos),
@@ -16676,9 +16679,9 @@ function openCustomTeamSheet(co){
     idx--;
   }
   const tier=steps[steps.length-1];
-  cands=cands.sort((a,b)=>b.rep-a.rep||a.name.localeCompare(b.name,'es'));   /* en pantalla: de más a menos reputación */
+  cands=cands.sort((a,b)=>repM(b)-repM(a)||a.name.localeCompare(b.name,'es'));   /* en pantalla: de más a menos reputación */
   ui.custom={country:co,divs:tier.divs,tierLabel:tier.label};
-  const rows=cands.map(c=>`<button class="cc-team" data-act="custom-team" data-club="${c.id}">${crestHTML(c,34)}<span class="cc-lt"><b>${esc(c.name)}</b><small>${esc(c.city)}</small></span><span class="lstat"><small class="lrep">${starsFracHTML(c.rep)} ${c.rep}</small></span></button>`).join('');
+  const rows=cands.map(c=>`<button class="cc-team" data-act="custom-team" data-club="${c.id}">${crestHTML(c,34)}<span class="cc-lt"><b>${esc(c.name)}</b><small>${esc(c.city)}</small></span><span class="lstat"><small class="lrep">${starsFracHTML(repM(c))} ${repM(c)}</small></span></button>`).join('');
   openSheet(`<h3>${flagHTML(co)} ${esc(C.name)}</h3><p>Estos son los tres equipos peor valorados de ${esc(tier.label)}. Elige a cuál quieres sustituir con tu club.</p>${rows}<div class="row-btns"><button class="btn ghost" data-act="custom-back-country">Otro país</button></div>`);
 }
 function openCustomConfirm(){
