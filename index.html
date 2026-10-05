@@ -1244,6 +1244,7 @@ const FRANCE=P(`2.3,51.05 4.2,50.3 6,49.5 7.6,49 7.6,47.6 6.8,46 7,45 7.6,44 7.6
 const PORTUGAL=P(`-8.85,41.87 -8.72,41.5 -8.75,41.15 -8.87,40.7 -8.9,40.3 -8.86,40.15 -9.2,39.6 -9.38,39.36 -9.5,38.78 -9.4,38.6 -8.9,38.52 -8.93,38.0 -8.97,37.5 -8.97,37.02 -8.5,37.05 -7.93,37.02 -7.42,37.19 -7.55,37.5 -7.66,37.64 -7.5,38.15 -7.16,38.88 -7.0,39.0 -7.3,39.3 -6.85,39.7 -6.9,40.15 -6.9,40.5 -6.85,41.0 -6.75,41.4 -6.75,41.8 -7.3,41.92 -8.1,41.9 -8.85,41.87`);
 const POLAND=P(`14.1,53.9 14.3,54.5 16.4,54.8 18.7,54.8 19.7,54.4 20.9,54.3 22.7,54.4 23.5,53.9 23.9,53.1 23.6,52.3 24.1,51.6 23.9,50.9 22.9,49.1 22.5,49.0 20.9,49.4 19.8,49.4 19.0,49.4 18.9,49.9 18.4,49.9 17.6,50.2 16.9,50.4 16.0,50.4 15.0,50.8 14.6,51.6 14.1,52.2 14.5,52.9`);
 const NORWAY=P(`5.0,58.0 5.3,59.0 5.0,60.3 5.9,61.0 6.8,62.1 7.0,62.8 8.0,63.0 9.0,63.7 10.0,63.0 10.7,63.5 11.3,64.5 12.0,65.5 13.0,66.3 14.0,67.0 14.5,67.9 16.0,68.5 17.5,69.0 19.0,69.7 20.5,69.9 21.0,70.1 23.0,70.3 25.5,71.0 28.0,70.5 29.9,69.7 29.0,69.0 27.0,68.6 25.0,67.0 23.5,65.9 23.0,64.0 21.3,63.0 20.1,62.0 18.0,61.0 16.5,60.6 14.5,60.0 12.5,59.0 11.9,59.0 11.0,58.9 9.0,58.1`);
+const TURKEY=P(`27.0,42.0 28.0,41.7 29.0,41.3 31.4,41.3 35.2,42.0 38.4,41.0 41.5,41.5 43.6,41.1 44.8,39.8 44.3,37.2 42.3,37.3 40.0,37.2 36.7,36.7 34.6,36.2 32.6,36.2 30.5,36.2 29.0,36.1 27.3,36.9 26.0,38.4 26.3,40.0`);
 const BULGARIA=P(`22.4,43.4 22.9,44.0 23.0,44.2 24.0,43.7 25.3,43.7 26.0,43.75 27.2,44.0 28.0,43.75 28.6,43.75 27.9,42.6 27.5,42.0 26.6,41.3 26.0,41.25 25.3,41.3 24.5,41.4 23.7,41.3 23.0,41.35 22.6,41.9 22.4,42.5`);
 const ARGENTINA=P(`-62,-22 -57.5,-25 -58,-27.3 -58.5,-30.5 -57.9,-33 -57.1,-34.6 -57,-36.5 -57.5,-38 -62,-40.8 -64,-42.1 -65.3,-43.5 -67,-45.3 -67.7,-47 -68.5,-49.3 -69,-51.5 -68.5,-54.5 -68.6,-54.9 -70,-52.5 -72.3,-50.3 -72.5,-46.8 -71.8,-42.3 -71.5,-38.5 -70.4,-35 -69.9,-33 -70,-29.3 -68.3,-24.5 -65,-22`);
 const SWITZERLAND=P(`6.1,46.2 6.0,46.6 6.5,47.1 7.0,47.45 7.6,47.6 8.2,47.6 8.6,47.65 9.0,47.6 9.5,47.55 9.6,47.3 9.6,47.05 9.9,46.85 10.5,46.5 10.0,46.2 9.2,46.0 8.95,45.85 8.3,46.15 7.7,45.95 7.0,45.85 6.8,45.9 6.3,46.0`);
@@ -1275,6 +1276,7 @@ const FLAG_PATTERN={
   CH:{type:'cross',offset:.5,arm:.14,cross:'#FFFFFF',bg:'#D52B1E'},
   AR:{type:'hstripe',colors:['#75AADB','#FFFFFF','#75AADB']},
   BG:{type:'hstripe',colors:['#FFFFFF','#00966E','#D62612']},
+  TR:{type:'hstripe',colors:['#E30A17','#E30A17']},
 };
 function flagColorAt(co,nx,ny){
   const f=FLAG_PATTERN[co];if(!f)return null;
@@ -1303,7 +1305,7 @@ function flagColorAt(co,nx,ny){
 }
 const LAND=[EURASIA,NAMER,SAMER,AFRICA,AUS,...ISLANDS,SICILY,SARDINIA,MALLORCA];
 /* ============ CONFIGURACIÓN / PAÍSES / MAPA ============ */
-const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR','BG'];
+const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR','BG','TR'];
 /* Configuración de ligas congelada por partida: una partida solo puede ver/simular las ligas y divisiones
    que existían cuando se creó. Así añadir nuevas ligas al HTML no modifica partidas ya empezadas. */
 function captureLeagueConfig(){
@@ -1399,7 +1401,7 @@ const COUNTRIES={
   IT:{name:'Italia',league:'Serie A',divs:['Serie A','Serie B'],pin:[12.4,42.5],polys:[ITALY,SICILY,SARDINIA]},
   DE:{name:'Alemania',league:'Bundesliga',divs:['Bundesliga','2. Bundesliga'],pin:[10.3,51.1],polys:[GERMANY]},
   NL:{name:'Países Bajos',league:'Eredivisie',divs:['Eredivisie','Eerste Divisie'],pin:[5.3,52.1],polys:[NETHERLANDS]},
-   TR:{name:'Turquía',league:'Süper Lig',divs:['Süper Lig'],pin:[32.9,39.9],polys:[]},
+   TR:{name:'Turquía',league:'Süper Lig',divs:['Süper Lig'],pin:[32.9,39.9],polys:[TURKEY]},
    PT:{name:'Portugal',league:'Liga Portugal Betclic',divs:['Liga Portugal Betclic','Liga Portugal 2 Meu Super','Liga 3 Placard'],pin:[-8,39.6],polys:[PORTUGAL],inset:MADEIRA_AZORES},
    FR:{name:'Francia',league:'Ligue 1',divs:['Ligue 1','Ligue 2'],pin:[2.4,46.8],polys:[FRANCE]},
    RU:{name:'Rusia',league:'Liga Premier de Rusia',divs:['Liga Premier de Rusia'],pin:[37.6,55.7],polys:[]},
@@ -1631,6 +1633,16 @@ K('REDS','Red Star','Red Star','Saint-Ouen','FR','#f4f4f4','#d4192b',44,2),K('RO
 K('SOCH','Sochaux','Sochaux','Montbéliard','FR','#f2d31b','#1c3f94',44,2),
 K('SREI','Stade de Reims','Reims','Reims','FR','#d4192b','#f4f4f4',50,2),K('LAVA','Stade Lavallois','Laval','Laval','FR','#1c3f94','#f4f4f4',42,2),
 K('BOUL','US Boulogne','Boulogne','Boulogne-sur-Mer','FR','#8b1a1a','#f4f4f4',40,2),K('DNKQ','USL Dunkerque','Dunkerque','Dunkerque','FR','#1c3f94','#f4f4f4',46,2),
+/* Süper Lig (Turquía, división 1). EYU ya existía como club real de TR, se reutiliza tal cual. */
+K('ALNY','Alanyaspor','Alanyaspor','Alanya','TR','#f4f4f4','#d4192b',50,1),K('AMED','Amedspor','Amedspor','Diyarbakır','TR','#d4192b','#1c8f3f',48,1),
+K('BSK','Beşiktaş','Beşiktaş','Estambul','TR','#1a1a1a','#f4f4f4',72,1),K('CORU','Çorum FK','Çorum FK','Çorum','TR','#1c3f94','#f4f4f4',44,1),
+K('ERZU','Erzurumspor','Erzurumspor','Erzurum','TR','#1a66b4','#f4f4f4',46,1),K('FENR','Fenerbahçe','Fenerbahçe','Estambul','TR','#f2d31b','#0a2a5a',80,1),
+K('GALA','Galatasaray SK','Galatasaray','Estambul','TR','#f2d31b','#a3122a',78,1),K('GAZI','Gaziantep','Gaziantep','Gaziantep','TR','#d4192b','#1a1a1a',56,1),
+K('GENB','Gençlerbirliği SK','Gençlerbirliği','Ankara','TR','#d41b1b','#1a1a1a',56,1),K('GOZT','Göztepe','Göztepe','Esmirna','TR','#f4d31b','#d4192b',58,1),
+K('IBAS','İstanbul Başakşehir','Başakşehir','Estambul','TR','#1a2a5e','#f47b20',58,1),K('KASM','Kasımpaşa','Kasımpaşa','Estambul','TR','#0a3a8a','#f4f4f4',56,1),
+K('KOCE','Kocaelispor','Kocaelispor','Izmit','TR','#0a8a3d','#f4f4f4',48,1),K('KONY','Konyaspor','Konyaspor','Konya','TR','#0a8a3d','#f4f4f4',54,1),
+K('RIZE','Çaykur Rizespor','Rizespor','Rize','TR','#0a7a3d','#f4f4f4',52,1),K('SAMS','Samsunspor','Samsunspor','Samsun','TR','#d4192b','#1c3f94',56,1),
+K('TRBZ','Trabzonspor','Trabzonspor','Trebisonda','TR','#7fb3e0','#8b1a1a',62,1),
 ];
 const LEGACY=[/* destinos de cesion (Betclic 1. Liga y II liga, temporada 2026/27). Van aqui y no en CLUBS a proposito:
    leagueClubs() deriva las ligas de CLUBS, y meterlos crearia divisiones polacas ficticias. */
@@ -2375,7 +2387,9 @@ Object.assign(CITY,{
  'Metz':{ll:[6.18,49.12]},'Montpellier':{ll:[3.88,43.61]},'Nancy':{ll:[6.18,48.69]},'Nantes':{ll:[-1.55,47.22]},'Pau':{ll:[-0.37,43.30]},
  'Saint-Ouen':{ll:[2.33,48.91]},'Rodez':{ll:[2.57,44.35]},'Saint-Étienne':{ll:[4.39,45.44]},'Montbéliard':{ll:[6.80,47.51]},'Reims':{ll:[4.03,49.26]},
  'Laval':{ll:[-0.77,48.07]},'Boulogne-sur-Mer':{ll:[1.61,50.73]},'Dunkerque':{ll:[2.38,51.03]},
- 'Caen':{ll:[-0.37,49.18]},'Valenciennes':{ll:[3.52,50.36]},'Thonon-les-Bains':{ll:[6.48,46.37]},'Châteauroux':{ll:[1.70,46.81]}
+ 'Caen':{ll:[-0.37,49.18]},'Valenciennes':{ll:[3.52,50.36]},'Thonon-les-Bains':{ll:[6.48,46.37]},'Châteauroux':{ll:[1.70,46.81]},
+ 'Estambul':{ll:[28.98,41.01]},'Diyarbakır':{ll:[40.23,37.91]},'Çorum':{ll:[34.95,40.55]},'Erzurum':{ll:[41.28,39.90]},'Gaziantep':{ll:[37.38,37.07]},
+ 'Ankara':{ll:[32.86,39.93]},'Esmirna':{ll:[27.14,38.42]},'Izmit':{ll:[29.92,40.77]},'Konya':{ll:[32.48,37.87]},'Rize':{ll:[40.52,41.02]},'Samsun':{ll:[36.33,41.29]},'Trebisonda':{ll:[39.72,41.00]},'Alanya':{ll:[31.99,36.54]}
 });
 const NAMES={
  ES:{f:['Álvaro','Iker','Dani','Sergio','Marcos','Adrián','Hugo','Jorge','Pablo','Rubén','Nacho','Óscar','Javi','Raúl','Iván','Unai','Mario','Ismael','Bruno','Lucas','Gonzalo','Aitor','Diego','Ángel'],l:['Moreno','Ortega','Vidal','Castro','Navarro','Santana','Ibáñez','Cordero','Lozano','Pastor','Ferrer','Bravo','Soler','Aranda','Quintana','Rojas','Mendoza','Salas','Cabrera','Herrera','Prieto','Campos','Villalba','Marín','Serrano']},
@@ -14682,9 +14696,9 @@ function storeImport(n,s,meta){
 }
 
 /* ===================== mundo: otras ligas y torneos ===================== */
-const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya'};
+const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Copa de Turquía'};
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TRC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1};
