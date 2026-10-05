@@ -1244,6 +1244,7 @@ const FRANCE=P(`2.3,51.05 4.2,50.3 6,49.5 7.6,49 7.6,47.6 6.8,46 7,45 7.6,44 7.6
 const PORTUGAL=P(`-8.85,41.87 -8.72,41.5 -8.75,41.15 -8.87,40.7 -8.9,40.3 -8.86,40.15 -9.2,39.6 -9.38,39.36 -9.5,38.78 -9.4,38.6 -8.9,38.52 -8.93,38.0 -8.97,37.5 -8.97,37.02 -8.5,37.05 -7.93,37.02 -7.42,37.19 -7.55,37.5 -7.66,37.64 -7.5,38.15 -7.16,38.88 -7.0,39.0 -7.3,39.3 -6.85,39.7 -6.9,40.15 -6.9,40.5 -6.85,41.0 -6.75,41.4 -6.75,41.8 -7.3,41.92 -8.1,41.9 -8.85,41.87`);
 const POLAND=P(`14.1,53.9 14.3,54.5 16.4,54.8 18.7,54.8 19.7,54.4 20.9,54.3 22.7,54.4 23.5,53.9 23.9,53.1 23.6,52.3 24.1,51.6 23.9,50.9 22.9,49.1 22.5,49.0 20.9,49.4 19.8,49.4 19.0,49.4 18.9,49.9 18.4,49.9 17.6,50.2 16.9,50.4 16.0,50.4 15.0,50.8 14.6,51.6 14.1,52.2 14.5,52.9`);
 const NORWAY=P(`5.0,58.0 5.3,59.0 5.0,60.3 5.9,61.0 6.8,62.1 7.0,62.8 8.0,63.0 9.0,63.7 10.0,63.0 10.7,63.5 11.3,64.5 12.0,65.5 13.0,66.3 14.0,67.0 14.5,67.9 16.0,68.5 17.5,69.0 19.0,69.7 20.5,69.9 21.0,70.1 23.0,70.3 25.5,71.0 28.0,70.5 29.9,69.7 29.0,69.0 27.0,68.6 25.0,67.0 23.5,65.9 23.0,64.0 21.3,63.0 20.1,62.0 18.0,61.0 16.5,60.6 14.5,60.0 12.5,59.0 11.9,59.0 11.0,58.9 9.0,58.1`);
+const BULGARIA=P(`22.4,43.4 22.9,44.0 23.0,44.2 24.0,43.7 25.3,43.7 26.0,43.75 27.2,44.0 28.0,43.75 28.6,43.75 27.9,42.6 27.5,42.0 26.6,41.3 26.0,41.25 25.3,41.3 24.5,41.4 23.7,41.3 23.0,41.35 22.6,41.9 22.4,42.5`);
 const ARGENTINA=P(`-62,-22 -57.5,-25 -58,-27.3 -58.5,-30.5 -57.9,-33 -57.1,-34.6 -57,-36.5 -57.5,-38 -62,-40.8 -64,-42.1 -65.3,-43.5 -67,-45.3 -67.7,-47 -68.5,-49.3 -69,-51.5 -68.5,-54.5 -68.6,-54.9 -70,-52.5 -72.3,-50.3 -72.5,-46.8 -71.8,-42.3 -71.5,-38.5 -70.4,-35 -69.9,-33 -70,-29.3 -68.3,-24.5 -65,-22`);
 const SWITZERLAND=P(`6.1,46.2 6.0,46.6 6.5,47.1 7.0,47.45 7.6,47.6 8.2,47.6 8.6,47.65 9.0,47.6 9.5,47.55 9.6,47.3 9.6,47.05 9.9,46.85 10.5,46.5 10.0,46.2 9.2,46.0 8.95,45.85 8.3,46.15 7.7,45.95 7.0,45.85 6.8,45.9 6.3,46.0`);
 const SCOTLAND=P(`-2.0,55.77 -3.2,55.98 -2.8,56.2 -2.9,56.45 -2.2,56.85 -2.08,57.15 -1.78,57.5 -2.1,57.65 -2.5,57.7 -3.3,57.65 -4.0,57.6 -4.2,57.5 -3.9,58.0 -4.0,58.3 -4.6,58.55 -5.0,58.6 -4.75,58.57 -5.0,58.3 -5.3,58.1 -5.16,57.9 -5.6,57.6 -5.8,57.4 -5.7,57.1 -5.83,57.0 -5.6,56.85 -5.1,56.82 -5.3,56.6 -5.47,56.4 -5.6,56.1 -5.6,55.7 -5.6,55.4 -5.4,55.3 -4.9,55.4 -4.9,55.75 -4.6,55.95 -4.3,55.86 -4.75,55.6 -4.63,55.46 -4.9,55.1 -4.9,54.9 -4.3,54.85 -3.6,54.85 -2.5,55.3`);
@@ -1273,6 +1274,7 @@ const FLAG_PATTERN={
   SC:{type:'saltire',bg:'#0065BD',cross:'#FFFFFF',arm:.12},
   CH:{type:'cross',offset:.5,arm:.14,cross:'#FFFFFF',bg:'#D52B1E'},
   AR:{type:'hstripe',colors:['#75AADB','#FFFFFF','#75AADB']},
+  BG:{type:'hstripe',colors:['#FFFFFF','#00966E','#D62612']},
 };
 function flagColorAt(co,nx,ny){
   const f=FLAG_PATTERN[co];if(!f)return null;
@@ -1301,7 +1303,7 @@ function flagColorAt(co,nx,ny){
 }
 const LAND=[EURASIA,NAMER,SAMER,AFRICA,AUS,...ISLANDS,SICILY,SARDINIA,MALLORCA];
 /* ============ CONFIGURACIÓN / PAÍSES / MAPA ============ */
-const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR'];
+const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR','BG'];
 /* Configuración de ligas congelada por partida: una partida solo puede ver/simular las ligas y divisiones
    que existían cuando se creó. Así añadir nuevas ligas al HTML no modifica partidas ya empezadas. */
 function captureLeagueConfig(){
@@ -1400,6 +1402,7 @@ const COUNTRIES={
    FR:{name:'Francia',league:'Ligue 1',divs:['Ligue 1'],pin:[2.4,46.8],polys:[FRANCE]},
    RU:{name:'Rusia',league:'Liga Premier de Rusia',divs:['Liga Premier de Rusia'],pin:[37.6,55.7],polys:[]},
    AR:{name:'Argentina',league:'Liga Profesional de Fútbol',divs:['Liga Profesional de Fútbol'],pin:[-64,-38],polys:[ARGENTINA]},
+   BG:{name:'Bulgaria',league:'Parva Liga',divs:['Parva Liga'],pin:[25.2,42.7],polys:[BULGARIA]},
    HR:{name:'Croacia',league:'HNL',divs:['HNL'],pin:[16.4,45.3],polys:[]},
    BE:{name:'Bélgica',league:'Pro League',divs:['Pro League'],pin:[4.4,50.8],polys:[BELGIUM]},
    AT:{name:'Austria',league:'Admiral Bundesliga',divs:['Admiral Bundesliga'],pin:[14.5,47.5],polys:[AUSTRIA]},
@@ -1608,6 +1611,14 @@ K('RACI','Racing Club','Racing Club','Avellaneda','AR','#7fb3e0','#f4f4f4',62,1)
 K('SNLO','San Lorenzo','San Lorenzo','Buenos Aires','AR','#1a1a1a','#d4192b',52,1),K('SARM','Sarmiento','Sarmiento','Junín','AR','#1a8a3d','#f4f4f4',42,1),
 K('TALL','Talleres de Córdoba','Talleres','Córdoba','AR','#f4f4f4','#1a1a1a',54,1),K('TIGR','Tigre','Tigre','Victoria','AR','#0a3a8a','#f4f4f4',44,1),
 K('USFE','Unión de Santa Fe','Unión SF','Santa Fe','AR','#d4192b','#1a1a1a',44,1),K('VELZ','Vélez Sarsfield','Vélez','Buenos Aires','AR','#1a1a1a','#f4f4f4',54,1),
+/* Parva Liga (Bulgaria, división 1) */
+K('ARDA','Arda Kardzhali','Arda','Kardzhali','BG','#1c3f94','#f4f4f4',44,1),K('BOTP','Botev Plovdiv','Botev Plovdiv','Plovdiv','BG','#f4d31b','#1a1a1a',46,1),
+K('BOTV','Botev Vratsa','Botev Vratsa','Vratsa','BG','#1a1a1a','#f4f4f4',42,1),K('CHMV','Cherno More Varna','Cherno More','Varna','BG','#1c3f94','#f4f4f4',44,1),
+K('CSK48','CSKA 1948 Sofia','CSKA 1948','Sofía','BG','#d4192b','#f4f4f4',46,1),K('CSOF','CSKA Sofia','CSKA Sofia','Sofía','BG','#d4192b','#1a1a1a',48,1),
+K('DUNR','Dunav Ruse','Dunav Ruse','Ruse','BG','#f4f4f4','#1c3f94',42,1),K('LEVS','Levski Sofia','Levski','Sofía','BG','#1c3f94','#f4f4f4',52,1),
+K('LOKP','Lokomotiv Plovdiv','Lokomotiv Plovdiv','Plovdiv','BG','#1a1a1a','#f4f4f4',44,1),K('LOKS','Lokomotiv Sofia','Lokomotiv Sofia','Sofía','BG','#f4841c','#1a1a1a',42,1),
+K('LUDO','Ludogorets','Ludogorets','Razgrad','BG','#1c8f3f','#f4f4f4',58,1),K('SEPT','Septemvri Sofia','Septemvri','Sofía','BG','#1c3f94','#f4f4f4',40,1),
+K('SLAS','Slavia Sofia','Slavia Sofia','Sofía','BG','#f4f4f4','#1a1a1a',44,1),K('SPVA','Spartak Varna','Spartak Varna','Varna','BG','#d4192b','#f4f4f4',42,1),
 ];
 const LEGACY=[/* destinos de cesion (Betclic 1. Liga y II liga, temporada 2026/27). Van aqui y no en CLUBS a proposito:
    leagueClubs() deriva las ligas de CLUBS, y meterlos crearia divisiones polacas ficticias. */
@@ -1756,7 +1767,46 @@ K2('EVE21','Everton U21','Everton U21','Liverpool','EN','#003399','#f4f4f4',50),
 K2('CRY21','Crystal Palace U21','Crystal Palace U21','Londres','EN','#1b458f','#c4122e',50),
 K2('CHE23','Chelsea U23','Chelsea U23','Londres','EN','#034694','#f4f4f4',52),
 K2('LEE21','Leeds United U21','Leeds U21','Leeds','EN','#f4f4f4','#1c3f94',50),
-K2('CHOJ','Chojniczanka Chojnice','Chojniczanka','Chojnice','PL','#f4f4f4','#1a1a1a',44),];
+K2('CHOJ','Chojniczanka Chojnice','Chojniczanka','Chojnice','PL','#f4f4f4','#1a1a1a',44),
+/* Bulgaria: campeones históricos que ya no están en la Parva Liga. Existen solo para el palmarés (no crean división). */
+K2('LITE','Litex Lovech','Litex','Lovech','BG','#f4841c','#0a3a8a',50),
+K2('BERO','Beroe','Beroe','Stara Zagora','BG','#0a8a3d','#f4f4f4',48),
+K2('ETAR','Etar','Etar','Veliko Tarnovo','BG','#f4f4f4','#0a8a3d',44),
+/* Bulgaria: resto de participantes de la Kupa na Balgariya (Segunda/Tercera/aficionados). Solo existen para la copa. */
+K2('AKAD','Akademik Svishtov','Akademik','Svishtov','BG','#0a3a8a','#f4f4f4',36),
+K2('BALB','Balkan Botevgrad','Balkan','Botevgrad','BG','#d4192b','#f4f4f4',40),
+K2('BDIN','Bdin','Bdin','Vidin','BG','#0a8a3d','#f4f4f4',38),
+K2('BELA','Belasitsa','Belasitsa','Petrich','BG','#1c3f94','#f4f4f4',40),
+K2('BENK','Benkovski Isperih','Benkovski','Isperih','BG','#f2d31b','#1a1a1a',36),
+K2('BOIH','Botev Ihtiman','Botev Ihtiman','Ihtiman','BG','#d4192b','#f4f4f4',36),
+K2('BONP','Botev Novi Pazar','Botev NP','Novi Pazar','BG','#0a8a3d','#f4f4f4',36),
+K2('CHTR','Chavdar Troyan','Chavdar','Troyan','BG','#f4841c','#1a1a1a',38),
+K2('CH19','Chernomorets 1919 Burgas','Chernomorets','Burgas','BG','#0a3a8a','#f4f4f4',42),
+K2('CHBA','Chernomorets Balchik','Chern. Balchik','Balchik','BG','#1c3f94','#f4f4f4',36),
+K2('DOBR','Dobrudzha Dobrich','Dobrudzha','Dobrich','BG','#0a8a3d','#f4f4f4',42),
+K2('MINP','FK Minyor Pernik','Minyor','Pernik','BG','#0a3a8a','#d4192b',42),
+K2('FRAT','Fratria','Fratria','Varna','BG','#1c3f94','#f4f4f4',38),
+K2('HEBA','Hebar Pazardzhik','Hebar','Pazardzhik','BG','#d4192b','#f4f4f4',43),
+K2('LEVK','Levski Krumovgrad','Levski Krum.','Krumovgrad','BG','#1c3f94','#f4f4f4',40),
+K2('LKGO','Lokomotiv GO','Lok. Gorna','Gorna Oryahovitsa','BG','#d4192b','#1a1a1a',38),
+K2('LKMZ','Lokomotiv Mezdra','Lok. Mezdra','Mezdra','BG','#0a8a3d','#f4f4f4',36),
+K2('MARE','Marek','Marek','Dupnitsa','BG','#0a3a8a','#f4f4f4',40),
+K2('MONT','Montana','Montana','Montana','BG','#0a8a3d','#f4f4f4',44),
+K2('NATS','Natsional Sofia','Natsional','Sofía','BG','#d4192b','#1a1a1a',38),
+K2('NEFT','Neftochimic Burgas','Neftochimic','Burgas','BG','#0a3a8a','#f4f4f4',42),
+K2('NESE','Nesebar','Nesebar','Nesebar','BG','#1c3f94','#f4f4f4',40),
+K2('OBOR','Oborishte','Oborishte','Panagyurishte','BG','#d4192b','#1a1a1a',36),
+K2('PIRI','Pirin Blagoevgrad','Pirin','Blagoevgrad','BG','#0a8a3d','#f4f4f4',44),
+K2('RILS','Rilski Sportist','Rilski','Samokov','BG','#1c3f94','#f4f4f4',38),
+K2('RODO','Rodopa Smolyan','Rodopa','Smolyan','BG','#0a3a8a','#f4f4f4',38),
+K2('SPPV','Spartak Pleven','Spartak Pleven','Pleven','BG','#0a8a3d','#f4f4f4',40),
+K2('SPPD','Spartak Plovdiv','Spartak Plovdiv','Plovdiv','BG','#d4192b','#1a1a1a',38),
+K2('SPTS','Sportist Svoge','Sportist','Svoge','BG','#1c3f94','#f4f4f4',40),
+K2('VIHR','Vihren','Vihren','Sandanski','BG','#0a3a8a','#f4f4f4',38),
+K2('VOLO','Volov Shumen','Volov','Shumen','BG','#0a8a3d','#f4f4f4',38),
+K2('YAMB','Yambol 1915','Yambol','Yambol','BG','#0a3a8a','#f4f4f4',38),
+K2('YANT','Yantra Gabrovo','Yantra','Gabrovo','BG','#d4192b','#f4f4f4',42),
+K2('ZAGO','Zagorets','Zagorets','Nova Zagora','BG','#0a8a3d','#f4f4f4',38),];
 const CLUBBY=Object.fromEntries([...CLUBS,...LEGACY].map(c=>[c.id,c]));
 let CLUB_DEFAULTS=null;   /* se rellena más abajo, después de asignar los escudos reales (ver CLUB_LOGO) */
 function resetClubOverrides(){
@@ -2141,8 +2191,11 @@ const CLUB_LOGO={
  ARN:'https://cdn.resfu.com/img_data/equipos/259.png?size=120x&lossy=1',BRB:'https://cdn.resfu.com/img_data/equipos/427.png?size=120x&lossy=1',CAL:'https://cdn.resfu.com/img_data/equipos/3961.png?size=120x&lossy=1',EBR:'https://cdn.resfu.com/img_data/equipos/951.png?size=120x&lossy=1',NAX:'https://cdn.resfu.com/img_data/equipos/1785.png?size=120x&lossy=1',OSAP:'https://cdn.resfu.com/img_data/equipos/327.png?size=120x&lossy=1',PSP:'https://cdn.resfu.com/img_data/equipos/1943.png?size=120x&lossy=1',REU:'https://cdn.resfu.com/img_data/equipos/6215.png?size=120x&lossy=1',SDLO:'https://cdn.resfu.com/img_data/equipos/4823.png?size=120x&lossy=1',CENI:'https://cdn.resfu.com/img_data/equipos/718.png?size=120x&lossy=1',TERR:'https://cdn.resfu.com/img_data/equipos/16545.png?size=120x&lossy=1',TUD:'https://cdn.resfu.com/img_data/equipos/2545.png?size=120x&lossy=1',LOGB:'https://cdn.resfu.com/img_data/equipos/4126.png?size=120x&lossy=1',OLO:'https://cdn.resfu.com/img_data/equipos/4781.png?size=120x&lossy=1',UTE:'https://cdn.resfu.com/img_data/equipos/2637.png?size=120x&lossy=1',
  ATBA:'https://cdn.resfu.com/img_data/equipos/5465.png?size=120x&lossy=1',CASB:'https://cdn.resfu.com/img_data/equipos/653.png?size=120x&lossy=1',CIE:'https://cdn.resfu.com/img_data/equipos/775.png?size=120x&lossy=1',INTC:'https://cdn.resfu.com/img_data/equipos/102474.png?size=120x&lossy=1',DMI:'https://cdn.resfu.com/img_data/equipos/5184.png?size=120x&lossy=1',LORD:'https://cdn.resfu.com/img_data/equipos/13670.png?size=120x&lossy=1',ORI:'https://cdn.resfu.com/img_data/equipos/1880.png?size=120x&lossy=1',PDE:'https://cdn.resfu.com/img_data/equipos/6003.png?size=120x&lossy=1',POB:'https://cdn.resfu.com/img_data/equipos/1981.png?size=120x&lossy=1',MURI:'https://cdn.resfu.com/img_data/equipos/6058.png?size=120x&lossy=1',UCAM:'https://cdn.resfu.com/img_data/equipos/6056.png?size=120x&lossy=1',CTE:'https://cdn.resfu.com/img_data/equipos/10195.png?size=120x&lossy=1',YEC:'https://cdn.resfu.com/img_data/equipos/2774.png?size=120x&lossy=1',VALB:'https://cdn.resfu.com/img_data/equipos/3902.png?size=120x&lossy=1',
  SANL:'https://cdn.resfu.com/img_data/equipos/333.png?size=120x&lossy=1',SANLB:'https://cdn.resfu.com/img_data/equipos/14096.png?size=120x&lossy=1',ANTO:'https://cdn.resfu.com/img_data/equipos/3946.png?size=120x&lossy=1',BAD:'https://cdn.resfu.com/img_data/equipos/12219.png?size=120x&lossy=1',DBE:'https://cdn.resfu.com/img_data/equipos/10095.png?size=120x&lossy=1',LUC:'https://cdn.resfu.com/img_data/equipos/18047.png?size=120x&lossy=1',CAC:'https://cdn.resfu.com/img_data/equipos/113119.png?size=120x&lossy=1',MIJ:'https://cdn.resfu.com/img_data/equipos/8468.png?size=120x&lossy=1',LPAB:'https://cdn.resfu.com/img_data/equipos/4668.png?size=120x&lossy=1',LIND:'https://cdn.resfu.com/img_data/equipos/6124.png?size=120x&lossy=1',MFC:'https://cdn.resfu.com/img_data/equipos/2565.png?size=120x&lossy=1',SPG:'https://cdn.resfu.com/img_data/equipos/8677.png?size=120x&lossy=1',TAMA:'https://cdn.resfu.com/img_data/equipos/85233.png?size=120x&lossy=1',
- ATAL:'https://cdn.resfu.com/img_data/equipos/141.png?size=120x&lossy=1',ATCV:'https://cdn.resfu.com/img_data/equipos/4264.png?size=120x&lossy=1',ATOR:'https://cdn.resfu.com/img_data/equipos/383.png?size=120x&lossy=1',PASO:'https://cdn.resfu.com/img_data/equipos/9629.png?size=120x&lossy=1',GUA:'https://cdn.resfu.com/img_data/equipos/11825.png?size=120x&lossy=1',NAV:'https://cdn.resfu.com/img_data/equipos/268.png?size=120x&lossy=1',TALV:'https://cdn.resfu.com/img_data/equipos/6159.png?size=120x&lossy=1',PUER:'https://cdn.resfu.com/img_data/equipos/66462.png?size=120x&lossy=1',GSE:'https://cdn.resfu.com/img_data/equipos/5715.png?size=120x&lossy=1',RAVI:'https://cdn.resfu.com/img_data/equipos/2094.png?size=120x&lossy=1',ALCH:'https://cdn.resfu.com/img_data/equipos/150.png?size=120x&lossy=1',SALU:'https://cdn.resfu.com/img_data/equipos/2212.png?size=120x&lossy=1',CONQ:'https://cdn.resfu.com/img_data/equipos/2554.png?size=120x&lossy=1',SANS:'https://cdn.resfu.com/img_data/equipos/2570.png?size=120x&lossy=1'
-};
+  ATAL:'https://cdn.resfu.com/img_data/equipos/141.png?size=120x&lossy=1',ATCV:'https://cdn.resfu.com/img_data/equipos/4264.png?size=120x&lossy=1',ATOR:'https://cdn.resfu.com/img_data/equipos/383.png?size=120x&lossy=1',PASO:'https://cdn.resfu.com/img_data/equipos/9629.png?size=120x&lossy=1',GUA:'https://cdn.resfu.com/img_data/equipos/11825.png?size=120x&lossy=1',NAV:'https://cdn.resfu.com/img_data/equipos/268.png?size=120x&lossy=1',TALV:'https://cdn.resfu.com/img_data/equipos/6159.png?size=120x&lossy=1',PUER:'https://cdn.resfu.com/img_data/equipos/66462.png?size=120x&lossy=1',GSE:'https://cdn.resfu.com/img_data/equipos/5715.png?size=120x&lossy=1',RAVI:'https://cdn.resfu.com/img_data/equipos/2094.png?size=120x&lossy=1',ALCH:'https://cdn.resfu.com/img_data/equipos/150.png?size=120x&lossy=1',SALU:'https://cdn.resfu.com/img_data/equipos/2212.png?size=120x&lossy=1',CONQ:'https://cdn.resfu.com/img_data/equipos/2554.png?size=120x&lossy=1',SANS:'https://cdn.resfu.com/img_data/equipos/2570.png?size=120x&lossy=1',
+  ARDA:'https://cdn.resfu.com/img_data/equipos/86651.png?size=120x&lossy=1',BOTP:'https://cdn.resfu.com/img_data/equipos/6371.png?size=120x&lossy=1',BOTV:'https://cdn.resfu.com/img_data/equipos/6470.png?size=120x&lossy=1',CHMV:'https://cdn.resfu.com/img_data/equipos/4058.png?size=120x&lossy=1',CSK48:'https://cdn.resfu.com/img_data/equipos/102466.png?size=120x&lossy=1',CSOF:'https://cdn.resfu.com/img_data/equipos/4068.png?size=120x&lossy=1',DUNR:'https://cdn.resfu.com/img_data/equipos/12276.png?size=120x&lossy=1',LEVS:'https://cdn.resfu.com/img_data/equipos/4011.png?size=120x&lossy=1',LOKP:'https://cdn.resfu.com/img_data/equipos/6475.png?size=120x&lossy=1',LOKS:'https://cdn.resfu.com/img_data/equipos/5869.png?size=120x&lossy=1',LUDO:'https://cdn.resfu.com/img_data/equipos/6474.png?size=120x&lossy=1',SEPT:'https://cdn.resfu.com/img_data/equipos/17421.png?size=120x&lossy=1',SLAS:'https://cdn.resfu.com/img_data/equipos/4565.png?size=120x&lossy=1',SPVA:'https://cdn.resfu.com/img_data/equipos/7476.png?size=120x&lossy=1',
+  LITE:'https://cdn.resfu.com/img_data/equipos/6476.png?size=120x&lossy=1',BERO:'https://cdn.resfu.com/img_data/equipos/6320.png?size=120x&lossy=1',ETAR:'https://cdn.resfu.com/img_data/equipos/6321.png?size=120x&lossy=1',
+  AKAD:'https://cdn.resfu.com/img_data/equipos/11760.png?size=120x&lossy=1',BALB:'https://cdn.resfu.com/img_data/equipos/63851.png?size=120x&lossy=1',BDIN:'https://cdn.resfu.com/img_data/equipos/7480.png?size=120x&lossy=1',BELA:'https://cdn.resfu.com/img_data/equipos/17414.png?size=120x&lossy=1',BENK:'https://cdn.resfu.com/img_data/equipos/159917.png?size=120x&lossy=1',BOIH:'https://cdn.resfu.com/img_data/equipos/17415.png?size=120x&lossy=1',BONP:'https://cdn.resfu.com/img_data/equipos/17444.png?size=120x&lossy=1',CHTR:'https://cdn.resfu.com/img_data/equipos/86665.png?size=120x&lossy=1',CH19:'https://cdn.resfu.com/img_data/equipos/112273.png?size=120x&lossy=1',CHBA:'https://cdn.resfu.com/img_data/equipos/17445.png?size=120x&lossy=1',DOBR:'https://cdn.resfu.com/img_data/equipos/7477.png?size=120x&lossy=1',MINP:'https://cdn.resfu.com/img_data/equipos/17417.png?size=120x&lossy=1',FRAT:'https://cdn.resfu.com/img_data/equipos/158923.png?size=120x&lossy=1',HEBA:'https://cdn.resfu.com/img_data/equipos/59507.png?size=120x&lossy=1',LEVK:'https://cdn.resfu.com/img_data/equipos/143387.png?size=120x&lossy=1',LKGO:'https://cdn.resfu.com/img_data/equipos/17403.png?size=120x&lossy=1',LKMZ:'https://cdn.resfu.com/img_data/equipos/17404.png?size=120x&lossy=1',MARE:'https://cdn.resfu.com/img_data/equipos/11762.png?size=120x&lossy=1',MONT:'https://cdn.resfu.com/img_data/equipos/9258.png?size=120x&lossy=1',NATS:'https://cdn.resfu.com/img_data/equipos/160122.png?size=120x&lossy=1',NEFT:'https://cdn.resfu.com/img_data/equipos/7474.png?size=120x&lossy=1',NESE:'https://cdn.resfu.com/img_data/equipos/7472.png?size=120x&lossy=1',OBOR:'https://cdn.resfu.com/img_data/equipos/17425.png?size=120x&lossy=1',PIRI:'https://cdn.resfu.com/img_data/equipos/17420.png?size=120x&lossy=1',RILS:'https://cdn.resfu.com/img_data/equipos/20026.png?size=120x&lossy=1',RODO:'https://cdn.resfu.com/img_data/equipos/20021.png?size=120x&lossy=1',SPPV:'https://cdn.resfu.com/img_data/equipos/17409.png?size=120x&lossy=1',SPPD:'https://cdn.resfu.com/img_data/equipos/17436.png?size=120x&lossy=1',SPTS:'https://cdn.resfu.com/img_data/equipos/4609.png?size=120x&lossy=1',VIHR:'https://cdn.resfu.com/img_data/equipos/17423.png?size=120x&lossy=1',VOLO:'https://cdn.resfu.com/img_data/equipos/112278.png?size=120x&lossy=1',YAMB:'https://cdn.resfu.com/img_data/equipos/102465.png?size=120x&lossy=1',YANT:'https://cdn.resfu.com/img_data/equipos/63876.png?size=120x&lossy=1',ZAGO:'https://cdn.resfu.com/img_data/equipos/17440.png?size=120x&lossy=1'
+ };
 Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
 [['AFCW',9200],['BNSL',436],['BKPL',508],['BRDC',9208],['BROM',5536],['BURA',4443],['CAMU',9755],['DONC',9175],['HUDD',1337],['LEIC',1538],['LEYO',9177],['LUTN',1600],['MNF',2807],['MKDN',9191],['NTCO',9187],['OXUT',6339],['PBR',5653],['PLY',9211],['READ',2092],['SHWD',2327],['STVG',2859],['SKP',9760],['WGNA',2753],['WYCW',9204]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
 [['BOHN',1047],['SHMR',2318],['STPA',12690],['DUND',12695],['SHEL',12682],['DERC',918],['GALW',1197],['WATF',12543],['DROG',940],['SLIG',2353]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
@@ -2288,7 +2341,8 @@ Object.assign(CITY,{
  'Buenos Aires':{ll:[-58.38,-34.61]},'La Plata':{ll:[-57.95,-34.92]},'Avellaneda':{ll:[-58.37,-34.66]},'Florencio Varela':{ll:[-58.27,-34.82]},
  'Vicente López':{ll:[-58.48,-34.53]},'Victoria':{ll:[-58.96,-34.45]},'Lanús':{ll:[-58.39,-34.70]},'Rosario':{ll:[-60.64,-32.94]},
  'Mar del Plata':{ll:[-57.56,-38.00]},'San Miguel de Tucumán':{ll:[-65.22,-26.82]},'Banfield':{ll:[-58.40,-34.74]},'Santiago del Estero':{ll:[-64.27,-27.78]},
- 'Río Cuarto':{ll:[-64.35,-33.13]},'Mendoza':{ll:[-68.85,-32.89]},'Córdoba':{ll:[-64.18,-31.42]},'Junín':{ll:[-60.93,-34.58]},'Santa Fe':{ll:[-60.70,-31.63]}
+ 'Río Cuarto':{ll:[-64.35,-33.13]},'Mendoza':{ll:[-68.85,-32.89]},'Córdoba':{ll:[-64.18,-31.42]},'Junín':{ll:[-60.93,-34.58]},'Santa Fe':{ll:[-60.70,-31.63]},
+ 'Sofía':{ll:[23.32,42.70]},'Plovdiv':{ll:[24.75,42.14]},'Varna':{ll:[27.91,43.21]},'Vratsa':{ll:[23.56,43.21]},'Kardzhali':{ll:[25.38,41.65]},'Razgrad':{ll:[26.53,43.53]},'Ruse':{ll:[25.96,43.85]}
 });
 const NAMES={
  ES:{f:['Álvaro','Iker','Dani','Sergio','Marcos','Adrián','Hugo','Jorge','Pablo','Rubén','Nacho','Óscar','Javi','Raúl','Iván','Unai','Mario','Ismael','Bruno','Lucas','Gonzalo','Aitor','Diego','Ángel'],l:['Moreno','Ortega','Vidal','Castro','Navarro','Santana','Ibáñez','Cordero','Lozano','Pastor','Ferrer','Bravo','Soler','Aranda','Quintana','Rojas','Mendoza','Salas','Cabrera','Herrera','Prieto','Campos','Villalba','Marín','Serrano']},
@@ -2342,7 +2396,9 @@ const STADIUM={
  OL:'Groupama Stadium',LEN:'Stade Bollaert-Delelis',OM:'Orange Vélodrome',LIL:'Decathlon Arena – Stade Pierre-Mauroy',ASM:'Stade Louis-II',STR:'Stade de la Meinau',REN:'Roazhon Park',SBR:'Stade Francis-Le Blé',NCE:'Allianz Riviera',LOR:'Stade du Moustoir',PFC:'Stade Jean Bouin',AUX:'Stade de l\u2019Abbé Deschamps',ANG:'Stade Raymond-Kopa',TRO:'Stade de l\u2019Aube',HAC:'Stade Océane',LEM:'Stade Marie-Marvingt',AEKA:'OPAP Arena',
  FCP:'Estádio Do Dragão',PSV:'Philips Stadion',SPTL:'José Alvalade',VFB:'MHPArena',FEN:'Chobani Stadium',GAL:'RAMS Park',BRU:'Jan Breydelstadion',BDG:'Aspmyra Stadion',FEY:'Stadion Feijenoord',VIK:'Lyse Arena',SHK:'Stamford Bridge',SLA:'Fortuna Arena',SBAH:'Bank Respublika Arena',LAS:'Raiffeisen Arena',SVB:'Štadión Tehelné pole',DZG:'Stadion Maksimir',CELT:'Celtic Park',CELC:'Celtic Park',RNGR:'Ibrox Stadium',ABDN:'Pittodrie Stadium',DNDE:'Dens Park',DNUT:'Tannadice Park',FALK:'Falkirk Stadium',HEMO:'Tynecastle Park',HIBE:'Easter Road',KILM:'Rugby Park',MWEL:'Fir Park',SJOH:'McDiarmid Park',SMIR:'St Mirren Park',BASL:'St. Jakob-Park',THUN:'Visana Stadion',LUGA:'Stadio Comunale di Cornaredo',VADU:'Rheinpark Stadion',GRAS:'Letzigrund',LSNE:'Stade de la Tuilière',LUZN:'Swissporarena',SRVT:'Stade de Genève',SION:'Stade de Tourbillon',STGL:'Kybunpark',THUN:'Stockhorn Arena',YBOY:'Wankdorf Stadium',FCZH:'Letzigrund',HBS:'Superbet Arena-Giulești',LSK:'Stadion Vasil Levski',NEC:'Goffertstadion',CLJ:'Stadion Z\u2019dežele',
  /* Argentina (Primera División) */
- BOCA:'Estadio Alberto J. Armando',RACI:'Estadio Presidente Perón',RIVP:'Estadio Mâs Monumental',ESLP:'Estadio Jorge Luis Hirschi',ARGN:'Estadio Diego Armando Maradona',ROS:'Gigante de Arroyito',LANU:'Ciudad de Lanús - Néstor Díaz Pérez',VELZ:'José Amalfitani',INDE:'Libertadores de América',INRI:'Bautista Gargantini',BELG:'Estadio Julio César Villagra',SNLO:'Pedro Bidegain',HURA:'Tomás Adolfo Ducó',TIGR:'José Dellagiovanna',TALL:'Mario Alberto Kempes',USFE:'15 de Abril',GLP:'Estadio Juan Carmelo Zerillo',DYJ:'Estadio Norberto Tomaghello',CCOR:'Estadio Único Madre de Ciudades',INST:'Juan Domingo Perón, Ciudad de Córdoba',ATUC:'Monumental Presidente José Fierro',PLATN:'Ciudad de Vicente Lopez',RIES:'Guillermo Laza',GMEN:'Víctor Antonio Legrotaglie',BARC:'Estadio Claudio Fabián Tapia',BANF:'Florencio Solá',NEWO:'Marcelo Alberto Bielsa',SARM:'Eva Perón de Junín',ALDO:'José María Minella',ERCU:'Estadio Ciudad de Río Cuarto',
+  BOCA:'Estadio Alberto J. Armando',RACI:'Estadio Presidente Perón',RIVP:'Estadio Mâs Monumental',ESLP:'Estadio Jorge Luis Hirschi',ARGN:'Estadio Diego Armando Maradona',ROS:'Gigante de Arroyito',LANU:'Ciudad de Lanús - Néstor Díaz Pérez',VELZ:'José Amalfitani',INDE:'Libertadores de América',INRI:'Bautista Gargantini',BELG:'Estadio Julio César Villagra',SNLO:'Pedro Bidegain',HURA:'Tomás Adolfo Ducó',TIGR:'José Dellagiovanna',TALL:'Mario Alberto Kempes',USFE:'15 de Abril',GLP:'Estadio Juan Carmelo Zerillo',DYJ:'Estadio Norberto Tomaghello',CCOR:'Estadio Único Madre de Ciudades',INST:'Juan Domingo Perón, Ciudad de Córdoba',ATUC:'Monumental Presidente José Fierro',PLATN:'Ciudad de Vicente Lopez',RIES:'Guillermo Laza',GMEN:'Víctor Antonio Legrotaglie',BARC:'Estadio Claudio Fabián Tapia',BANF:'Florencio Solá',NEWO:'Marcelo Alberto Bielsa',SARM:'Eva Perón de Junín',ALDO:'José María Minella',ERCU:'Estadio Ciudad de Río Cuarto',
+  /* Bulgaria (Parva Liga) */
+  LEVS:'Stadion Georgi Asparuhov',CSOF:'Stadion Bâlgarska Armija',LUDO:'Huvepharma Arena',CSK48:'Stadion Bistritsa',ARDA:'Arena Arda',LOKP:'Stadion Lokomotiv',CHMV:'Stadion Ticha',BOTP:'Stadion Hristo Botev',SLAS:'Alexander Shalamanov',LOKS:'Stadion Lokomotiv',BOTV:'Hristo Botev',SPVA:'Stadion Spartak (Varna)',DUNR:'Gradski Stadium',SEPT:'Stadion Vasil Levski',
  USG:'The King Power At Den Dreef Stadium',BJK:'Tüpraş Stadyumu',AZA:'AFAS Stadion',SPA:'epet ARENA',OLY:'Stadio Georgios Karaiskakis',RSC:'Lotto Park',LIS:'Åråsen Stadion',FTC:'Groupama Arena',RBS:'Red Bull Arena (Salzburgo)',LECP:'Enea stadion',STU:'Merkur Spiel-Arena',JAG:'Chorten Arena',TRZ:'Estadio Dr. Magalhães Pessoa',RED:'Stadion Rajko Mitić',TRAB:'Papara Park',MJA:'Strandvallen',AAR:'Ceres Park',UCR:'Stadionul Ion Oblemenco',CSKS:'Stadion Bâlgarska Armija',KZA:'Dariaus ir Girėno stadionas',IBE:'David Petriashvili Stadium',STV:'Daio Wasabi Stayen Stadium',KAI:'Ortalyq stadıon',EGN:'Egnatia Arena',VPL:'Doosan Arena',OMN:'GSP Stadium',
  ATA:'New Balance Arena',SPB:'Estádio Municipal de Braga',BHA:'The American Express Community Stadium',MDJ:'MCH Arena',AJA:'Johan Cruyff Arena',SCF:'Europa-Park Stadion',KOB:'Parken Stadion',HAJ:'Stadion Poljud',PAN:'Apostolos Nikolaidis',BRN:'Brann Stadion',TWE:'De Grolsch Veste',PAF:'Stelios Kyriakides',HEA:'Tynecastle Stadium',NSJ:'Right to Dream Park',GET:'Estadio Coliseum',JAB:'Stadion Strelnice',RIG:'Skonto Stadions',BBL:'Banja Luka City Stadium',GNT:'Planet Group Arena',KUP:'Väre Areena',LRI:'Victoria Stadium',VIT:'Estádio Dom Afonso Henriques',FAM:'Estádio Municipal 22 de Junho',GIL:'Estádio Cidade de Barcelos',MOR:'Comendador Joaquim Almeida Freitas',SCL:'Estádio de São Miguel',ESTP:'Estádio António Coimbra da Mota',ARO:'Estádio Municipal de Arouca',MAR:'Estádio dos Barreiros',AVS:'Estádio Municipal do Fontelo',CPA:'Estádio Municipal de Rio Maior',RAVE:'Estadio dos Arcos',ALV:'Complexo Desportivo do FC Alverca',CDN:'Estádio da Madeira',ETD:'Estádio Municipal de Rio Maior',PSV:'Philips Stadion',FEY:'Stadion Feijenoord',AJA:'Johan Cruyff Arena',AZA:'AFAS Stadion',TWE:'De Grolsch Veste',NEC:'Goffertstadion',UTR:'Stadion Galgenwaard',HFE:'Abe Lenstra Stadion',SPR:'Sparta Stadion Het Kasteel',ADO:'WerkTalent Stadion',GRN:'Euroborg',GAE:'De Adelaarshorst',CMB:'Kooi Stadion',TEL:'BUKO Stadion',EXC:'Van Donge & De Roo Stadion',PEC:'MAC³PARK Stadion',WIL:'Koning Willem II Stadion',FSI:'Fortuna Sittard Stadion',RSC:'Lotto Park',ANT:'Bosuilstadion',CBR:'Jan Breydelstadion',CHL:'Stade du Pays de Charleroi',BRU:'Jan Breydelstadion',GNK:'Cegeka Arena',GNT:'Planet Group Arena',KVK:'Guldensporen Stadion',MEC:'Achter de Kazerne',WES:'Het Kuipje',LOM:'Soevereinstadion',OHL:'The King Power At Den Dreef Stadium',RLL:'Easi Arena',STV:'Daio Wasabi Stayen Stadium',SKB:'Freethiel-Stadion',SLG:'Stade Maurice Dufrasne',USG:'Stade Joseph Mariën',ZUL:'Elindus Arena',LAS:'Raiffeisen Arena',RBS:'Red Bull Arena (Salzburgo)',STU:'Merkur Spiel-Arena',AWI:'Generali Arena',WAC:'Lavanttal Arena',HAR:'Profertil Arena Hartberg',RWI:'Allianz Stadion',RIE:'Josko Arena',ALT:'CASHPOINT Arena',TIR:'Tivoli Stadion Tirol',AUL:'SUN MINIMEAL Arena',GAK:'Stadion Graz-Liebenau',MIR:'Estadio Municipal de Anduva',HUE:'Estadio El Alcoraz',ZAR:'Ibercaja Estadio',VILB:'Ciudad Deportiva José Manuel Llaneza',AMM:'Centro Deportivo Cívitas Alcalá de Henares',RMC:'Estadio Alfredo Di Stéfano',PON:'Municipal El Toralín',CUL:'Estadio Reino de León',PONV:'Estadio Municipal de Pasarón',ZAM:'Estadio Ruta de la Plata',RMU:'Estadio Heredia 21 La Condomina',IBI:'Estadi Palladium Can Misses',BARA:'Nuevo Lasesarre',UNI:'Estadio Municipal Reina Sofía',ALC:'Estadio Santo Domingo',ANQ:'Estadio El Maulí',BIL:'Instalaciones de Lezama',ALG:'Nuevo Mirador',EUR:'Can Dragó',LUG:'Estadio Anxo Carro',HER:'José Rico Pérez',MER:'Estadio Romano José Fouto',NAS:'Nou Estadi Costa Daurada',CTG:'Estadio Cartagonova',LOG:'Estadio Las Gaunas',FER:'Estadio de A Malata',RUS:'Stadium Gal',STA:'Can Dragó',CACE:'Estadio Príncipe Felipe',TRL:'Estadio de Pinilla',TRM:'Municipal El Pozuelo',GETX:'Municipal de Fadura',FAB:'Estadio ABANCA-RIAZOR',RMJ:'Cerro del Espino',AVIL:'Román Suárez Puerta',JAE:'Estadio Municipal La Victoria',AGU:'Estadio El Rubial',EXT:'Francisco de la Hera',CRI:'Estadio La Isla',OUR:'Estadio Municipal de O Couto',
  /* Dinamarca (3F Superliga) */
@@ -8101,6 +8157,8 @@ ATAL:0.045,ATCV:0.045,ATOR:0.09,PASO:0.14,GUA:0.165,NAV:0.125,TALV:0.185,PUER:0.
   AFCW:0.45,BNSL:1.2,BKPL:0.95,BRDC:0.65,BROM:0.35,BURA:0.5,CAMU:0.45,DONC:0.55,HUDD:1.6,LEIC:18,LEYO:0.5,LUTN:3.5,MNF:0.4,MKDN:0.55,NTCO:0.6,OXUT:1.1,PBR:0.9,PLY:1.2,READ:1,SHWD:2.2,STVG:0.4,SKP:0.75,WGNA:0.85,WYCW:0.7};
 /* Primera División de Argentina: presupuestos reales en M€ */
 Object.assign(BUDGET,{ALDO:1.2,ARGN:4,ATUC:2.2,BANF:2,BARC:1.5,BELG:3.2,BOCA:18,HURA:3.8,CCOR:1.4,DYJ:2.8,RIES:1.1,ESLP:5.5,ERCU:0.65,GLP:2.5,GMEN:0.7,INRI:1.6,INDE:6,INST:2.1,LANU:4.2,NEWO:3.5,PLATN:1.8,RACI:10,RIVP:22,ROS:4.5,SNLO:5,SARM:1.3,TALL:7.5,TIGR:1.9,USFE:2.2,VELZ:5.5});
+/* Bulgaria (Parva Liga): presupuestos reales en M€ */
+Object.assign(BUDGET,{ARDA:0.9,BOTP:1.8,BOTV:0.45,CHMV:1.2,CSK48:1.1,CSOF:4,DUNR:0.25,LEVS:3,LOKP:0.85,LOKS:0.5,LUDO:10,SEPT:0.4,SLAS:0.7,SPVA:0.6});
 /* presupuesto: parte del dato real/generado del club a su reputación de partida, pero luego SIGUE a la reputación
    actual (10% más por cada punto ganado o perdido). Así un club que sube de reputación de verdad gana recursos de
    verdad, y uno que se hunde los pierde, sea cual sea su fama de partida. */
@@ -11690,6 +11748,51 @@ const DK_TITLE='#49CB2B',DK_REL='#FCA6A1';
 /* ligas cuyo split juega solo una vuelta sencilla dentro de cada grupo (5 jornadas con 6 equipos) en vez de
    ida y vuelta completa como Dinamarca (10 jornadas) */
 const SPLIT_SINGLE_LEG={CH1:true};
+/* ---- Parva Liga (Bulgaria): 14 equipos, 26 jornadas de fase regular y después un split en TRES grupos
+   (Campeonato 1-6, Conference League 7-10 y Descenso 11-14) que juegan una vuelta sencilla dentro del grupo. ---- */
+const BUL_REG=26;
+const BUL_GROUPS=[{n:4,nm:'Grupo Campeonato',legs:2},{n:4,nm:'Grupo Conference League',legs:2},{n:6,nm:'Grupo Descenso',legs:1}];
+const BUL_GKEYS=['champ','conf','releg'];
+/* semana del play-off europeo de Conference (3º del Grupo Campeonato vs ganador del Grupo Conference) */
+const BUL_PO_W=BUL_REG+6;
+/* Participantes de la Kupa na Balgariya (50 clubes): Parva Liga + Segunda/Tercera/aficionados. Excluye filiales
+   y equipos duplicados (CSKS/LUD/BPV/LSK) y Litex (ya solo existe para el palmarés). */
+const BGC_TEAMS=['ARDA','BOTP','BOTV','CHMV','CSK48','CSOF','DUNR','LEVS','LOKP','LOKS','LUDO','SEPT','SLAS','SPVA','BERO','ETAR','AKAD','BALB','BDIN','BELA','BENK','BOIH','BONP','CHTR','CH19','CHBA','DOBR','MINP','FRAT','HEBA','LEVK','LKGO','LKMZ','MARE','MONT','NATS','NEFT','NESE','OBOR','PIRI','RILS','RODO','SPPV','SPPD','SPTS','VIHR','VOLO','YAMB','YANT','ZAGO'];
+/* reparte la clasificación en los tres grupos y añade sus jornadas al calendario: Campeonato y Conference a
+   doble vuelta (6 jornadas) y Descenso a vuelta sencilla (5), arrastrando puntos y goles de la fase regular. */
+function bulSplitIfDue(fx,tb,r){
+  if(r!==BUL_REG)return null;
+  const st=sortTable(tb);if(st.length!==14)return null;
+  const groups={},fxBy=[];let i=0;
+  BUL_GROUPS.forEach((g,gi)=>{const ids=st.slice(i,i+g.n).map(x=>x.id);i+=g.n;groups[BUL_GKEYS[gi]]=ids;
+    const all=buildRawFixtures(ids.slice(),rng(hashStr('bul|'+state.seed+'|'+state.season+'|'+BUL_GKEYS[gi])));
+    fxBy.push(g.legs===1?all.slice(0,ids.length-1):all);});
+  const n=Math.max(...fxBy.map(x=>x.length));
+  for(let k=0;k<n;k++){let rd=[];fxBy.forEach(x=>{if(x[k])rd=rd.concat(x[k])});fx.push(rd)}
+  return{groups};
+}
+/* orden final de los tres grupos tras el split (el acumulado de puntos se conserva), para decidir campeón y plazas */
+function bulGroups(L){
+  const order=sortTable(L.tb).map(r=>r.id);
+  if(!L.split)return{champ:order,conf:[],releg:[]};
+  const g=L.split.groups||{};
+  const pick=arr=>arr?order.filter(id=>arr.includes(id)):[];
+  return{champ:pick(g.champ),conf:pick(g.conf),releg:pick(g.releg)};
+}
+/* Play-off europeo de Conference: final a partido único en el estadio del 3º del Grupo Campeonato (h),
+   con ventaja de campo y prórroga y penaltis. */
+function bulPoInit(h,a,w){return{key:'BGPO',name:'Play-off de Conference',ids:[h,a],bye:[],sc:{},champ:null,et:true,homeAdv:true,rounds:[{n:'Final',w,ties:[{h,a}],done:false}]}}
+/* crea el play-off europeo cuando el split de la Parva Liga ya se ha jugado (3º del Grupo Campeonato vs ganador del Grupo Conference) */
+function bulEnsureCups(r){
+  if(!state||!state.cups)return;
+  if(state.cups.BGPO)return;
+  if(r<BUL_PO_W)return;
+  const L=leagueData('BG1');if(!L||!L.split||L.fx.length<=BUL_REG)return;
+  const rounds=L.fx.slice(BUL_REG);
+  if(!rounds.length||rounds.some(rd=>!rd.length||rd.some(t=>t.hg==null)))return;
+  const G=bulGroups(L);const third=G.champ[2],confWin=G.conf[0];
+  if(third&&confWin&&third!==confWin)state.cups.BGPO=bulPoInit(third,confWin,BUL_PO_W);
+}
 /* emparejamientos de cada grupo (ida y vuelta dentro del grupo) fusionados jornada a jornada */
 function buildSplitFx(top,bot,seedStr){
   const rt=buildRawFixtures(top.slice(),rng(hashStr(seedStr+'|T'))),rb=buildRawFixtures(bot.slice(),rng(hashStr(seedStr+'|B')));
@@ -11707,6 +11810,7 @@ function buildSplitFxSingle(top,bot,seedStr){
 }
 /* si en la jornada r toca abrir el split, reparte por la clasificación y añade las jornadas extra a fx */
 function splitIfDue(fx,tb,key,r){
+  if(key==='BG1')return bulSplitIfDue(fx,tb,r);
   const cfg=SPLITS[key];if(!cfg||r!==cfg.reg)return null;
   const st=sortTable(tb);if(st.length!==cfg.size)return null;
   const top=st.slice(0,cfg.top).map(x=>x.id),bot=st.slice(cfg.top).map(x=>x.id);
@@ -11874,8 +11978,8 @@ function playLeagueStage(){
   round.forEach(simMatch);if(state.country==='AR'){const t=arTourOf(r);if(t)arTally(round,t)}finance(round);updateMood();progressTick(r);positionTick();if(r===20){aiMarket('winter');aiIdle('winter');aiPoach('winter');aiYouth('winter')}
   famInteract();
   const cups=advanceWorld(r);
-  state.week++;if(state.country==='AR')arEnsureCups(state.week);
-  {const uk=userKey();if(SPLITS[uk]&&!state.split&&state.week===SPLITS[uk].reg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
+  state.week++;if(state.country==='AR')arEnsureCups(state.week);bulEnsureCups(state.week);
+  {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
   if(state.week>=state.fixtures.length)afterLeague();
   else if(state.week%4===0)state.market=genMarket();
   const mine=round.find(m=>m.h===state.club||m.a===state.club);
@@ -12505,7 +12609,9 @@ function newSeason(){
     state.prevSCE=[state.cups&&state.cups.UCL&&state.cups.UCL.champ,state.cups&&state.cups.UEL&&state.cups.UEL.champ];
     /* Recopa Sudamericana y Supercopa Internacional de la temporada que arranca */
     state.prevRecs=[state.cups&&state.cups.LIB&&state.cups.LIB.champ,state.cups&&state.cups.SUD&&state.cups.SUD.champ];
-    {const artk=state.cups&&state.cups.ARTK&&state.cups.ARTK.champ,st=sortTable(state.table).map(r=>r.id);
+    /* la Supercopa Internacional la disputan clubes argentinos: se toma la Tabla Anual argentina
+       (state.table si diriges en Argentina; si no, la del resto del mundo AR1), nunca tu propia liga. */
+    {const artk=state.cups&&state.cups.ARTK&&state.cups.ARTK.champ,st=sortTable(arAnnualTable()).map(r=>r.id);
      const a=(artk&&CLUBBY[artk])?artk:(st[0]||null),b=st.find(id=>id!==a)||null;
      state.sintPair=(a&&b&&a!==b)?[a,b]:null;}
   }
@@ -14114,15 +14220,15 @@ function storeImport(n,s,meta){
 }
 
 /* ===================== mundo: otras ligas y torneos ===================== */
-const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Copa Suiza',AR:'Copa Argentina'};
+const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Copa Suiza',AR:'Copa Argentina',BG:'Kupa na Balgariya'};
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC','SCSC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','ENC','ENLC','ENSC']},{id:'FR',name:'Francia',comps:['FR1','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC','SCSC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4};
 const SC_SKIP={AT:1,DK:1,CH:1};
 const SC_WEEKS={ES:[20,21]};
 const userKey=()=>state.country+(state.div||1);
-const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k.endsWith('C');
+const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k.endsWith('C');
 const compName=k=>{
   if(k==='ARAK')return'Torneo Apertura';
   if(k==='ARLK')return'Torneo Clausura';
@@ -14144,6 +14250,7 @@ const compName=k=>{
   if(k==='ESRF')return'Primera Federación';
   if(k==='ESFR')return'Segunda Federación';
   if(k==='CHLIC')return'Copa Liechtenstein';
+  if(k==='BGPO')return'Play-off de Conference';
   const co=k.slice(0,2),suf=k.slice(2);
   if(suf==='SC')return TROPHY_SC[co]||'Supercopa';
   if(suf==='LC')return LCNAME[co]||'Copa de la Liga';
@@ -14707,7 +14814,7 @@ function cupWear(t,store){
 function afterLeague(){
   for(let guard=0;guard<60;guard++){
     const w=state.week;
-    arEnsureCups(w);
+    arEnsureCups(w);bulEnsureCups(w);
     if(userCupTie(w))return;
     let maxW=-1;
     for(const k in state.cups){const c=state.cups[k];
@@ -14722,7 +14829,7 @@ function afterLeague(){
 }
 function playCupStage(){
   const ct=userCupTie(state.week);if(!ct)return null;
-  if(state.country==='AR')arEnsureCups(state.week);
+  if(state.country==='AR')arEnsureCups(state.week);bulEnsureCups(state.week);
   ensureFinBase();
   const t=me(),hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id)),mine=[];
   if(ct.group){
@@ -14851,7 +14958,7 @@ function playCupRound(cup,ri,leg){
       if((leg==null||leg===0)&&!(t.l&&t.l[0])){simTieLeg(t,cup,0);if(t.h===state.club||t.a===state.club)out.push(t)}
       if((leg==null||leg===1)&&(t.l&&t.l[0])&&!t.l[1]){simTieLeg(t,cup,1);resolveTie(t,cup);if(t.h===state.club||t.a===state.club)out.push(t)}
     }else{
-      if(t.hg!==undefined)return;simTie(t,cup,last,ri);if(t.h===state.club||t.a===state.club)out.push(t);
+      if(t.hg!==undefined)return;simTie(t,cup,last&&!cup.homeAdv,ri);if(t.h===state.club||t.a===state.club)out.push(t);
     }
   });
   if(!two||leg==null||leg===1)R.done=true;
@@ -14860,7 +14967,7 @@ function playCupRound(cup,ri,leg){
   return out;
 }
 function advanceWorld(r){
-  arEnsureCups(r);
+  arEnsureCups(r);bulEnsureCups(r);
   const mine=[];
   /* mantenimiento semanal de los clubes que NO son de tu liga: les caducan lesiones y sanciones (antes se acumulaban
      toda la temporada y degradaban al rival para siempre). Un guard evita repetirlo si advanceWorld se llama dos veces
@@ -14872,7 +14979,7 @@ function advanceWorld(r){
       t.players.forEach(p=>{if(p.inj>0)p.inj--;if(p.sus>0)p.sus--});
     }
   }
-  for(const k in state.others){const L=state.others[k];if(SPLITS[k]&&!L.split&&r===SPLITS[k].reg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){arWorldTally(r);arWorldEnsureCups(r);}
   for(const k in state.cups){
     const cup=state.cups[k];
@@ -14972,7 +15079,7 @@ function recordHonors(final){
     }
   };
   gamePlayable().forEach(co=>{
-    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
+    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
     const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,'cup',co+'C');
     const scup=state.cups&&state.cups[co+'SC'];if(scup&&scup.champ)add(scup.champ,'sc',co+'SC');
   });
@@ -15010,8 +15117,9 @@ function recordHonors(final){
 }
 function finishAll(){
   arEnsureCups(999);
-  for(const k in state.others){const L=state.others[k];if(SPLITS[k]&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,SPLITS[k].reg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:null);if(sreg!=null&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,sreg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){const fx=state.others.AR1.fx;for(let r=0;r<fx.length;r++)if(fx[r]&&fx[r][0]&&fx[r][0].hg!==undefined)arWorldTally(r);arWorldEnsureCups(999);}
+  bulEnsureCups(999);
   for(const k in state.cups){
     const cup=state.cups[k];
     if(cup.type==='groups'&&!cup.gdone){cup.groups.forEach(g=>g.fx.forEach(rd=>rd.forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup,g.tb)})));finishGroups(cup);}
@@ -15038,7 +15146,7 @@ const ECL_QUAL_IDS=['AJA','ATA','AWI','BBL','BHA','DNC','DRI','LUGA','GET','GOR'
 const ECL_QUAL_REPLACE=['AWI','RWI','QAR','MTA'];
 const FIXED_SCE_S1=['PSG','AVL'];
 /* supercopas nacionales de la 1ª temporada: participantes reales (España = Supercopa 2027, LaLiga 2025-26 FCB/RMA + Copa 2025-26 RSO/ATM; Italia = Supercoppa 2025-26 NAP/BOL; Inglaterra = Community Shield ARS/MCI; Alemania = Supercopa Franz Beckenbauer BVB/BAY) */
-const FIXED_SC_S1={IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG']};
+const FIXED_SC_S1={IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG'],BG:['LEVS','CSOF']};
 /* Copa Intercontinental de la FIFA: campeones de las 6 confederaciones. Los 5 de fuera de Europa se
    resuelven en previas (cuartos y semifinales); el campeón de la Champions entra directo a la final.
    Se juega en diciembre. */
@@ -15138,6 +15246,8 @@ function initWorld(){
         const fx=FIXED_SC_S1[co],cup=state.cups[co+'SC'];
         cup.rounds[0].ties=[{h:fx[0],a:fx[1]},{h:fx[2],a:fx[3]}];
       }
+      /* 1ª temporada en Bulgaria: Superkupa Levski Sofia vs CSKA Sofia (Levski local) */
+      if(co==='BG'&&!state.prevSC&&state.cups.BGSC&&state.cups.BGSC.rounds[0])state.cups.BGSC.rounds[0].ties=[{h:'LEVS',a:'CSOF'}];
     }
   });
   /* Portugal: la liga (PT1) y la Supertaça (PTSC) ya las crea el bucle gamePlayable(); aquí se añade
@@ -15147,6 +15257,12 @@ function initWorld(){
     const allPT=Object.values(CLUBBY).filter(c=>c.co==='PT'&&!isB(c.id)).map(c=>c.id);
     state.cups.PTC=cupInit('PTC','Taça de Portugal',allPT);
     state.cups.PTLC=cupInit('PTLC','Taça da Liga',pt1,CUP_W6.map(w=>w-2));
+  }
+  /* Bulgaria: la Kupa na Balgariya la juegan los clubes profesionales y aficionados (BGC_TEAMS) */
+  {
+    const bgIds=BGC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id));
+    if(CLUBBY[state.club]&&CLUBBY[state.club].co==='BG'&&!isB(state.club)&&!bgIds.includes(state.club))bgIds.push(state.club);
+    if(bgIds.length>1)state.cups.BGC=cupInit('BGC','Kupa na Balgariya',bgIds);
   }
   /* EFL Cup: segunda copa inglesa, con calendario propio para no chocar con la FA Cup */
   {
@@ -15251,7 +15367,7 @@ function leagueScorers(key){
 }
 function euroSlots(prevQual,replaceSet,posFrom,posTo){
   const out=[];
-  gamePlayable().forEach(co=>{if(co==='DK'||co==='IE')return;const L=leagueData(co+'1');out.push(...sortTable(L.tb).slice(posFrom,posTo).map(r=>r.id).filter(id=>!isB(id)))});
+  gamePlayable().forEach(co=>{if(co==='DK'||co==='IE'||co==='BG')return;const L=leagueData(co+'1');out.push(...sortTable(L.tb).slice(posFrom,posTo).map(r=>r.id).filter(id=>!isB(id)))});
   /* los clubes de ligas que el juego no simula (Turquía, Países Bajos, Ucrania...) no tienen clasificación
      que consultar: siguen en la competición la temporada siguiente tal cual, en vez de recalcularse.
      Portugal sí se simula: su campeón de liga y el de la Taça de Portugal se suman en qualifiers()/qualifiersEL().
@@ -15266,13 +15382,20 @@ function euroSlots(prevQual,replaceSet,posFrom,posTo){
    podría cruzar clubs de ambos grupos) decide las plazas europeas y el playoff. */
 function dkGroups(){const L=leagueData('DK1'),order=sortTable(L.tb).map(r=>r.id);return L.split?{champ:order.filter(id=>L.split.top.includes(id)),releg:order.filter(id=>L.split.bot.includes(id))}:{champ:order,releg:[]}}
 function dkOrder(){return dkGroups().champ}
-function qualifiers(){const s=new Set(euroSlots(state.qual,UCL_QUAL_REPLACE,0,4));const dk=dkOrder();if(dk[0])s.add(dk[0]);const t=state.others&&state.others.PT1&&state.others.PT1.tb?sortTable(state.others.PT1.tb)[0]:null;if(t)s.add(t.id);const ie=leagueData('IE1').tb?sortTable(leagueData('IE1').tb)[0]:null;if(ie)s.add(ie.id);return[...s]}
-function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,UEL_QUAL_REPLACE,4,8));if(state.cups&&state.cups.PTC&&state.cups.PTC.champ)s.add(state.cups.PTC.champ);if(state.cups&&state.cups.NLC&&state.cups.NLC.champ)s.add(state.cups.NLC.champ);if(state.cups&&state.cups.BEC&&state.cups.BEC.champ)s.add(state.cups.BEC.champ);if(state.cups&&state.cups.ATC&&state.cups.ATC.champ)s.add(state.cups.ATC.champ);if(state.cups&&state.cups.NOC&&state.cups.NOC.champ)s.add(state.cups.NOC.champ);if(state.cups&&state.cups.IEC&&state.cups.IEC.champ)s.add(state.cups.IEC.champ);if(state.cups&&state.cups.SCC&&state.cups.SCC.champ)s.add(state.cups.SCC.champ);
+function qualifiers(){const s=new Set(euroSlots(state.qual,UCL_QUAL_REPLACE,0,4));const dk=dkOrder();if(dk[0])s.add(dk[0]);const t=state.others&&state.others.PT1&&state.others.PT1.tb?sortTable(state.others.PT1.tb)[0]:null;if(t)s.add(t.id);const ie=leagueData('IE1').tb?sortTable(leagueData('IE1').tb)[0]:null;if(ie)s.add(ie.id);
+  /* Bulgaria: el campeón del Grupo Campeonato va a la previa de la Champions */
+  const bgChamp=bulGroups(leagueData('BG1')).champ[0];if(bgChamp&&CLUBBY[bgChamp])s.add(bgChamp);
+  return[...s]}
+function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,UEL_QUAL_REPLACE,4,8));if(state.cups&&state.cups.PTC&&state.cups.PTC.champ)s.add(state.cups.PTC.champ);if(state.cups&&state.cups.NLC&&state.cups.NLC.champ)s.add(state.cups.NLC.champ);if(state.cups&&state.cups.BEC&&state.cups.BEC.champ)s.add(state.cups.BEC.champ);if(state.cups&&state.cups.ATC&&state.cups.ATC.champ)s.add(state.cups.ATC.champ);if(state.cups&&state.cups.NOC&&state.cups.NOC.champ)s.add(state.cups.NOC.champ);if(state.cups&&state.cups.IEC&&state.cups.IEC.champ)s.add(state.cups.IEC.champ);if(state.cups&&state.cups.SCC&&state.cups.SCC.champ)s.add(state.cups.SCC.champ);if(state.cups&&state.cups.BGC&&state.cups.BGC.champ)s.add(state.cups.BGC.champ);
   const dk=dkOrder(),cup=state.cups&&state.cups.DKC&&state.cups.DKC.champ,top3=dk.slice(0,3);
   if(dk[1])s.add(dk[1]);
   if(cup&&!top3.includes(cup))s.add(cup);else if(cup&&dk[3])s.add(dk[3]);   /* si el campeón de Copa ya está arriba, la plaza viaja al 4º */
   return[...s]}
-function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,ECL_QUAL_REPLACE,8,12));if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);return[...s]}
+function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,ECL_QUAL_REPLACE,8,12));if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);
+  /* Bulgaria: 2º del Grupo Campeonato y ganador del play-off europeo (BGPO) van a la previa de la Conference */
+  const bgG=bulGroups(leagueData('BG1'));if(bgG.champ[1]&&CLUBBY[bgG.champ[1]])s.add(bgG.champ[1]);
+  if(state.cups&&state.cups.BGPO&&state.cups.BGPO.champ&&CLUBBY[state.cups.BGPO.champ])s.add(state.cups.BGPO.champ);
+  return[...s]}
 /* ---- CONMEBOL: plazas argentinas desde la Tabla Anual. LIB = 1º-3º (fase de grupos 1º-2º, 3º a la
    clasificación previa); SUD = 4º-9º (fase de grupos). Coincide con las zonas mostradas en la Tabla Anual. ---- */
 function arAnnualTable(){if(state.country==='AR')return state.table;return(state.others&&state.others.AR1&&state.others.AR1.tb)||{}}
@@ -15298,7 +15421,7 @@ function computeCopaQual(){
   return [...new Set(out)];
 }
 function champsLine(){
-  const parts=gamePlayable().map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}return FLAG[co]+' '+(top?cname(top.id):'—')});
+  const parts=gamePlayable().map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}return FLAG[co]+' '+(top?cname(top.id):'—')});
   const u=state.cups.UCL.champ;
   return 'Campeones de liga: '+parts.join(', ')+(u?'. Champions League: '+cname(u)+'.':'.');
 }
@@ -15517,6 +15640,7 @@ function compTrophyKey(key){
   if(key==='CHLIC')return'liechtenstein';
   if(key==='LIBQ')return'libq';
   if(key==='SUDQ')return'sudq';
+  if(key==='BGPO')return'sc';
   if(key==='ARAK')return'apertura';
   if(key==='ARLK')return'clausura';
   if(key==='ARTK')return'trofeo';
@@ -15734,6 +15858,31 @@ function chLeagueTable(key){
   return tbl(SPLITS.CH1.upper,topList,champZone,[['#49CB2B','Previa de Champions'],['#38D996','Previa de Europa League'],['#5694D8','Fase Previa Conference League']])
        + tbl(SPLITS.CH1.lower,botList,relZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']]);
 }
+/* Parva Liga (Bulgaria): fase regular de 26 jornadas y, tras el corte, tres grupos (Campeonato 1-6,
+   Conference League 7-10 y Descenso 11-14). Cada grupo conserva los puntos y juega una vuelta sencilla. */
+function bulLeagueTable(key){
+  const L=leagueData(key),st=sortTable(L.tb),me=state.club;
+  const tbl=(title,list,zoneFn,legend)=>{
+    const rows=list.map((r,i)=>{const c=CLUBBY[r.id],dg=r.gf-r.ga,z=zoneFn(i+1,list.length);
+      return`<tr class="${r.id===me?'me':''}"><td class="pos"${z?` style="--zc:${z}"`:''}>${z?'<i></i>':''}<span>${i+1}</span></td><td class="tm"><button class="tmbtn" data-act="club-view" data-club="${r.id}">${crestHTML(c,24)}<span class="nl">${esc(c.name)}</span><span class="ns">${esc(short3(c))}</span></button></td><td class="pts">${r.pts}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${dg>0?'+':''}${dg}</td></tr>`}).join('');
+    const used=new Set(list.map((r,i)=>zoneFn(i+1,list.length)));
+    const lg=(legend||[]).filter(([c])=>used.has(c));
+    const legendHTML=lg.length?`<div class="legend2"><b>LEYENDA</b><div class="lg-grid">${lg.map(([c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div></div>`:'';
+    return`<div class="card">${title?`<h3>${esc(title)}</h3>`:''}<div class="tblwrap"><table class="tbl abbtbl"><thead><tr><th>#</th><th>Club</th><th>Pts</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th></tr></thead><tbody>${rows}</tbody></table></div>${legendHTML}</div>`;
+  };
+  if(!L.split){
+    const zoneFn=pos=>pos<=4?'#5694D8':pos<=8?'#79B9DE':'#e53935';
+    return tbl('',st,zoneFn,[['#5694D8','Grupo Campeonato'],['#79B9DE','Grupo Conference League'],['#e53935','Grupo Descenso']]);
+  }
+  const G=L.split.groups||{};
+  const pick=arr=>arr?st.filter(r=>arr.includes(r.id)):[];
+  const champZone=pos=>pos===1?'#7cb342':pos===2?'#79B9DE':pos===3?'#38D996':'#9e9e9e';
+  const confZone=pos=>pos===1?'#38D996':'#9e9e9e';
+  const relegZone=pos=>pos<=4?'#9e9e9e':pos===5?'#ef9a9a':'#e53935';
+  return tbl('Grupo Campeonato',pick(G.champ),champZone,[['#7cb342','Previa de Champions League'],['#79B9DE','Previa de Conference League'],['#38D996','Play-off europeo (Conference)'],['#9e9e9e','Permanencia']])
+       + tbl('Grupo Conference League',pick(G.conf),confZone,[['#38D996','Siguiente ronda (Play-off europeo)'],['#9e9e9e','Permanencia']])
+       + tbl('Grupo Descenso',pick(G.releg),relegZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Play-off de descenso'],['#e53935','Descenso']]);
+}
 function _zoneTable(title,t,qual,label,relLabel){
   qual=qual||2;label=label||'Clasificado';
   const st=sortTable(t);
@@ -15780,6 +15929,7 @@ function groupStageHTML(key){
 function leagueTable(key){
   if(key==='DK1')return dkLeagueTable(key);
   if(key==='CH1')return chLeagueTable(key);
+  if(key==='BG1')return bulLeagueTable(key);
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=String(key).slice(0,2)==='ES'?+String(key).slice(2):null;
@@ -16690,8 +16840,8 @@ const ICO_SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const ICO_STAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z"/></svg>';
 const ICO_GLOBE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>';
 const TROPHY_ICO={league:ICO_TROPHY,cup:ICO_CUP,sc:ICO_SHIELD,lc:ICO_CUP,ucl:ICO_STAR,uel:ICO_CUP,ecl:ICO_CUP,cwc:ICO_SHIELD,sce:ICO_SHIELD,wc:ICO_GLOBE,ic:ICO_GLOBE,cf:ICO_CUP,d2:ICO_TROPHY,d3:ICO_TROPHY,d4:ICO_TROPHY,eflt:ICO_CUP,fat:ICO_CUP,scc:ICO_CUP,lp2:ICO_CUP,cisc:ICO_CUP};
-const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Copa de Turquía',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Copa Suiza',AR:'Copa Argentina'};
-const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski',IE:'Supercopa de Irlanda'};
+const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Copa de Turquía',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Copa Suiza',AR:'Copa Argentina',BG:'Kupa na Balgariya'};
+const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski',IE:'Supercopa de Irlanda',BG:'Superkupa na Balgariya'};
 const TROPHY_ORDER=['league','apertura','clausura','cup','trofeo','sarg','sint','sc','lc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','lib','sud','recs','cinter','cwc','sce','wc','ic','ifc','cf','cofed','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
 function trophyName(club,k){
   const co=club.co;
@@ -16712,7 +16862,7 @@ function trophyName(club,k){
   if(k==='cup')return TROPHY_CUP[co]||'Copa';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia'}[co]||'Copa de la Liga';
-  if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1. Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
+  if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1. Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
   if(k==='d3')return{ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2. Liga',SC:'League One Escocia'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
   if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3. Liga',SC:'League Two Escocia'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
@@ -16735,7 +16885,7 @@ function trophyName(club,k){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:NOFOTO_TROPHY,d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',sc:NOFOTO_TROPHY,d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:NOFOTO_TROPHY,d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',sc:NOFOTO_TROPHY,d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:NOFOTO_TROPHY,sc:'323',d2:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668'};
 function trophyImg(club,k){
   const co=club&&club.co;
@@ -16876,6 +17026,7 @@ function honorKindForCup(key){
   if(key==='ECL')return'ecl';
   if(key==='SCE')return'sce';
   if(key==='IFC')return'ifc';
+  if(key==='BGPO')return'sc';
   if(key==='ARAK')return'apertura';
   if(key==='ARLK')return'clausura';
   if(key==='ARTK')return'trofeo';
@@ -17318,6 +17469,25 @@ USG:{league:12,cup:2,sc:2,d2:1,d3:1},
     VELZ:{cinter:1,lib:1,clausura:6,apertura:2,recs:1,sarg:2,sint:1,ifc:1}
   };
   Object.entries(AR).forEach(([id,o])=>Object.entries(o).forEach(([k,n])=>add(id,k,n)));
+  /* Palmarés histórico de los clubes búlgaros (BeSoccer): Parva Liga, Kupa na Balgariya y Superkupa */
+  const BG={
+    CSOF:{league:23,cup:5,sc:5},
+    LEVS:{league:21,cup:3,sc:4},
+    LUDO:{league:19,cup:4,sc:9},
+    LITE:{league:4,cup:2,sc:1},
+    SLAS:{league:2,cup:1},
+    BERO:{league:2,cup:2,sc:1},
+    BOTV:{league:1,d2:1},
+    LOKP:{league:1,cup:2,sc:2},
+    ETAR:{league:1},
+    LOKS:{league:1},
+    BOTP:{league:1,cup:2,sc:1},
+    CHMV:{cup:1,sc:1},
+    DUNR:{d2:2},
+    CSK48:{d2:1},
+    SEPT:{d2:1}
+  };
+  Object.entries(BG).forEach(([id,o])=>Object.entries(o).forEach(([k,n])=>add(id,k,n)));
 })();
 /* total oficial indicado por la fuente (el desglose puede sumar mas por solapes entre competiciones) */
 const PAL_TOTAL={RMA:99,FCB:97};
