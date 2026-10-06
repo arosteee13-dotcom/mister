@@ -17161,6 +17161,15 @@ function imPlayersHTML(){
   <div class="res-scroll"><div class="sq-list">${rows||'<p class="muted-s">Ese archivo no tiene jugadores.</p>'}</div></div>
   <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cancelar</button><button class="btn primary"${n?'':' disabled'} data-act="imp-confirm">Añadir ${n} jugador${n===1?'':'es'}</button></div>`;
 }
+/* el filial de un club personalizado siempre se llama "<nombre del club> B" (y su escudo abreviado "<short> B"),
+   en vez de arrastrar el nombre del filial real del club al que sustituyó; crea el filial si el club no tenía */
+function applyFilialNaming(clubId,name,short,logo){
+  const bid=filialFor(clubId);
+  if(!bid||!CLUBBY[bid])return;
+  const b=CLUBBY[bid];
+  b.name=name+' B';b.short=(short||b.short)+' B';
+  if(logo)b.logo=logo;else if(CLUBBY[clubId]&&CLUBBY[clubId].logo)b.logo=CLUBBY[clubId].logo;else delete b.logo;
+}
 /* reaplica al club sustituido el nombre/escudo que el usuario le puso al crearlo: necesario cada vez que se
    carga una partida, porque CLUBBY se reconstruye desde los datos originales en cada recarga de la página */
 function applyClubOverride(s){
@@ -17169,6 +17178,7 @@ function applyClubOverride(s){
   Object.assign(base,{name:o.name,short:o.short,city:o.city,rep:o.rep,stadium:o.stadium});
   if(o.logo)base.logo=o.logo;else delete base.logo;
   delete BUDGET[s.club];   /* el presupuesto del club personalizado se deriva de la reputación elegida, no del club real sustituido */
+  applyFilialNaming(s.club,o.name,o.short,o.logo);
 }
 function finalizeCustomGame(){
   const baseId=ui.custom.baseId,base=CLUBBY[baseId],cc=ui.custom.club;
@@ -17176,6 +17186,7 @@ function finalizeCustomGame(){
   Object.assign(base,{name:cc.name,short:cc.short,city:cc.city,rep:cc.rep,stadium:cc.stadium});
   if(cc.logo)base.logo=cc.logo;else delete base.logo;
   delete BUDGET[baseId];   /* el presupuesto pasa a derivarse de la reputación elegida, no del club real original */
+  applyFilialNaming(baseId,cc.name,cc.short,cc.logo);
   const savedRealDB=REAL_DB[baseId];
   if(cc.squadMode==='auto')delete REAL_DB[baseId];   /* plantilla genérica: nunca tira de la base de datos del club real al que sustituye */
   closeSheet();
