@@ -2529,6 +2529,45 @@ Object.assign(NAMES,{
   TR:{f:['Emre','Burak','Mert','Kerem','Oğuz','Yusuf','Enes','Berkay','Cem','Serkan','Ozan','Tolga','Barış','Onur','Furkan','Ege','Deniz','Arda','Hakan','Uğur'],l:['Yılmaz','Kaya','Demir','Çelik','Şahin','Aydın','Öztürk','Arslan','Doğan','Kılıç','Aslan','Çetin','Koç','Kurt','Özkan','Polat','Erdoğan','Güneş','Aksoy','Bulut']},
   HR:{f:['Luka','Ivan','Marko','Josip','Ante','Mateo','Tomislav','Nikola','Filip','Petar','Domagoj','Kristijan'],l:['Horvat','Kovačić','Marić','Perić','Novak','Vuković','Babić','Jurić','Radić','Knežević','Pavlović','Tomić','Barišić']}
 });
+/* bancos de nombres añadidos para que los jugadores generados/canterano con otras nacionalidades (antes caían
+   todos en nombres españoles si no había banco propio) tengan nombre y apellido acorde a su país */
+Object.assign(NAMES,{
+ RU:{f:['Dmitri','Ivan','Alexei','Sergei','Nikolai','Pavel','Artem','Igor','Viktor','Maxim','Yevgeni','Andrei','Kirill','Vladislav','Roman'],l:['Ivanov','Petrov','Smirnov','Kuznetsov','Volkov','Sokolov','Popov','Fedorov','Morozov','Egorov','Novikov','Orlov','Lebedev','Kozlov','Belov']},
+ PL:{f:['Jakub','Kamil','Tomasz','Mateusz','Piotr','Krzysztof','Wojciech','Paweł','Marcin','Łukasz','Dawid','Michał','Grzegorz','Adrian','Rafał'],l:['Kowalski','Nowak','Wiśniewski','Wójcik','Kowalczyk','Kamiński','Lewandowski','Zieliński','Szymański','Dąbrowski','Kozłowski','Mazur','Piotrowski','Grabowski','Pawłowski']},
+ CZ:{f:['Jakub','Tomáš','Jan','Martin','Ondřej','Petr','Lukáš','David','Filip','Václav','Marek','Adam','Radek','Michal','Vojtěch'],l:['Novák','Svoboda','Novotný','Dvořák','Černý','Procházka','Kučera','Veselý','Horák','Němec','Pokorný','Král','Beneš','Fiala','Hájek']},
+ HU:{f:['Bence','Dávid','Máté','Levente','Balázs','Zoltán','Ádám','Gábor','Péter','Krisztián','László','Attila','Milán','Norbert','Tamás'],l:['Nagy','Kovács','Tóth','Szabó','Horváth','Varga','Kiss','Molnár','Németh','Farkas','Balogh','Papp','Takács','Juhász','Lakatos']},
+ RO:{f:['Andrei','Ioan','Mihai','Alexandru','Cristian','Gabriel','Daniel','Florin','Vasile','Radu','Ştefan','Marian','Cosmin','Bogdan','Adrian'],l:['Popescu','Ionescu','Popa','Stan','Dumitru','Stoica','Gheorghe','Constantin','Marin','Tudor','Matei','Rusu','Ciobanu','Munteanu','Vlad']},
+ SE:{f:['Erik','Oskar','Viktor','Anders','Magnus','Lars','Mikael','Henrik','Gustav','Emil','Johan','Niklas','Fredrik','Sebastian','Axel'],l:['Andersson','Johansson','Karlsson','Nilsson','Eriksson','Larsson','Olsson','Persson','Svensson','Gustafsson','Pettersson','Jonsson','Jansson','Hansson','Bergström']},
+ LT:{f:['Tomas','Mantas','Rokas','Dovydas','Lukas','Justas','Paulius','Arnas','Vytautas','Gediminas','Marius','Kazimieras','Darius','Edvinas','Mindaugas'],l:['Kazlauskas','Jankauskas','Petrauskas','Žukauskas','Vasiliauskas','Paulauskas','Butkus','Ramanauskas','Urbonas','Stankevičius','Rimkus','Adomaitis','Balčiūnas','Girdenis','Mockus']},
+ AL:{f:['Ardit','Besnik','Flamur','Granit','Ilir','Krenar','Luan','Mergim','Nderim','Petrit','Shkëlzen','Taulant','Visar','Xhevdet','Ylli'],l:['Krasniqi','Hoxha','Berisha','Shehu','Gashi','Morina','Kelmendi','Rama','Mustafa','Kastrati','Zogu','Bytyqi','Sahiti','Vula','Ahmeti']},
+ GR:{f:['Giorgos','Yannis','Dimitris','Kostas','Nikos','Panos','Vasilis','Stavros','Christos','Petros','Michalis','Thanos','Antonis','Alexandros','Spiros'],l:['Papadopoulos','Vasiliou','Nikolaou','Georgiou','Dimitriou','Konstantinou','Ioannou','Pappas','Karagiannis','Antoniou','Christodoulou','Economou','Angelopoulos','Stavrou','Markou']},
+ GE:{f:['Giorgi','Levan','Nika','Saba','Davit','Luka','Beka','Mikheil','Irakli','Zurab','Vakhtang','Tornike','Lasha','Gigi','Archil'],l:['Beridze','Tsiklauri','Gelashvili','Kapanadze','Mamuchashvili','Lomidze','Kavtaradze','Chkheidze','Davitashvili','Jorbenadze','Khubulava','Metreveli','Sharikadze','Pataridze','Gogoladze']},
+ SA:{f:['Ahmed','Mohammed','Youssef','Omar','Khalid','Faisal','Hassan','Karim','Mahmoud','Tariq','Sami','Nasser','Rashid','Zaid','Walid'],l:['Al-Harbi','Al-Otaibi','Hassan','Mansour','Khalil','Saleh','Ibrahim','Farouk','Nasser','Qureshi','Hamdan','Rashid','Abdullah','Youssef','Amrani']},
+ IL:{f:['Yossi','Noam','Itay','Omer','Eitan','Dor','Guy','Shay','Tal','Amit','Ron','Idan','Nadav','Daniel','Liam'],l:['Cohen','Levi','Mizrahi','Peretz','Biton','Dahan','Avraham','Malka','Azulay','Ben-David','Shapira','Katz','Gabay','Friedman','Shalom']},
+ JP:{f:['Haruto','Sota','Ren','Yuto','Riku','Kaito','Sora','Hiroto','Yuki','Takeru','Kenta','Daiki','Shota','Ryota','Tatsuya'],l:['Satō','Suzuki','Takahashi','Tanaka','Watanabe','Itō','Yamamoto','Nakamura','Kobayashi','Kato','Yoshida','Yamada','Sasaki','Yamaguchi','Matsumoto']},
+ KR:{f:['Min-jun','Seo-jun','Ji-ho','Jun-woo','Dong-hyun','Hyun-woo','Jae-won','Sung-min','Tae-yang','Joon-ho','Woo-jin','Sang-woo','Yong-jin','Kyung-soo','Min-ho'],l:['Kim','Lee','Park','Choi','Jung','Kang','Cho','Yoon','Jang','Lim','Han','Oh','Shin','Kwon','Hwang']},
+ CN:{f:['Wei','Jian','Hao','Lei','Qiang','Yong','Jun','Peng','Tao','Bo','Hui','Ming','Chao','Kai','Long'],l:['Wang','Li','Zhang','Liu','Chen','Yang','Huang','Zhao','Wu','Zhou','Xu','Sun','Ma','Zhu','Hu']},
+ IN:{f:['Rohan','Arjun','Vikram','Aditya','Rahul','Karan','Sanjay','Amit','Nikhil','Varun','Siddharth','Raj','Ankit','Deepak','Manoj'],l:['Sharma','Patel','Singh','Kumar','Gupta','Rao','Reddy','Nair','Mehta','Joshi','Chauhan','Verma','Pandey','Das','Bose']}
+});
+/* nacionalidades sin banco de nombres propio: se usa el banco de un país de cultura/idioma afín en vez de
+   caer por defecto en nombres españoles (ver mkPerson) */
+const NAT_ALIAS={
+ AU:'EN',CA:'EN',GI:'EN',IE:'EN',NIR:'EN',NZ:'EN',WAL:'EN',WA:'EN',SC:'EN',US:'EN',
+ MT:'IT',SM:'IT',
+ BO:'ES',CL:'ES',CO:'ES',EC:'ES',MX:'ES',PA:'ES',PE:'ES',PY:'ES',UY:'ES',VE:'ES',AD:'ES',
+ AT:'DE',CH:'DE',LU:'DE',
+ BE:'NL',
+ BA:'HR',RS:'HR',ME:'HR',MK:'HR',SI:'HR',BG:'HR',
+ XK:'AL',
+ CY:'GR',
+ IS:'SE',NO:'SE',DK:'SE',FO:'SE',FI:'SE',
+ LV:'LT',EE:'LT',
+ MD:'RO',
+ SK:'CZ',
+ AM:'GE',AZ:'GE',
+ AE:'SA',QA:'SA',IQ:'SA',EG:'SA',DZ:'SA',MA:'SA',
+ KZ:'RU',UZ:'RU',TJ:'RU',BY:'RU',UA:'RU'
+};
 const NATNAME={SO:'Somalia',SY:'Siria',BI:'Burundi',IQ:'Irak',NZ:'Nueva Zelanda',ES:'España',EN:'Inglaterra',IT:'Italia',DE:'Alemania',FR:'Francia',PT:'Portugal',BR:'Brasil',AR:'Argentina',LT:'Lituania',MD:'Moldavia',SR:'Surinam',TD:'Chad',LU:'Luxemburgo',FO:'Islas Feroe',CY:'Chipre',EC:'Ecuador',BG:'Bulgaria',CH:'Suiza',CL:'Chile',CZ:'República Checa',DZ:'Argelia',TR:'Turquía',CG:'Congo',AZ:'Azerbaiyán',NL:'Países Bajos',AT:'Austria',UA:'Ucrania',NO:'Noruega',BE:'Bélgica',SK:'Eslovaquia',GR:'Grecia',AM:'Armenia',BA:'Bosnia y Herzegovina',XK:'Kosovo',EE:'Estonia',MK:'Macedonia del Norte',MT:'Malta',HU:'Hungría',AD:'Andorra',KZ:'Kazajistán',AL:'Albania',FI:'Finlandia',NIR:'Irlanda del Norte',GI:'Gibraltar',BY:'Bielorrusia',LV:'Letonia',IE:'República de Irlanda',ME:'Montenegro',WAL:'Gales',SM:'San Marino',RO:'Rumanía',IS:'Islandia',DK:'Dinamarca',PL:'Polonia',SE:'Suecia',SI:'Eslovenia',ER:'Eritrea',ST:'Santo Tomé y Príncipe',GW:'Guinea-Bissau',US:'Estados Unidos',SC:'Escocia',CA:'Canadá',HT:'Haití',CV:'Cabo Verde',CM:'Camerún',GH:'Ghana'};
 /* ============ ESTADIOS ============ */
 const STADIUM={
@@ -9042,11 +9081,11 @@ function mkPerson(r,co,used,clubId){
   }
   for(let k=0;k<12;k++){
     const c=r()<.72?co:pick(Object.keys(NAMES),r);
-    const nm=NAMES[c]||NAMES.ES;
+    const nm=NAMES[c]||NAMES[NAT_ALIAS[c]]||NAMES.EN;
     const n=pick(nm.f,r)+' '+pick(nm.l,r);
     if(!used.has(n)){used.add(n);return[n,c]}
   }
-  const fall=NAMES[co]||NAMES.ES;
+  const fall=NAMES[co]||NAMES[NAT_ALIAS[co]]||NAMES.EN;
   const n=pick(fall.f,r)+' '+pick(fall.l,r)+' Jr.';used.add(n);return[n,co];
 }
 /* factor de valor por edad: sube hasta la plenitud (hasta 28) y cae cada vez más rápido a partir de ahí */
