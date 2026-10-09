@@ -13343,7 +13343,14 @@ function fixLineup(t,strict){
 }
 let BENCH_N=9;
 /* límite de suplentes según la liga: 12 en Primera División española, 9 en el resto */
-const benchLimit=id=>{const c=CLUBBY[id];return c&&c.co==='ES'&&c.div===1?12:9};
+/* suplentes en el banquillo por liga (1ª y categorías inferiores conocidas); el resto 9.
+   1ª: Italia 15; España, Portugal, Países Bajos, Bélgica, Turquía, Rusia, Dinamarca, Austria, Rumanía y Ucrania 12;
+       Inglaterra, Alemania, Francia, Polonia, Bulgaria, Noruega, Escocia, Suiza e Irlanda 9.
+   Inferiores: EN Championship 9 / L1,L2,National 7; ES Hypermotion y 1ª Federación 12, 2ª Federación 7;
+       DE 2. Bundesliga y 3. Liga 9; IT Serie B 12; FR Ligue 2 9; PT Liga Portugal 2 12. */
+const BENCH_CD={IT1:15,ES1:12,PT1:12,NL1:12,BE1:12,TR1:12,RU1:12,DK1:12,AT1:12,RO1:12,UA1:12,AR1:12,EN1:9,DE1:9,FR1:9,PL1:9,BG1:9,NO1:9,SC1:9,CH1:9,IE1:9,MX1:10,
+  EN2:9,EN3:7,EN4:7,EN5:7,ES2:12,ES3:12,DE2:9,DE3:9,IT2:12,FR2:9,PT2:12};
+const benchLimit=id=>{const c=CLUBBY[id];if(!c)return 9;const v=BENCH_CD[c.co+(c.div||1)];if(v!=null)return v;if(c.co==='ES'&&(c.div||1)>=4)return 7;return 9};
 /* orden del banquillo: porteros primero (2 con 12 suplentes, 1 con 9) y después por posición (DF, MD, FW) */
 function benchOrder(p){return p.pos==='GK'?0:p.pos==='DF'?1:p.pos==='MD'?2:p.pos==='FW'?3:4}
 function sortBench(t){
@@ -15228,14 +15235,22 @@ function famChildren(id){const out=[];for(const k in FAMILY)if(FAMILY[k]===id&&C
 /* cadena de filiales por debajo de un club, de más cercano a más lejano (B, C, ...) */
 function filialDescendants(id){const out=[],q=[id];while(q.length){const x=q.shift();for(const y of famChildren(x)){out.push(y);q.push(y)}}return out}
 /* crea (si hace falta) el club B de un primer equipo "pid" y lo registra en CLUBBY/FAMILY; el filial siempre hereda el escudo del primer equipo salvo que ya tenga uno propio */
-/* sufijo del nombre del filial según el país: B (ES/PT/FR/BE/TR), II (DE/NL/RU/AT/CH/DK/PL/BG/NO/SC) y U21 (EN/IE/IT) */
-const FILIAL_SUF=co=>({DE:'II',NL:'II',RU:'II',AT:'II',CH:'II',DK:'II',PL:'II',BG:'II',NO:'II',SC:'II',EN:'U21',IE:'U21',IT:'U21'}[co]||'B');
-const filialMaxAge=co=>(co==='EN'||co==='IE'||co==='IT')?21:23;
+/* nombre del filial según el país: sufijo B/II/2/U21/U23 o prefijo Jong (Países Bajos).
+   Italia, Bélgica y México → U23; Dinamarca, Suiza, Argentina y los U21 ya existentes (Inglaterra,Irlanda) → U21;
+   Rusia y Ucrania → 2; Austria,Rumanía,Bulgaria,Polonia,Alemania,Noruega,Escocia → II;
+   Países Bajos → "Jong <equipo>"; Francia,España,Portugal,Turquía… → B.
+   (los filiales con nombre propio —Atlético Madrileño, Juventus Next Gen…— no usan esta fórmula) */
+const FILIAL_SUF=co=>({EN:'U21',IE:'U21',AR:'U21',IT:'U23',BE:'U23',MX:'U23',DK:'U21',CH:'U21',RU:'2',UA:'2',AT:'II',RO:'II',BG:'II',PL:'II',DE:'II',NO:'II',SC:'II'}[co]||'B');
+const FILIAL_PRE=co=>(co==='NL'?'Jong':'');
+const filialMaxAge=co=>FILIAL_SUF(co)==='U21'?21:23;
 function makeBTeam(pid){
   const c=CLUBBY[pid];if(!c)return null;
   const bid=pid+'B';
   if(!CLUBBY[bid]){
-    const b=K(bid,c.name+' '+FILIAL_SUF(c.co),c.short+' '+FILIAL_SUF(c.co),c.city,c.co,c.c1,c.c2,Math.max(40,repOf(pid)-7),(c.div||1)+1);
+    const pre=FILIAL_PRE(c.co);
+    const nm=pre?pre+' '+c.name:c.name+' '+FILIAL_SUF(c.co);
+    const sh=pre?pre+' '+c.short:c.short+' '+FILIAL_SUF(c.co);
+    const b=K(bid,nm,sh,c.city,c.co,c.c1,c.c2,Math.max(40,repOf(pid)-7),(c.div||1)+1);
     b.bTeam=1;if(c.logo)b.logo=c.logo;
     CLUBBY[bid]=b;FAMILY[pid]=bid;FAMILY[bid]=pid;
   }else if(!CLUBBY[bid].logo&&c.logo){CLUBBY[bid].logo=c.logo}
@@ -22342,10 +22357,243 @@ REAL_LOANS.push(['Tom Fogarty','TAMW','BKLT',1,'Rotación',['Tom Fogarty','DF',2
     ['Ángel Torres','DYNK','OPR',1,'Rotación',['Ángel Torres','FW',2002,'ES',60,68,0.6,3,'DC/ED']],
     ['Anton Tsarenko','DYNK','BWL',1,'Rotación',['Anton Tsarenko','MD',2004,'UA',55,68,0.5,2,'MC']],
     ['Maksym Dyachuk','DYNK','BOST',1,'Rotación',['Maksym Dyachuk','DF',2003,'UA',58,70,0.7,2,'DFC']],
-    ['Anton Matkevych','DYNK','OBOL',1,'Rotación',['Anton Matkevych','FW',2004,'UA',55,68,0.5,2,'DC']],
-    ['Oleksandr Husiev','DYNK','CHO',1,'Rotación',['Oleksandr Husiev','DF',2004,'UA',54,66,0.4,2,'LD']],
+    ['Andrii Matkevych','DYNK','OBOL',1,'Rotación',['Andrii Matkevych','FW',2005,'UA',44,55,0.881,2,'EI/MI']],
+    ['Oleksiy Gusev','DYNK','CHO',1,'Rotación',['Oleksiy Gusev','DF',2005,'UA',55,66,1.22,2,'LD/LI']],
     ['Aleksandre Peikrishvili','DYNK','GAG',1,'Rotación',['Aleksandre Peikrishvili','MD',2004,'GE',50,65,0.3,1,'MC']],
-    ['Vladyslav Herych','DYNK','CHO',1,'Rotación',['Vladyslav Herych','FW',2004,'UA',54,68,0.5,2,'DC']]
+    ['Vladyslav Gerych','DYNK','CHO',1,'Rotación',['Vladyslav Gerych','FW',2006,'UA',62,68,0.877,2,'EI/DC']]
+  );
+})();
+/* ===== Bukovyna Chernivtsi (BUKV): plantilla real + atributos + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{BUKV:[
+    ['Herman Penkov','GK',1994,'UA',62,null,0.213,null,'POR'],['Danylo Kanevtsev','GK',1996,'UA',55,null,0.424,null,'POR'],['Artem Matsiuk','GK',2010,'UA',26,null,0.009,null,'POR'],
+    ['Petro Stasiuk','DF',1995,'UA',72,null,1.19,null,'LI/LD'],['Vitalii Dakhnovskyi','DF',1999,'UA',70,null,1.82,null,'MI/ED'],['Danylo Karas','DF',1997,'UA',67,null,1.01,null,'DFC/LD'],['Illia Putria','DF',1998,'UA',66,null,2.42,null,'LD/LI'],['Mykyta Bezuhlyi','DF',1995,'UA',66,null,0.724,null,'DFC/LD'],['Edwin Odinaka','DF',2004,'NG',64,null,1.91,null,'LD/ED'],['Andriy Busko','DF',1997,'UA',64,null,0.62,null,'DFC/LD'],['Oleh Illin','DF',1997,'UA',64,null,1.14,null,'MD/MI'],['Vladyslav Pryimak','DF',1996,'UA',64,null,1.97,null,'DFC/MC'],['Taras Sakiv','DF',1998,'UA',56,null,0.614,null,'LI/DFC'],['Dmytro Shynkarenko','DF',2000,'UA',54,null,0.436,null,'LD/MD'],['Eduard Romanets','DF',2006,'UA',43,null,0.215,null,'DFC'],['Tymur Nianchur','DF',2007,'UA',42,null,0.021,null,'DFC'],['Maksym Yakhontov','DF',2006,'UA',40,null,0.008,null,'LI'],['Robert Hazazian','DF',2007,'UA',31,null,0.002,null,'DFC'],
+    ['Maksym Zaderaka','MD',1994,'UA',71,null,1.84,null,'MCO/ED'],['Vadym Vitenchuk','MD',1997,'UA',69,null,1.75,null,'MCD/MC'],['Vitaly Grusha','MD',1994,'UA',68,null,0.654,null,'MCO/MC'],['Viacheslav Tankovskyi','MD',1995,'UA',61,null,1.82,null,'MC/MCD'],['Arsenii Kilievyi','MD',2004,'UA',49,null,0.394,null,'MCO/MC'],['Fedir Babak','MD',2007,'UA',41,null,0.041,null,'MC'],['Roman Horenko','MD',2007,'UA',36,null,0.034,null,'MC'],
+    ['Bohdan Boichuk','FW',1996,'UA',69,null,1.02,null,'ED/MI'],['Oleh Kozhushko','FW',1998,'UA',68,null,1.75,null,'DC/MD'],['Yevhen Pidlepenets','FW',1999,'UA',66,null,1.72,null,'ED/MD'],['Mor Talla Gaye','FW',1999,'SN',63,null,3.15,null,'ED/LI'],['Danylo Kravchuk','FW',2001,'UA',62,null,2.08,null,'DC/MD'],['Mihael Klepač','FW',1997,'HR',59,null,0.859,null,'EI/DC'],['Renat Dadashov','FW',1999,'AZ',52,null,1.99,null,'DC/MCO'],['Sviatoslav Matiash','FW',2006,'UA',43,null,0.077,null,'DC'],['Teimur Khalilov','FW',2006,'UA',41,null,0.021,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{'Viacheslav Tankovskyi':{RIT:66,TIR:42,PAS:57,REG:66,DEF:51,FÍS:56},'Renat Dadashov':{RIT:62,TIR:61,PAS:53,REG:61,DEF:34,FÍS:67}});
+  Object.entries({'Herman Penkov':336578,'Danylo Kanevtsev':318979,'Artem Matsiuk':3848887,'Petro Stasiuk':448409,'Vitalii Dakhnovskyi':957595,'Danylo Karas':749452,'Illia Putria':284370,'Mykyta Bezuhlyi':404288,'Edwin Odinaka':3392468,'Andriy Busko':352058,'Oleh Illin':365070,'Vladyslav Pryimak':474160,'Taras Sakiv':342171,'Dmytro Shynkarenko':972935,'Eduard Romanets':3437319,'Tymur Nianchur':3612823,'Maksym Yakhontov':3685050,'Robert Hazazian':3612923,'Maksym Zaderaka':247367,'Vadym Vitenchuk':824694,'Vitaly Grusha':428674,'Viacheslav Tankovskyi':206445,'Arsenii Kilievyi':3254880,'Fedir Babak':3386284,'Roman Horenko':3382988,'Bohdan Boichuk':276577,'Oleh Kozhushko':326904,'Yevhen Pidlepenets':734752,'Mor Talla Gaye':3219909,'Danylo Kravchuk':929692,'Mihael Klepač':379009,'Renat Dadashov':320327,'Sviatoslav Matiash':3308219,'Teimur Khalilov':3612450}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{GROB:K2('GROB','SK Grobiņa','Grobiņa','Grobiņa','LV','#1c3f94','#f4f4f4',40)});
+  if(CLUBBY.GROB)CLUBBY.GROB.logo='https://cdn.resfu.com/img_data/equipos/64831.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['Illia Putria','LNZC','BUKV',1,'Rotación',['Illia Putria','DF',1998,'UA',66,null,2.42,null,'LD/LI']],
+    ['Viacheslav Tankovskyi','LNZC','BUKV',1,'Rotación',['Viacheslav Tankovskyi','MD',1995,'UA',61,null,1.82,null,'MC/MCD']],
+    ['Danylo Kravchuk','LNZC','BUKV',1,'Rotación',['Danylo Kravchuk','FW',2001,'UA',62,null,2.08,null,'DC/MD']],
+    ['Ivan Tyshchenko','BUKV','GROB',1,'Rotación',['Ivan Tyshchenko','MD',2004,'UA',50,65,0.3,1,'MC']]
+  );
+})();
+/* ===== Chornomorets Odessa (CHO): plantilla real + atributos + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{CHO:[
+    ['Maksym Koval','GK',1993,'UA',61,null,0.578,null,'POR'],['Chijioke Kingsley Aniagboso','GK',2004,'UA',51,null,0.267,null,'POR'],['Nazar Baida','GK',2001,'UA',50,null,0.187,null,'POR'],['Maksym Nabyt','GK',2005,'UA',43,null,0.041,null,'POR'],
+    ['Vitalii Farasieienko','DF',2003,'UA',66,null,1.55,null,'MD/ED'],['Moses Jarju','DF',2003,'UA',58,null,0.486,null,'DFC/MC'],['Mykola Kohut','DF',1998,'UA',57,null,1.17,null,'MD/MC'],['Marian Faryna','DF',2003,'UA',57,null,1.15,null,'DFC/LI'],['Ivan Kohut','DF',1998,'UA',56,null,0.799,null,'MI/LI'],['Oleksiy Gusev','DF',2005,'UA',55,null,1.22,null,'LD/LI'],['Sergiy Korniychuk','DF',2004,'UA',43,null,0.336,null,'LI/LD'],['Magomed Kratov','DF',2004,'UA',42,null,0.166,null,'DFC'],['Stanislav Yarmola','DF',2006,'UA',35,null,0.02,null,'DFC'],
+    ['Vasyl Kurko','MD',1995,'UA',65,null,1.39,null,'MCD/DFC'],['Nikita Stepovyi','MD',2008,'UA',37,null,0.007,null,'MC'],['Vladislav Klymenko','MD',1994,'UA',57,null,0.41,null,'MC/LD'],['Dmytro Kliots','MD',1996,'UA',56,null,1.38,null,'MC/MCD'],['Giorgi Robakidze','MD',2005,'UA',51,null,0.24,null,'MC/MCO'],['Maksym Melnychenko','MD',2005,'UA',51,null,0.917,null,'MCD/DFC'],['Artur Avahimian','MD',1997,'UA',50,null,0.689,null,'MCO/MC'],['Oleksandr Pshenychniuk','MD',2006,'UA',48,null,0.271,null,'MCO'],['Muhammed Jobe','MD',2004,'UA',26,null,0.002,null,'MCD'],['Artem Prysiazhniuk','MD',2005,'UA',42,null,0.059,null,'MC'],
+    ['Christian Mba','FW',2000,'UA',63,null,2.47,null,'DC'],['Vladyslav Gerych','FW',2006,'UA',62,null,0.877,null,'EI/DC'],['Kiril Popov','FW',2003,'UA',62,null,0.771,null,'DC/ED'],['Andrii Khoma','FW',2001,'UA',61,null,1.09,null,'DC/EI'],['Danyil Alefirenko','FW',2000,'UA',56,null,2.2,null,'EI/DC'],['Oleh Pushkariov','FW',2004,'UA',50,null,1.4,null,'EI/DC'],['Yevhenii Riazantsev','FW',2002,'UA',44,null,0.453,null,'ED/DC'],['Jerry Dieu-Merci Yoka','FW',2006,'UA',43,null,0.043,null,'DC'],['Tymerlan Hryhorchuk','FW',2008,'UA',36,null,0.001,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{'Marian Faryna':{RIT:68,TIR:36,PAS:49,REG:62,DEF:59,FÍS:65}});
+  Object.assign(REAL_FOOT,{'Vitalii Farasieienko':'I','Mykola Kohut':'I','Marian Faryna':'I','Sergiy Korniychuk':'I','Nikita Stepovyi':'I','Artem Prysiazhniuk':'I','Yevhenii Riazantsev':'A'});
+  Object.entries({'Maksym Koval':100596,'Chijioke Kingsley Aniagboso':3384518,'Nazar Baida':3177785,'Maksym Nabyt':3211467,'Vitalii Farasieienko':3308594,'Moses Jarju':3207353,'Mykola Kohut':666678,'Marian Faryna':3190195,'Ivan Kohut':666680,'Oleksiy Gusev':3308517,'Sergiy Korniychuk':3254857,'Magomed Kratov':3443600,'Stanislav Yarmola':3612895,'Nikita Stepovyi':3708316,'Vasyl Kurko':445733,'Vladislav Klymenko':437631,'Dmytro Kliots':244032,'Giorgi Robakidze':3247230,'Maksym Melnychenko':3254801,'Artur Avahimian':274937,'Oleksandr Pshenychniuk':3321697,'Muhammed Jobe':3407122,'Artem Prysiazhniuk':3396316,'Christian Mba':3303416,'Vladyslav Gerych':3647998,'Kiril Popov':901340,'Andrii Khoma':872846,'Danyil Alefirenko':991510,'Oleh Pushkariov':879425,'Yevhenii Riazantsev':798716,'Jerry Dieu-Merci Yoka':3590987,'Tymerlan Hryhorchuk':3615734}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Christian Mba','KHARK','CHO',1,'Rotación',['Christian Mba','FW',2000,'UA',63,null,2.47,null,'DC']],
+    ['Maksym Melnychenko','POLZ','CHO',1,'Rotación',['Maksym Melnychenko','MD',2005,'UA',51,null,0.917,null,'MCD/DFC']]
+  );
+})();
+/* ===== FC Kharkiv (KHARK): plantilla real + atributos + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{KHARK:[
+    ['Heorhii Yermakov','GK',2002,'UA',72,null,4.25,null,'POR'],['Danylo Varakuta','GK',2002,'UA',68,null,2.23,null,'POR'],['Yaroslav Protsenko','GK',2002,'UA',45,null,0.044,null,'POR'],
+    ['Artem Shabanov','DF',1992,'UA',74,null,1.43,null,'DFC/LI'],['Illia Krupskyi','DF',2004,'UA',74,null,8.69,null,'LD/LI'],['Yevhen Pavliuk','DF',2002,'UA',73,null,5.09,null,'DFC/MC'],['Oleksandr Martyniuk','DF',2002,'UA',69,null,5.56,null,'LI/LD'],['Volodymyr Saliuk','DF',2002,'UA',69,null,3.43,null,'DFC/LD'],['Valerii Dubko','DF',2001,'UA',64,null,2.81,null,'DFC/DC'],['Artem Smolyakov','DF',2003,'UA',61,null,3.83,null,'LI/MI'],['Dmytro Pushkalov','DF',2010,'UA',31,null,0.003,null,'DFC'],
+    ['Ivan Kaliuzhnyi','MD',1998,'UA',75,null,9.79,null,'MC/MCD'],['Rafael Profini','MD',2003,'UA',64,null,2.89,null,'MCD/MC'],['Oleksandr Yatsyk','MD',2003,'UA',63,null,4.52,null,'MC/MCD'],['Joseph Nicolás Árevalo Chaparro','MD',2003,'UA',63,null,1.64,null,'MCD/MC'],['Matvii Panchenko','MD',2006,'UA',53,null,0.748,null,'MC'],['Ihor Kohut','MD',1996,'UA',50,null,0.668,null,'MC/MCO'],['Cauan Matteo Baptistella','MD',2008,'UA',50,null,0.055,null,'MCO'],['Andriy Korol','MD',2008,'UA',44,null,0.029,null,'MC'],
+    ['Baton Zabërgja','FW',2001,'UA',72,null,5.23,null,'ED/DC'],['Peter Mandela Itodo','FW',2003,'UA',72,null,3.56,null,'DC/ED'],['Denys Antiukh','FW',1997,'UA',71,null,4.43,null,'ED/MI'],['Carlos Miguel Paraco González','FW',2004,'UA',70,null,5.4,null,'DC/ED'],['Ermir Rashica','FW',2004,'AL',69,null,7.52,null,'EI/DC'],['Ramik Hadzhyiev','FW',2005,'UA',57,null,1.25,null,'ED/MD'],['Oleksiy Plichko','FW',2006,'UA',48,null,0.165,null,'ED'],['Oleksii Sydorov','FW',2001,'UA',61,null,3.75,null,'DC/EI']
+  ]});
+  Object.assign(REAL_FOOT,{'Artem Shabanov':'I','Oleksandr Martyniuk':'I','Valerii Dubko':'I','Artem Smolyakov':'I','Ivan Kaliuzhnyi':'I','Denys Antiukh':'I','Peter Mandela Itodo':'A'});
+  Object.assign(REAL_ATTR,{'Artem Smolyakov':{RIT:65,TIR:40,PAS:60,REG:62,DEF:58,FÍS:56},'Rafael Profini':{RIT:66,TIR:33,PAS:49,REG:55,DEF:58,FÍS:67},'Oleksandr Yatsyk':{RIT:69,TIR:57,PAS:64,REG:71,DEF:63,FÍS:67},'Joseph Nicolás Árevalo Chaparro':{RIT:67,TIR:39,PAS:52,REG:56,DEF:53,FÍS:53},'Carlos Miguel Paraco González':{RIT:71,TIR:53,PAS:51,REG:67,DEF:40,FÍS:55}});
+  Object.entries({'Heorhii Yermakov':3167569,'Danylo Varakuta':865464,'Yaroslav Protsenko':3185396,'Artem Shabanov':213210,'Illia Krupskyi':3151585,'Yevhen Pavliuk':949431,'Oleksandr Martyniuk':887776,'Volodymyr Saliuk':3142724,'Valerii Dubko':951286,'Artem Smolyakov':3224031,'Dmytro Pushkalov':3791966,'Ivan Kaliuzhnyi':290387,'Rafael Profini':3171440,'Oleksandr Yatsyk':894529,'Joseph Nicolás Árevalo Chaparro':3240753,'Matvii Panchenko':3397946,'Ihor Kohut':334092,'Cauan Matteo Baptistella':3404707,'Andriy Korol':3496508,'Baton Zabërgja':995036,'Peter Mandela Itodo':3459799,'Denys Antiukh':451704,'Carlos Miguel Paraco González':3148332,'Ermir Rashica':3262328,'Ramik Hadzhyiev':3333366,'Oleksiy Plichko':3308088,'Oleksii Sydorov':872840}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Artem Smolyakov','LAF','KHARK',1,'Rotación',['Artem Smolyakov','DF',2003,'UA',61,null,3.83,null,'LI/MI']],
+    ['Dmytro Kapinus','KHARK','OBOL',1,'Rotación',['Dmytro Kapinus','DF',2003,'UA',52,null,1.49,null,'LD/LI']]
+  );
+})();
+/* ===== FC Kryvbas (KRYV): plantilla real (GRL/valor de BeSoccer) + atributos + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{KRYV:[
+    ['Oleksandr Kemkin','GK',2002,'UA',61,null,2.4,null,'POR'],['Abdulmajid Danladi Mohammed','GK',2006,'UA',34,null,0.001,null,'POR'],['Bohdan Khoma','GK',2003,'UA',33,null,0.139,null,'POR'],['Danylo Sychov','GK',2010,'UA',29,null,0.006,null,'POR'],
+    ['Volodymyr Vilivald','DF',2004,'UA',63,null,3.41,null,'DFC/LI'],['Joseph Edward Jones Córdoba','DF',2005,'UA',55,null,0.926,null,'DFC/LI'],['Oleksandr Kamenskyi','DF',2007,'UA',47,null,0.485,null,'MI/MC'],['Oleksii Tovarnytskyi','DF',2004,'UA',45,null,0.436,null,'DFC'],['Thiago Isabel Nascimento Borges','DF',2005,'BR',45,null,0.197,null,'LI'],['João Pedro Flores Fernandes Oliveira Machado','DF',2005,'PT',44,null,0.095,null,'LD/MD'],['Vyacheslav Kulbachuk','DF',2004,'UA',48,null,0.857,null,'LI/LD'],['Yevhen Maiakov','DF',2007,'UA',37,null,0.024,null,'DFC'],['Jimmy Geremias Lima Mpanzu','DF',2002,'PT',33,null,0.001,null,'DFC/LI'],['Yehor Korobka','DF',2009,'UA',30,null,0.006,null,'DFC'],
+    ['Aharon Roy Nawi Nabi','MD',2004,'IL',58,null,2.67,null,'MCD/MC'],['Denys Pidhurskyi','MD',2003,'UA',62,null,4.05,null,'MCD/MC'],['Yaroslav Shevchenko','MD',2006,'UA',49,null,0.838,null,'MC/MCD'],['Giovany Aymar Herbert Forcheney','MD',2005,'PA',50,null,0.223,null,'MCO/MC'],['Jhonny Santiago Cuiza Cayo','MD',2005,'BO',56,null,1.72,null,'MCD/LD'],['Dmytro Hodia','MD',2005,'UA',50,null,1.27,null,'MCO/DC'],
+    ['Bar Lin','FW',2004,'IL',56,null,1.97,null,'ED/MD'],['Yackson Stiven Rivas','FW',2002,'VE',58,null,1.95,null,'ED/DC'],['Assane Seck','FW',2004,'SN',51,null,0.484,null,'ED/MD'],['Shakeone Satchwell','FW',2004,'JM',52,null,0.745,null,'DC'],['Cyprian Thobias Kachwele','FW',2005,'TZ',47,null,0.133,null,'DC/MD'],['Volodymyr Mulyk','FW',2006,'UA',41,null,0.435,null,'DC'],['Tymur Butenko','FW',2007,'UA',41,null,0.045,null,'ED/MC'],['Matvii Bodnar','FW',2008,'UA',40,null,0.061,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{'Jhonny Santiago Cuiza Cayo':{RIT:75,TIR:41,PAS:58,REG:67,DEF:56,FÍS:62},'Yackson Stiven Rivas':{RIT:79,TIR:56,PAS:53,REG:73,DEF:46,FÍS:61}});
+  Object.assign(REAL_FOOT,{'Thiago Isabel Nascimento Borges':'I','Vyacheslav Kulbachuk':'I','Dmytro Hodia':'I','Bar Lin':'I'});
+  Object.entries({'Oleksandr Kemkin':879406,'Abdulmajid Danladi Mohammed':3679757,'Bohdan Khoma':3308197,'Danylo Sychov':3664201,'Volodymyr Vilivald':3322307,'Joseph Edward Jones Córdoba':3343742,'Oleksandr Kamenskyi':3435282,'Oleksii Tovarnytskyi':3256445,'Thiago Isabel Nascimento Borges':3166887,'João Pedro Flores Fernandes Oliveira Machado':936892,'Vyacheslav Kulbachuk':3344782,'Yevhen Maiakov':3612822,'Jimmy Geremias Lima Mpanzu':3293292,'Yehor Korobka':3780160,'Aharon Roy Nawi Nabi':3239413,'Denys Pidhurskyi':971914,'Yaroslav Shevchenko':3477121,'Giovany Aymar Herbert Forcheney':3676102,'Jhonny Santiago Cuiza Cayo':3272869,'Dmytro Hodia':3338727,'Bar Lin':939591,'Yackson Stiven Rivas':753638,'Assane Seck':1029332,'Shakeone Satchwell':3373426,'Cyprian Thobias Kachwele':3514318,'Volodymyr Mulyk':3387816,'Tymur Butenko':3349046,'Matvii Bodnar':3612922}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{RTOM:K2('RTOM','Real Tomayapo','Tomayapo','Tarija','BO','#1c3f94','#f4f4f4',44)});
+  if(CLUBBY.RTOM)CLUBBY.RTOM.logo='https://cdn.resfu.com/img_data/equipos/121278.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['Yackson Stiven Rivas','LGUA','KRYV',1,'Rotación',['Yackson Stiven Rivas','FW',2002,'VE',58,null,1.95,null,'ED/DC']],
+    ['Jhonny Santiago Cuiza Cayo','RTOM','KRYV',1,'Rotación',['Jhonny Santiago Cuiza Cayo','MD',2005,'BO',56,null,1.72,null,'MCD/LD']],
+    ['Giovany Aymar Herbert Forcheney','AUPA','KRYV',1,'Rotación',['Giovany Aymar Herbert Forcheney','MD',2005,'PA',50,null,0.223,null,'MCO/MC']],
+    ['Aharon Roy Nawi Nabi','MTA','KRYV',1,'Rotación',['Aharon Roy Nawi Nabi','MD',2004,'IL',58,null,2.67,null,'MCD/MC']],
+    ['Vyacheslav Kulbachuk','DEB','KRYV',1,'Rotación',['Vyacheslav Kulbachuk','DF',2004,'UA',48,null,0.857,null,'LI/LD']]
+  );
+})();
+/* ===== FK Epitsentr (EPIT): plantilla real + atributos + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{EPIT:[
+    ['Oleh Bilyk','GK',1998,'UA',59,null,1.24,null,'POR'],['Nikita Fedotov','GK',2000,'UA',56,null,0.255,null,'POR'],['Arsenii Vavshko','GK',2005,'UA',26,null,0.074,null,'POR'],
+    ['Vladyslav Moroz','DF',2001,'UA',68,null,1.94,null,'DFC'],['Oleksandr Klymets','DF',2000,'UA',67,null,1.59,null,'LI/MI'],['Serjan Repaj','DF',2000,'UA',67,null,1.01,null,'DFC/LD'],['Ihor Kyriukhantsev','DF',1996,'UA',65,null,1.46,null,'LD/MD'],['Artem Kozak','DF',1998,'UA',61,null,1.69,null,'MD/MC'],['Nil Coch Montaña','DF',1998,'UA',61,null,0.714,null,'DFC/MC'],['Stepan Hryhorashchuk','DF',2001,'UA',56,null,1.07,null,'DFC'],['Valerii Luchkevych','DF',1996,'UA',55,null,1.32,null,'LD/ED'],['Andriy Boyko','DF',2005,'UA',51,null,0.177,null,'LD'],['Vitalii Horin','DF',2007,'UA',43,null,0.133,null,'DFC/LD'],
+    ['Kyrylo Kovalets','MD',1993,'UA',66,null,1.85,null,'MCO/MC'],['Mykola Myroniuk','MD',2003,'UA',66,null,1.46,null,'MC/MCO'],['Jon Ceberio Mutuberria','MD',1996,'UA',58,null,0.816,null,'MC/MCD'],['Raúl Tavares Pulido','MD',1999,'UA',57,null,0.34,null,'MC/MCO'],['Evgeniy Zaporozhets','MD',1994,'UA',56,null,0.854,null,'MC/MCO'],['Andrey Lipovuz','MD',1998,'UA',56,null,0.943,null,'MCD/MC'],['Daniil Vashchenko','MD',2005,'UA',54,null,0.939,null,'MCD/MC'],
+    ['Vadym Sydun','FW',2005,'UA',62,null,2.84,null,'DC/ED'],['Carlos Humberto Rojas Mosquera','FW',2002,'UA',58,null,0.652,null,'ED/EI'],['Daniel Rueda Bodega','FW',2002,'UA',53,null,1.19,null,'EI/MD'],['Maksym Evpak','FW',2002,'UA',53,null,0.491,null,'DC'],['Ivan Bendera','FW',2003,'UA',49,null,0.378,null,'EI/MI'],['Denys Golub','FW',2004,'UA',36,null,0.066,null,'ED/EI']
+  ]});
+  Object.assign(REAL_ATTR,{'Nil Coch Montaña':{RIT:61,TIR:35,PAS:38,REG:48,DEF:56,FÍS:57},'Valerii Luchkevych':{RIT:73,TIR:54,PAS:66,REG:70,DEF:63,FÍS:60}});
+  Object.entries({'Oleh Bilyk':293350,'Nikita Fedotov':662517,'Arsenii Vavshko':3440483,'Vladyslav Moroz':972844,'Oleksandr Klymets':666479,'Serjan Repaj':796481,'Ihor Kyriukhantsev':583895,'Artem Kozak':290388,'Nil Coch Montaña':424458,'Stepan Hryhorashchuk':3171705,'Valerii Luchkevych':232320,'Andriy Boyko':3321912,'Vitalii Horin':3544774,'Kyrylo Kovalets':191691,'Mykola Myroniuk':972846,'Jon Ceberio Mutuberria':358898,'Raúl Tavares Pulido':678298,'Evgeniy Zaporozhets':416070,'Andrey Lipovuz':428702,'Daniil Vashchenko':3321918,'Vadym Sydun':3352601,'Carlos Humberto Rojas Mosquera':879631,'Daniel Rueda Bodega':995441,'Maksym Evpak':3399538,'Ivan Bendera':3333389,'Denys Golub':3171836}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{CRB:K2('CRB','Clube de Regatas Brasil','CRB','Maceió','BR','#d4192b','#f4f4f4',52)});
+  if(CLUBBY.CRB)CLUBBY.CRB.logo='https://cdn.resfu.com/img_data/equipos/15135.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['Geovane','EPIT','CRB',1,'Rotación',['Geovane','MD',2008,'BR',50,null,0.982,null,'MC/MCO']],
+    ['S. Krystin','EPIT','AHVO',1,'Rotación',['S. Krystin','MD',2003,'UA',46,null,0.579,null,'MD/LI']],
+    ['V. Krystin','EPIT','AHVO',1,'Rotación',['V. Krystin','DF',2004,'UA',48,null,0.28,null,'LD/LI']]
+  );
+})();
+/* ===== Karpaty Lviv (KARP): plantilla real + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{KARP:[
+    ['Yurii-Volodymyr Hereta','GK',2004,'UA',62,null,2.21,null,'POR'],['Denys Marchenko','GK',2007,'UA',62,null,1.97,null,'POR'],['Anton Zhylkin','GK',2003,'UA',50,null,0.311,null,'POR'],['Roman Mysak','GK',1991,'UA',38,null,0.061,null,'POR'],
+    ['Vladislav Baboglo','DF',1999,'UA',75,null,4.35,null,'DFC/MC'],['Vitalii Kholod','DF',2004,'UA',73,null,8.06,null,'DFC/LI'],['Roman Vantukh','DF',1998,'UA',72,null,3.15,null,'LI/MI'],['Rostyslav Liakh','DF',2001,'UA',71,null,2.95,null,'LI/MI'],['Yan Kostenko','DF',2003,'UA',70,null,3.39,null,'MI/EI'],['Denys Miroshnichenko','DF',1995,'UA',70,null,2.03,null,'LD/LI'],['Iván Calero Ruiz','DF',1995,'ES',69,null,1.16,null,'LD/LI'],['Jean Henrique Carneiro Pedroso','DF',2004,'BR',64,null,4.35,null,'DFC/LD'],['Tymur Stetskov','DF',1998,'UA',62,null,1.62,null,'DFC/LI'],['Yurii Kokodyniak','DF',2007,'UA',51,null,0.135,null,'LD'],['Mykola Kyrychok','DF',2006,'UA',48,null,0.467,null,'DFC/LD'],['Andrii Buleza','DF',2004,'UA',42,null,1.32,null,'LI/LD'],
+    ['Ambrosii Chachua','MD',1994,'UA',73,null,2.05,null,'MCO/MC'],['Fellipe Vieira Cardoso','MD',2005,'BR',65,null,1.7,null,'MCO/MC'],['Mohamed Aiman Moukhliss Agmir','MD',2000,'UA',61,null,1.34,null,'MC/MCD'],['Marko Sapuha','MD',2003,'UA',56,null,1.8,null,'MCD/MC'],['Eriki Daniel Rodrigues Bento','MD',2005,'BR',51,null,0.175,null,'MCD/MC'],['Bruno Iglesias Lois','MD',2003,'ES',49,null,0.518,null,'MCO/MC'],['Vladyslav Reznik','MD',2007,'UA',46,null,0.096,null,'MC'],['Ivan Chaban','MD',2006,'UA',39,null,0.057,null,'MC'],
+    ['Joaquín Carlos Cifuentes Xalmet','FW',1997,'ES',69,null,2.36,null,'ED/MI'],['Xeber Alkain Mitxelena','FW',1997,'ES',65,null,1.7,null,'ED/LD'],['Nazariy Rusyn','FW',1999,'UA',65,null,1.81,null,'DC/EI'],['Yaroslav Karabin','FW',2003,'UA',62,null,4.43,null,'DC/MD'],['Joseph Thibaut Sery','FW',2000,'UA',53,null,0.454,null,'DC'],['Oleksandr Diedov','FW',2008,'UA',41,null,0.051,null,'DC']
+  ]});
+  Object.entries({'Yurii-Volodymyr Hereta':887220,'Denys Marchenko':3434211,'Anton Zhylkin':3177681,'Roman Mysak':130906,'Vladislav Baboglo':634085,'Vitalii Kholod':3225742,'Roman Vantukh':302232,'Rostyslav Liakh':798532,'Yan Kostenko':954692,'Denys Miroshnichenko':209980,'Iván Calero Ruiz':139844,'Jean Henrique Carneiro Pedroso':3227093,'Tymur Stetskov':476640,'Yurii Kokodyniak':3612508,'Mykola Kyrychok':3327635,'Andrii Buleza':879414,'Ambrosii Chachua':209976,'Fellipe Vieira Cardoso':3372197,'Mohamed Aiman Moukhliss Agmir':342272,'Marko Sapuha':3153841,'Eriki Daniel Rodrigues Bento':3479454,'Bruno Iglesias Lois':885940,'Vladyslav Reznik':3437204,'Ivan Chaban':3333371,'Joaquín Carlos Cifuentes Xalmet':424462,'Xeber Alkain Mitxelena':424989,'Nazariy Rusyn':307419,'Yaroslav Karabin':953338,'Joseph Thibaut Sery':873971,'Oleksandr Diedov':3788105}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{REMO:K2('REMO','Clube do Remo','Remo','Belém','BR','#1c3f94','#f4f4f4',50)});
+  if(CLUBBY.REMO)CLUBBY.REMO.logo='https://cdn.resfu.com/img_data/equipos/17658.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['Edson','KARP','REMO',1,'Rotación',['Edson','MD',1998,'BR',60,null,1.72,null,'MCD/MC']],
+    ['A. Shakh','KARP','LGD',1,'Rotación',['A. Shakh','MD',2005,'UA',57,null,2.52,null,'MCO/DC']],
+    ['Fabi','KARP','PALM',1,'Rotación',['Fabi','FW',2006,'BR',41,null,0.235,null,'EI']],
+    ['Illia Kvasnytsia','KARP','LBER',1,'Rotación',['Illia Kvasnytsia','FW',2003,'UA',57,null,4.62,null,'ED/EI']],
+    ['B. Levitskyi','KARP','RUKH',1,'Rotación',['B. Levitskyi','DF',2009,'UA',38,null,0.026,null,'DFC/MC']]
+  );
+})();
+/* ===== Kolos Kovalivka (KOLO): plantilla real + pies + avatares + cesión ===== */
+(function(){
+  Object.assign(REAL_DB,{KOLO:[
+    ['Ivan Pakholiuk','GK',2004,'UA',70,null,4.64,null,'POR'],['Valentyn Morhun','GK',2001,'UA',42,null,0.281,null,'POR'],['Dmytro Matsapura','GK',2000,'UA',33,null,0.418,null,'POR'],
+    ['Andrii Tsurikov','DF',1992,'UA',73,null,1.4,null,'LI/EI'],['Andrii Poniedielnik','DF',1997,'UA',72,null,2.95,null,'LD/DFC'],['Eduard Kozik','DF',2003,'UA',71,null,4.51,null,'DFC/LD'],['Roman Honcharenko','DF',1994,'UA',67,null,1.1,null,'DFC/LI'],['Mykyta Burda','DF',1995,'UA',65,null,1.58,null,'DFC/LD'],['Ibrahim Kane','DF',2000,'UA',65,null,2.88,null,'MD/MC'],['Daniil Khrypchuk','DF',2004,'UA',60,null,1.76,null,'DFC/MCD'],['Vitalii Katrych','DF',2005,'UA',59,null,0.606,null,'LI/MI'],['Zurab Rukhadze','DF',2003,'GE',58,null,2.06,null,'LI/MI'],['Yehor Popravka','DF',2004,'UA',53,null,0.959,null,'LD/LI'],['Vladyslav Shershen','DF',2006,'UA',52,null,0.331,null,'DFC'],['Oleksandr Savchuk','DF',2005,'UA',47,null,0.119,null,'DFC/LD'],
+    ['Arinaldo Rrapaj','MD',2001,'AL',72,null,5.71,null,'MCO/MC'],['Nika Gagnidze','MD',2001,'GE',72,null,6.29,null,'MC/MCO'],['Elias Miguel Trevizan Telles','MD',1998,'UA',70,null,2.42,null,'MCD/MC'],['Irgi Kasalla','MD',2002,'UA',70,null,1.87,null,'MCO/EI'],['Oleksandr Demchenko','MD',1996,'UA',69,null,2.07,null,'MCD/MC'],['Oleksii Bezruchuk','MD',2006,'UA',51,null,0.721,null,'MCO/MC'],['Luka Stankovski','MD',2002,'UA',49,null,1.92,null,'MCO/MC'],['Daniil Denysenko','MD',2006,'UA',49,null,0.295,null,'MCO/MC'],['Dmytro Sukhonos','MD',2008,'UA',38,null,0.017,null,'MC'],['Oleksandr Naumov','MD',2008,'UA',38,null,0.004,null,'MC'],
+    ['Yurii Klymchuk','FW',1997,'UA',71,null,3.82,null,'DC/EI'],['Anton Salabai','FW',2002,'UA',68,null,1.87,null,'EI/MI'],['Ardit Tahiri','FW',2002,'AL',64,null,4.34,null,'DC/EI'],['D. Ndukwe','FW',2000,'UA',62,null,2.37,null,'DC'],['Artem Husol','FW',2006,'UA',57,null,2.61,null,'ED/MI']
+  ]});
+  Object.assign(REAL_FOOT,{'Andrii Tsurikov':'I','Roman Honcharenko':'A','Ibrahim Kane':'I','Vitalii Katrych':'I','Zurab Rukhadze':'I'});
+  Object.entries({'Ivan Pakholiuk':3254561,'Valentyn Morhun':429675,'Dmytro Matsapura':953369,'Andrii Tsurikov':101101,'Andrii Poniedielnik':451491,'Eduard Kozik':879409,'Roman Honcharenko':451472,'Mykyta Burda':229493,'Ibrahim Kane':772073,'Daniil Khrypchuk':3148517,'Vitalii Katrych':3185668,'Zurab Rukhadze':3178225,'Yehor Popravka':3308083,'Vladyslav Shershen':3338601,'Oleksandr Savchuk':3333380,'Arinaldo Rrapaj':759580,'Nika Gagnidze':805755,'Elias Miguel Trevizan Telles':838137,'Irgi Kasalla':3330341,'Oleksandr Demchenko':684440,'Oleksii Bezruchuk':3308091,'Luka Stankovski':816060,'Daniil Denysenko':3308100,'Dmytro Sukhonos':3627407,'Oleksandr Naumov':3773551,'Yurii Klymchuk':855432,'Anton Salabai':3153776,'Ardit Tahiri':973691,'D. Ndukwe':971882,'Artem Husol':3343258}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['M. Sasovskyi','KOLO','KULB',1,'Rotación',['M. Sasovskyi','DF',2001,'UA',61,null,0.853,null,'DFC/MC']]
+  );
+})();
+/* ===== Kudrivka (KUD): plantilla real + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{KUD:[
+    ['Anton Yashkov','GK',1992,'UA',59,null,0.16,null,'POR'],['Kyrylo Lavuta','GK',2002,'UA',51,null,0.233,null,'POR'],['Oleksandr Chobitko','GK',2007,'UA',40,null,0.002,null,'POR'],['Mykhailo Kulyk','GK',2005,'UA',31,null,0.118,null,'POR'],
+    ['Dmytro Semenov','DF',2000,'UA',63,null,1.44,null,'DFC/MC'],['Oleksandr Bieliaiev','DF',1999,'UA',57,null,0.778,null,'MI/MC'],['Mykola Oharkov','DF',2005,'UA',57,null,1.44,null,'LI/DFC'],['Maksym Melnychuk','DF',1999,'UA',57,null,1.1,null,'LI/LD'],['Myroslav Serdiuk','DF',1999,'UA',56,null,0.563,null,'DFC/LI'],['Vladyslav Shapoval','DF',1995,'UA',56,null,0.707,null,'LI/DFC'],['Bohdan Vekliak','DF',1999,'UA',55,null,0.243,null,'DFC'],['Yurii Potimkov','DF',2002,'UA',49,null,0.523,null,'DFC/LD'],['Yevhenii Pasich','DF',1993,'UA',48,null,0.319,null,'LD/LI'],['Matías Gabriel Rosales','DF',2005,'UA',40,null,0.014,null,'LD/MD'],['Vladyslav Hromskyi','DF',2006,'UA',37,null,0.001,null,'DFC'],
+    ['Artur Dumanyuk','MD',1997,'UA',61,null,1.04,null,'MCD/MC'],['Rodion Plaksa','MD',2002,'UA',58,null,0.536,null,'MCO/MC'],['Faites Prevu Kaya Makosso','MD',1998,'UA',57,null,0.685,null,'MCD/MC'],['Mykola Vechurko','MD',1992,'UA',57,null,0.095,null,'MC/MCO'],['Yevhenii Smyrnyi','MD',1998,'UA',52,null,1,null,'MC/MCO'],['Kyrylo Siheiev','MD',2004,'UA',49,null,1.22,null,'MC/DC'],['Victor Adeoye Adeyinka','MD',2006,'UA',44,null,0.479,null,'MCD/MC'],['Demian Yesin','MD',2007,'UA',33,null,0.005,null,'MD/MI'],
+    ['Raymond Frimpong Owusu','FW',2002,'UA',59,null,1.12,null,'DC/EI'],['Kostiantyn Bychek','FW',2000,'UA',52,null,1.3,null,'EI/DC'],['Reynaldiño Jorge Verley Barrera','FW',2002,'UA',52,null,1.58,null,'DC/ED'],['Serhii Sten','FW',2002,'UA',50,null,1.43,null,'EI/MI'],['Ivan Petriak','FW',1994,'UA',46,null,0.086,null,'EI/LD'],['Denys Svitiukha','FW',2002,'UA',46,null,0.365,null,'ED/MD'],['Demchenko Anton Volodymyrovych','FW',2005,'UA',44,null,0.346,null,'DC'],['Oleksandr Yushchenko','FW',2005,'UA',43,null,0.001,null,'ED/MD'],['Roman Solodarenko','FW',2006,'UA',27,null,0.042,null,'DC']
+  ]});
+  Object.assign(REAL_FOOT,{'Anton Yashkov':'I','Oleksandr Chobitko':'I','Mykola Oharkov':'I','Maksym Melnychuk':'I','Vladyslav Shapoval':'I','Vladyslav Hromskyi':'I','Yevhenii Smyrnyi':'I','Kostiantyn Bychek':'I','Denys Svitiukha':'I','Oleksandr Yushchenko':'I'});
+  Object.entries({'Anton Yashkov':357564,'Kyrylo Lavuta':3354131,'Oleksandr Chobitko':3665762,'Mykhailo Kulyk':3308495,'Dmytro Semenov':424594,'Oleksandr Bieliaiev':669200,'Mykola Oharkov':3307958,'Maksym Melnychuk':354191,'Myroslav Serdiuk':3333593,'Vladyslav Shapoval':293343,'Bohdan Vekliak':952556,'Yurii Potimkov':3208845,'Yevhenii Pasich':302252,'Matías Gabriel Rosales':3281733,'Vladyslav Hromskyi':3477176,'Artur Dumanyuk':430099,'Rodion Plaksa':991600,'Faites Prevu Kaya Makosso':743460,'Mykola Vechurko':211583,'Yevhenii Smyrnyi':715963,'Kyrylo Siheiev':3190198,'Victor Adeoye Adeyinka':3701979,'Demian Yesin':3410978,'Raymond Frimpong Owusu':3142755,'Kostiantyn Bychek':3143511,'Reynaldiño Jorge Verley Barrera':3198567,'Serhii Sten':972841,'Ivan Petriak':357577,'Denys Svitiukha':1017324,'Demchenko Anton Volodymyrovych':3307976,'Oleksandr Yushchenko':3143292,'Roman Solodarenko':3587331}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{ALFC:K2('ALFC','Alianza FC','Alianza','San Salvador','SV','#1c3f94','#f4f4f4',44)});
+  if(CLUBBY.ALFC)CLUBBY.ALFC.logo='https://cdn.resfu.com/img_data/equipos/9153.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['Reynaldiño Jorge Verley Barrera','ALFC','KUD',1,'Rotación',['Reynaldiño Jorge Verley Barrera','FW',2002,'UA',52,null,1.58,null,'DC/ED']],
+    ['V. Rogozynsky','KUD','CHEU',1,'Rotación',['V. Rogozynsky','DF',1995,'UA',55,null,0.465,null,'LI/EI']],
+    ['J. Collahuazo','KUD','TAW',1,'Rotación',['J. Collahuazo','DF',2006,'EC',52,null,0.206,null,'DFC/LI']]
+  );
+})();
+/* ===== Livyi Bereh (LBER): plantilla real + pies + avatares + cesión ===== */
+(function(){
+  Object.assign(REAL_DB,{LBER:[
+    ['Roman Zhmurko','GK',1997,'UA',65,null,0.246,null,'POR'],['Oleksandr Domoleha','GK',2003,'UA',44,null,0.09,null,'POR'],['Denys Ihnatenko','GK',2003,'UA',38,null,0.126,null,'POR'],
+    ['Sidnney Silva Santos','DF',2000,'BR',68,null,0.904,null,'LI/EI'],['Andriy Yakymiv','DF',1997,'UA',67,null,0.772,null,'DFC/MC'],['Oleh Sokolov','DF',1999,'UA',67,null,0.913,null,'LD/LI'],['Valerii Bondarenko','DF',1994,'UA',66,null,1.33,null,'DFC/LI'],['Nazarii Vorobchak','DF',2000,'UA',65,null,0.295,null,'MD'],['Valerii Samar','DF',2001,'UA',64,null,0.687,null,'DFC/LI'],['Illia Kovalenko','DF',2001,'UA',52,null,0.004,null,'DFC/LD'],['Séverin Tatolna','DF',2002,'UA',51,null,0.309,null,'LI/MI'],['Nicholas Osei Bonsu','DF',2001,'GH',51,null,0.254,null,'LI/ED'],['Artem Marynovskyi','DF',2007,'UA',49,null,0.219,null,'DFC'],['Ernest Astakhov','DF',1998,'UA',47,null,0.313,null,'LD/DFC'],['Ivan Kotukha','DF',2005,'UA',44,null,0.147,null,'LD/LI'],['Bohdan Chuiev','DF',2000,'UA',59,null,1.34,null,'DFC/LD'],
+    ['Yevhen Banada','MD',1992,'UA',65,null,0.258,null,'MC/MCD'],['Vikentii Voloshyn','MD',2001,'UA',63,null,0.334,null,'MCO/MC'],['Sergii Kosovskyi','MD',1998,'UA',63,null,0.654,null,'MCD/MC'],['Diego Henrique Souza Da Silva','MD',2003,'BR',58,null,0.637,null,'MCO/MC'],['Artem Cheliadin','MD',2000,'UA',55,null,2.71,null,'MCD/MC'],['Oleh Kryvoruchko','MD',2005,'UA',51,null,0.902,null,'MC/MD'],['Vitalii Tishchenko','MD',2006,'UA',43,null,0.048,null,'MCD'],
+    ['Dmytro Shastal','FW',1996,'UA',68,null,1.08,null,'EI/MI'],['Illia Kvasnytsia','FW',2003,'UA',57,null,4.62,null,'ED/EI'],['Wendell Florencio Brito','FW',2006,'BR',53,null,0.061,null,'DC/MI'],['Roman Geresh','FW',2006,'UA',51,null,0.205,null,'DC'],['Nazar Voloshyn','FW',2000,'UA',48,null,0.057,null,'DC'],['Pape Malick Fall','FW',2006,'SN',36,null,0.014,null,'DC']
+  ]});
+  Object.assign(REAL_FOOT,{'Sidnney Silva Santos':'I','Nicholas Osei Bonsu':'I','Artem Marynovskyi':'I','Vikentii Voloshyn':'I','Diego Henrique Souza Da Silva':'I','Artem Cheliadin':'I'});
+  Object.entries({'Roman Zhmurko':353941,'Oleksandr Domoleha':3333961,'Denys Ihnatenko':901980,'Sidnney Silva Santos':855434,'Andriy Yakymiv':391891,'Oleh Sokolov':667919,'Valerii Bondarenko':309567,'Nazarii Vorobchak':952562,'Valerii Samar':981197,'Illia Kovalenko':3354129,'Séverin Tatolna':3214148,'Nicholas Osei Bonsu':3225124,'Artem Marynovskyi':3308547,'Ernest Astakhov':445751,'Ivan Kotukha':3308511,'Bohdan Chuiev':953638,'Yevhen Banada':282073,'Vikentii Voloshyn':342683,'Sergii Kosovskyi':652407,'Diego Henrique Souza Da Silva':996197,'Artem Cheliadin':499754,'Oleh Kryvoruchko':3254589,'Vitalii Tishchenko':3534687,'Dmytro Shastal':424587,'Illia Kvasnytsia':3306731,'Wendell Florencio Brito':3513430,'Roman Geresh':3422960,'Nazar Voloshyn':3437168,'Pape Malick Fall':3863961}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['S. Galoyan','LBER','CHEU',1,'Rotación',['S. Galoyan','MD',2002,'UA',50,null,0.246,null,'MD/MI']]
+  );
+})();
+/* ===== LNZ Cherkasy (LNZC): plantilla real + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{LNZC:[
+    ['Oleksiy Palamarchuk','GK',1991,'UA',73,null,0.491,null,'POR'],['Dmytro Ledvii','GK',2003,'UA',60,null,3.46,null,'POR'],['Kirill Samoilenko','GK',2001,'UA',37,null,0.151,null,'POR'],
+    ['Hennadii Pasich','DF',1993,'UA',76,null,1.38,null,'MI/LI'],['Roman Didyk','DF',2003,'UA',75,null,8.66,null,'DFC/MCD'],['Denys Kuzyk','DF',2002,'UA',75,null,7.3,null,'MD/MI'],['Nazarii Muravskyi','DF',2000,'UA',75,null,3.35,null,'DFC/LD'],['Oleh Horin','DF',2000,'UA',74,null,2.59,null,'DFC/MC'],['Oleksandr Drambaiev','DF',2001,'UA',72,null,3.41,null,'LI/DFC'],['Vitalii Roman','DF',2003,'UA',67,null,5.16,null,'LI/LD'],['Bohdan Sliubyk','DF',2004,'UA',66,null,3.12,null,'DFC/LI'],['Ajdi Dajko','DF',2003,'UA',57,null,3.78,null,'DFC/LI'],['Andrii Kitela','DF',2005,'UA',56,null,2.34,null,'LD/LI'],['Dmytro Matkivskyi','DF',2006,'UA',45,null,0.001,null,'MD'],['Nazar Smotrytskyi','DF',2009,'UA',35,null,0.004,null,'LI/LD'],
+    ['Artur Riabov','MD',2000,'UA',73,null,2.47,null,'MC/MCD'],['Yehor Tverdokhlib','MD',2001,'UA',73,null,5.5,null,'MCO/MC'],['Yevhenii Pastukh','MD',2004,'UA',73,null,8.95,null,'MCO/DC'],['Muharrem Jashari','MD',1998,'UA',72,null,4.82,null,'MCO/MC'],['Shota Nonikashvili','MD',2001,'GE',61,null,2.81,null,'MCD/MC'],['Talles Brener De Paula','MD',1998,'BR',60,null,1.84,null,'MCO/MC'],['Adam Mustapha Yakubu Hassan','MD',2005,'UA',59,null,2.7,null,'MCD/MC'],['Maksym Tlumak','MD',2008,'UA',38,null,0.028,null,'MCD'],['Myroslav Donyk','MD',2010,'UA',26,null,0.008,null,'MC'],
+    ['Mark Osei Assinor','FW',2000,'UA',73,null,3.78,null,'DC/EI'],['Papa Ndiaga Yade','FW',2000,'MR',68,null,2.19,null,'EI/MI'],['Korede Yemi David','FW',2001,'UA',68,null,1.56,null,'DC/ED'],['Tedi Cara','FW',2000,'UA',68,null,5.01,null,'EI/DC'],['Artur Mykytyshyn','FW',2003,'UA',65,null,6.01,null,'ED/EI']
+  ]});
+  Object.assign(REAL_FOOT,{'Dmytro Matkivskyi':'I','Nazar Smotrytskyi':'I','Shota Nonikashvili':'I','Maksym Tlumak':'I','Denys Kuzyk':'A','Oleh Horin':'A','Muharrem Jashari':'A'});
+  Object.entries({'Oleksiy Palamarchuk':451753,'Dmytro Ledvii':3195056,'Kirill Samoilenko':972685,'Hennadii Pasich':302253,'Roman Didyk':870939,'Denys Kuzyk':888801,'Nazarii Muravskyi':427249,'Oleh Horin':451807,'Oleksandr Drambaiev':1027486,'Vitalii Roman':921328,'Bohdan Sliubyk':3153842,'Ajdi Dajko':888406,'Andrii Kitela':917810,'Dmytro Matkivskyi':3321947,'Nazar Smotrytskyi':3629700,'Artur Riabov':823928,'Yehor Tverdokhlib':952557,'Yevhenii Pastukh':3254807,'Muharrem Jashari':373569,'Shota Nonikashvili':435108,'Talles Brener De Paula':475440,'Adam Mustapha Yakubu Hassan':606469,'Maksym Tlumak':3612518,'Myroslav Donyk':3664181,'Mark Osei Assinor':3298822,'Papa Ndiaga Yade':869086,'Korede Yemi David':427686,'Tedi Cara':464235,'Artur Mykytyshyn':901985}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Papa Ndiaga Yade','OLEX','LNZC',1,'Rotación',['Papa Ndiaga Yade','FW',2000,'MR',68,null,2.19,null,'EI/MI']],
+    ['Bohdan Sliubyk','PARD','LNZC',1,'Rotación',['Bohdan Sliubyk','DF',2004,'UA',66,null,3.12,null,'DFC/LI']],
+    ['Jewison Bennette','LNZC','GYO',1,'Rotación',['Jewison Bennette','FW',2004,'CR',49,null,1.87,null,'EI/MI']],
+    ['Eynel Soares','LNZC','TRN',1,'Rotación',['Eynel Soares','FW',1999,'CV',71,null,2.59,null,'EI/MI']],
+    ['O. Lepskyi','LNZC','PRGO',1,'Rotación',['O. Lepskyi','FW',2006,'UA',54,null,0.162,null,'ED']]
+  );
+})();
+/* ===== Obolon (OBOL): plantilla real + pies + avatares ===== */
+(function(){
+  Object.assign(REAL_DB,{OBOL:[
+    ['Nikita Vorobyov','GK',1990,'UA',26,null,null,null,'POR'],['Nazariy Fedorivsky','GK',1996,'UA',61,null,0.949,null,'POR'],['Kyrylo Barantsov','GK',2003,'UA',47,null,0.073,null,'POR'],['Vadym Stashkiv','GK',2007,'UA',42,null,0.092,null,'POR'],
+    ['Pavlo Polehenko','DF',1995,'UA',67,null,1.66,null,'LD/LI'],['Yevhenii Shevchenko','DF',1996,'UA',66,null,1.7,null,'LI/MI'],['Vitalii Yermakov','DF',1992,'UA',64,null,0.274,null,'DFC/LI'],['Yevhenii Morozko','DF',1993,'UA',58,null,0.419,null,'LD/MI'],['Kyrylo Prokopchuk','DF',1998,'UA',55,null,0.299,null,'DFC'],['Egor Prokopenko','DF',1998,'UA',55,null,0.724,null,'LI/MI'],['Maksym Hrysio','DF',1996,'UA',54,null,0.799,null,'LD/MD'],['Oleksandr Zhovtenko','DF',2005,'UA',53,null,0.425,null,'DFC/LI'],['Dmytro Kapinus','DF',2003,'UA',52,null,1.49,null,'LD/LI'],['Rostyslav Liashchuk','DF',2006,'UA',43,null,0.04,null,'LD'],['Andrii Lomnytskyi','DF',2005,'UA',42,null,0.503,null,'DFC'],['Oleksandr Feshchenko','DF',2007,'UA',42,null,0.067,null,'DFC'],['Vladyslav Skrygun','DF',2005,'UA',35,null,0.026,null,'DFC'],
+    ['Roman Volokhatyi','MD',2000,'UA',66,null,2.17,null,'MC/ED'],['Dmytro Myshniov','MD',1994,'UA',63,null,1.39,null,'MC/MCO'],['Oleg Slobodyan','MD',1996,'UA',61,null,1.21,null,'MCO/MC'],['Maksym Chekh','MD',1999,'UA',56,null,1.33,null,'MCD/MC'],['Taras Moroz','MD',1996,'UA',54,null,1.16,null,'MCD/DFC'],['Denys Shostak','MD',2003,'UA',51,null,1.4,null,'MCO/MC'],['Artem Chornyi','MD',2008,'UA',44,null,0.035,null,'MC'],['Artem Kulakovskyi','MD',2002,'UA',43,null,0.377,null,'MC/MI'],
+    ['Sergey Sukhanov','FW',1995,'UA',64,null,1.42,null,'DC/MD'],['Denys Ustymenko','FW',1999,'UA',64,null,1.82,null,'DC/ED'],['Igor Medynskyi','FW',1993,'UA',56,null,0.52,null,'ED/MD'],['Artem Shulianskyi','FW',2001,'UA',52,null,0.708,null,'EI/MI'],['Taras Lyakh','FW',2005,'UA',46,null,0.247,null,'DC'],['Andrii Matkevych','FW',2005,'UA',44,null,0.881,null,'EI/MI'],['Denys Teslyuk','FW',2003,'UA',43,null,1.08,null,'DC/MD'],['Serhii Rebrysh','FW',2007,'UA',31,null,0.004,null,'DC']
+  ]});
+  Object.assign(REAL_FOOT,{'Vadym Stashkiv':'I','Yevhenii Shevchenko':'I','Kyrylo Prokopchuk':'I','Egor Prokopenko':'I','Andrii Lomnytskyi':'I','Vladyslav Skrygun':'A'});
+  Object.entries({'Nikita Vorobyov':3863850,'Nazariy Fedorivsky':328281,'Kyrylo Barantsov':3200793,'Vadym Stashkiv':3434234,'Pavlo Polehenko':293334,'Yevhenii Shevchenko':451691,'Vitalii Yermakov':336025,'Yevhenii Morozko':294592,'Kyrylo Prokopchuk':368297,'Egor Prokopenko':675778,'Maksym Hrysio':333496,'Oleksandr Zhovtenko':3544348,'Dmytro Kapinus':879412,'Rostyslav Liashchuk':3437335,'Andrii Lomnytskyi':3185665,'Oleksandr Feshchenko':3477112,'Vladyslav Skrygun':3440555,'Roman Volokhatyi':734760,'Dmytro Myshniov':211609,'Oleg Slobodyan':388763,'Maksym Chekh':284377,'Taras Moroz':451726,'Denys Shostak':879426,'Artem Chornyi':3435246,'Artem Kulakovskyi':852046,'Sergey Sukhanov':451703,'Denys Ustymenko':789732,'Igor Medynskyi':323909,'Artem Shulianskyi':991364,'Taras Lyakh':3390624,'Andrii Matkevych':3308514,'Denys Teslyuk':972851,'Serhii Rebrysh':3634058}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== Polissya Zhytomyr (POLZ): plantilla real + pies + avatares + cesión ===== */
+(function(){
+  Object.assign(REAL_DB,{POLZ:[
+    ['Yevhenii Volynets','GK',1993,'UA',74,null,1.49,null,'POR'],['Nazar Makarenko','GK',2007,'UA',52,null,0.569,null,'POR'],['Oleh Kudryk','GK',1997,'UA',52,null,0.722,null,'POR'],['Artur Drobot','GK',2006,'UA',41,null,0.023,null,'POR'],['Denys Talko','GK',2008,'UA',40,null,0.001,null,'POR'],['Ihnat Spoda','GK',2009,'UA',37,null,0.003,null,'POR'],
+    ['Eduard Sarapii','DF',1999,'UA',76,null,6.06,null,'DFC/MC'],['Bohdan Mykhailichenko','DF',1997,'UA',75,null,5.14,null,'LI/MI'],['Serhii Chobotenko','DF',1997,'UA',75,null,4.36,null,'DFC/LD'],['Ilir Krasniqi','DF',2000,'XK',72,null,6.2,null,'DFC/MC'],['Mykyta Kravchenko','DF',1997,'UA',65,null,3.23,null,'LD/MD'],['Giorgi Maisuradze','DF',2002,'GE',62,null,1.85,null,'LD/LI'],['João Victor Dall Stella Vialle','DF',2002,'UA',52,null,1.73,null,'DFC'],['Denys Gryshkevych','DF',2005,'UA',50,null,0.226,null,'DFC/LD'],['Andi Hadroj','DF',1999,'UA',49,null,0.971,null,'LD/MD'],['Kiril Koberniuk','DF',2005,'UA',47,null,0.068,null,'DFC'],
+    ['Ruslan Babenko','MD',1992,'UA',74,null,1.46,null,'MC/MCD'],['Oleksandr Andriievskyi','MD',1994,'UA',74,null,2.04,null,'MC/MCO'],['Borys Krushynskyi','MD',2002,'UA',72,null,6.87,null,'MCD/DFC'],['Lindon Emërllahu','MD',2003,'UA',71,null,8.04,null,'MC/MCD'],['Oleh Fedor','MD',2004,'UA',63,null,3.22,null,'MC/MI'],['Andrusw Alberto Araujo Araque','MD',2003,'UA',60,null,3.28,null,'MCD/MC'],['Volodymyr Shepeliev','MD',1997,'UA',55,null,2.82,null,'MC/MCO'],['Yaroslav Karaman','MD',2006,'UA',52,null,0.001,null,'MCO/MC'],['Borel Tomandzoto Beliada','MD',2002,'UA',46,null,0.254,null,'MC/MCD'],['Kostrytsia Oleksandr Olehovych','MD',2006,'UA',37,null,0.026,null,'MC'],
+    ['Leandro Livramento Andrade','FW',1999,'CV',79,null,10.32,null,'ED/MCO'],['Igor Krasnopir','FW',2003,'UA',75,null,8,null,'DC/EI'],['Oleksandr Nazarenko','FW',2000,'UA',74,null,5.94,null,'EI/MI'],['Maksym Braharu','FW',2002,'UA',71,null,6.65,null,'EI/LI'],['Vladyslav Veleten','FW',2002,'UA',71,null,5.46,null,'ED/MI'],['Oleksandr Filippov','FW',1993,'UA',65,null,2.26,null,'DC/MCO'],['Mykola Haiduchyk','FW',2000,'UA',64,null,3.65,null,'DC'],['Béni Makouana','FW',2002,'CG',45,null,0.469,null,'EI/DC']
+  ]});
+  Object.assign(REAL_FOOT,{'Bohdan Mykhailichenko':'I','Ruslan Babenko':'I','Oleksandr Andriievskyi':'I','Borys Krushynskyi':'I','Kostrytsia Oleksandr Olehovych':'I','Oleksandr Nazarenko':'I','Mykola Haiduchyk':'I','Lindon Emërllahu':'A'});
+  Object.entries({'Yevhenii Volynets':491329,'Nazar Makarenko':3387823,'Oleh Kudryk':274919,'Artur Drobot':3496565,'Denys Talko':3664398,'Ihnat Spoda':3788109,'Eduard Sarapii':729588,'Bohdan Mykhailichenko':276524,'Serhii Chobotenko':290394,'Ilir Krasniqi':798618,'Mykyta Kravchenko':296408,'Giorgi Maisuradze':3150172,'João Victor Dall Stella Vialle':906279,'Denys Gryshkevych':3308467,'Andi Hadroj':725250,'Kiril Koberniuk':3457453,'Ruslan Babenko':110743,'Oleksandr Andriievskyi':311005,'Borys Krushynskyi':1017286,'Lindon Emërllahu':3174084,'Oleh Fedor':917813,'Andrusw Alberto Araujo Araque':3153111,'Volodymyr Shepeliev':290396,'Yaroslav Karaman':3321945,'Borel Tomandzoto Beliada':1001295,'Kostrytsia Oleksandr Olehovych':3435340,'Leandro Livramento Andrade':753562,'Igor Krasnopir':3308583,'Oleksandr Nazarenko':367171,'Maksym Braharu':870932,'Vladyslav Veleten':894530,'Oleksandr Filippov':234423,'Mykola Haiduchyk':3137473,'Béni Makouana':800978}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['A. Gonçalves','POLZ','VRN',1,'Rotación',['A. Gonçalves','FW',2003,'UA',55,null,0.484,null,'EI/MI']]
+  );
+})();
+/* ===== Veres Rivne (VRN): plantilla real + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{VRN:[
+    ['Valentyn Horokh','GK',2001,'UA',65,null,0.628,null,'POR'],['Oleksandr Kharechko','GK',2007,'UA',43,null,0.053,null,'POR'],['Pavlo Stefaniuk','GK',2005,'UA',33,null,0.062,null,'POR'],['Vadym Samkov','GK',2008,'UA',30,null,null,null,'POR'],
+    ['Kai Cipot','DF',2001,'SI',70,null,3.5,null,'DFC/DC'],['Konstantinos Stamoulis','DF',2001,'GR',68,null,2.18,null,'LD/MD'],['Semen Vovchenko','DF',1999,'UA',68,null,2.67,null,'DFC/LI'],['Maksym Smiian','DF',2002,'UA',66,null,1.64,null,'LI/MC'],['Pavlo Bahrii','DF',2005,'UA',53,null,0.148,null,'LI'],['Mykhailo Protasevych','DF',2005,'UA',53,null,1.4,null,'LD/DFC'],['Danyil Checher','DF',2005,'UA',48,null,0.365,null,'DFC/MC'],['Andrey Souza','DF',2005,'UA',33,null,0.045,null,'DFC'],
+    ['Ihor Kharatin','MD',1995,'UA',69,null,1.46,null,'MCD/MC'],['Vitalii Boiko','MD',1998,'UA',68,null,1.93,null,'MC/MCD'],['Rostyslav Baran','MD',2005,'UA',54,null,0.213,null,'MC/MCO'],['Fabrício Yan Peixoto Barros Limeira','MD',2004,'BR',52,null,0.011,null,'MCO/MC'],['Stanislav Mihutskyi','MD',2007,'UA',48,null,0.001,null,'MC'],['Ivan Sanotskyi','MD',2007,'UA',41,null,0.01,null,'MC'],['David Niyo','MD',2007,'UA',41,null,0.017,null,'MC'],['Maksym Pylypey','MD',2008,'UA',26,null,0.001,null,'MC'],
+    ['Vladyslav Sharai','FW',1997,'UA',70,null,2.85,null,'EI/ED'],['A. Gonçalves','FW',2003,'UA',55,null,0.484,null,'EI/MI'],['Wesley Da Conceição Duarte Moreira','FW',2002,'BR',51,null,0.782,null,'EI/MI'],['Nathanael Dane Blair','FW',2004,'UA',47,null,0.507,null,'DC/ED'],['Guilherme De Jesus Lima','FW',2006,'BR',45,null,0.062,null,'EI/ED'],['Alagie Wally','FW',2006,'UA',38,null,0.17,null,'DC'],['Mykyta Aleksandrov','FW',2005,'UA',34,null,0.037,null,'DC'],['Luka Khokhashvili','FW',2007,'GE',32,null,0.005,null,'EI'],['Anton Vydrych','FW',2008,'UA',33,null,0.004,null,'DC']
+  ]});
+  Object.assign(REAL_FOOT,{'Valentyn Horokh':'A','Semen Vovchenko':'I','Maksym Smiian':'I','Pavlo Bahrii':'I','Vitalii Boiko':'I','Ivan Sanotskyi':'I','David Niyo':'I','Vladyslav Sharai':'I','Guilherme De Jesus Lima':'I'});
+  Object.entries({'Valentyn Horokh':908193,'Oleksandr Kharechko':3391324,'Pavlo Stefaniuk':3496360,'Vadym Samkov':3900105,'Kai Cipot':868434,'Konstantinos Stamoulis':776696,'Semen Vovchenko':971864,'Maksym Smiian':1027467,'Pavlo Bahrii':3435036,'Mykhailo Protasevych':3308485,'Danyil Checher':3333376,'Andrey Souza':3509732,'Ihor Kharatin':219851,'Vitalii Boiko':451777,'Rostyslav Baran':3435028,'Fabrício Yan Peixoto Barros Limeira':987344,'Stanislav Mihutskyi':3612924,'Ivan Sanotskyi':3612619,'David Niyo':3659091,'Maksym Pylypey':3788089,'Vladyslav Sharai':451713,'A. Gonçalves':893790,'Wesley Da Conceição Duarte Moreira':906114,'Nathanael Dane Blair':3275438,'Guilherme De Jesus Lima':3269790,'Alagie Wally':3644566,'Mykyta Aleksandrov':3256456,'Luka Khokhashvili':3824513,'Anton Vydrych':3543314}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{ASTL:K2('ASTL','FC Asia Talas','Talas','Talas','KG','#1c3f94','#f4f4f4',36)});
+  if(CLUBBY.ASTL)CLUBBY.ASTL.logo='https://cdn.resfu.com/img_data/equipos/169693.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['G. Kutsia','VRN','IBE',1,'Rotación',['G. Kutsia','MD',2007,'UA',45,null,0.235,null,'MCO/MC']],
+    ['A. Kozhukhar','VRN','ASTL',1,'Rotación',['A. Kozhukhar','GK',2006,'UA',43,null,0.189,null,'POR']],
+    ['I. Pushkutsa','VRN','LOK',1,'Rotación',['I. Pushkutsa','FW',2007,'UA',42,null,0.089,null,'DC']]
+  );
+})();
+/* ===== Zorya Luhansk (ZOR): plantilla real + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{ZOR:[
+    ['Oleksandr Saputin','GK',2004,'UA',63,null,4.58,null,'POR'],['Vladyslav Rybak','GK',2001,'UA',60,null,0.687,null,'POR'],['Illia Karavashchenko','GK',2001,'UA',47,null,0.119,null,'POR'],['Valerii Kosivskyi','GK',2005,'UA',33,null,0.036,null,'POR'],
+    ['Anderson Jordan Da Silva Cordeiro','DF',1999,'BR',73,null,4.52,null,'DFC/LD'],['Ihor Perduta','DF',1991,'UA',72,null,0.409,null,'LD/LI'],['Leovigildo Júnior Reis Rodrigues','DF',1996,'BR',66,null,2.14,null,'LI/LD'],['Andrija Janjić','DF',2002,'RS',64,null,2.59,null,'DFC'],['Artem Machelyuk','DF',2000,'UA',58,null,0.353,null,'LD/LI'],['Vasyl Kravets','DF',1997,'UA',58,null,1.27,null,'LI/DFC'],['Gabriel Eskinja','DF',2003,'HR',56,null,0.758,null,'DFC/MC'],['Ítalo Guilherme Machado Henrique','DF',2002,'BR',52,null,0.462,null,'LD/MD'],
+    ['Dejan Popara','MD',2003,'ME',71,null,4.54,null,'MCD/MC'],['Bohdan Kushnirenko','MD',1996,'UA',65,null,2.11,null,'MCD/MC'],['Jakov Bašić','MD',1997,'HR',62,null,2.2,null,'MCD/MC'],['Ivan Nesterenko','MD',2003,'UA',58,null,1.74,null,'MCO/MC'],['Vladlen Yurchenko','MD',1994,'UA',57,null,0.132,null,'MCO/MC'],['Maksym Boyko','MD',2004,'UA',54,null,0.32,null,'MC/MCD'],['Kyrylo Dryshliuk','MD',1999,'UA',53,null,1.3,null,'MC/MCD'],['Anton Hlushchenko','MD',2004,'UA',52,null,0.661,null,'MCO/MC'],['Sallieu Bah','MD',2006,'UA',41,null,0.108,null,'MCO'],
+    ['Pylyp Budkivskyi','FW',1992,'UA',74,null,1.35,null,'DC/MCO'],['Artem Slesar','FW',2005,'UA',66,null,5.87,null,'ED/MD'],['Domagoj Jelavić','FW',2001,'HR',63,null,2.07,null,'EI/LI'],['Gerson Leal Rodrigues Gouveia','FW',1995,'LU',59,null,1.76,null,'DC/EI'],['Ihor Horbach','FW',2004,'UA',52,null,1.98,null,'DC/MI'],['Fedir Zadorozhnyi','FW',2007,'UA',48,null,0.262,null,'DC'],['Artem Serdyuk','FW',2006,'UA',46,null,0.302,null,'DC']
+  ]});
+  Object.assign(REAL_FOOT,{'Leovigildo Júnior Reis Rodrigues':'I','Vasyl Kravets':'I','Jakov Bašić':'I','Sallieu Bah':'I','Fedir Zadorozhnyi':'I'});
+  Object.entries({'Oleksandr Saputin':3164840,'Vladyslav Rybak':3146353,'Illia Karavashchenko':3409688,'Valerii Kosivskyi':3435325,'Anderson Jordan Da Silva Cordeiro':465192,'Ihor Perduta':209365,'Leovigildo Júnior Reis Rodrigues':284248,'Andrija Janjić':848921,'Artem Machelyuk':971851,'Vasyl Kravets':287799,'Gabriel Eskinja':959308,'Ítalo Guilherme Machado Henrique':3157179,'Dejan Popara':848925,'Bohdan Kushnirenko':451796,'Jakov Bašić':864041,'Ivan Nesterenko':3142528,'Vladlen Yurchenko':100756,'Maksym Boyko':3539510,'Kyrylo Dryshliuk':375069,'Anton Hlushchenko':887188,'Sallieu Bah':3450895,'Pylyp Budkivskyi':100759,'Artem Slesar':3189439,'Domagoj Jelavić':986151,'Gerson Leal Rodrigues Gouveia':331108,'Ihor Horbach':3131106,'Fedir Zadorozhnyi':3308543,'Artem Serdyuk':3308552}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{VORS:K2('VORS','Vorskla Poltava','Vorskla','Poltava','UA','#1a8a3a','#f4f4f4',48),AORB:K2('AORB','Al Orooba','Al Orooba','Fujairah','AE','#1c3f94','#f4f4f4',40)});
+  [['VORS',9240],['AORB',60917]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Ivan Nesterenko','VORS','ZOR',1,'Rotación',['Ivan Nesterenko','MD',2003,'UA',58,null,1.74,null,'MCO/MC']],
+    ['N. Anđušić','ZOR','AORB',1,'Rotación',['N. Anđušić','MD',2000,'RS',52,null,0.4,null,'MC/MCO']]
   );
 })();
 init();
