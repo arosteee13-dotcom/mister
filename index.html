@@ -725,6 +725,17 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .sheet p{color:var(--muted)}
 .sheet .row-btns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
 .sheet .row-btns .btn{flex:1;min-width:130px}
+.menu-grid{display:flex;gap:6px;margin-top:18px}
+.mg-tile{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;height:60px;border-radius:14px;background:rgba(220,240,228,.05);border:1px solid var(--line2);color:inherit;text-align:center;padding:6px 3px;transition:transform .2s var(--ease),background .25s,border-color .25s}
+.mg-tile svg{width:18px;height:18px;flex:none}
+.mg-tile span{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 10px/1.15 var(--display,inherit);letter-spacing:-.01em}
+.mg-tile:active{transform:scale(.95)}
+.mg-tile:hover{background:rgba(220,240,228,.09)}
+.mg-tile.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;box-shadow:0 10px 26px -12px rgba(159,230,189,.55)}
+.mg-wide{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:50px;margin-top:12px;border-radius:14px;background:rgba(220,240,228,.05);border:1px solid var(--line2);color:inherit;font:600 15px var(--display,inherit)}
+.mg-wide svg{width:20px;height:20px}
+.mg-wide:active{transform:scale(.97)}
+.mg-wide:hover{background:rgba(220,240,228,.09)}
 #toasts{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);z-index:200;display:grid;gap:8px;pointer-events:none;width:min(420px,calc(100% - 28px))}
 .toast{padding:12px 16px;border-radius:14px;background:rgba(26,39,34,.97);border:1px solid var(--line2);font-size:14px;text-align:center;animation:tin .4s var(--ease),tout .4s 2.6s forwards}
 @keyframes tin{from{opacity:0;transform:translateY(-10px)}}
@@ -21625,7 +21636,7 @@ const H={
   crv(t){const L=leagueData(ui.cc),total=L.fx.length;ui.rvs=ui.rvs||{};ui.rvs[ui.cc]=clamp(leagueRv(ui.cc)+(+t.dataset.d),0,total-1);renderKeepScroll()},
   mxcrv(t){const tour=t.dataset.t||mxTour(ui.cc)||'ap',[w0,w1]=mxWeekRange(tour);ui.mxrv=ui.mxrv||{};let c=ui.mxrv[tour];if(c==null||c<w0||c>w1)c=clamp(state.week,w0,w1);ui.mxrv[tour]=clamp(c+(+t.dataset.d),w0,w1);renderKeepScroll()},
   uclrv(t){const key=t.dataset.k,total=state.cups[key].league.fx.length;ui.rvs=ui.rvs||{};ui.rvs[key+'_L']=clamp(uclLeagueRv(key)+(+t.dataset.d),0,total-1);renderGame()},
-  menu(){const impBtn=state&&state.customClub?'<button class="btn ghost" data-act="imp-players-open">Importar jugadores</button>':'';openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="row-btns"><button class="btn primary" data-act="save-now">Guardar ahora</button><button class="btn ghost" data-act="export-save">Exportar a archivo</button>${impBtn}<button class="btn ghost" data-act="mgr-profile">Perfil de entrenador</button><button class="btn ghost" data-act="exit">Salir al menú principal</button></div><div class="row-btns" style="margin-top:10px"><button class="btn ghost" data-act="sheet-close">Seguir jugando</button></div>`)},
+  menu(){const impBtn=state&&state.customClub?'<button class="mg-tile" data-act="imp-players-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M4 19h16"/></svg><span>Importar</span></button>':'';openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="menu-grid"><button class="mg-tile" data-act="mgr-profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg><span>Perfil</span></button><button class="mg-tile primary" data-act="save-now"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg><span>Guardar</span></button><button class="mg-tile" data-act="export-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg><span>Exportar</span></button>${impBtn}<button class="mg-tile" data-act="exit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M13 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg><span>Salir</span></button></div><button class="mg-wide" data-act="sheet-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4Z"/></svg><span>Seguir jugando</span></button>`)},
   'mgr-profile'(){mgrProfileSheet()},
   'save-now'(){saveGame();closeSheet();toast('Partida guardada')},
   exit(){saveGame();closeSheet();state=null;resetClubOverrides();resetDivs();go('title')},
