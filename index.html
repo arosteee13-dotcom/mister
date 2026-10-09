@@ -15260,7 +15260,7 @@ function filialFor(id){
   return makeBTeam(id);
 }
 /* ============ FILIAL / JUVENILES ============ */
-function initFam(){const ds=filialDescendants(state.club);state.fam=ds[0]&&CLUBBY[ds[0]]?{id:ds[0],players:genSquad(CLUBBY[ds[0]],state.seed)}:null;state.fam2=ds[1]&&CLUBBY[ds[1]]?{id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)}:null;state.loansOut=[]}
+function initFam(){filialFor(state.club);/* se asegura de que el filial exista (si no, se crea aquí mismo) antes de buscarlo, por si nunca se abrió la ficha del club */const ds=filialDescendants(state.club);state.fam=ds[0]&&CLUBBY[ds[0]]?{id:ds[0],players:genSquad(CLUBBY[ds[0]],state.seed)}:null;state.fam2=ds[1]&&CLUBBY[ds[1]]?{id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)}:null;state.loansOut=[]}
 /* filiales gestionables del club del usuario (B, C...), con su plantilla real */
 const famList=()=>[state.fam,state.fam2].filter(Boolean);
 const famIds=()=>famList().map(f=>f.id);
