@@ -15121,12 +15121,14 @@ function mgrProfileSheet(){
     return`<div class="mrow" style="grid-template-columns:26px 1fr auto">${c?crestHTML(c,26):''}<span class="pname">${c?esc(c.name):s.club}<small>${span}</small></span></div>`;
   }).join('');
   if(!ui.mgrTab)ui.mgrTab='general';
+  if(!ui.mgrMainTab)ui.mgrMainTab='clubes';
+  const mainSeg=`<div class="seg" style="margin:10px 0 4px">${[['clubes','Clubes dirigidos'],['palmares','Palmarés']].map(([k,l])=>`<button class="${ui.mgrMainTab===k?'on':''}" data-act="mgr-main-tab" data-k="${k}">${l}</button>`).join('')}</div>`;
   const seg=`<div class="seg" style="margin:10px 0 4px">${[['general','General'],['historia','Historia']].map(([k,l])=>`<button class="${ui.mgrTab===k?'on':''}" data-act="mgr-tab" data-k="${k}">${l}</button>`).join('')}</div>`;
   const body=ui.mgrTab==='historia'?mgrHistoriaHTML():mgrPalmaresGeneral();
+  const paneHTML=ui.mgrMainTab==='palmares'?`${seg}${body}`:(rows||'<p class="muted-s">Sin datos.</p>');
   openSheet(`<div class="res-top"><h3>Perfil de entrenador</h3><p class="muted-s" style="margin-bottom:10px">Tu carrera como míster.</p>
-  <div class="subh">Clubes dirigidos</div><div style="margin-bottom:4px">${rows||'<p class="muted-s">Sin datos.</p>'}</div>
-  <div class="subh">Palmarés</div>${seg}</div>
-  <div class="res-scroll">${body}</div>
+  ${mainSeg}</div>
+  <div class="res-scroll">${paneHTML}</div>
   <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`,true);
 }
 /* pop-up de jugadores de tu club que se retiran al empezar la temporada (36 años o más), con su ficha completa en el club */
@@ -21533,6 +21535,7 @@ const H={
   'season-summary'(){seasonSheet()},
   'ss-tab'(t){ui.ssTab=t.dataset.k;seasonSheet()},
   'mgr-tab'(t){ui.mgrTab=t.dataset.k;mgrProfileSheet()},
+  'mgr-main-tab'(t){ui.mgrMainTab=t.dataset.k;mgrProfileSheet()},
   'mgr-pal-info'(t){
     const k=t.dataset.k,name=t.dataset.n;
     const log=(state.mgrLog||[]).filter(e=>e.k===k&&CLUBBY[e.club]&&trophyName(CLUBBY[e.club],e.k)===name);
