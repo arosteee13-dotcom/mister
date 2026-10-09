@@ -866,6 +866,10 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .seg{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
 .seg button{flex:none;padding:8px 15px;border-radius:999px;background:rgba(220,240,228,.05);border:1px solid var(--line);font-size:13.5px;color:var(--muted);transition:all .2s}
 .seg button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.sort-row{display:flex;gap:6px;overflow:auto;padding:0 0 8px}
+.sort-row button{flex:none;display:flex;align-items:center;gap:3px;padding:6px 11px;border-radius:999px;background:rgba(220,240,228,.05);border:1px solid var(--line);font-size:12.5px;color:var(--muted);transition:all .2s}
+.sort-row button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.sort-row button .ar{font-size:10px;opacity:.8}
 .pitch{position:relative;aspect-ratio:3/4;width:min(100%,460px);max-height:64dvh;margin:0 auto;border-radius:24px;background:linear-gradient(180deg,#112319,#0d1c14);border:1px solid rgba(159,230,189,.2);overflow:hidden}
 .pitch>svg{position:absolute;inset:0;width:100%;height:100%}
 .pp{position:absolute;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:3px;transition:transform .25s var(--ease)}
@@ -2826,6 +2830,7 @@ function ppOf(p){
   return v.a;
 }
 const POS_G={POR:'GK',LD:'DF',LI:'DF',DFC:'DF',MCD:'MD',MC:'MD',MCO:'MD',MI:'MD',MD:'MD',EI:'FW',ED:'FW',DC:'FW'};
+const POS_ORD={POR:0,DFC:1,LI:2,LD:3,MCD:4,MC:5,MCO:6,MI:7,MD:8,EI:9,ED:10,DC:11};
 const POS_COL={GK:'#e8b866',DF:'#8fb4ff',MD:'#9fe6bd',FW:'#f08c7c'};
 const posCol=l=>POS_COL[POS_G[l]]||'#9fe6bd';
 const posChip=p=>{const l=ppOf(p)[0],c=posCol(l);return`<span class="pb" style="color:${c};background:${c}26">${l}</span>`};
@@ -9688,7 +9693,7 @@ const modeName=m=>m==='real'?'Base de datos (jugadores reales)':'Jugadores ficti
 const modeChip=id=>curMode()==='real'?`<span class="cc-div src">${REAL_DB[id]?'Plantilla real':'Plantilla generada'}</span>`:'';
 /* ===================== estado global ===================== */
 let state=null;
-const ui={gmode:'fict',screen:'title',mode:'new',slot:1,level:0,club:null,seed:1,preview:{},zoom:1,tab:'home',sel:null,mkt:null,rv:null,origins:['50% 50%','50% 50%'],cf:null,mapBuilt:false,country:null,cvId:null,cvTab:'squad',cvSub:'first',clubTab:'info',vmode:'map',trophyPending:null,trophyCb:null,ssTab:'general',mgrTab:'general',museum:{co:'ALL',cont:'ALL'}};
+const ui={gmode:'fict',screen:'title',mode:'new',slot:1,level:0,club:null,seed:1,preview:{},zoom:1,tab:'home',sel:null,mkt:null,rv:null,origins:['50% 50%','50% 50%'],cf:null,mapBuilt:false,country:null,cvId:null,cvTab:'squad',cvSub:'first',clubTab:'info',vmode:'map',trophyPending:null,trophyCb:null,ssTab:'general',mgrTab:'general',museum:{co:'ALL',cont:'ALL'},sqSort:null};
 const me=()=>state.teams[state.club];
 
 /* ===================== jugadores ===================== */
@@ -20956,7 +20961,17 @@ squad(){
     const vseg=`<div class="seg">${[['info','Información'],['stats','Estadísticas']].map(([k,l])=>`<button class="${ui.sqv===k?'on':''}" data-act="sqv" data-v="${k}">${l}</button>`).join('')}</div>`;
     return`<div class="sec-h"><h2>Plantilla</h2><span>Cedidos</span></div>${seg}${vseg}${loanView(lo,li,ui.sqv==='stats')}`;
   }
-  const S=squadObj(ui.sq),c=CLUBBY[S.id],list=[...S.players].sort(byPos),st=ui.sqv==='stats',xi=new Set(me().lineup);
+  const S=squadObj(ui.sq),c=CLUBBY[S.id],st=ui.sqv==='stats',xi=new Set(me().lineup);
+  const SORT_KEYS={pos:['Posición',p=>POS_ORD[ppOf(p)[0]]!=null?POS_ORD[ppOf(p)[0]]:99],name:['Nombre',p=>(p.n||'').toLowerCase()],age:['Edad',p=>p.age||0],val:['Valor',p=>p.val||0],wage:['Salario',p=>p.wage||0],nat:['Nacionalidad',p=>(NATNAME[p.nat]||p.nat||'')],ovr:['GRL',p=>p.ovr||0],pot:['POT',p=>Math.round(Math.max(p.pot||p.ovr,p.ovr))]};
+  const list=[...S.players].sort((a,b)=>{
+    if(ui.sqSort&&SORT_KEYS[ui.sqSort.k]){
+      const f=SORT_KEYS[ui.sqSort.k][1],va=f(a),vb=f(b),dir=ui.sqSort.dir;
+      if(va<vb)return -dir;if(va>vb)return dir;
+      return byPos(a,b);
+    }
+    return byPos(a,b);
+  });
+  const sortBar=`<div class="sort-row">${Object.entries(SORT_KEYS).map(([k,[l]])=>{const on=ui.sqSort&&ui.sqSort.k===k;return`<button class="${on?'on':''}" data-act="sqsort" data-k="${k}">${esc(l)}${on?`<span class="ar">${ui.sqSort.dir===1?'▲':'▼'}</span>`:''}</button>`}).join('')}</div>`;
   const avg=list.length?Math.round(list.reduce((a,p)=>a+p.ovr,0)/list.length):'-',age=list.length?(list.reduce((a,p)=>a+p.age,0)/list.length).toFixed(1):'-';   /* filial vacío (modo real, sin plantilla real): sin jugadores no hay media */
   const rows=st
     ? list.map(p=>`<button class="prow-b sts" data-act="pl" data-id="${p.id}" data-club="${S.id}">${posChip(p)}<span class="pname">${esc(p.n)}<small>${p.age} años ${roleChip(p.role||roleIn(p,S.players))}${tagsHTML(p)}</small></span><span>${p.ap||0}</span><span${p.pos==='GK'?' title="Goles encajados"':''}>${p.pos==='GK'?`${p.ge||0}<em class="ge">e</em>`:(p.g||0)}</span><span>${p.as||0}</span><span>${p.yc||0}</span><span>${p.rc||0}</span><span>${ratOf(p)}</span></button>`).join('')
@@ -20967,7 +20982,7 @@ squad(){
   const note=linked.length?'<p class="hint">Los equipos vinculados suben y bajan jugadores desde la ficha (Acciones), pero no se compran ni se venden entre ellos.</p>':'';
   const empty=list.length?'':`<p class="hint" style="margin:10px 0">${esc(c.name)} no tiene jugadores todavía${S.mine?'':': este club no cuenta con plantilla real de filial'}.${S.mine&&linked.length?' Puedes bajar jugadores desde la ficha de cada jugador (Acciones).':''}</p>`;
   const body=list.length?(st?`<div class="card list">${th}${rows}</div>`:rows):empty;
-  return`<div class="sec-h"><h2>Plantilla</h2><span>GRL medio ${avg}, edad media ${age}</span></div>${seg}${head}${vseg}${body}${note}<p class="hint">Toca un jugador para ver su ficha.</p>`;
+  return`<div class="sec-h"><h2>Plantilla</h2><span>GRL medio ${avg}, edad media ${age}</span></div>${seg}${head}${vseg}${sortBar}${body}${note}<p class="hint">Toca un jugador para ver su ficha.</p>`;
 },
 tactics(){
   const t=me();if(!t.bench)t.bench=autoBench(t);const sl=FORMS[t.formation],lbl=FORM_LBL[t.formation],xi=xiPlayers(t);
@@ -21541,11 +21556,12 @@ const H={
   'of-ctr'(t){ui.pm.cnt=t.dataset.o;renderPM()},
   'of-ctr-x'(){ui.pm.cnt=null;renderPM()},
   'of-ctr-go'(t){const r=counterOffer(t.dataset.p,t.dataset.o,+t.dataset.pct);ui.pm.cnt=null;toast(r.msg);renderPM();renderGame()},
-  sq(t){ui.sq=t.dataset.k;renderGame()},
+  sq(t){ui.sq=t.dataset.k;ui.sqSort=null;renderGame()},
   sqv(t){ui.sqv=t.dataset.v;renderGame()},
+  sqsort(t){const k=t.dataset.k,row=t.closest('.sort-row'),sl=row?row.scrollLeft:0;ui.sqSort=(ui.sqSort&&ui.sqSort.k===k)?{k,dir:-ui.sqSort.dir}:{k,dir:1};renderGame();const row2=$('.sort-row');if(row2)row2.scrollLeft=sl;},
   crd(t){ui.crd=ui.crd||{};ui.crd[ui.cc]=+t.dataset.i;renderKeepScroll()},
   take(){takeControl()},
-  tab(t){ui.tab=t.dataset.tab;ui.sel=null;renderGame();$('#gmain').scrollTop=0},
+  tab(t){ui.tab=t.dataset.tab;ui.sel=null;ui.sqSort=null;renderGame();$('#gmain').scrollTop=0},
   play(){
     try{
       const bad=lineupIssues(me());
