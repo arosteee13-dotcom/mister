@@ -15848,6 +15848,7 @@ const famInfo=()=>state.fam?{id:state.fam.id,mineIsB:isB(state.club)}:null;
 function linkedSquads(){
   const out=[];
   if(isB(state.club)){const pid=FAMILY[state.club];if(pid&&CLUBBY[pid]){const T=state.teams[pid]||previewTeam(pid);if(T)out.push({id:pid,players:T.players,mine:false,parent:true})}}
+  else{famChildren(state.club).forEach(cid=>{if(!CLUBBY[cid])return;const T=state.teams[cid]||previewTeam(cid);if(T)out.push({id:cid,players:T.players,mine:false,child:true})})}
   famList().forEach(f=>out.push({id:f.id,players:f.players,mine:false,fam:f}));
   return out;
 }
