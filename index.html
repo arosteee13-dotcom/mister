@@ -14984,6 +14984,8 @@ function revisePot(p,old,a,r){
 }
 function newSeason(){
   const champs=champsLine();state.qual=qualifiers();state.qualEL=qualifiersEL();state.qualEC=qualifiersEC();state.copaQual=computeCopaQual();state.qualLIB=qualifiersLIB();state.qualSUD=qualifiersSUD();
+  /* campeón de la MOL Cup de la temporada que acaba de terminar: entra en la previa de la Conference League */
+  state.czCupChamp=(state.cups&&state.cups.CZC&&state.cups.CZC.champ)||null;
   { const prevSC={};
     archiveLiteHist();
     gamePlayable().forEach(co=>{
@@ -16673,7 +16675,7 @@ function storeImport(n,s,meta){
 /* ===================== mundo: otras ligas y torneos ===================== */
 const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Kupa Rossii',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup'};
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4,TR:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1};
@@ -17936,6 +17938,13 @@ function initWorld(){
       if(ids.length>=2)state.cups.GRC=cupInit('GRC','Kypello Elladas',ids);
       return;
     }
+    /* República Checa: la MOL Cup la juegan los 16 de la Chance Liga + categorías inferiores y amateurs (CZ_CUP_TEAMS) */
+    if(co==='CZ'){
+      const ids=CZ_CUP_TEAMS.filter(id=>CLUBBY[id]&&!isB(id));
+      if(CLUBBY[state.club]&&CLUBBY[state.club].co==='CZ'&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
+      if(ids.length>=2){state.cups.CZC=cupInit('CZC','MOL Cup',ids);state.cups.CZC.et=true;}
+      return;
+    }
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
     let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')).map(c=>c.id));
     if(co==='AR'&&state.season===1&&ARCOPA_S1.every(id=>CLUBBY[id]))ids=ARCOPA_S1.slice();
@@ -18047,7 +18056,11 @@ function initWorld(){
   const uelSet=new Set(qEL);
   const usedSet=new Set([...uclSet,...uelSet]);
   const hasQualEC=state.qualEC&&state.qualEC.length;
-  const winC=hasQualEC?runQualifying('ecl',ECL_QUAL_IDS.filter(id=>!state.qualEC.includes(id))):[];
+  /* República Checa: el campeón de la MOL Cup entra en la previa de la Conference League (debe ganarse el pase) */
+  const qECset=state.qualEC||[];
+  const eclPool=ECL_QUAL_IDS.filter(id=>!qECset.includes(id));
+  {const czc=state.czCupChamp;if(czc&&CLUBBY[czc]&&!isB(czc)&&qECset.indexOf(czc)<0&&eclPool.indexOf(czc)<0)eclPool.push(czc);}
+  const winC=hasQualEC?runQualifying('ecl',eclPool):[];
   const qEC=hasQualEC?fitEuroField(state.qualEC.concat(winC),winC,usedSet.has(state.club)?null:state.club,36,usedSet):FIXED_ECL_S1.filter(id=>CLUBBY[id]);
   state.cups.ECL=cupInitECL(qEC);
   /* CONMEBOL: Libertadores y Sudamericana (4 grupos de 4 + KO), con las plazas argentinas de la Tabla Anual */
@@ -23254,6 +23267,27 @@ Object.assign(TROPHY_IMG_CO,{GR:{league:'https://cdn.resfu.com/img_data/competic
 /* ===== formaciones por defecto (Chance Liga) ===== */
 (function(){
   Object.assign(FORM_MAIN,{ARB:'4-2-3-1',BOST:'4-2-3-1',BOH2:'3-4-2-1',ZLN:'4-2-3-1',HRK:'3-4-3',JAB:'4-2-3-1',MBOL:'4-2-3-1',PARD:'4-1-4-1',SIG:'4-2-3-1',SLA:'3-4-2-1',SLOV:'4-2-3-1',LIB:'3-4-3',SPA:'3-4-3',TEP:'3-5-2',VPL:'3-4-2-1',ZBRO:'4-2-3-1'});
+})();
+/* ===== MOL Cup (Copa de la República Checa): clubes participantes + escudos =====
+   Los 17 clubes de la Chance Liga/2ª usan su id real; el resto (categorías inferiores y amateurs)
+   se crean solo para la copa (viven en CLUBBY, no en CLUBS, para no generar ligas ficticias). */
+const CZ_CUP_TEAMS=(function(){
+  const DEFS=[
+    ['ABC Bránik',65696],['Admira Praha',30928],['Aritma Praha',30958],['Artis Brno',30979],['Baník Most - Souš',137745],['Baník Ostrava',1040],['Baník Sokolov',13166],['Bedrichov',171941],['Belotin',172158],['Benátky nad Jizerou',60058],['Benešov',30959],['Bílovec',136947],['Blansko',30932],['Bohemians 1905',3682],['Bospor Bohumín',101657],['Brandýs nad Labem',65698],['Břeclav',30961],['Břidličná',151525],['Brumov',30960],['Bystrc',59491],['Bzenec-Vracov',89376],['Čechie Vykan',101677],['Česká Lípa',85912],['České Budějovice',10051],['Český Krumlov',31014],['Chlumec nad Cidlinou',121818],['Chomutov',30933],['Chotebor',89377],['Doubravka',30963],['Dvůr Králové',30965],['FC Křimice',167387],['FC Kuřim',137207],['FC Pencin',159344],['FC Spartak Rychnov',137700],['FC Strání',101675],['FC Táborsko',13138],['FC Vratimov',86614],['FC Vsetín',65708],['FC Zlín',13174],['FK Caslav',30995],['FK Dukla Praha',5800],['FK Hodonín',31002],['FK Klasterec nad Ohri',168572],['FK Komárov',101660],['FK Okula Nýrsko',171834],['FK Ostrov',89389],['FK Turnov',30984],['Frýdek-Místek',13145],['Frýdlant',31000],['FS Třebíč',172241],['Havířov',30968],['Havlíčkův Brod',31001],['Hermanuv Mestec',170115],['Hlinsko',88141],['Hluboka nad Vltavou',159233],['Hlučín',30937],['Holešov',89393],['Horni Becva',172157],['Horní Ředice',163915],['Horovice',88148],['Hradec Králové',4531],['Hranice',30938],['Humpolec',111777],['Hvězda Cheb',30970],['Jablonec',10046],['Jiskra Domažlice',17883],['Jiskra Rýmařov',30971],['Karlovy Vary',30972],['Karviná',13178],['Kosmonosy',137746],['Kozlovice',30973],['Králův Dvůr',30975],['Letohrad',30976],['Loko Praha',13169],['Meteor Praha',30980],['MFK Chrudim',30934],['MFK Kravaře',87209],
+    ['Milevsko',60030],['Mladá Boleslav',10056],['Motorlet Praha',60041],['Neratovice-Byškovice',30943],['Nové Sady',74961],['Nový Jičín',30981],['Pardubice',13171],['Petřín Plzeň',101471],['Písek',30946],['Polanka nad Odrou',121389],['Police nad Metuji',163913],['Povltavská FA',30931],['Přepeře',111768],['Pribram',10048],['Prostějov',30945],['Rajecko',156584],['Rokycany',31012],['SFC Opava',18069],['SFK Vrchovina',60077],['Sigma Olomouc',2348],['SK Kladno',2346],['SK Krumvir',171942],['SK Rapid Psary',163914],['SK Štětí',65703],['SK Strakonice 1908',86625],['SK Zápy',30988],['SKHS Kroměříž',30936],['Slaný',121392],['Slavia Ceske Budejovice',172161],['Slavia HK',156057],['Slavia Praha',10057],['Slavia Vejprnice',87260],['Slavičín',30985],['Slavoj Vyšehrad',30986],['Slovácko',3968],['Slovan Liberec',10049],['Slovan Velvary',89394],['Sokol Brozany',30949],['Sokol Hostouň',89390],['Sokol Lanžhot',111477],['Sokol Tasovice',30987],['Sparta Brno',87231],['Sparta Kolín',18068],['Sparta Praha',10050],['Spartak Hluk',167398],['Spartak Pribram',166127],['Spartak Soběslav',101674],['Spartak Velká Bíteš',89388],['Stará Říše',31016],['Šternberk',102895],['Stonava',167427],['Šumperk',65709],['Svitavy',87187],['Tatran Bohunice',87191],['Tatran Všechovice',121388],['Tempo Praha',159237],['Teplice',1153],['TJ Bystrice',172159],['Třinec',13199],['Trutnov',30992],['Uherský Brod',60084],['Uničov',30953],['Unie Hlubina',121387],['Ústí nad Orlicí',60061],['Valašské Meziříčí',60099],['Varnsdorf',13188],['Velké Hamry',101472],['Velké Meziříčí',30954],['Viagem Ústí nad Labem',4530],['Viktoria Plzeň',10054],['Viktoria Vestec',171300],['Viktoria Žižkov',1154],['Vitkovice',59486],['Vlašim',13158],['Vysočina Jihlava',10058],['Vysoké Mýto',30955],['Zábřeh',30956],['Zbrojovka Brno',10053],['Žďár nad Sázavou',30998],['Ždírec nad Droubravou',65711],['Znojmo',5714]
+  ];
+  const EXIST={'Artis Brno':'ARB','Baník Ostrava':'BOST','Bohemians 1905':'BOH2','FC Zlín':'ZLN','Hradec Králové':'HRK','Jablonec':'JAB','Mladá Boleslav':'MBOL','Pardubice':'PARD','Sigma Olomouc':'SIG','Slavia Praha':'SLA','Slovácko':'SLOV','Slovan Liberec':'LIB','Sparta Praha':'SPA','Teplice':'TEP','Viktoria Plzeň':'VPL','Zbrojovka Brno':'ZBRO','Karviná':'KAR'};
+  const out=[];
+  DEFS.forEach(([nm,logo])=>{
+    let id=EXIST[nm];
+    if(!id){
+      id='CZ'+logo;
+      if(!CLUBBY[id])CLUBBY[id]=K2(id,nm,nm.slice(0,14),nm,'CZ','#1c3f94','#d4192b',38);
+    }
+    if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+logo+'.png?size=120x&lossy=1';
+    out.push(id);
+  });
+  return out;
 })();
 init();
 </script>
