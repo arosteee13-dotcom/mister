@@ -20854,7 +20854,15 @@ function migrateWagesIfNeeded(){
   });
   famList().forEach(f=>{const fc=CLUBBY[f.id];if(fc&&(fc.div===5||fc.div===6))(f.players||[]).forEach(bump)});
 }
-function enterGame(){ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';_gTab=null;migrateUclIfNeeded();migrateWagesIfNeeded();renderGame();go('game')}
+/* partidas guardadas antes de que el filial se creara siempre al empezar: si falta, se crea ahora mismo sin tocar uno que ya exista */
+function migrateFamIfNeeded(){
+  if(!state||!state.club||state.fam||isB(state.club))return;
+  filialFor(state.club);
+  const ds=filialDescendants(state.club);
+  if(ds[0]&&CLUBBY[ds[0]])state.fam={id:ds[0],players:genSquad(CLUBBY[ds[0]],state.seed)};
+  if(!state.fam2&&ds[1]&&CLUBBY[ds[1]])state.fam2={id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)};
+}
+function enterGame(){ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';_gTab=null;migrateUclIfNeeded();migrateWagesIfNeeded();migrateFamIfNeeded();renderGame();go('game')}
 let _gTab=null;
 function renderGame(){
   const c=CLUBBY[state.club],t=me();
