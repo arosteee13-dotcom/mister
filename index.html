@@ -17286,7 +17286,7 @@ function cupInitEFLT(key,name,proIds,academyIds,gweeks,koweeks){
    igual que el EFL Trophy). Clasifican 1º y 2º de cada grupo (8 equipos) a Cuartos, Semifinales y Final,
    todo a partido único y SIEMPRE con penaltis directos si hay empate (ninguna ronda tiene prórroga, ni
    siquiera la final). */
-const NLC_ACADEMIES=['FUL23','SOU21','CHA21','STK21','WHU21','MID21','NOR21','WAT21','HUL21','IPS21','BOU21','SHU21','PNE21','MILW21','SWU21','CRD21'];
+const NLC_ACADEMIES=['BOU21','FUL23','IPS21','HUL21','AVLB','CHEB','WHU21','WOL21','SOU21','STK21','NOR21','MID21','WAT21','SHU21','WBA21','BRC23'];
 function cupInitNLC(key,name,nlIds,academyIds,gweeks,koweeks){
   const r=rng(hashStr(key+'|'+state.seed+'|'+state.season));
   const nl=shuffle(nlIds.slice(),r),aca=shuffle(academyIds.slice(),r),G=4;
@@ -17304,6 +17304,64 @@ function cupInitNLC(key,name,nlIds,academyIds,gweeks,koweeks){
   const koN=['Cuartos de final','Semifinales','Final'];
   const rounds=koN.map((n,i)=>({n,w:koweeks[i],ties:null,done:false}));
   return{key,name,ids:[...nlIds,...academyIds],bye:[],type:'groups',groups:grp,gweeks,gdone:false,rounds,champ:null,sc:{},shootoutBonus:true};
+}
+/* ===== FA Cup (Inglaterra): eliminatoria con entrada escalonada por divisiones =====
+   R1: 24 de la National League (EN5) + los 8 peores de League Two (EN4).
+   R2: los 16 ganadores + los 16 restantes de League Two + los 16 mejores de League One (EN3) + los 24 de Championship (EN2).
+   R3: los 36 ganadores + los 8 restantes de League One + los 20 de la Premier League (EN1).
+   Después dieciseisavos (32) → octavos → cuartos → semifinales → final.
+   El de menor reputación es local (como en la FA Cup real). */
+const FA_W=[4,7,10,13,16,19,22,25];
+function cupInitFA(key,name,d1,d2,d3,d4,d5,userClub){
+  const byRep=a=>a.slice().sort((x,y)=>repOf(y)-repOf(x));
+  const D1=byRep(d1),D2=byRep(d2),D3=byRep(d3),D4=byRep(d4),D5=byRep(d5);
+  if(userClub){const arr=[D1,D2,D3,D4,D5].find(a=>a.includes(userClub));if(!arr){const c=CLUBBY[userClub],d=c?(c.div||1):1;(d<=1?D1:d===2?D2:d===3?D3:d===4?D4:D5).push(userClub);}}
+  const r1=D5.slice(0,24).concat(D4.slice(16,24));               /* 24 EN5 + 8 peores EN4 */
+  const r2new=D4.slice(0,16).concat(D3.slice(0,16),D2);          /* 16 EN4 + 16 mejores EN3 + 24 EN2 */
+  const r3new=D3.slice(16,24).concat(D1);                        /* 8 EN3 + 20 EN1 */
+  const r=rng(hashStr(key+'|'+state.seed+'|'+state.season));
+  const rounds=[
+    {n:'Primera ronda',w:FA_W[0],ties:pairUpHomeLower(shuffle(r1.slice(),r)),done:false},
+    {n:'Segunda ronda',w:FA_W[1],ties:null,done:false},
+    {n:'Tercera ronda',w:FA_W[2],ties:null,done:false},
+    {n:'Dieciseisavos de final',w:FA_W[3],ties:null,done:false},
+    {n:'Octavos de final',w:FA_W[4],ties:null,done:false},
+    {n:'Cuartos de final',w:FA_W[5],ties:null,done:false},
+    {n:'Semifinales',w:FA_W[6],ties:null,done:false},
+    {n:'Final',w:FA_W[7],ties:null,done:false}
+  ];
+  const cup={key,name,ids:[...r1,...r2new,...r3new],bye:[],rounds,champ:null,sc:{}};
+  cup._nextTies=(c,ri)=>{
+    const prev=c.rounds[ri-1].ties.map(t=>t.w);
+    const extra=ri===1?r2new:(ri===2?r3new:[]);
+    return pairUpHomeLower(shuffle(prev.concat(extra),rng(hashStr(key+'|r'+ri+'|'+state.seed+'|'+state.season))));
+  };
+  return cup;
+}
+/* ===== Copa del Rey (España): Primera ronda 112 equipos → 56 → 28; en dieciseisavos entran los 4 clubes de
+   la Supercopa (exentos), quedando 32; luego octavos (16), cuartos (8), semifinales (4) y final (2).
+   El de menor reputación es local en las primeras rondas (como en la Copa real). */
+const COPA_W=[4,8,13,19,26,33,40];
+function cupInitCopa(key,name,r1,exempt){
+  const ex=(exempt||[]).filter(id=>CLUBBY[id]&&!isB(id));
+  const first=[...new Set(r1.filter(id=>CLUBBY[id]&&!isB(id)&&!ex.includes(id)))];
+  const r=rng(hashStr(key+'|'+state.seed+'|'+state.season));
+  const rounds=[
+    {n:'Primera ronda',w:COPA_W[0],ties:pairUpHomeLower(shuffle(first.slice(),r)),done:false},
+    {n:'Segunda ronda',w:COPA_W[1],ties:null,done:false},
+    {n:'Dieciseisavos de final',w:COPA_W[2],ties:null,done:false},
+    {n:'Octavos de final',w:COPA_W[3],ties:null,done:false},
+    {n:'Cuartos de final',w:COPA_W[4],ties:null,done:false},
+    {n:'Semifinales',w:COPA_W[5],ties:null,done:false},
+    {n:'Final',w:COPA_W[6],ties:null,done:false}
+  ];
+  const cup={key,name,ids:[...first,...ex],bye:[],rounds,champ:null,sc:{}};
+  cup._nextTies=(c,ri)=>{
+    const prev=c.rounds[ri-1].ties.map(t=>t.w);
+    const extra=(ri===2)?ex:[];
+    return pairUpHomeLower(shuffle(prev.concat(extra),rng(hashStr(key+'|r'+ri+'|'+state.seed+'|'+state.season))));
+  };
+  return cup;
 }
 /* clasifica la fase de grupos: 1º y 2º de cada grupo pasan a octavos (1º de un grupo vs 2º de otro) */
 /* National League Cup: solo 4 grupos (8 clasificados), así que el emparejamiento genérico anti-mismo-grupo
@@ -18007,6 +18065,31 @@ function initWorld(){
       if(ids.length>=2){state.cups.CZC=cupInit('CZC','MOL Cup',ids);state.cups.CZC.et=true;}
       return;
     }
+    /* Inglaterra: la FA Cup entra escalonada (National League en la 1ª ronda; Premier y Championship en la 3ª). */
+    if(co==='EN'){
+      const div=d=>CLUBS.filter(c=>gameClub(c)&&c.co==='EN'&&!isB(c.id)&&(c.div||1)===d).map(c=>c.id);
+      const my=(CLUBBY[state.club]&&CLUBBY[state.club].co==='EN'&&!isB(state.club))?state.club:null;
+      if(div(1).length&&div(5).length)state.cups.ENC=cupInitFA('ENC','FA Cup',div(1),div(2),div(3),div(4),div(5),my);
+      return;
+    }
+    /* España: la Copa del Rey. 112 clasificados (LaLiga + Hypermotion + 12 de cada grupo de Primera Federación
+       + 10 de cada grupo de Segunda Federación) en la 1ª ronda; los 4 clubes de la Supercopa entran exentos
+       en dieciseisavos. Mismo criterio en la 1ª y en las siguientes temporadas. */
+    if(co==='ES'){
+      const q=(state.copaQual&&state.copaQual.length)?state.copaQual:computeCopaQual();
+      state.copaQual=q;
+      let exempt=((state.prevSC&&state.prevSC.ES&&state.prevSC.ES.ids)||FIXED_SC_S1.ES||[]).filter(id=>CLUBBY[id]&&!isB(id));
+      let first=[...new Set(q.filter(id=>CLUBBY[id]&&!isB(id)&&!exempt.includes(id)))];
+      /* cuadro de 112: si faltan, se completa con clubes de Federación por reputación */
+      if(first.length<112){const have=new Set([...first,...exempt]);
+        const extra=CLUBS.filter(c=>c.co==='ES'&&!isB(c.id)&&(c.div||1)>=5&&!have.has(c.id)).sort((a,b)=>repOf(b.id)-repOf(a.id));
+        while(first.length<112&&extra.length)first.push(extra.shift().id);}
+      if(first.length>112)first=first.slice(0,112);
+      const my=(CLUBBY[state.club]&&CLUBBY[state.club].co==='ES'&&!isB(state.club))?state.club:null;
+      if(my&&!first.includes(my)&&!exempt.includes(my)){first.unshift(my);if(first.length>112)first.pop();}
+      if(first.length>=2)state.cups.ESC=cupInitCopa('ESC','Copa del Rey',first,exempt);
+      return;
+    }
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
     let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')).map(c=>c.id));
     if(co==='AR'&&state.season===1&&ARCOPA_S1.every(id=>CLUBBY[id]))ids=ARCOPA_S1.slice();
@@ -18056,9 +18139,10 @@ function initWorld(){
     if(CLUBBY[state.club]&&CLUBBY[state.club].co==='BG'&&!isB(state.club)&&!bgIds.includes(state.club))bgIds.push(state.club);
     if(bgIds.length>1)state.cups.BGC=cupInit('BGC','Kupa na Balgariya',bgIds);
   }
-  /* EFL Cup: segunda copa inglesa, con calendario propio para no chocar con la FA Cup */
+  /* EFL Cup: segunda copa inglesa, solo para Premier League + EFL (EN1-EN4, 92 clubes); la National League
+     no participa. Calendario propio para no chocar con la FA Cup. */
   {
-    const ids=CLUBS.filter(c=>gameClub(c)&&c.co==='EN'&&!isB(c.id)).map(c=>c.id);
+    const ids=CLUBS.filter(c=>gameClub(c)&&c.co==='EN'&&!isB(c.id)&&(c.div||1)<=4).map(c=>c.id);
     if(CLUBBY[state.club]&&CLUBBY[state.club].co==='EN'&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
     state.cups.ENLC=cupInit('ENLC','EFL Cup',ids,CUP_W6.map(w=>w-2));
   }
@@ -18312,7 +18396,12 @@ function computeCopaQual(){
   const out=[];
   [1,2].forEach(d=>leagueClubs('ES',d).forEach(c=>{if(!isB(c.id))out.push(c.id)}));
   [5,6,7,8,9,10,11].forEach(d=>{
-    let n=0;sortTable(leagueData('ES'+d).tb).forEach(r=>{if(n>=5||isB(r.id))return;out.push(r.id);n++});
+    const tb=(leagueData('ES'+d)&&leagueData('ES'+d).tb)||{};
+    const rows=Object.keys(tb).map(id=>({id,...tb[id]}));
+    /* si la liga aún no tiene resultados (p. ej. al crear la partida), se clasifican por reputación */
+    const ord=rows.some(r=>r.pts>0)?sortTable(tb).map(r=>r.id):rows.sort((a,b)=>repOf(b.id)-repOf(a.id)).map(r=>r.id);
+    const cap=(d<=6)?12:10;let n=0;   /* Primera Federación: top 12 por grupo; Segunda Federación: top 10 por grupo */
+    ord.forEach(id=>{if(n>=cap||isB(id))return;out.push(id);n++});
   });
   return [...new Set(out)];
 }
@@ -23315,14 +23404,14 @@ Object.assign(TROPHY_IMG_CO,{GR:{league:'https://cdn.resfu.com/img_data/competic
   Object.assign(REAL_DB,{VPL:[
     ['Florian Wiegele','GK',2001,'AT',72,76,2.6,9.4,'POR'],['Marián Tvrdoň','GK',1995,'SK',68,68,0.65,7,'POR'],['Viktor Baier','GK',2005,'CZ',66,76,1.7,2.8,'POR'],['Dominik Ťapaj','GK',2004,'SK',57,67,0.325,1.7,'POR'],
     ['Adam Gabriel','DF',2001,'CZ',65,70,0.975,6,'LD/MD'],['Sampson Dweh','DF',2002,'LR',76,80,9.5,19,'DFC/LD'],['Václav Jemelka','DF',1995,'CZ',76,76,5,23,'DFC/LI'],['Karel Spáčil','DF',2003,'CZ',71,78,3.5,12.5,'DFC/LI/MI'],['Denis Vavro','DF',1996,'SK',76,78,7,23,'DFC'],['Filip Prebsl','DF',2003,'CZ',68,73,1.6,8.9,'DFC/MC'],['Tobiáš Pališcák','DF',2008,'SK',58,75,0.475,2.2,'DFC'],['Jan Paluska','DF',2005,'CZ',67,74,1.9,6.6,'DFC'],['Merchas Doski','DF',2000,'IQ',71,73,2.1,14.5,'LI/MI'],
-    ['Lukáš Červ','MD',2001,'CZ',75,79,7,20,'MCD/MC'],['Amar Memić','MD',2001,'BA',75,77,7,21,'MD/MI/EI/ED'],['Patrik Hrošovský','MD',1992,'SK',77,77,4.9,26,'MC/MCO/MCD/DFC'],['Stefan Pirgić','MD',2003,'RS',63,71,1.1,4.8,'MC/MCD'],['Alexandr Sojka','MD',2003,'CZ',68,76,2.7,9.4,'MC/MCO/MCD'],['Sebastian Bohac','MD',2003,'CZ',60,67,0.5,3.1,'MC/MCD'],['Cheick Souaré','MD',2003,'FR',74,78,6,18,'MI/EI'],['Tomáš Ladra','MD',1997,'CZ',74,74,4.1,22,'MCO/MC'],['Jiří Maxim Panoš','MD',2008,'CZ',67,80,2.4,6.3,'MCO/ED/MC'],
+    ['Lukáš Červ','MD',2001,'CZ',75,79,7,20,'MCD/MC'],['Amar Memić','MD',2001,'BA',75,77,7,21,'MD/MI/EI/ED'],['Patrik Hrošovský','MD',1992,'SK',77,77,4.9,26,'MC/MCO/MCD/DFC'],['Stefan Pirgić','MD',2003,'RS',63,71,1.1,4.8,'MC/MCD'],['Alexandr Sojka','MD',2003,'CZ',68,76,2.7,9.4,'MC/MCO/MCD'],['Cheick Souaré','MD',2003,'FR',74,78,6,18,'MI/EI'],['Tomáš Ladra','MD',1997,'CZ',74,74,4.1,22,'MCO/MC'],['Jiří Maxim Panoš','MD',2008,'CZ',67,80,2.4,6.3,'MCO/ED/MC'],
     ['Matěj Vydra','FW',1992,'CZ',74,75,2.4,23,'DC/MCO'],['Prince Kwabena Adu','FW',2004,'GH',72,77,3.6,16,'DC'],['Christophe Kabongo','FW',2004,'CZ',67,77,2.3,9,'DC'],['Salim Fago Lawal','FW',2003,'NG',66,73,1.7,7.7,'DC/EI'],['Baboucarr Faal','FW',2003,'GM',54,61,0.22,2.6,'DC'],['Mohamed Toure','FW',2006,'GN',56,68,0.35,3,'DC'],['Denis Višinský','FW',2003,'CZ',72,77,3.5,16,'EI/MCO/ED/MI']
   ]});
   Object.assign(REAL_FOOT,{'Václav Jemelka':'I','Karel Spáčil':'I','Merchas Doski':'I','Cheick Souaré':'I'});
   Object.assign(FORM_MAIN,{VPL:'4-2-3-1'});
   Object.entries({'Florian Wiegele':470524,'Marián Tvrdoň':285246,'Viktor Baier':3215430,'Dominik Ťapaj':3230017,'Adam Gabriel':867335,'Sampson Dweh':3162448,'Václav Jemelka':285881,'Karel Spáčil':960986,'Denis Vavro':174834,'Filip Prebsl':887833,'Tobiáš Pališcák':3462668,'Jan Paluska':3195515,'Merchas Doski':803733,'Lukáš Červ':772174,'Amar Memić':3168172,'Patrik Hrošovský':184708,'Stefan Pirgić':3145181,'Alexandr Sojka':887949,'Sebastian Bohac':892604,'Cheick Souaré':893828,'Tomáš Ladra':305977,'Jiří Maxim Panoš':3269295,'Matěj Vydra':53935,'Prince Kwabena Adu':912471,'Christophe Kabongo':903527,'Salim Fago Lawal':3405473,'Baboucarr Faal':3257109,'Mohamed Toure':3603410,'Denis Višinský':879125}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
   REAL_LOANS.push(
-    ['A. Kadlec','VPL','MBOL',1,'Rotación',['A. Kadlec','DF',2005,'CZ',62,70,0.5,1.5,'DFC']]
+    ['Adam Kadlec','VPL','MBOL',1,'Rotación',['Adam Kadlec','DF',2003,'CZ',62,null,3.33,null,'LD/DFC']]
   );
 })();
 /* ===== Slavia Praha (SLA, Chance Liga): plantilla real (datos del paste) + pies + avatares ===== */
@@ -23349,9 +23438,9 @@ Object.assign(TROPHY_IMG_CO,{GR:{league:'https://cdn.resfu.com/img_data/competic
   Object.assign(FORM_MAIN,{SPA:'3-4-2-1'});
   Object.entries({'Jakub Surovčík':879103,'Krisztián Hegyi':796233,'Ki-Jana Hoever':776363,'Pavel Kadeřábek':75903,'Martin Suchomel':908668,'Tobias Guddal':3155408,'Loïc Mbe Soh':426904,'Jaroslav Zelený':173000,'Adam Ševínský':3185177,'Jakub Martinec':374162,'Elias Cobbaut':313931,'Viktor Vitályos':3347832,'Patrik Vydra':885260,'Sivert Mannsverk':844590,'Adam Karabec':878320,'Matěj Jurásek':879130,'Roman Macek':235182,'Andy Irving':341863,'Magnus Kofod Andersen':385421,'Hugo Sochůrek':3499389,'Josimar Alcócer':988398,'Matěj Ryneš':430874,'Santiago Eneme':599093,'Joao Grimaldo':851505,'Jonatan Braut Brunes':327026,'Matyáš Vojta':1001560,'John Mercado':851486,'Ondrej Penxa':3269284,'Ebrima Singhateh':3230211}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
   REAL_LOANS.push(
-    ['O. Kukučka','SPA','ZLN',1,'Rotación',['O. Kukučka','DF',2005,'CZ',60,68,0.4,2,'DFC']],
-    ['K. Milla','SPA','JAB',1,'Rotación',['K. Milla','FW',2005,'CZ',62,70,0.5,2,'DC']],
-    ['D. Hollý','SPA','JAB',1,'Rotación',['D. Hollý','MD',2005,'CZ',60,68,0.45,2,'MC']]
+    ['Ondřej Kukučka','SPA','ZLN',1,'Rotación',['Ondřej Kukučka','DF',2003,'CZ',60,null,0.45,null,'DFC/LD']],
+    ['Kevin-Prince Milla','SPA','JAB',1,'Rotación',['Kevin-Prince Milla','FW',2004,'CZ',63,null,2.89,null,'DC/ED']],
+    ['Dominik Hollý','SPA','JAB',1,'Rotación',['Dominik Hollý','MD',2004,'SK',60,null,4.18,null,'MC/DC']]
   );
 })();
 /* ===== presupuestos reales (M€): Super League griega + Chance Liga checa ===== */
@@ -23387,6 +23476,161 @@ const CZ_CUP_TEAMS=(function(){
     out.push(id);
   });
   return out;
+})();
+/* ===== FC Artis Brno (ARB, Chance Liga): plantilla real + pies + atributos + avatares =====
+   El paste de BeSoccer no traía GRL/valor/edad: los GRL se ESTIMAN a partir de los atributos (cuando los hay)
+   y del nivel de un club modesto de la Chance Liga; las edades son orientativas. Ajustables si aportas los datos. */
+(function(){
+  Object.assign(REAL_DB,{ARB:[
+    ['Tadeáš Stoppen','GK',2004,'CZ',58,null,0.5,null,'POR'],['Jiří Borek','GK',2003,'CZ',55,null,0.35,null,'POR'],['Richard Kašík','GK',2008,'CZ',48,null,0.15,null,'POR'],
+    ['Albert Labík','DF',2002,'CZ',56,null,0.4,null,'LI/MI'],['Karel Pojezný','DF',2000,'CZ',60,null,0.7,null,'DFC/LI'],['Dominik Plechatý','DF',2001,'CZ',58,null,0.55,null,'DFC/LD'],['Michal Jerabek','DF',2001,'CZ',57,null,0.5,null,'DFC/LD'],['Ondřej Čoudek','DF',2003,'CZ',53,null,0.3,null,'DFC'],['Štěpán Harazim','DF',2004,'CZ',52,null,0.28,null,'LD/MD'],['Dominik Preisler','DF',1999,'CZ',58,null,0.6,null,'LI/MI'],['David Šimek','DF',2000,'CZ',56,null,0.45,null,'DFC/LD'],['Danijel Kolarić','DF',2002,'HR',54,null,0.35,null,'DFC/MC'],['Emmanuel Favor Fully','DF',2004,'GH',50,null,0.22,null,'LI/DFC'],['Neil Glossoa','DF',2004,'FR',51,null,0.25,null,'LD/MD'],
+    ['Jan Navrátil','MD',1998,'CZ',60,null,0.65,null,'MD/ED'],['Martin Pospíšil','MD',1995,'CZ',68,null,1.1,null,'MCD/MC'],['Sebastian Boháč','MD',2003,'CZ',58,null,0.6,null,'MC/LD'],['Aleksandar Komljenović','MD',2000,'RS',55,null,0.4,null,'MC/EI'],['Adam Petrák','MD',2002,'CZ',54,null,0.35,null,'MCD/MC'],['Adam Erik Carlén','MD',2001,'CZ',56,null,0.45,null,'MCD/MC'],['Dominik Sarapata','MD',2002,'CZ',56,null,0.45,null,'MC/MD'],['Ge Ismael Nicaise Sylla','MD',2003,'CI',53,null,0.3,null,'MC/MCO'],
+    ['Quadri Adebayo Adediran','FW',2001,'NG',57,null,0.5,null,'DC/MCO'],['Alexis Alégué Elandi','FW',1997,'CM',57,null,0.55,null,'ED/MI'],['Hélio Alberto Delgado Silva','FW',1999,'PT',58,null,0.6,null,'EI/MI'],['Vladimir Perišić','FW',2000,'RS',57,null,0.5,null,'DC/MCO'],['El Hadji Latyr Ndiaye','FW',2002,'SN',54,null,0.35,null,'DC/MCO'],['Issa Fomba','FW',2002,'ML',52,null,0.28,null,'EI/MI'],['Vukadin Vukadinovic','FW',1996,'RS',60,null,0.7,null,'ED/DC'],['Jakub Fulnek','FW',2001,'CZ',55,null,0.4,null,'EI/ED'],['Daniel Toula','FW',2004,'CZ',50,null,0.22,null,'EI/ED'],['Youssoupha Sanyang','FW',2006,'GM',67,null,1.0,null,'EI/MI'],['Martin Tauš','FW',2003,'CZ',52,null,0.28,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{'Neil Glossoa':{RIT:60,TIR:35,PAS:46,REG:54,DEF:56,FÍS:63},'Martin Pospíšil':{RIT:72,TIR:59,PAS:67,REG:73,DEF:64,FÍS:75},'Sebastian Boháč':{RIT:62,TIR:40,PAS:52,REG:62,DEF:53,FÍS:54},'Adam Erik Carlén':{RIT:55,TIR:45,PAS:53,REG:62,DEF:57,FÍS:74},'Dominik Sarapata':{RIT:63,TIR:49,PAS:58,REG:61,DEF:61,FÍS:60},'Alexis Alégué Elandi':{RIT:65,TIR:51,PAS:54,REG:66,DEF:38,FÍS:50},'Youssoupha Sanyang':{RIT:79,TIR:51,PAS:60,REG:76,DEF:36,FÍS:63}});
+  Object.assign(REAL_FOOT,{'Alexis Alégué Elandi':'I','Youssoupha Sanyang':'I'});
+  Object.entries({'Tadeáš Stoppen':914642,'Jiří Borek':895716,'Richard Kašík':3709526,'Albert Labík':908317,'Karel Pojezný':842645,'Dominik Plechatý':343268,'Michal Jerabek':665630,'Ondřej Čoudek':908364,'Štěpán Harazim':908796,'Dominik Preisler':267086,'David Šimek':348735,'Danijel Kolarić':3180780,'Emmanuel Favor Fully':3594310,'Jan Navrátil':154685,'Martin Pospíšil':172018,'Aleksandar Komljenović':893062,'Adam Petrák':678485,'Adam Erik Carlén':871180,'Dominik Sarapata':3351654,'Quadri Adebayo Adediran':3164844,'Alexis Alégué Elandi':295471,'Hélio Alberto Delgado Silva':913018,'Vladimir Perišić':925262,'El Hadji Latyr Ndiaye':3223461,'Issa Fomba':911305,'Vukadin Vukadinovic':172528,'Jakub Fulnek':239047,'Daniel Toula':3186611,'Martin Tauš':3379994,'Sebastian Boháč':892604}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  /* clubes que faltaban para las cesiones del paste (København y Petržalka) */
+  Object.assign(CLUBBY,{KBH:K2('KBH','FC København','København','Copenhague','DK','#f4f4f4','#1a3a8a',80),PETZ:K2('PETZ','FC Petržalka','Petržalka','Bratislava','SK','#0a8a3d','#f4f4f4',50)});
+  if(CLUBBY.KBH)CLUBBY.KBH.logo='https://cdn.resfu.com/img_data/equipos/1078.png?size=120x&lossy=1';
+  if(CLUBBY.PETZ)CLUBBY.PETZ.logo='https://cdn.resfu.com/img_data/equipos/59333.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['Emmanuel Favor Fully','SLA2','ARB',1,'Rotación'],
+    ['Karel Pojezný','BOST','ARB',1,'Rotación'],
+    ['Dominik Sarapata','KBH','ARB',1,'Rotación'],
+    ['Daniel Samek','ARB','CZ2346',1,'Rotación',['Daniel Samek','MD',2004,'CZ',55,null,0.4,null,'MC/MCD']],
+    ['Daniel Svancara','ARB','PETZ',1,'Rotación',['Daniel Svancara','FW',2003,'CZ',54,null,0.35,null,'DC']]
+  );
+})();
+/* ===== Baník Ostrava (BOST, Chance Liga): plantilla real + pies + atributos + avatares ===== */
+(function(){
+  Object.assign(REAL_DB,{BOST:[
+    ['Martin Jedlička','GK',1998,'CZ',75,null,5.75,null,'POR'],['Matouš Babka','GK',2002,'CZ',60,null,0.761,null,'POR'],['Viktor Budinský','GK',1993,'CZ',49,null,0.265,null,'POR'],
+    ['Vlasiy Sinyavskiy','DF',1997,'UA',73,null,3.34,null,'LI/EI'],['Matěj Chaluš','DF',1998,'CZ',71,null,3.6,null,'DFC/MC'],['Michal Frydrych','DF',1990,'CZ',70,null,0.344,null,'DFC/LD'],['Jakub Elbel','DF',2000,'CZ',69,null,1.6,null,'LI/DFC'],['Jiří Míček','DF',2007,'CZ',64,null,1.3,null,'DFC/LI'],['Abdullahi Ibrahim Bewene','DF',2005,'NG',64,null,2.45,null,'LD/MD'],['Daniel Holzer','DF',1995,'CZ',64,null,1.83,null,'LI/MI'],['Maksym Diachuk','DF',2003,'UA',62,null,4.2,null,'DFC/LI'],['Yevhenii Skyba','DF',2003,'UA',62,null,1.53,null,'DFC/LD'],['Matúš Kmeť','DF',2000,'CZ',59,null,1.69,null,'LD/ED'],['Rhodri Smith','DF',2006,'WAL',49,null,0.891,null,'LI/MI'],
+    ['Jiří Boula','MD',1999,'CZ',74,null,6.11,null,'MC/MCD'],['Michal Kohút','MD',2000,'CZ',69,null,3.96,null,'MCO/MC'],['David Planka','MD',2005,'CZ',65,null,8.43,null,'MC/MCD'],['Aboubacar Traoré','MD',2004,'ML',62,null,1.23,null,'MCD/LD'],['Raymond Roan Nogha Nogha','MD',2004,'CI',61,null,1.44,null,'MCD/DFC'],['Artur Musak','MD',2006,'UA',59,null,3.05,null,'MC/MCD'],['Filip Šancl','MD',2005,'CZ',58,null,2.29,null,'MCO/MC'],['Dantaye Michael Lee Gilbert','MD',2005,'CZ',53,null,0.522,null,'MCO/MC'],
+    ['Abdallah Gning','FW',1998,'SN',73,null,3.6,null,'DC/EI'],['Václav Jurečka','FW',1994,'CZ',68,null,2.56,null,'DC/ED'],['Filip Kubala','FW',1999,'CZ',60,null,0.162,null,'DC/ED'],['Vít Škrkoň','FW',2008,'CZ',57,null,0.998,null,'DC/EI']
+  ]});
+  Object.assign(REAL_ATTR,{'Michal Frydrych':{RIT:57,TIR:50,PAS:55,REG:52,DEF:62,FÍS:68},'Maksym Diachuk':{RIT:63,TIR:36,PAS:52,REG:58,DEF:60,FÍS:66},'Matúš Kmeť':{RIT:68,TIR:45,PAS:63,REG:66,DEF:65,FÍS:64},'Rhodri Smith':{RIT:68,TIR:34,PAS:47,REG:61,DEF:58,FÍS:54},'Václav Jurečka':{RIT:73,TIR:66,PAS:64,REG:69,DEF:51,FÍS:75}});
+  Object.assign(REAL_FOOT,{'Jakub Elbel':'I','Daniel Holzer':'I','Michal Kohút':'I'});
+  Object.entries({'Martin Jedlička':356977,'Matouš Babka':822422,'Viktor Budinský':174637,'Vlasiy Sinyavskiy':284488,'Matěj Chaluš':290071,'Michal Frydrych':72905,'Jakub Elbel':872525,'Jiří Míček':3269269,'Abdullahi Ibrahim Bewene':3390564,'Daniel Holzer':172039,'Maksym Diachuk':901979,'Yevhenii Skyba':3254548,'Matúš Kmeť':353213,'Rhodri Smith':3235038,'Jiří Boula':346178,'Michal Kohút':350587,'David Planka':3195510,'Aboubacar Traoré':3343537,'Raymond Roan Nogha Nogha':3265302,'Artur Musak':3416876,'Filip Šancl':3303291,'Dantaye Michael Lee Gilbert':3261391,'Abdallah Gning':1030855,'Václav Jurečka':286244,'Filip Kubala':287796,'Vít Škrkoň':3411780}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  /* clubes destino de las cesiones salientes del paste */
+  Object.assign(CLUBBY,{PODB:K2('PODB','FK Železiarne Podbrezová','Podbrezová','Podbrezová','SK','#1c8f3f','#f4f4f4',46),ITUR:K2('ITUR','FC Inter Turku','Inter Turku','Turku','FI','#1a1a1a','#f2d31b',48),JBAR:K2('JBAR','Junior de Barranquilla','Junior','Barranquilla','CO','#d4192b','#f4f4f4',58),MBOL2:Object.assign(K2('MBOL2','Mladá Boleslav II','M. Boleslav II','Mladá Boleslav','CZ','#1c3f94','#f4f4f4',44),{bTeam:true})});
+  if(CLUBBY.PODB)CLUBBY.PODB.logo='https://cdn.resfu.com/img_data/equipos/13496.png?size=120x&lossy=1';
+  if(CLUBBY.ITUR)CLUBBY.ITUR.logo='https://cdn.resfu.com/img_data/equipos/1378.png?size=120x&lossy=1';
+  if(CLUBBY.JBAR)CLUBBY.JBAR.logo='https://cdn.resfu.com/img_data/equipos/11325.png?size=120x&lossy=1';
+  if(CLUBBY.MBOL2)CLUBBY.MBOL2.logo='https://cdn.resfu.com/img_data/equipos/10056.png?size=120x&lossy=1';
+  FAMILY.MBOL2='MBOL';
+  REAL_LOANS.push(
+    ['Dennis Owusu','BOST','CZ18069',1,'Rotación',['Dennis Owusu','DF',2004,'GH',55,null,0.4,null,'DFC']],
+    ['M. Rusnák','BOST','PODB',1,'Rotación',['M. Rusnák','DF',2003,'SK',54,null,0.35,null,'DFC']],
+    ['Samuel Grygar','BOST','MBOL',1,'Rotación',['Samuel Grygar','MD',2004,'CZ',58,null,2.43,null,'MC/MCD']],
+    ['Lauri Laine','BOST','ITUR',1,'Rotación',['Lauri Laine','FW',2003,'FI',54,null,0.35,null,'DC']],
+    ['Pablo Ortíz','BOST','JBAR',1,'Rotación',['Pablo Ortíz','DF',2004,'CO',54,null,0.35,null,'DFC']],
+    ['Stanislav Petruța','BOST','ZLN',1,'Rotación',['Stanislav Petruța','MD',2004,'RO',54,null,0.35,null,'MCD/MC']],
+    ['Marek Havran','BOST','MBOL',1,'Rotación',['Marek Havran','MD',2004,'CZ',56,null,0.45,null,'MC/MCO']],
+    ['Jan Harušťák','BOST','MBOL2',1,'Rotación',['Jan Harušťák','DF',2005,'CZ',52,null,0.3,null,'DFC']],
+    ['Jakub Pira','BOST','KAR',1,'Rotación',['Jakub Pira','FW',2004,'CZ',54,null,0.35,null,'DC']]
+  );
+})();
+/* ===== Bohemians 1905 (BOH2, Chance Liga): plantilla real + pies + atributos + avatares ===== */
+(function(){
+  Object.assign(REAL_DB,{BOH2:[
+    ['Tomáš Frühwald','GK',2002,'CZ',69,null,2.76,null,'POR'],['Michal Reichl','GK',1992,'CZ',59,null,0.634,null,'POR'],['Jakub Šiman','GK',1995,'CZ',35,null,0.069,null,'POR'],
+    ['Milan Havel','DF',1994,'CZ',74,null,2.12,null,'LD/LI'],['David Lischka','DF',1997,'CZ',72,null,2.37,null,'DFC/LD'],['Peter Oluwajuwonlo Kareem','DF',2003,'NG',66,null,1.19,null,'LD/MD'],['Jan Vondra','DF',1995,'CZ',64,null,2.39,null,'DFC/LI'],['Petr Mirvald','DF',2003,'CZ',61,null,0.141,null,'LI/MI'],['Jan Kovařík','DF',1989,'CZ',60,null,0.02,null,'MI/EI'],['Matěj Kadlec','DF',2002,'CZ',60,null,0.649,null,'DFC/LI'],['Dominik Javorček','DF',2003,'SK',57,null,1.64,null,'LI/MI'],['David Heidenreich','DF',2000,'CZ',52,null,0.222,null,'DFC/LI'],['Denis Vala','DF',2001,'CZ',52,null,0.375,null,'LD/MD'],['Mathews Banda','DF',2005,'ZM',44,null,0.246,null,'LD/MD'],['Jakub Tichý','DF',2007,'CZ',42,null,0.009,null,'DFC/MC'],
+    ['Aleš Čermák','MD',1994,'CZ',73,null,1.97,null,'MCO/MC'],['Roman Kvet','MD',1998,'CZ',71,null,3.3,null,'MC/MCD'],['Václav Pilar','MD',1989,'CZ',70,null,0.025,null,'MI/MD'],['Jan Matoušek','MD',1998,'CZ',70,null,3.6,null,'MCO/DC'],['Benson Sakala','MD',1996,'ZM',69,null,2.25,null,'MCD/MC'],['Vojtěch Smrž','MD',1997,'CZ',69,null,1.35,null,'MC/MCD'],['Vladimír Zeman','MD',2000,'CZ',61,null,1.46,null,'MCO/EI'],['Dominik Pleštil','MD',1999,'CZ',58,null,1.84,null,'MD/MI'],['Šimon Černý','MD',2006,'CZ',52,null,0.302,null,'MCO/MC'],['Oliver Mikuda','MD',2005,'CZ',49,null,0.203,null,'MC/MCO'],['Samuel Obinaiia','MD',2005,'CZ',48,null,0.209,null,'MC/DFC'],['Matej Suryn','MD',2004,'CZ',47,null,0.073,null,'MI/MCD'],
+    ['Ladislav Almasi','FW',1999,'SK',62,null,1.65,null,'DC/EI'],['Mohamed Yasser Nour','FW',2001,'EG',56,null,1.08,null,'DC/ED'],['Ladislav Krobot','FW',2001,'CZ',54,null,1.3,null,'DC/MCO']
+  ]});
+  Object.assign(REAL_ATTR,{'Milan Havel':{RIT:68,TIR:49,PAS:64,REG:67,DEF:67,FÍS:70},'Dominik Javorček':{RIT:72,TIR:36,PAS:54,REG:65,DEF:61,FÍS:64},'Roman Kvet':{RIT:72,TIR:70,PAS:69,REG:73,DEF:59,FÍS:72}});
+  Object.assign(REAL_FOOT,{'David Lischka':'I','Jan Vondra':'I','Petr Mirvald':'I','Jan Kovařík':'I','Dominik Javorček':'I','Václav Pilar':'A'});
+  Object.entries({'Tomáš Frühwald':907055,'Michal Reichl':172002,'Jakub Šiman':292851,'Milan Havel':184388,'David Lischka':320226,'Peter Oluwajuwonlo Kareem':3536021,'Jan Vondra':291820,'Petr Mirvald':3455993,'Jan Kovařík':75913,'Matěj Kadlec':3172540,'Dominik Javorček':810970,'David Heidenreich':369033,'Denis Vala':772169,'Mathews Banda':3385075,'Jakub Tichý':3270168,'Aleš Čermák':184690,'Roman Kvet':290086,'Václav Pilar':67486,'Jan Matoušek':290096,'Benson Sakala':293115,'Vojtěch Smrž':348640,'Vladimír Zeman':940334,'Dominik Pleštil':348708,'Šimon Černý':3639706,'Oliver Mikuda':3588866,'Samuel Obinaiia':3377385,'Matej Suryn':3536152,'Ladislav Almasi':317241,'Mohamed Yasser Nour':3300869,'Ladislav Krobot':459650}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Samuel Obinaiia','JAB','BOH2',1,'Rotación']
+  );
+})();
+/* ===== FC Zlín (ZLN, Chance Liga): plantilla real + atributos + avatares =====
+   El paste no traía GRL/valor/edad: se ESTIMAN (atributos cuando los hay + nivel de club modesto); edades orientativas. */
+(function(){
+  Object.assign(REAL_DB,{ZLN:[
+    ['Stanislav Dostál','GK',1992,'CZ',62,null,0.4,null,'POR'],['Milan Knobloch','GK',1993,'CZ',58,null,0.3,null,'POR'],['Štěpán Bachůrek','GK',2003,'CZ',50,null,0.15,null,'POR'],
+    ['Jakub Cernin','DF',2001,'CZ',62,null,0.5,null,'DFC/MCD'],['Jakub Jugas','DF',1997,'CZ',66,null,0.7,null,'DFC/LD'],['Antonín Křapka','DF',1998,'CZ',60,null,0.45,null,'DFC/LD'],['Miloš Kopečný','DF',1999,'CZ',58,null,0.4,null,'LD/ED'],['Marián Pišoja','DF',2005,'SK',58,null,0.4,null,'MD/ED'],['Michal Fukala','DF',2000,'CZ',60,null,0.45,null,'LD/LI'],['Jakub Kolář','DF',1999,'CZ',58,null,0.4,null,'DFC/MC'],['Adam Gaži','DF',2003,'CZ',56,null,0.35,null,'LI/ED'],['Lukáš Bartošák','DF',1999,'CZ',58,null,0.4,null,'LI/EI'],['Ondřej Kukučka','DF',2003,'CZ',60,null,0.45,null,'DFC/LD'],['David Grygera','DF',2004,'CZ',52,null,0.25,null,'LD/DFC'],['Prince Mbatshi Mukuba','DF',2002,'CD',58,null,0.4,null,'DFC/LI'],['Zvonimir Katalinić','DF',2001,'HR',56,null,0.35,null,'DFC/LI'],
+    ['Miloš Kratochvíl','MD',1997,'CZ',66,null,0.75,null,'MC/MCO'],['Cletus Nombil','MD',2002,'CZ',58,null,0.4,null,'MCD/MC'],['Michal Cupák','MD',2001,'CZ',62,null,0.5,null,'MCO/MC'],['Joss Didiba Moudoumbou','MD',2003,'CM',58,null,0.4,null,'MCD/DFC'],['Naphthalene Frank Appiah','MD',2003,'GH',54,null,0.3,null,'MCO'],['Tomas Ulbrich','MD',2003,'CZ',56,null,0.35,null,'MCO/MI'],['David Machalik','MD',2002,'CZ',58,null,0.4,null,'MC/MCO'],['Kristers Penkevics','MD',2001,'LV',56,null,0.35,null,'MCD/MC'],['Stanislav Petruța','MD',2004,'RO',54,null,0.35,null,'MCD/MC'],['Tomáš Hellebrand','MD',2004,'CZ',60,null,0.45,null,'MCO/MC'],['Jiří Štefan','MD',2003,'CZ',56,null,0.35,null,'MC/MCO'],['Tomas Fojtu','MD',2004,'CZ',52,null,0.25,null,'MCO/ED'],
+    ['Tomáš Poznar','FW',1995,'CZ',64,null,0.6,null,'DC/MC'],['Daniel Šmiga','FW',2003,'CZ',58,null,0.4,null,'DC/EI'],['Stanley Guzorochi Kanu','FW',2002,'NG',56,null,0.35,null,'DC/ED'],['Filip Dorňák','FW',2005,'CZ',50,null,0.2,null,'EI/ED'],['Prince Emmanuel Chibuzor','FW',2004,'NG',50,null,0.2,null,'DC/EI'],['Mouhamed Moustapha Alassane Toure','FW',2002,'ML',54,null,0.3,null,'DC/LD']
+  ]});
+  Object.assign(REAL_ATTR,{'Jakub Jugas':{RIT:46,TIR:38,PAS:48,REG:49,DEF:59,FÍS:65},'Tomáš Poznar':{RIT:53,TIR:58,PAS:47,REG:49,DEF:33,FÍS:59}});
+  Object.entries({'Stanislav Dostál':281549,'Milan Knobloch':306310,'Štěpán Bachůrek':895703,'Jakub Cernin':348671,'Jakub Jugas':172979,'Antonín Křapka':243948,'Miloš Kopečný':281539,'Marián Pišoja':342252,'Michal Fukala':371727,'Jakub Kolář':375462,'Adam Gaži':883973,'Lukáš Bartošák':210859,'Ondřej Kukučka':892688,'Prince Mbatshi Mukuba':3218007,'Zvonimir Katalinić':3147659,'Miloš Kratochvíl':193964,'Cletus Nombil':664244,'Michal Cupák':324412,'Joss Didiba Moudoumbou':305713,'Naphthalene Frank Appiah':3142632,'Tomas Ulbrich':327046,'David Machalik':284704,'Kristers Penkevics':895066,'Stanislav Petruța':3276539,'Tomáš Hellebrand':3413769,'Jiří Štefan':3396966,'Tomas Fojtu':925713,'Tomáš Poznar':212609,'Daniel Šmiga':892692,'Stanley Guzorochi Kanu':776922}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Lukáš Branecký','ZLN','CZ18069',1,'Rotación',['Lukáš Branecký','DF',2004,'CZ',52,null,0.3,null,'DFC']]
+  );
+})();
+/* ===== Hradec Králové (HRK, Chance Liga): plantilla real + pies + atributos + avatares ===== */
+(function(){
+  Object.assign(REAL_DB,{HRK:[
+    ['Adam Zadražil','GK',2000,'CZ',76,null,4.57,null,'POR'],['Matyáš Vágner','GK',2003,'CZ',48,null,0.405,null,'POR'],['Patrik Vízek','GK',1993,'CZ',40,null,0.081,null,'POR'],
+    ['Daniel Horák','DF',2000,'CZ',77,null,4.6,null,'LI/MI'],['Filip Cihak','DF',1999,'CZ',76,null,4.07,null,'DFC/MC'],['František Čech','DF',1998,'CZ',74,null,1.03,null,'DFC/LD'],['Jakub Uhrinčať','DF',2001,'CZ',74,null,1.45,null,'DFC/LD'],['Tomáš Petrášek','DF',1992,'CZ',72,null,1.15,null,'DFC/MC'],['Filip Mielke','DF',2005,'CZ',66,null,5.42,null,'DFC/MCD'],['Tomáš Wiesner','DF',1997,'CZ',66,null,4.5,null,'MD/LD'],['David Ludvíček','DF',2001,'CZ',61,null,1.54,null,'LI/MD'],['Juraj Chvátal','DF',1996,'SK',56,null,1.45,null,'LD/MD'],['Rodrigo Abajas Martín','DF',2003,'ES',51,null,0.636,null,'LI/DFC'],
+    ['Vladimír Darida','MD',1990,'CZ',79,null,0.71,null,'MC/MCO'],['Adam Vlkanova','MD',1994,'CZ',73,null,2.91,null,'MCO/EI'],['Samuel Dancák','MD',1998,'CZ',73,null,3.54,null,'MC/MCD'],['Jakub Kučera','MD',1997,'CZ',72,null,3.28,null,'MC/MCD'],['Daniel Trubač','MD',1997,'CZ',71,null,3.41,null,'MCO/MI'],['Matěj Valenta','MD',2000,'CZ',61,null,2.97,null,'MC/MCD'],['Stepan Ponikelsky','MD',2007,'CZ',48,null,0.013,null,'MC/MI'],['Viktor Zentrich','MD',2003,'CZ',47,null,0.144,null,'MCD/DFC'],['Elione Fernandes Neto','MD',2005,'AO',43,null,0.477,null,'MC/MCD'],
+    ['Mick Van Buren','FW',1992,'NL',76,null,1.55,null,'DC/ED'],['Ondrej Mihalik','FW',1997,'CZ',74,null,2.34,null,'DC/EI'],['Tomáš Čvančara','FW',2000,'CZ',62,null,4.46,null,'DC/ED'],['Abdullahi Omar','FW',2007,'CZ',52,null,0.001,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{'Tomáš Wiesner':{RIT:82,TIR:58,PAS:67,REG:77,DEF:68,FÍS:70},'Rodrigo Abajas Martín':{RIT:78,TIR:32,PAS:47,REG:67,DEF:57,FÍS:62},'Vladimír Darida':{RIT:61,TIR:71,PAS:73,REG:72,DEF:70,FÍS:64},'Adam Vlkanova':{RIT:76,TIR:65,PAS:70,REG:77,DEF:47,FÍS:62},'Matěj Valenta':{RIT:65,TIR:58,PAS:66,REG:64,DEF:65,FÍS:67},'Mick Van Buren':{RIT:70,TIR:65,PAS:62,REG:68,DEF:44,FÍS:70},'Ondrej Mihalik':{RIT:82,TIR:62,PAS:62,REG:75,DEF:40,FÍS:69},'Tomáš Čvančara':{RIT:80,TIR:66,PAS:64,REG:70,DEF:39,FÍS:75}});
+  Object.assign(REAL_FOOT,{'Daniel Horák':'I'});
+  Object.entries({'Adam Zadražil':393550,'Matyáš Vágner':879110,'Patrik Vízek':303161,'Daniel Horák':348728,'Filip Cihak':350559,'František Čech':329033,'Jakub Uhrinčať':958963,'Tomáš Petrášek':288034,'Filip Mielke':3203927,'Tomáš Wiesner':305981,'David Ludvíček':895676,'Juraj Chvátal':197826,'Rodrigo Abajas Martín':1005386,'Vladimír Darida':71529,'Adam Vlkanova':276245,'Samuel Dancák':348685,'Jakub Kučera':305978,'Daniel Trubač':232836,'Matěj Valenta':630269,'Stepan Ponikelsky':3410851,'Viktor Zentrich':755211,'Elione Fernandes Neto':3193643,'Mick Van Buren':228601,'Ondrej Mihalik':240583,'Tomáš Čvančara':630268,'Abdullahi Omar':3686564}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  /* club destino que faltaba (filial del Slovan Bratislava) + cesiones salientes del paste */
+  Object.assign(CLUBBY,{SVB2:Object.assign(K2('SVB2','Slovan Bratislava II','Slovan II','Bratislava','SK','#0a5aa8','#f4f4f4',42),{bTeam:true})});
+  if(CLUBBY.SVB2&&CLUBBY.SVB&&CLUBBY.SVB.logo)CLUBBY.SVB2.logo=CLUBBY.SVB.logo;
+  FAMILY.SVB2='SVB';
+  REAL_LOANS.push(
+    ['Marko Regza','HRK','NYI',1,'Rotación',['Marko Regza','FW',2003,'HU',54,null,0.35,null,'DC']],
+    ['Adam Griger','HRK','SVB2',1,'Rotación',['Adam Griger','FW',2004,'SK',55,null,0.4,null,'DC']],
+    ['J. Hodek','HRK','CZ13158',1,'Rotación',['J. Hodek','FW',2004,'CZ',52,null,0.3,null,'DC']],
+    ['Daniel Hais','HRK','CZ30936',1,'Rotación',['Daniel Hais','FW',2004,'CZ',52,null,0.3,null,'DC']],
+    ['G. Barkovsky','HRK','POL',1,'Rotación',['G. Barkovsky','FW',2004,'CZ',52,null,0.3,null,'DC']],
+    ['Adam Binar','HRK','CZ30945',1,'Rotación',['Adam Binar','MD',2004,'CZ',52,null,0.3,null,'MC']],
+    ['L. Kubr','HRK','CZ30936',1,'Rotación',['L. Kubr','DF',2004,'CZ',52,null,0.3,null,'DFC']]
+  );
+})();
+/* ===== FK Jablonec (JAB, Chance Liga): plantilla real + pies + atributos + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{JAB:[
+    ['Jan Hanuš','GK',1988,'CZ',73,null,0.023,null,'POR'],['Klemen Mihelak','GK',2002,'SI',56,null,1.11,null,'POR'],['Michal Kukučka','GK',2002,'CZ',47,null,0.34,null,'POR'],
+    ['Nemanja Tekijaški','DF',1997,'RS',78,null,4.62,null,'DFC/LD'],['Martin Cedidla','DF',2002,'CZ',77,null,7.96,null,'LD/DFC'],['Dusan Pavlović','DF',2004,'RS',72,null,2.95,null,'DFC/LD'],['Matěj Polidar','DF',2000,'CZ',72,null,3.12,null,'MI/EI'],['Jiří Sláma','DF',1999,'CZ',68,null,3.32,null,'LI/MI'],['Filip Novák','DF',1990,'CZ',67,null,0.166,null,'LI/DFC'],['Eduard Sobol','DF',1995,'UA',56,null,0.957,null,'LI/MI'],['Daniel Souček','DF',1998,'CZ',56,null,1.59,null,'LD/DFC'],['Nassim Patrice Innocenti','DF',2002,'BF',52,null,0.723,null,'DFC/LI'],['David Nykrín','DF',2004,'CZ',51,null,0.284,null,'LI/MI'],
+    ['Vakhtang Chanturishvili','MD',1993,'GE',76,null,1.99,null,'MI/MD'],['Sebastian Nebyla','MD',2002,'SK',74,null,7.73,null,'MC/MCD'],['Filip Zorvan','MD',1996,'CZ',67,null,3.67,null,'MCO/MC'],['Richard Sedláček','MD',1999,'CZ',67,null,2.59,null,'MC/MCD'],['Jan Suchan','MD',1996,'CZ',65,null,1.98,null,'MCO/MC'],['Antonín Růsek','MD',1999,'CZ',65,null,1.99,null,'MCO/DC'],['Nils Raul Hugo Ahl','MD',2002,'SE',63,null,1.62,null,'MCO/MD'],['Nelson Okeke','MD',2002,'NG',60,null,2.04,null,'MC/MCD'],['Dominik Hollý','MD',2004,'SK',60,null,4.18,null,'MC/DC'],['Roman Horák','MD',2005,'CZ',52,null,0.722,null,'MC/MCD'],
+    ['Lamin Jawo','FW',1995,'GM',74,null,2.13,null,'DC/ED'],['Saidou Alioum Moubarak','FW',2003,'CM',64,null,4.84,null,'ED/MD'],['Jan Chramosta','FW',1991,'CZ',64,null,0.383,null,'DC/EI'],['Kevin-Prince Milla','FW',2004,'CZ',63,null,2.89,null,'DC/ED'],['Filip Vecheta','FW',2003,'CZ',62,null,3.65,null,'DC/EI']
+  ]});
+  Object.assign(REAL_ATTR,{'Nemanja Tekijaški':{RIT:68,TIR:35,PAS:50,REG:56,DEF:58,FÍS:68},'Filip Novák':{RIT:72,TIR:65,PAS:67,REG:70,DEF:70,FÍS:73},'Eduard Sobol':{RIT:72,TIR:71,PAS:66,REG:69,DEF:65,FÍS:67},'Dominik Hollý':{RIT:59,TIR:44,PAS:56,REG:57,DEF:55,FÍS:55},'Lamin Jawo':{RIT:36,TIR:41,PAS:32,REG:46,DEF:30,FÍS:58},'Saidou Alioum Moubarak':{RIT:81,TIR:54,PAS:57,REG:70,DEF:43,FÍS:67},'Kevin-Prince Milla':{RIT:54,TIR:52,PAS:49,REG:52,DEF:36,FÍS:61}});
+  Object.assign(REAL_FOOT,{'Michal Kukučka':'I','Matěj Polidar':'I','Jiří Sláma':'I','Filip Novák':'I','Eduard Sobol':'I','David Nykrín':'I','Vakhtang Chanturishvili':'I','Roman Horák':'I'});
+  Object.entries({'Klemen Mihelak':864147,'Michal Kukučka':890209,'Nemanja Tekijaški':634049,'Martin Cedidla':822314,'Dusan Pavlović':3296670,'Matěj Polidar':375044,'Jiří Sláma':484118,'Filip Novák':172526,'Eduard Sobol':179401,'Daniel Souček':309784,'Nassim Patrice Innocenti':879146,'David Nykrín':3173707,'Vakhtang Chanturishvili':277149,'Sebastian Nebyla':754313,'Filip Zorvan':232905,'Richard Sedláček':320848,'Jan Suchan':240586,'Antonín Růsek':320847,'Nils Raul Hugo Ahl':960869,'Nelson Okeke':895625,'Dominik Hollý':3147007,'Roman Horák':919049,'Lamin Jawo':333316,'Saidou Alioum Moubarak':901802,'Jan Chramosta':70866,'Kevin-Prince Milla':3132732,'Filip Vecheta':864392}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  /* club destino que faltaba (Ružomberok) + cesiones del paste */
+  Object.assign(CLUBBY,{RUZ:K2('RUZ','MFK Ružomberok','Ružomberok','Ružomberok','SK','#f2d31b','#1a1a1a',54)});
+  if(CLUBBY.RUZ)CLUBBY.RUZ.logo='https://cdn.resfu.com/img_data/equipos/6363.png?size=120x&lossy=1';
+  REAL_LOANS.push(
+    ['Michal Kukučka','FCN','JAB',1,'Rotación'],
+    ['Filip Vecheta','PARD','JAB',1,'Rotación'],
+    ['S. Lavrinčík','JAB','RUZ',1,'Rotación',['S. Lavrinčík','MD',2004,'SK',54,null,0.35,null,'MC']],
+    ['Matej Malenšek','JAB','BRV',1,'Rotación',['Matej Malenšek','FW',2004,'SI',54,null,0.35,null,'DC']]
+  );
+})();
+/* ===== FK Mladá Boleslav (MBOL, Chance Liga): plantilla real + pies + atributos + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{MBOL:[
+    ['Jiří Floder','GK',1997,'CZ',70,null,0.653,null,'POR'],['Vojtěch Vorel','GK',1996,'CZ',51,null,0.386,null,'POR'],['Marek Obdrzalek','GK',2007,'CZ',48,null,0.009,null,'POR'],
+    ['Martin Králik','DF',1995,'CZ',73,null,2.27,null,'DFC/LI'],['Ondřej Karafiát','DF',1995,'CZ',72,null,1.25,null,'DFC/MC'],['Matej Hybš','DF',1993,'CZ',70,null,0.711,null,'DFC/LI'],['Filip Matoušek','DF',2001,'CZ',64,null,1.87,null,'LD/DFC'],['Denis Donát','DF',2001,'CZ',63,null,1.04,null,'DFC/LD'],['Adam Kadlec','DF',2003,'CZ',62,null,3.33,null,'LD/DFC'],['Dominik Mares','DF',2003,'CZ',54,null,2.11,null,'MD/LD'],['Matěj Zachoval','DF',2005,'CZ',53,null,0.675,null,'LI/MI'],['Jan Harušťák','DF',2005,'CZ',52,null,0.545,null,'DFC/LI'],['Filip Kolář','DF',2005,'CZ',51,null,0.124,null,'LI/DFC'],
+    ['Daniel Langhamer','MD',2003,'CZ',70,null,4.07,null,'MC/MCO'],['Martin Šubert','MD',2002,'CZ',69,null,1.09,null,'MC/ED'],['David Kozel','MD',2002,'CZ',68,null,1.15,null,'MC/MCO'],['Jan Zíka','MD',2006,'CZ',60,null,0.62,null,'MC/MCD'],['Samuel Grygar','MD',2004,'CZ',58,null,2.43,null,'MC/MCD'],['David Pech','MD',2002,'CZ',56,null,1.95,null,'MC/EI'],['Marek Havran','MD',2006,'CZ',55,null,1.19,null,'MD/EI'],
+    ['Solomon John','FW',2001,'NG',71,null,3.25,null,'EI/ED'],['Jiří Klíma','FW',1997,'CZ',62,null,1.98,null,'DC/MCO'],['Jan Buryán','FW',2006,'CZ',60,null,2.86,null,'DC/EI'],['Josef Kolařík','FW',2007,'CZ',60,null,1.28,null,'ED/EI'],['Filip Lehký','FW',2002,'CZ',58,null,1.98,null,'EI/ED'],['Filip Špatenka','FW',2004,'CZ',54,null,1.5,null,'DC/MCO'],['Lukáš Letenay','FW',2001,'CZ',54,null,1.23,null,'DC/ED'],['Jan Jinoch','FW',2006,'CZ',48,null,0.026,null,'ED/EI'],['Vojtech Hora','FW',2004,'CZ',45,null,0.443,null,'ED/MD'],['Boluwatife Victor Ogungbayi','FW',2004,'NG',43,null,0.367,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{'Ondřej Karafiát':{RIT:67,TIR:57,PAS:60,REG:60,DEF:65,FÍS:67},'Matej Hybš':{RIT:75,TIR:49,PAS:62,REG:70,DEF:63,FÍS:68},'Adam Kadlec':{RIT:70,TIR:42,PAS:53,REG:59,DEF:56,FÍS:67}});
+  Object.assign(REAL_FOOT,{'Matej Hybš':'I','Jan Harušťák':'I','Jan Buryán':'I'});
+  Object.entries({'Jiří Floder':318898,'Vojtěch Vorel':243546,'Marek Obdrzalek':3269289,'Martin Králik':282182,'Ondřej Karafiát':210863,'Matej Hybš':140301,'Filip Matoušek':967576,'Denis Donát':876732,'Adam Kadlec':3151535,'Dominik Mares':3183078,'Matěj Zachoval':919045,'Jan Harušťák':3343506,'Filip Kolář':3272083,'Daniel Langhamer':879120,'Martin Šubert':879129,'David Kozel':461355,'Jan Zíka':3318190,'Samuel Grygar':892690,'David Pech':808722,'Marek Havran':3406318,'Solomon John':924581,'Jiří Klíma':304970,'Jan Buryán':3195503,'Josef Kolařík':3411288,'Filip Lehký':914463,'Filip Špatenka':3259991,'Lukáš Letenay':653037,'Vojtech Hora':3206316,'Boluwatife Victor Ogungbayi':3308845}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  /* filial del Slovácko que faltaba + cesiones del paste */
+  Object.assign(CLUBBY,{SLOV2:Object.assign(K2('SLOV2','1. FC Slovácko II','Slovácko II','Uherské Hradiště','CZ','#f4f4f4','#1c3f94',42),{bTeam:true})});
+  if(CLUBBY.SLOV2&&CLUBBY.SLOV&&CLUBBY.SLOV.logo)CLUBBY.SLOV2.logo=CLUBBY.SLOV.logo;
+  FAMILY.SLOV2='SLOV';
+  REAL_LOANS.push(
+    ['Filip Špatenka','LIB','MBOL',1,'Rotación'],
+    ['Lukáš Letenay','LIB','MBOL',1,'Rotación'],
+    ['N. Penner','MBOL','CZ10048',1,'Rotación',['N. Penner','MD',2004,'CZ',54,null,0.35,null,'MC']],
+    ['Tomas Kral','MBOL','SLOV2',1,'Rotación',['Tomas Kral','DF',2004,'CZ',52,null,0.3,null,'DFC']],
+    ['L. Fila','MBOL','CZ10048',1,'Rotación',['L. Fila','MD',2004,'CZ',40,null,0.1,null,'MC']],
+    ['Matouš Krulich','MBOL','CZ10048',1,'Rotación',['Matouš Krulich','FW',2004,'CZ',50,null,0.2,null,'DC']]
+  );
 })();
 init();
 </script>
