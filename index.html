@@ -20497,7 +20497,8 @@ function clubViewHTML(id){
   const isMyFilial=!!(state&&id!==state.club&&famOf(id));
   const recipCount=(state&&id!==state.club&&affiliationWith(id))?1:0;
   const realAff=realAffilFor(id);
-  const ancestorCount=isB(id)?filialAncestors(id).length:0;
+  const ancestorIds=isB(id)?filialAncestors(id).filter(pid=>!(isMyFilial&&pid===state.club)):[];
+  const ancestorCount=ancestorIds.length;
   const affCount=(hasFilial?1:0)+ownAffList.length+(isMyFilial?1:0)+recipCount+realAff.length+ancestorCount;
   const sub=[['first','Primer equipo',squad.length],['ced','Cedidos',hasCed?(loans.out.length+loans.inn.length):null],['affil','Afiliaciones',affCount||null]];
   if(!sub.some(([k])=>k===ui.cvSub))ui.cvSub='first';
@@ -20513,7 +20514,7 @@ function clubViewHTML(id){
     const realUps=realAff.filter(a=>a.dir==='up'),realDowns=realAff.filter(a=>a.dir==='down');
     const filRow=hasFilial?affRow(fid,'Filial','filial'):'';
     const parentRow=isMyFilial?affRow(state.club,'Filial','filial'):'';
-    const ancestorRows=isB(id)?filialAncestors(id).map(pid=>affRow(pid,'Filial','filial')).join(''):'';
+    const ancestorRows=ancestorIds.map(pid=>affRow(pid,'Filial','filial')).join('');
     const recipProfRow=recipAsAffProf?affRow(state.club,affDealType(id),'down',id):'';
     const recipAfilRow=recipAsAffilClub?affRow(state.club,affDealType(id),'up',id):'';
     const realUpRows=realUps.map(a=>affRow(a.id,dealTypeBetween(id,a.id),'real',id+'|'+a.id)).join('');
