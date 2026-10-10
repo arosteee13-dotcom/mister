@@ -14004,6 +14004,47 @@ function grGroups(L){
   const pick=arr=>arr?order.filter(id=>arr.includes(id)):[];
   return{champ:pick(g.champ),euro:pick(g.euro),releg:pick(g.releg)};
 }
+/* ---- Chance Liga (República Checa): 16 equipos, 30 jornadas de fase regular y después un split en TRES
+   grupos (Campeonato 1-6, Europa 7-10, Descenso 11-16) que juegan una vuelta sencilla dentro del grupo
+   (5/3/5 jornadas) arrastrando la clasificación íntegra. El ganador del Grupo de Europa juega un play-off a
+   partido único contra el 5º del Grupo Campeonato por la plaza de la previa de la Conference League. ---- */
+const CZ_REG=30;
+const CZ_GROUPS=[{n:6,nm:'Grupo Campeonato',legs:1},{n:4,nm:'Grupo de Europa',legs:1},{n:6,nm:'Grupo Descenso',legs:1}];
+const CZ_GKEYS=['champ','mid','releg'];
+const CZ_PO_W=CZ_REG+5;
+function czSplitIfDue(fx,tb,r){
+  if(r!==CZ_REG)return null;
+  const st=sortTable(tb);if(st.length!==16)return null;
+  const groups={},fxBy=[];let i=0;
+  CZ_GROUPS.forEach((g,gi)=>{const ids=st.slice(i,i+g.n).map(x=>x.id);i+=g.n;groups[CZ_GKEYS[gi]]=ids;
+    const all=buildRawFixtures(ids.slice(),rng(hashStr('cz|'+state.seed+'|'+state.season+'|'+CZ_GKEYS[gi])));
+    fxBy.push(g.legs===1?all.slice(0,ids.length-1):all);});
+  const n=Math.max(...fxBy.map(x=>x.length));
+  for(let k=0;k<n;k++){let rd=[];fxBy.forEach(x=>{if(x[k])rd=rd.concat(x[k])});fx.push(rd)}
+  return{groups};
+}
+/* orden final de los tres grupos checos tras el split (acumulado íntegro de puntos) */
+function czGroups(L){
+  const order=sortTable(L.tb).map(r=>r.id);
+  if(!L.split)return{champ:order,mid:[],releg:[]};
+  const g=L.split.groups||{};
+  const pick=arr=>arr?order.filter(id=>arr.includes(id)):[];
+  return{champ:pick(g.champ),mid:pick(g.mid),releg:pick(g.releg)};
+}
+/* Play-off europeo de Conference checo: final a partido único en casa del 5º del Grupo Campeonato, con
+   ventaja de campo, prórroga y penaltis. */
+function czPoInit(h,a,w){return{key:'CZPO',name:'Play-off de Conference',ids:[h,a],bye:[],sc:{},champ:null,et:true,homeAdv:true,rounds:[{n:'Final',w,ties:[{h,a}],done:false}]}}
+/* crea el play-off cuando el split ya se ha jugado (5º del Grupo Campeonato vs ganador del Grupo de Europa) */
+function czEnsureCups(r){
+  if(!state||!state.cups)return;
+  if(state.cups.CZPO)return;
+  if(r<CZ_PO_W)return;
+  const L=leagueData('CZ1');if(!L||!L.split||L.fx.length<=CZ_REG)return;
+  const rounds=L.fx.slice(CZ_REG);
+  if(!rounds.length||rounds.some(rd=>!rd.length||rd.some(t=>t.hg==null)))return;
+  const G=czGroups(L);const fifth=G.champ[4],midWin=G.mid[0];
+  if(fifth&&midWin&&fifth!==midWin)state.cups.CZPO=czPoInit(fifth,midWin,CZ_PO_W);
+}
 /* Play-off europeo de Conference: final a partido único en el estadio del 3º del Grupo Campeonato (h),
    con ventaja de campo y prórroga y penaltis. */
 function bulPoInit(h,a,w){return{key:'BGPO',name:'Play-off de Conference',ids:[h,a],bye:[],sc:{},champ:null,et:true,homeAdv:true,rounds:[{n:'Final',w,ties:[{h,a}],done:false}]}}
@@ -14045,6 +14086,7 @@ function buildSplitFxMixed(top,bot,seedStr){
 function splitIfDue(fx,tb,key,r){
   if(key==='BG1')return bulSplitIfDue(fx,tb,r);
   if(key==='GR1')return grSplitIfDue(fx,tb,r);
+  if(key==='CZ1')return czSplitIfDue(fx,tb,r);
   const cfg=SPLITS[key];if(!cfg||r!==cfg.reg)return null;
   const st=sortTable(tb);if(st.length!==cfg.size)return null;
   const top=st.slice(0,cfg.top).map(x=>x.id),bot=st.slice(cfg.top).map(x=>x.id);
@@ -14235,8 +14277,8 @@ function playLeagueStage(){
   round.forEach(simMatch);if(state.country==='AR'){const t=arTourOf(r);if(t)arTally(round,t)}else if(state.country==='MX'){const t=mxTourOf(r);if(t)mxTally(round,t)}finance(round);updateMood();progressTick(r);positionTick();if(r===20){aiMarket('winter');aiIdle('winter');aiPoach('winter');aiYouth('winter')}
   famInteract();
   const cups=advanceWorld(r);
-  state.week++;if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);
-  {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
+  state.week++;if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
+  {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:uk==='CZ1'?CZ_REG:null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
   if(state.week>=state.fixtures.length)afterLeague();
   else if(state.week%4===0)state.market=genMarket();
   const mine=round.find(m=>m.h===state.club||m.a===state.club);
@@ -14985,8 +15027,26 @@ function revisePot(p,old,a,r){
 }
 function newSeason(){
   const champs=champsLine();state.qual=qualifiers();state.qualEL=qualifiersEL();state.qualEC=qualifiersEC();state.copaQual=computeCopaQual();state.qualLIB=qualifiersLIB();state.qualSUD=qualifiersSUD();
-  /* campeón de la MOL Cup de la temporada que acaba de terminar: entra en la previa de la Conference League */
-  state.czCupChamp=(state.cups&&state.cups.CZC&&state.cups.CZC.champ)||null;
+  /* Chance Liga: grupos del split de la temporada recién terminada + plazas europeas (campeón → Champions;
+     2º → previa UCL; 3º-4º → previa UEL; ganador del play-off 5º/mitad → previa ECL). La plaza de la MOL Cup
+     va al campeón de Copa; si ya tiene plaza (1º-5º o ganador del play-off), pasa al siguiente clasificado de
+     liga sin plaza, nunca al subcampeón (regla UEFA actual). Se calcula aquí, con la tabla recién terminada. */
+  {const CZ_L=leagueData('CZ1');const G=(CZ_L&&CZ_L.split)?czGroups(CZ_L):null;
+   state.czTop=G?{champ:G.champ.slice(),mid:G.mid.slice(),releg:G.releg.slice()}:null;
+   const czc=(state.cups&&state.cups.CZC&&state.cups.CZC.champ)||null;state.czCupChamp=czc;
+   const po=(state.cups&&state.cups.CZPO&&state.cups.CZPO.champ)||null;
+   const qs=new Set([...(state.qual||[]),...(state.qualEL||[]),...(state.qualEC||[])]);
+   const champ=G?G.champ:[];
+   state.czUclq=(champ[1]&&CLUBBY[champ[1]])?[champ[1]]:[];
+   state.czUelq=[champ[2],champ[3]].filter(id=>id&&CLUBBY[id]);
+   const euro={};[champ[0],champ[1],champ[2],champ[3],champ[4],(G&&G.mid[0]),po].forEach(id=>{if(id)euro[id]=1});
+   let cupPick=null;
+   if(czc&&CLUBBY[czc]){if(!isB(czc)&&!euro[czc]&&!qs.has(czc))cupPick=czc;
+     else{const ord=G?G.champ.concat(G.mid,G.releg):((CZ_L&&CZ_L.tb)?sortTable(CZ_L.tb).map(r=>r.id):[]);
+       cupPick=ord.find(id=>CLUBBY[id]&&!isB(id)&&!euro[id]&&!qs.has(id))||null;}}
+   state.czEuroPick=cupPick;
+   state.czEclq=[po,cupPick].filter(id=>id&&CLUBBY[id]&&!isB(id)&&!qs.has(id));
+  }
   { const prevSC={};
     archiveLiteHist();
     gamePlayable().forEach(co=>{
@@ -16676,13 +16736,13 @@ function storeImport(n,s,meta){
 /* ===================== mundo: otras ligas y torneos ===================== */
 const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Kupa Rossii',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup'};
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4,TR:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1};
 const SC_WEEKS={ES:[20,21],TR:[20,21]};
 const userKey=()=>state.country+(state.div||1);
-const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k.endsWith('C');
+const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k.endsWith('C');
 const compName=k=>{
   if(k==='ENT')return'EFL Trophy';
   if(k==='ENNC')return'National League Cup';
@@ -16707,6 +16767,7 @@ const compName=k=>{
   if(k==='ESFR')return'Segunda Federación';
   if(k==='CHLIC')return'Copa Liechtenstein';
   if(k==='BGPO')return'Play-off de Conference';
+  if(k==='CZPO')return'Play-off de Conference';
   if(k==='MXAP')return'Liga MX - Apertura';
   if(k==='MXCL')return'Liga MX - Clausura';
   if(k==='MXPIA')return'Play-in (Apertura)';
@@ -17484,7 +17545,7 @@ function cupWear(t,store){
 function afterLeague(){
   for(let guard=0;guard<60;guard++){
     const w=state.week;
-    arEnsureCups(w);mxEnsureCups(w);bulEnsureCups(w);
+    arEnsureCups(w);mxEnsureCups(w);bulEnsureCups(w);czEnsureCups(w);
     if(userCupTie(w))return;
     let maxW=-1;
     for(const k in state.cups){const c=state.cups[k];
@@ -17500,7 +17561,7 @@ function afterLeague(){
 function playCupStage(){
   const ct=userCupTie(state.week);if(!ct)return null;
   ensureUserSquad();
-  if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);
+  if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
   ensureFinBase();
   const t=me(),hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id)),mine=[];
   if(ct.group){
@@ -17650,7 +17711,7 @@ function advanceWorld(r){
       t.players.forEach(p=>{if(p.inj>0)p.inj--;if(p.sus>0)p.sus--});
     }
   }
-  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){arWorldTally(r);arWorldEnsureCups(r);}
   for(const k in state.cups){
     const cup=state.cups[k];
@@ -17752,7 +17813,7 @@ function recordHonors(final){
     }
   };
   gamePlayable().forEach(co=>{
-    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
+    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
     const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,'cup',co+'C');
     if(co==='EN'&&state.cups.ENT&&state.cups.ENT.champ)add(state.cups.ENT.champ,'eflt','ENT');
     if(co==='EN'&&state.cups.ENNC&&state.cups.ENNC.champ)add(state.cups.ENNC.champ,'nlc','ENNC');
@@ -17800,9 +17861,9 @@ function recordHonors(final){
 }
 function finishAll(){
   arEnsureCups(999);
-  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:null);if(sreg!=null&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,sreg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:null);if(sreg!=null&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,sreg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){const fx=state.others.AR1.fx;for(let r=0;r<fx.length;r++)if(fx[r]&&fx[r][0]&&fx[r][0].hg!==undefined)arWorldTally(r);arWorldEnsureCups(999);}
-  bulEnsureCups(999);
+  bulEnsureCups(999);czEnsureCups(999);
   for(const k in state.cups){
     const cup=state.cups[k];
     if(cup.type==='groups'&&!cup.gdone){cup.groups.forEach(g=>g.fx.forEach(rd=>rd.forEach(t=>{if(t.hg===undefined)simGroupTie(t,cup,g.tb)})));finishGroups(cup);}
@@ -18046,21 +18107,30 @@ function initWorld(){
     if(cclIds.length>=16)state.cups.CCLC=cupInit('CCLC','CONCACAF Champions Cup',cclIds);
   }
   const hasQual=state.qual&&state.qual.length;
-  const winU=hasQual?runQualifying('ucl',UCL_QUAL_IDS.filter(id=>!state.qual.includes(id))):[];
+  /* República Checa: 2º del Grupo Campeonato → previa de la Champions */
+  const uclPool=UCL_QUAL_IDS.filter(id=>!((state.qual)||[]).includes(id));
+  (state.czUclq||[]).forEach(id=>{if(id&&CLUBBY[id]&&!((state.qual)||[]).includes(id)&&uclPool.indexOf(id)<0)uclPool.push(id);});
+  const winU=hasQual?runQualifying('ucl',uclPool):[];
   const q=hasQual?fitEuroField(state.qual.concat(winU),winU,state.club,36):FIXED_UCL_S1.filter(id=>CLUBBY[id]);
   state.cups.UCL=cupInitUCL(q);
   const uclSet=new Set(q);
   const hasQualEL=state.qualEL&&state.qualEL.length;
-  const winE=hasQualEL?runQualifying('uel',UEL_QUAL_IDS.filter(id=>!state.qualEL.includes(id))):[];
+  /* República Checa: 3º y 4º del Grupo Campeonato → previa de la Europa League */
+  const uelPool=UEL_QUAL_IDS.filter(id=>!((state.qualEL)||[]).includes(id));
+  (state.czUelq||[]).forEach(id=>{if(id&&CLUBBY[id]&&!((state.qualEL)||[]).includes(id)&&uelPool.indexOf(id)<0)uelPool.push(id);});
+  const winE=hasQualEL?runQualifying('uel',uelPool):[];
   const qEL=hasQualEL?fitEuroField(state.qualEL.concat(winE),winE,uclSet.has(state.club)?null:state.club,36,uclSet):FIXED_UEL_S1.filter(id=>CLUBBY[id]);
   state.cups.UEL=cupInitUEL(qEL);
   const uelSet=new Set(qEL);
   const usedSet=new Set([...uclSet,...uelSet]);
   const hasQualEC=state.qualEC&&state.qualEC.length;
-  /* República Checa: el campeón de la MOL Cup entra en la previa de la Conference League (debe ganarse el pase) */
+  /* República Checa: plaza europea de la MOL Cup (previa de la Conference), ya resuelta en newSeason
+     (campeón, o el siguiente clasificado de liga sin plaza si el campeón ya va a Europa). */
   const qECset=state.qualEC||[];
   const eclPool=ECL_QUAL_IDS.filter(id=>!qECset.includes(id));
-  {const czc=state.czCupChamp;if(czc&&CLUBBY[czc]&&!isB(czc)&&qECset.indexOf(czc)<0&&eclPool.indexOf(czc)<0)eclPool.push(czc);}
+  /* República Checa: ganador del play-off (5º del Grupo Campeonato vs ganador del Grupo de Europa) y campeón
+     de la MOL Cup → previa de la Conference League */
+  (state.czEclq||[]).forEach(id=>{if(id&&CLUBBY[id]&&qECset.indexOf(id)<0&&eclPool.indexOf(id)<0&&!usedSet.has(id))eclPool.push(id);});
   const winC=hasQualEC?runQualifying('ecl',eclPool):[];
   const qEC=hasQualEC?fitEuroField(state.qualEC.concat(winC),winC,usedSet.has(state.club)?null:state.club,36,usedSet):FIXED_ECL_S1.filter(id=>CLUBBY[id]);
   state.cups.ECL=cupInitECL(qEC);
@@ -18193,6 +18263,8 @@ function qualifiers(){const s=new Set(euroSlots(state.qual,'ucl',UCL_QUAL_REPLAC
   const bgChamp=bulGroups(leagueData('BG1')).champ[0];if(bgChamp&&CLUBBY[bgChamp])s.add(bgChamp);
   /* Grecia: 1º y 2º del Play-off de Campeón van a la Champions */
   const grCh1=grGroups(leagueData('GR1')).champ;if(grCh1[0]&&CLUBBY[grCh1[0]])s.add(grCh1[0]);if(grCh1[1]&&CLUBBY[grCh1[1]])s.add(grCh1[1]);
+  /* República Checa: campeón del Grupo Campeonato → fase de liga de la Champions */
+  const czCh=czGroups(leagueData('CZ1')).champ;if(czCh[0]&&CLUBBY[czCh[0]])s.add(czCh[0]);
   return[...s]}
 function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,'uel',UEL_QUAL_REPLACE));if(state.cups&&state.cups.PTC&&state.cups.PTC.champ)s.add(state.cups.PTC.champ);if(state.cups&&state.cups.NLC&&state.cups.NLC.champ)s.add(state.cups.NLC.champ);if(state.cups&&state.cups.BEC&&state.cups.BEC.champ)s.add(state.cups.BEC.champ);if(state.cups&&state.cups.ATC&&state.cups.ATC.champ)s.add(state.cups.ATC.champ);if(state.cups&&state.cups.NOC&&state.cups.NOC.champ)s.add(state.cups.NOC.champ);if(state.cups&&state.cups.IEC&&state.cups.IEC.champ)s.add(state.cups.IEC.champ);if(state.cups&&state.cups.SCC&&state.cups.SCC.champ)s.add(state.cups.SCC.champ);if(state.cups&&state.cups.BGC&&state.cups.BGC.champ)s.add(state.cups.BGC.champ);if(state.cups&&state.cups.ROC&&state.cups.ROC.champ)s.add(state.cups.ROC.champ);if(state.cups&&state.cups.TRC&&state.cups.TRC.champ)s.add(state.cups.TRC.champ);
    /* Ucrania: el campeón de Copa va a la previa de la Europa League; si ya está en Champions por la liga, la plaza pasa al siguiente mejor clasificado */
@@ -18245,7 +18317,7 @@ function computeCopaQual(){
   return [...new Set(out)];
 }
 function champsLine(){
-  const parts=gamePlayable().map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}return FLAG[co]+' '+(top?cname(top.id):'—')});
+  const parts=gamePlayable().map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}return FLAG[co]+' '+(top?cname(top.id):'—')});
   const u=state.cups.UCL.champ;
   return 'Campeones de liga: '+parts.join(', ')+(u?'. Champions League: '+cname(u)+'.':'.');
 }
@@ -18811,6 +18883,31 @@ function bulLeagueTable(key){
        + tbl('Grupo Conference League',pick(G.conf),confZone,[['#38D996','Siguiente ronda (Play-off europeo)'],['#9e9e9e','Permanencia']])
        + tbl('Grupo Descenso',pick(G.releg),relegZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Play-off de descenso'],['#e53935','Descenso']]);
 }
+/* Chance Liga (República Checa): fase regular de 30 jornadas y, tras el corte, tres grupos (Campeonato 1-6,
+   Europa 7-10 y Descenso 11-16), a vuelta sencilla, con los puntos íntegros arrastrados. */
+function czLeagueTable(key){
+  const L=leagueData(key),st=sortTable(L.tb),me=state.club;
+  const tbl=(title,list,zoneFn,legend)=>{
+    const rows=list.map((r,i)=>{const c=CLUBBY[r.id],dg=r.gf-r.ga,z=zoneFn(i+1,list.length);
+      return`<tr class="${r.id===me?'me':''}"><td class="pos"${z?` style="--zc:${z}"`:''}>${z?'<i></i>':''}<span>${i+1}</span></td><td class="tm"><button class="tmbtn" data-act="club-view" data-club="${r.id}">${crestHTML(c,24)}<span class="nl">${esc(c.name)}</span><span class="ns">${esc(short3(c))}</span></button></td><td class="pts">${r.pts}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${dg>0?'+':''}${dg}</td></tr>`}).join('');
+    const used=new Set(list.map((r,i)=>zoneFn(i+1,list.length)));
+    const lg=(legend||[]).filter(([c])=>used.has(c));
+    const legendHTML=lg.length?`<div class="legend2"><b>LEYENDA</b><div class="lg-grid">${lg.map(([c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div></div>`:'';
+    return`<div class="card">${title?`<h3>${esc(title)}</h3>`:''}<div class="tblwrap"><table class="tbl abbtbl"><thead><tr><th>#</th><th>Club</th><th>Pts</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th></tr></thead><tbody>${rows}</tbody></table></div>${legendHTML}</div>`;
+  };
+  if(!L.split){
+    const zoneFn=pos=>pos<=6?'#5694D8':pos<=10?'#79B9DE':'#9e9e9e';
+    return tbl('',st,zoneFn,[['#5694D8','Grupo Campeonato (1.º-6.º)'],['#79B9DE','Grupo de Europa (7.º-10.º)'],['#9e9e9e','Grupo Descenso (11.º-16.º)']]);
+  }
+  const G=L.split.groups||{};
+  const pick=arr=>arr?st.filter(r=>arr.includes(r.id)):[];
+  const champZone=pos=>pos===1?'#49CB2B':pos===2?'#38D996':pos<=4?'#5694D8':pos===5?'#79B9DE':'#9e9e9e';
+  const midZone=pos=>pos===1?'#79B9DE':'#9e9e9e';
+  const relegZone=pos=>pos<=3?'#9e9e9e':pos<=5?'#ef9a9a':'#e53935';
+  return tbl('Grupo Campeonato',pick(G.champ),champZone,[['#49CB2B','Champions League'],['#38D996','Previa de Champions'],['#5694D8','Previa de Europa League'],['#79B9DE','Play-off por la Conference'],['#9e9e9e','Permanencia']])
+       + tbl('Grupo de Europa',pick(G.mid),midZone,[['#79B9DE','Siguiente ronda (Play-off europeo)'],['#9e9e9e','Permanencia']])
+       + tbl('Grupo Descenso',pick(G.releg),relegZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Play-off de descenso'],['#e53935','Descenso']]);
+}
 function _zoneTable(title,t,qual,label,relLabel){
   qual=qual||2;label=label||'Clasificado';
   const st=sortTable(t);
@@ -18859,6 +18956,7 @@ function leagueTable(key){
   if(key==='CH1')return chLeagueTable(key);
   if(key==='BG1')return bulLeagueTable(key);
   if(key==='RO1')return roLeagueTable(key);
+  if(key==='CZ1')return czLeagueTable(key);
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=String(key).slice(0,2)==='ES'?+String(key).slice(2):null;
