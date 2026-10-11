@@ -389,6 +389,7 @@ button.posc:hover{transform:translateY(-1px)}
    que se note entre toda la plantilla, sin tener que leer las etiquetas pequeñas una a una */
 .pcard.has-offer{animation:offerPulse 1.1s ease-in-out infinite}
 .pcard.has-renew{animation:offerPulse 1.1s ease-in-out infinite}
+.pcard.locked{opacity:.55;filter:grayscale(.4)}
 @keyframes offerPulse{
   0%,100%{border-color:var(--line);box-shadow:none}
   50%{border-color:#ffc23d;box-shadow:0 0 0 2px rgba(255,194,61,.55),0 0 14px rgba(255,194,61,.5)}
@@ -7364,7 +7365,7 @@ const REAL_LOANS=[
  ['Adam Nhaili','STV','DND',1,'Rotación',['Adam Nhaili','MD',2003,'BE',63,74,1,2.4,'MCO/MC']],
  ['Hugo Michel Lambotte','STV','VIR',1,'Rotación',['Hugo Michel Lambotte','DF',2002,'BE',62,72,0.9,2.2,'DFC']],
  ['Victor Olatunji','RSL','SKB',1,'Rotación',['Victor Olatunji','FW',2000,'NG',70,73,2.1,5.4,'DC']],
- ['Elohim Kaboré','HAM','SKB',1,'Rotación',['Elohim Kaboré','FW',2007,'CI',63,78,1.1,1.9,'DC']],
+ ['Moustapha Kaboré','HAM','SKB',1,'Rotación',['Moustapha Kaboré','FW',2002,'BF',58,null,0.4,null,'DC']],
  ['Stephane Keller','ITT','SKB',1,'Rotación',['Stephane Keller','DF',2002,'CM',61,67,0.475,5.7,'DFC']],
  ['Johannes Schenk','PRM','SKB',1,'Rotación',['Johannes Schenk','GK',2003,'DE',70,79,3.1,0.85,'POR']],
  ['A. Zeqiri','WID','SLG',1,'Rotación',['A. Zeqiri','FW',1999,'CH',67,72,1.5,4.4,'DC']],
@@ -7610,7 +7611,7 @@ const REAL_LOANS=[
  ['Michał Miłosz Rakoczy','GOR','POD',1,'Rotación',['Michał Miłosz Rakoczy','MD',2002,'PL',50,58,2.23,7.8,'MCO/MC']],
  ['Kamil Lukoszek','GOR','MOTL',1,'Rotación',['Kamil Lukoszek','MD',2002,'PL',64,67,'0.8','2.3','MI/MD/EI/ED']],
  ['Kacper Plichta','MOTL','TYC',1,'Rotación',['Kacper Plichta','FW',2007,'PL',32,40,'0.044','0.15','DC/LD']],
- ['Mads Agger','POG','BKH',1,'Rotación',['Mads Agger','FW',1999,'DK',71,79,3.78,13.2,'DC/EI']],
+ ['Mikkel Agger','POG','BKH',1,'Rotación',['Mikkel Agger','FW',2000,'DK',66,null,3.78,null,'DC/MCO']],
  ['Guilherme Luiz','GOZ','RADO',1,'Rotación',['Guilherme Luiz','FW',2005,'BR',66,75,1.9,5.3,'DC']],
  ['Muhamed Šahinović','RAK','RDK',1,'Rotación',['Muhamed Šahinović','GK',2003,'BA',44,52,1.05,3.7,'POR']],
  ['Jesús Antonio Díaz Gómez','RAK','CUC',1,'Rotación',['Jesús Antonio Díaz Gómez','MD',1999,'CO',58,66,1.67,5.8,'MCO/MD']],
@@ -8358,7 +8359,7 @@ const REAL_LOANS=[
  ['Álex Cardero','OVI','CUL',1,'Rotación'],
  ['Hugo García','EIB','CUL',1,'Rotación'],
  ['João Fersura','BETD','CUL',1,'Rotación',['João Fersura','FW',2005,'BR',34,62,0.064,1,'ED/EI']], ['H. Arrillaga','EIB','MIR',1,'Rotación'],['Carlos Navarro','LPA','MIR',1,'Rotación',['Carlos Navarro','DF',2004,'ES',50,58,0.217,1,'DFC/MC']],['Miguel Auría','OSAP','MIR',1,'Rotación',['Miguel Auría','MD',2005,'ES',53,64,0.599,1.5,'MCO/MC']],['Riki','VLL','MIR',1,'Rotación',['Riki','MD',2004,'ES',51,62,0.266,1,'MCO/MD']],['A. Uzkudun','AND','MIR',1,'Rotación'],['A. Morales','OSAP','LOG',1,'Rotación',['A. Morales','MD',2006,'ES',55,60,0.338,1.5,'MCO/EI']],['Papa Ba','GIRB','LOG',1,'Rotación',['Papa Ba','FW',2004,'ES',54,58,0.324,1.5,'ED/MD']]
-,['Cristian Carro','CFO','OUR',1,'Rotación',['Cristian Carro','FW',2007,'ES',38,52,0.005,0.5,'ED']],['Gonzalo Pastor','FAMB','UNI',1,'Rotación',['Gonzalo Pastor','MD',2006,'ES',49,58,0.420,2,'MC/MD']],['Arnau Casas','TRZ','UNI',1,'Rotación',['Arnau Casas','MD',2004,'ES',46,58,0.770,2,'MC/DFC']],['Fran Árbol','GRAB','ZAM',1,'Rotación',['Fran Árbol','GK',2006,'ES',46,52,0.196,1,'POR']],['J. Albert','CAS','ZAM',1,'Rotación',['J. Albert','DF',2004,'ES',52,58,0.482,2,'LI/DFC']],['M. Costa','TENB','ZAM',1,'Rotación',['M. Costa','MD',2004,'ES',50,58,0.154,1,'MC/MCO']],['D. Fernández','GIRB','ZAM',1,'Rotación',['D. Fernández','FW',2008,'ES',26,44,0.001,0.5,'ED']],['Serpeta','CAS','AGU',1,'Rotación',['Serpeta','FW',2000,'ES',53,58,0.329,1.5,'ED/EI']],['Seyram Viglo','MURI','AGU',1,'Rotación',['Seyram Viglo','FW',2006,'ES',38,50,0.037,0.5,'DC/MD']],['Fran Sabina','TEN','ALC',1,'Rotación'],['Tao Paradowski','IBI','ALG',1,'Rotación',['Tao Paradowski','GK',2005,'FR',45,52,0.226,1,'POR']],['Pablo Felipe','ILI','TRL',1,'Rotación',['Pablo Felipe','DF',2005,'ES',51,58,0.356,1.5,'DFC/LI']],['Boston Billups','ELD','CTG',1,'Rotación'],['Álvaro García','DAB','VILB',1,'Rotación',['Álvaro García','DF',2005,'ES',58,62,0.357,2,'DFC/LI']],['C. Eze','OVI','VILB',1,'Rotación'],['Antoñín','KOR','HER',1,'Rotación',['Antoñín','FW',2000,'ES',62,66,1.98,4,'DC/EI']],['Martín Krug','LEVB','TRM',1,'Rotación',['Martín Krug','DF',2006,'US',51,58,0.228,1.5,'DFC/MCD']],['Óscar Mesa','RMC3','RMJ',1,'Rotación',['Óscar Mesa','DF',2006,'ES',44,54,0.156,1,'LI/LD']],['Ismael Álvarez','CADM','RMJ',1,'Rotación',['Ismael Álvarez','FW',2008,'ES',48,56,0.216,1,'ED/MD']],['Jeremy José','TEN','RMJ',1,'Rotación'],['D. Stamatakis','OSAP','IBI',1,'Rotación',['D. Stamatakis','GK',2003,'GR',51,58,0.546,2,'POR']],['J. Blasco','RADO','IBI',1,'Rotación',['J. Blasco','DF',1999,'FR',63,63,2.48,10,'DFC/LD']],['Ismael Fadel','CAS','IBI',1,'Rotación',['Ismael Fadel','DF',2004,'MA',58,60,0.314,2,'DFC/MC']],['Diego Kochen','FCBB','LYN',1,'Rotación',['Diego Kochen','GK',2006,'US',62,79,0.9,1.9,'POR']],['Jón Sölvi Símonarson','IAK','LYN',1,'Rotación',['Jón Sölvi Símonarson','GK',2007,'IS',54,68,0.22,0.35,'POR']],['Munashe Garananga','KOB','LYN',1,'Rotación',['Munashe Garananga','DF',2001,'ZW',69,74,1.9,9.8,'DFC']],['Sanders Ngabo','BKH','LYN',1,'Rotación',['Sanders Ngabo','MD',2005,'DK',65,76,1.6,1.7,'MI/EI']],['Oliver Højer','KOB','LYN',1,'Rotación',['Oliver Højer','MD',2007,'DK',61,77,0.825,2.9,'MCO/MI/MC']],['Markus Anderson','PHI','LYN',1,'Rotación',['Markus Anderson','FW',2004,'US',52,62,0.18,0.7,'DC/MI/EI']],['Hong Hyun Seok','M05','MDJ',1,'Rotación',['Hong Hyun Seok','MD',1999,'KR',71,75,2.6,17.5,'MCO/MC/MCD']],['Mileta Rajović','LGW','MDJ',1,'Rotación',['Mileta Rajović','FW',2000,'DK',67,69,1.3,4.3,'DC']],['Mikkel Rakneberg','BOC','ODE',1,'Rotación',['Mikkel Rakneberg','DF',2002,'NO',65,72,1.4,3.7,'LI/MI']],['Jacob Christensen','MOL','SJE',1,'Rotación',['Jacob Christensen','MD',2001,'DK',68,73,1.7,2.4,'MCD/MC']],['Osaze De Rosario','SEA','SJE',1,'Rotación',['Osaze De Rosario','FW',2002,'GY',63,70,0.975,2.1,'DC']],['Ruben Alte','VIK','VIB',1,'Rotación',['Ruben Alte','MD',2000,'NO',67,70,1.3,2.3,'MI/MC/EI/MCO']],['Roald Mitchell','NYR','VIB',1,'Rotación',['Roald Mitchell','FW',2003,'TT',54,63,0.24,0.8,'DC']],['Elias Hagen','VIF','AAL',1,'Rotación',['Elias Hagen','MD',2000,'NO',67,70,1.3,2.3,'MC/MCD']],['Cheikh Mbacke Diop','BRN','AAL',1,'Rotación',['Cheikh Mbacke Diop','DF',2006,'SN',58,70,0.45,0.5,'DFC']],['Leonard Owusu','PTZ','FRE',1,'Rotación',['Leonard Owusu','MD',1997,'GH',69,69,1.2,2.7,'MCD/MC/DFC/MCO']],['Jakub Jezierski','SIG','FRE',1,'Rotación',['Jakub Jezierski','MD',2005,'PL',62,72,0.825,0.8,'MCD/MC']],['Danilo Al Saed','BKH','HKM',1,'Rotación',['Danilo Al Saed','MD',1999,'IQ',64,66,0.725,2.1,'MI/EI']],['Blerton Isufi','MOL','HKM',1,'Rotación',['Blerton Isufi','MD',2006,'XK',60,72,0.575,0.7,'MCO/DC/MC']],['Filip Manojlović','DIF','IKST',1,'Titular',['Filip Manojlović','GK',1996,'RS',68,70,1.0,3.3,'POR']],['Ola Visted','VIK','KFU',1,'Rotación',['Ola Visted','MD',2005,'NO',61,73,0.8,0.85,'MD/MC/ED/MCD']],['Syver Skeide','BDG','KRS',1,'Rotación'],['Gustav Christensen','BSC','KRS',1,'Rotación',['Gustav Christensen','MD',2005,'DK',65,77,1.7,3.3,'MI/MD/LD/LI']],['Filip Ottosson','IFK','LIS',1,'Titular',['Filip Ottosson','MD',1997,'SE',67,68,0.975,2.6,'MCD/MC']],['Martin Hellan','BRN','SDJ',1,'Rotación',['Martin Hellan','DF',2004,'NO',61,71,0.7,0.85,'LD']],['Oscar Forsmo Kapskarmo','EGD','SDJ',1,'Rotación',['Oscar Forsmo Kapskarmo','FW',2000,'NO',64,68,0.825,1.5,'DC']],['Leon Hien','DIF','TIL',1,'Rotación',['Leon Hien','DF',2002,'SE',65,72,1.3,2.6,'DFC']],['Odin Thiago Holm','CELT','VIF',1,'Rotación',['Odin Thiago Holm','MD',2003,'NO',64,73,1.3,2.0,'MC/MCD/MD/LD']],
+,['Cristian Carro','CFO','OUR',1,'Rotación',['Cristian Carro','FW',2007,'ES',38,52,0.005,0.5,'ED']],['Gonzalo Pastor','FAMB','UNI',1,'Rotación',['Gonzalo Pastor','MD',2006,'ES',49,58,0.420,2,'MC/MD']],['Arnau Casas','TRZ','UNI',1,'Rotación',['Arnau Casas','MD',2004,'ES',46,58,0.770,2,'MC/DFC']],['Fran Árbol','GRAB','ZAM',1,'Rotación',['Fran Árbol','GK',2006,'ES',46,52,0.196,1,'POR']],['J. Albert','CAS','ZAM',1,'Rotación',['J. Albert','DF',2004,'ES',52,58,0.482,2,'LI/DFC']],['M. Costa','TENB','ZAM',1,'Rotación',['M. Costa','MD',2004,'ES',50,58,0.154,1,'MC/MCO']],['D. Fernández','GIRB','ZAM',1,'Rotación',['D. Fernández','FW',2008,'ES',26,44,0.001,0.5,'ED']],['Serpeta','CAS','AGU',1,'Rotación',['Serpeta','FW',2000,'ES',53,58,0.329,1.5,'ED/EI']],['Seyram Viglo','MURI','AGU',1,'Rotación',['Seyram Viglo','FW',2006,'ES',38,50,0.037,0.5,'DC/MD']],['Fran Sabina','TEN','ALC',1,'Rotación'],['Tao Paradowski','IBI','ALG',1,'Rotación',['Tao Paradowski','GK',2005,'FR',45,52,0.226,1,'POR']],['Pablo Felipe','ILI','TRL',1,'Rotación',['Pablo Felipe','DF',2005,'ES',51,58,0.356,1.5,'DFC/LI']],['Boston Billups','ELD','CTG',1,'Rotación'],['Álvaro García','DAB','VILB',1,'Rotación',['Álvaro García','DF',2005,'ES',58,62,0.357,2,'DFC/LI']],['C. Eze','OVI','VILB',1,'Rotación'],['Antoñín','KOR','HER',1,'Rotación',['Antoñín','FW',2000,'ES',62,66,1.98,4,'DC/EI']],['Martín Krug','LEVB','TRM',1,'Rotación',['Martín Krug','DF',2006,'US',51,58,0.228,1.5,'DFC/MCD']],['Óscar Mesa','RMC3','RMJ',1,'Rotación',['Óscar Mesa','DF',2006,'ES',44,54,0.156,1,'LI/LD']],['Ismael Álvarez','CADM','RMJ',1,'Rotación',['Ismael Álvarez','FW',2008,'ES',48,56,0.216,1,'ED/MD']],['Jeremy José','TEN','RMJ',1,'Rotación'],['D. Stamatakis','OSAP','IBI',1,'Rotación',['D. Stamatakis','GK',2003,'GR',51,58,0.546,2,'POR']],['J. Blasco','RADO','IBI',1,'Rotación',['J. Blasco','DF',1999,'FR',63,63,2.48,10,'DFC/LD']],['Ismael Fadel','CAS','IBI',1,'Rotación',['Ismael Fadel','DF',2004,'MA',58,60,0.314,2,'DFC/MC']],['Diego Kochen','FCBB','LYN',1,'Rotación',['Diego Kochen','GK',2006,'US',62,79,0.9,1.9,'POR']],['Jón Sölvi Símonarson','IAK','LYN',1,'Rotación',['Jón Sölvi Símonarson','GK',2007,'IS',54,68,0.22,0.35,'POR']],['Munashe Garananga','KOB','LYN',1,'Rotación',['Munashe Garananga','DF',2001,'ZW',69,74,1.9,9.8,'DFC']],['Sanders Ngabo','BKH','LYN',1,'Rotación',['Sanders Ngabo','MD',2005,'DK',65,76,1.6,1.7,'MI/EI']],['Oliver Højer','KOB','LYN',1,'Rotación',['Oliver Højer','MD',2007,'DK',61,77,0.825,2.9,'MCO/MI/MC']],['Markus Anderson','PHI','LYN',1,'Rotación',['Markus Anderson','FW',2004,'US',52,62,0.18,0.7,'DC/MI/EI']],['Hong Hyun Seok','M05','MDJ',1,'Rotación',['Hong Hyun Seok','MD',1999,'KR',71,75,2.6,17.5,'MCO/MC/MCD']],['Mileta Rajović','LGW','MDJ',1,'Rotación',['Mileta Rajović','FW',2000,'DK',67,69,1.3,4.3,'DC']],['Mikkel Rakneberg','BOC','ODE',1,'Rotación',['Mikkel Rakneberg','DF',2002,'NO',65,72,1.4,3.7,'LI/MI']],['Jacob Christensen','MOL','SJE',1,'Rotación',['Jacob Christensen','MD',2001,'DK',68,73,1.7,2.4,'MCD/MC']],['Osaze De Rosario','SEA','SJE',1,'Rotación',['Osaze De Rosario','FW',2002,'GY',63,70,0.975,2.1,'DC']],['Ruben Alte','VIK','VIB',1,'Rotación',['Ruben Alte','MD',2000,'NO',67,70,1.3,2.3,'MI/MC/EI/MCO']],['Roald Mitchell','NYR','VIB',1,'Rotación',['Roald Mitchell','FW',2003,'TT',54,63,0.24,0.8,'DC']],['Elias Hagen','VIF','AAL',1,'Rotación',['Elias Hagen','MD',2000,'NO',67,70,1.3,2.3,'MC/MCD']],['Cheikh Mbacke Diop','BRN','AAL',1,'Rotación',['Cheikh Mbacke Diop','DF',2006,'SN',58,70,0.45,0.5,'DFC']],['Leonard Owusu','PTZ','FRE',1,'Rotación',['Leonard Owusu','MD',1997,'GH',69,69,1.2,2.7,'MCD/MC/DFC/MCO']],['Jakub Jezierski','SIG','FRE',1,'Rotación',['Jakub Jezierski','MD',2005,'PL',62,72,0.825,0.8,'MCD/MC']],['Danilo Al Saed','BKH','HKM',1,'Rotación',['Danilo Al Saed','MD',1999,'IQ',64,66,0.725,2.1,'MI/EI']],['Blerton Isufi','MOL','HKM',1,'Rotación',['Blerton Isufi','MD',2006,'XK',60,72,0.575,0.7,'MCO/DC/MC']],['Filip Manojlović','DIF','IKST',1,'Titular',['Filip Manojlović','GK',1996,'RS',55,null,0.3,null,'POR']],['Ola Visted','VIK','KFU',1,'Rotación',['Ola Visted','MD',2005,'NO',61,73,0.8,0.85,'MD/MC/ED/MCD']],['Syver Skeide','BDG','KRS',1,'Rotación'],['Gustav Christensen','BSC','KRS',1,'Rotación',['Gustav Christensen','MD',2005,'DK',65,77,1.7,3.3,'MI/MD/LD/LI']],['Filip Ottosson','IFK','LIS',1,'Titular',['Filip Ottosson','MD',1997,'SE',67,68,0.975,2.6,'MCD/MC']],['Martin Hellan','BRN','SDJ',1,'Rotación',['Martin Hellan','DF',2004,'NO',61,71,0.7,0.85,'LD']],['Oscar Forsmo Kapskarmo','EGD','SDJ',1,'Rotación',['Oscar Forsmo Kapskarmo','FW',2000,'NO',64,68,0.825,1.5,'DC']],['Leon Hien','DIF','TIL',1,'Rotación',['Leon Hien','DF',2002,'SE',56,null,0.4,null,'DFC']],['Odin Thiago Holm','CELT','VIF',1,'Rotación',['Odin Thiago Holm','MD',2003,'NO',64,73,1.3,2.0,'MC/MCD/MD/LD']],
  /* cesiones Segunda Federación Grupo 1 */
  ['L. Castro','DEP','AROS',1,'Rotación',['L. Castro','MD',2007,'ES',51,65,0.22,1.5,'MC']],
  ['A. Fraga','CEL','AROS',1,'Rotación',['A. Fraga','DF',2007,'ES',45,60,0.13,1,'DFC']],
@@ -14287,7 +14288,7 @@ function playLeagueStage(){
   ensureFinBase();
   const r=state.week,round=state.fixtures[r],before=posOf(state.club),t=me();
   const hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id));
-  round.forEach(simMatch);if(state.country==='AR'){const t=arTourOf(r);if(t)arTally(round,t)}else if(state.country==='MX'){const t=mxTourOf(r);if(t)mxTally(round,t)}finance(round);updateMood();progressTick(r);positionTick();if(r===20){aiMarket('winter');aiIdle('winter');aiPoach('winter');aiYouth('winter')}
+  round.forEach(simMatch);if(state.country==='AR'){const t=arTourOf(r);if(t)arTally(round,t)}else if(state.country==='MX'){const t=mxTourOf(r);if(t)mxTally(round,t)}finance(round);updateMood();progressTick(r);positionTick();if(r===20){runAiWindow('winter')}
   famInteract();
   const cups=advanceWorld(r);
   state.week++;if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
@@ -14362,6 +14363,43 @@ function ensureFreeAgents(){
   if(state.season<=1&&(state.week||0)<FREE_FROM_WEEK)return;
   if(state.freeAgents.length<FREE_MAX)genFreeAgents(Math.min(FREE_PER,FREE_MAX-state.freeAgents.length));
 }
+/* Al empezar cada temporada, los clubes de tu liga (IA) fichan algunos agentes libres: así un jugador
+   que dejas ir puede firmar por otro club antes de que puedas repescarlo, y el mercado no se llena sin fin.
+   Los que acaban de quedar libres en este mismo cambio no se tocan (aún "no están interesados en nadie"). */
+function aiSignFreeAgents(){
+  const fa=state.freeAgents;if(!fa||!fa.length)return;
+  const prev=state.season-1;
+  const avail=fa.filter(p=>!p.faSince||p.faSince<prev);
+  if(!avail.length)return;
+  avail.sort((a,b)=>(b.ovr||0)-(a.ovr||0));
+  const ids=Object.keys(state.teams).filter(id=>id!==state.club);
+  let cap=Math.max(2,Math.round(ids.length*0.08)),done=0;const moved=[];
+  for(const id of ids){
+    if(done>=cap)break;
+    if(Math.random()>0.35)continue;
+    const T=state.teams[id];if(!T||!T.players||T.players.length>=26)continue;
+    const need={GK:T.players.filter(x=>x.pos==='GK'&&!x.loanIn),DF:T.players.filter(x=>x.pos==='DF'&&!x.loanIn),MD:T.players.filter(x=>x.pos==='MD'&&!x.loanIn),FW:T.players.filter(x=>x.pos==='FW'&&!x.loanIn)};
+    for(let i=0;i<avail.length;i++){
+      const p=avail[i];if(!p)continue;
+      const arr=need[p.pos]||[];
+      if(arr.length>=8)continue;                       /* posición ya cubierta */
+      const worst=arr.length?arr.reduce((a,b)=>a.ovr<=b.ovr?a:b):null;
+      if(worst&&worst.ovr>=p.ovr-1)continue;            /* no mejora lo que ya tiene */
+      const gi=fa.indexOf(p);if(gi<0)continue;
+      fa.splice(gi,1);avail.splice(i,1);
+      delete p.faSince;delete p.blockSign;delete p.from;delete p.free;delete p.loanIn;delete p.famDown;
+      p.id=id+'_f'+Math.random().toString(36).slice(2,7);
+      p.cy=2+Math.floor(Math.random()*3);p.ap=0;p.cs=0;p.g=0;p.inj=0;p.en=100;p.blk=0;
+      p.wage=Math.max(p.wage||0,Math.round((p.val||0)*4));
+      T.players.push(p);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T);
+      moved.push({n:p.n,club:(CLUBBY[id]?CLUBBY[id].short:id),ovr:p.ovr||0});done++;break;
+    }
+  }
+  if(done){
+    const big=moved.filter(m=>m.ovr>=74).map(m=>`${m.n} (${m.club})`);
+    news(`Mercado: ${done===1?'un club ha fichado un agente libre':done+' clubes han fichado agentes libres'}${big.length?': '+big.slice(0,4).join(', '):''}.`);
+  }
+}
 /* ---------- filtros del mercado ---------- */
 const MKT_AGE=[['ALL','Cualquiera'],['u21','21 o menos'],['21-24','22-24'],['25-28','25-28'],['29-32','29-32'],['33+','33 o más']];
 const MKT_VAL=[['ALL','Cualquiera'],['u5','Menos de €5M'],['5-15','€5-15M'],['15-30','€15-30M'],['30-60','€30-60M'],['60+','€60M o más']];
@@ -14391,7 +14429,11 @@ const isBasque=p=>!!p&&(p.eus===1||/^ATH_?\d+$/.test(String(p.id))||((p.nat==='E
    (los de su plantilla real, ids ATH1, ATH2..., cuentan como vascos aunque su nombre no lo parezca) */
 const BASQUE_ONLY=new Set(['ATH','BIL']);   /* Athletic y su filial: solo fichan jugadores vascos */
 const canJoin=(clubId,p)=>(!BASQUE_ONLY.has(clubId)||isBasque(p))&&(!isB(clubId)||(p.age||27)<=23);
-const signBlock=p=>state&&BASQUE_ONLY.has(state.club)&&!isBasque(p)?`${cname(state.club)} solo ficha jugadores vascos, y ni el nombre ni el apellido de ${p.n} lo son.`:null;
+const signBlock=p=>{
+  if(state&&BASQUE_ONLY.has(state.club)&&!isBasque(p))return `${cname(state.club)} solo ficha jugadores vascos, y ni el nombre ni el apellido de ${p.n} lo son.`;
+  if(p&&p.blockSign&&state&&state.season<=p.blockSign)return `${p.n} no está interesado en fichar por tu club esta temporada. Vuelve a preguntarle la próxima; eso sí, si otro club se adelanta, podría firmar por él.`;
+  return null;
+};
 const mktPrice=p=>Math.round(p.val*(1.05+rng(hashStr('pr'+p.id+'|'+state.seed))()*.3)*10)/10;
 /* siempre se recorren todos los clubes del juego (con o sin filtros), así aparecen absolutamente todos los jugadores y se pagina entre todos */
 function mktEntries(f){
@@ -14413,9 +14455,8 @@ function mktEntries(f){
   /* agentes libres: no pertenecen a ningún club (solo con filtros de posición/nacionalidad/edad/valor/GRL) */
   (state&&state.freeAgents||[]).forEach(p=>{
     if((p.blk||0)>wk)return;
-    if((p.blockSign||0)>=state.season)return;   /* libre al que renunciaste: no fichable hasta la temporada siguiente */
     if(!mktMatch(p,f,null))return;
-    out.push({p,from:null,price:0,free:true});
+    out.push({p,from:null,price:0,free:true,locked:(p.blockSign||0)>=state.season});
   });
   return out;
 }
@@ -15229,7 +15270,7 @@ function newSeason(){
           if(keep.has(p.id)){p.cy=1;return}
           if(!isUser&&!aiRelease(p,r)){p.cy=2+Math.floor(r()*3);return}
           if(isUser)p.blockSign=state.season+1;   /* el jugador que se te va libre no puedes re-ficharlo hasta la temporada siguiente */
-          released.add(p.id);(state.freeAgents=state.freeAgents||[]).push(p);if(isUser)expired.push(p);
+          released.add(p.id);p.faSince=state.season;(state.freeAgents=state.freeAgents||[]).push(p);if(isUser)expired.push(p);
         });
         if(released.size)T.players=T.players.filter(p=>!released.has(p.id));
       }
@@ -15260,7 +15301,7 @@ function newSeason(){
   /* ingresos de los rivales: cada temporada recuperan parte de su presupuesto para poder seguir fichando */
   const famIdSet=new Set(famIds());
   Object.keys(state.teams).forEach(id=>{if(id===state.club||famIdSet.has(id))return;const T=state.teams[id],base=budgetFor(CLUBBY[id]);T.budget=r1(Math.min(base*1.8,T.budget+Math.max(3,base*.45)))});
-  aiMarket('summer');aiIdle('summer');aiPoach('summer');aiYouth('summer');
+  runAiWindow('summer');
   state.market=genMarket();
   initWorld();
   news(champs);
@@ -15268,6 +15309,8 @@ function newSeason(){
   loanInterest();
   { const m=me();m.lineup=bestXIOpt(m,m.formation);m.bench=autoBench(m); }   /* al empezar la temporada, tu mejor once por posiciones y cansancio */
   state.retiredNow=retired;
+  state.freedNow=expired;
+  aiSignFreeAgents();
   saveGame();
 }
 /* estadísticas de un jugador SOLO con este club, sumando todas las temporadas de su historial (p.hist, ya
@@ -15363,6 +15406,7 @@ function switchClub(newId){
 function afterOffers(){
   closeSheet();
   if(state.retiredNow&&state.retiredNow.length)setTimeout(()=>retiredSheet(state.retiredNow),350);
+  else if(state.freedNow&&state.freedNow.length)setTimeout(()=>freedSheet(state.freedNow),350);
 }
 function offersSheet(){
   const list=state.jobOffers||[];
@@ -15480,7 +15524,26 @@ function retiredSheet(list){
       statItem('TA',cs.yc),statItem('TR',cs.rc)].join('');
     return`<div class="hcard now" style="padding:0;overflow:hidden">${head}<div class="hcard-stats" style="margin:0;padding:12px 16px;border-top:1px solid var(--line)">${stats}</div></div>`;
   };
-  openSheet(`<div class="res-top"><h3>Retiros en tu plantilla</h3><p style="margin-bottom:8px">${list.length===1?'Un jugador cuelga':list.length+' jugadores cuelgan'} las botas esta pretemporada. Estas son sus cifras totales con tu club.</p></div><div class="res-scroll"><div class="hcards">${list.map(card).join('')}</div></div><div class="row-btns"><button class="btn primary" data-act="sheet-close">Vale</button></div>`);
+  openSheet(`<div class="res-top"><h3>Retiros en tu plantilla</h3><p style="margin-bottom:8px">${list.length===1?'Un jugador cuelga':list.length+' jugadores cuelgan'} las botas esta pretemporada. Estas son sus cifras totales con tu club.</p></div><div class="res-scroll"><div class="hcards">${list.map(card).join('')}</div></div><div class="row-btns"><button class="btn primary" data-act="after-retired">Vale</button></div>`);
+}
+/* pop-up de jugadores de tu club que quedan libres al empezar la temporada (contrato expirado sin renovar) */
+function freedSheet(list){
+  if(!list||!list.length)return;
+  const card=p=>{
+    const nat=natOf(p,state.club),pot=Math.round(Math.max(p.pot||p.ovr,p.ovr));
+    return`<div class="hcard now" style="padding:0;overflow:hidden">
+      <div class="pcard" style="cursor:default">
+        <div class="pc-av"><div class="pc-photo">${avatarHTML(p)}</div></div>
+        <div class="pc-main"><div class="pc-name">${esc(p.n)}</div>
+          <div class="pc-meta"><span class="pc-age">${p.age}a.</span><span class="pc-pos main">${ppOf(p)[0]}</span></div>
+          <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${fmtW(p.wage)}</span></div></div>
+        <div class="pc-right">
+          <div class="pc-num"><div><b style="color:${ratingColor(p.ovr)}">${p.ovr}</b><small>GRL</small></div><div><b style="color:${ratingColor(pot)}">${pot}</b><small>POT</small></div></div>
+          <div class="pc-role"><span class="tag ren">Queda libre</span></div>
+          <div class="pc-nat">${flagHTML(nat)} <span>${esc(NATNAME[nat]||'')}</span></div></div>
+      </div></div>`;
+  };
+  openSheet(`<div class="res-top"><h3>Se van libres</h3><p style="margin-bottom:8px">${list.length===1?'Un jugador ha visto expirar su contrato y queda':'Varios jugadores han visto expirar su contrato y quedan'} como agente libre. En su día les avisamos: podrías haberlos renovado. Vuelven a estar disponibles en el mercado la próxima temporada.</p></div><div class="res-scroll"><div class="hcards">${list.map(card).join('')}</div></div><div class="row-btns"><button class="btn primary" data-act="sheet-close">Vale</button></div>`);
 }
 function buyPlayer(id){
   const t=me(),i=state.market.findIndex(p=>p.id===id);if(i<0)return'No disponible';
@@ -15586,7 +15649,7 @@ function filialDescendants(id){const out=[],q=[id];while(q.length){const x=q.shi
    Rusia y Ucrania → 2; Austria,Rumanía,Bulgaria,Polonia,Alemania,Noruega,Escocia → II;
    Países Bajos → "Jong <equipo>"; Francia,España,Portugal,Turquía… → B.
    (los filiales con nombre propio —Atlético Madrileño, Juventus Next Gen…— no usan esta fórmula) */
-const FILIAL_SUF=co=>({EN:'U21',IE:'U21',AR:'U21',IT:'U23',BE:'U23',MX:'U23',DK:'U21',CH:'U21',RU:'2',UA:'2',AT:'II',RO:'II',BG:'II',PL:'II',DE:'II',NO:'II',SC:'II'}[co]||'B');
+const FILIAL_SUF=co=>({EN:'U21',IE:'U21',SE:'U21',AR:'U21',IT:'U23',BE:'U23',MX:'U23',DK:'U21',CH:'U21',RU:'2',UA:'2',AT:'II',RO:'II',BG:'II',PL:'II',DE:'II',NO:'II',SC:'II'}[co]||'B');
 const FILIAL_PRE=co=>(co==='NL'?'Jong':'');
 const filialMaxAge=co=>FILIAL_SUF(co)==='U21'?21:23;
 function makeBTeam(pid){
@@ -15695,6 +15758,20 @@ function startWork(k){
    (o fuera de tu liga); si les faltan en otra, fichan. Hay dos ventanas: antes de la temporada y a mitad de ella. */
 const AI_LIM={GK:[2,2,4],DF:[6,8,14],MD:[5,8,14],FW:[4,6,12]};   /* mínimo, ideal, máximo por posición */
 const AI_MAXSQ=40;
+/* contadores de movimientos de la ventana (para el resumen de mercado que ve el jugador) */
+function mktBump(k){state._mkt=state._mkt||{sale:0,loan:0};state._mkt[k]++}
+/* ejecuta una ventana de mercado de la IA y publica un resumen de la actividad */
+function runAiWindow(kind){
+  state._mkt={sale:0,loan:0};
+  aiMarket(kind);aiIdle(kind);aiPoach(kind);aiYouth(kind);
+  const m=state._mkt||{sale:0,loan:0};
+  if(m.sale+m.loan>0){
+    const parts=[];
+    if(m.sale)parts.push(`${m.sale} traspaso${m.sale>1?'s':''}`);
+    if(m.loan)parts.push(`${m.loan} ${m.loan>1?'cesiones':'cesión'}`);
+    news(`Mercado de ${kind==='winter'?'invierno':'verano'}: ${parts.join(' y ')} entre los clubes de tu liga y otros campeonatos.`);
+  }
+}
 /* ============ IA DE MERCADO (OFERTAS / FICHAJES) ============ */
 function aiMarket(kind){
   if(!state)return;
@@ -15707,6 +15784,7 @@ function aiMarket(kind){
   const score=p=>p.ovr+((p.age||27)<=24?.5*Math.max(0,(p.pot||p.ovr)-p.ovr):0)-((p.age||27)>=33?2:0);
   const fee=p=>Math.max(.1,r1(p.val*(.85+Math.random()*.3)));
   const move=(p,from,to,how,amt)=>{
+    mktBump(how==='sale'?'sale':'loan');
     const F=state.teams[from];F.players=F.players.filter(x=>x.id!==p.id);
     C[from][p.pos]--;changed.add(from);
     state.market=(state.market||[]).filter(x=>x.id!==p.id);
@@ -15716,7 +15794,7 @@ function aiMarket(kind){
       else{p.loanIn={from,season:state.season,share:1};state.loans.push({p,from,to,season:state.season,share:1})}
     }else if(how==='sale')F.budget=r1(F.budget+amt*.7);
     else{p.loanIn={from,season:state.season,share:1};state.loansAbroad.push({p,from})}
-    if(p.ovr>=76&&to&&notable.length<3)notable.push(how==='sale'?`${cname(to)} ficha a ${p.n} (${p.ovr}) del ${cname(from)} por ${fmtM(amt)}.`:`${cname(from)} cede a ${p.n} (${p.ovr}) al ${cname(to)} hasta final de temporada.`);
+    if(p.ovr>=74&&to&&notable.length<5)notable.push(how==='sale'?`${cname(to)} ficha a ${p.n} (${p.ovr}) del ${cname(from)} por ${fmtM(amt)}.`:`${cname(from)} cede a ${p.n} (${p.ovr}) al ${cname(to)} hasta final de temporada.`);
   };
   /* 1) quién sobra en cada equipo */
   const surplus=[];
@@ -15820,16 +15898,16 @@ function aiIdle(kind){
       .sort((a,b)=>(C[a][p.pos]-AI_LIM[p.pos][1])-(C[b][p.pos]-AI_LIM[p.pos][1]));
     for(const to of buyers){
       const T=state.teams[to],amt=fee(p);
-      if(young||T.budget<amt){take(p,from);p.loanIn={from,season:state.season,share:1};T.players.push(p);C[to][p.pos]++;changed.add(to);state.loans.push({p,from,to,season:state.season,share:1});
-        if(p.ovr>=70&&notable.length<3)notable.push(`${cname(from)} cede a ${p.n} (${p.ovr}) al ${cname(to)}: no contaba para él.`);return}
-      take(p,from);T.players.push(p);C[to][p.pos]++;changed.add(to);p.en=100;p.st={};
+      if(young||T.budget<amt){mktBump('loan');take(p,from);p.loanIn={from,season:state.season,share:1};T.players.push(p);C[to][p.pos]++;changed.add(to);state.loans.push({p,from,to,season:state.season,share:1});
+        if(p.ovr>=68&&notable.length<4)notable.push(`${cname(from)} cede a ${p.n} (${p.ovr}) al ${cname(to)}: no contaba para él.`);return}
+      mktBump('sale');take(p,from);T.players.push(p);C[to][p.pos]++;changed.add(to);p.en=100;p.st={};
       state.teams[from].budget=r1(state.teams[from].budget+amt);T.budget=r1(T.budget-amt);
-      if(p.ovr>=70&&notable.length<3)notable.push(`${cname(to)} ficha a ${p.n} (${p.ovr}) del ${cname(from)} por ${fmtM(amt)}: no tenía minutos.`);return;
+      if(p.ovr>=68&&notable.length<4)notable.push(`${cname(to)} ficha a ${p.n} (${p.ovr}) del ${cname(from)} por ${fmtM(amt)}: no tenía minutos.`);return;
     }
     /* nadie en la liga: los jóvenes se van cedidos fuera y el resto se vende a otro campeonato */
     take(p,from);
-    if(young){p.loanIn={from,season:state.season,share:1};state.loansAbroad.push({p,from})}
-    else state.teams[from].budget=r1(state.teams[from].budget+fee(p)*.7);
+    if(young){mktBump('loan');p.loanIn={from,season:state.season,share:1};state.loansAbroad.push({p,from})}
+    else{mktBump('sale');state.teams[from].budget=r1(state.teams[from].budget+fee(p)*.7)}
   });
   changed.forEach(id=>{const T=state.teams[id];T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)});
   if(changed.size)invalidateSquads(Array.from(changed));
@@ -15869,7 +15947,7 @@ function aiPoach(kind){
   const changed=new Set(),notable=[],lost={};
   const fee=p=>Math.max(.1,r1(p.val*(1.1+Math.random()*.35)));
   const setPl=(p,extra)=>{['list','loanList'].forEach(k=>p[k]=false);p.offers=[];p.loanOffers=[];delete p.role;p.en=100;p.inj=0;p.st={}};
-  const say=(b,p,s,amt)=>{if(notable.length<4&&p.ovr>=72)notable.push(`${cname(b)} se lleva a ${p.n} (${p.ovr}, ${p.age} años) del ${cname(s)} por ${fmtM(amt)}${rise(p)>=2?' tras su gran temporada':''}.`)};
+  const say=(b,p,s,amt)=>{if(notable.length<6&&p.ovr>=70)notable.push(`${cname(b)} se lleva a ${p.n} (${p.ovr}, ${p.age} años) del ${cname(s)} por ${fmtM(amt)}${rise(p)>=2?' tras su gran temporada':''}.`)};
   const buyers=ids.slice().sort(()=>Math.random()-.5);
   buyers.forEach(bid=>{
     const B=state.teams[bid],bc=CLUBBY[bid];
@@ -15894,7 +15972,7 @@ function aiPoach(kind){
       if(!aiCanSell(sid,p))continue;
       if(amt>B.budget*.8)continue;
       if(Math.random()>=Math.min(.9,Math.max(.15,.35+amb*.12))*(star?.6:1))continue;
-      S.players=S.players.filter(q=>q.id!==p.id);B.players.push(p);setPl(p);
+      S.players=S.players.filter(q=>q.id!==p.id);B.players.push(p);setPl(p);mktBump('sale');
       B.budget=r1(B.budget-amt);S.budget=r1(S.budget+amt);lost[sid]=(lost[sid]||0)+1;
       changed.add(bid);changed.add(sid);say(bid,p,sid,amt);
     }
@@ -15909,9 +15987,9 @@ function aiPoach(kind){
     if(!star)return;
     if(!aiCanSell(sid,star))return;
     const to=rich[Math.floor(Math.random()*rich.length)],amt=fee(star);
-    S.players=S.players.filter(q=>q.id!==star.id);setPl(star);S.budget=r1(S.budget+amt*.85);
+    S.players=S.players.filter(q=>q.id!==star.id);setPl(star);S.budget=r1(S.budget+amt*.85);mktBump('sale');
     (state.arrivals[to]=state.arrivals[to]||[]).push(star);changed.add(sid);
-    if(notable.length<4&&star.ovr>=74)notable.push(`${cname(to)} ficha a ${star.n} (${star.ovr}) del ${cname(sid)} por ${fmtM(amt)}.`);
+    if(notable.length<6&&star.ovr>=73)notable.push(`${cname(to)} ficha a ${star.n} (${star.ovr}) del ${cname(sid)} por ${fmtM(amt)}.`);
   });
   ids.forEach(bid=>{
     const B=state.teams[bid],bc=CLUBBY[bid];
@@ -15921,8 +15999,8 @@ function aiPoach(kind){
     const p=squadFor(from).filter(q=>!state.gone[q.id]&&!q.loanIn&&q.age<=27&&q.ovr>=bAvg-5&&q.ovr>=weak(B,q.pos)&&canJoin(bid,q)).sort((a,b)=>b.ovr-a.ovr)[0];
     if(!p)return;if(!aiCanSell(from,p))return;const amt=fee(p);if(amt>B.budget*.7)return;
     state.gone[p.id]=1;if(state.arrivals[from])state.arrivals[from]=state.arrivals[from].filter(q=>q.id!==p.id);
-    B.players.push(p);setPl(p);B.budget=r1(B.budget-amt);changed.add(bid);
-    if(notable.length<4&&p.ovr>=72)notable.push(`${cname(bid)} ficha a ${p.n} (${p.ovr}, ${p.age} años) del ${cname(from)} por ${fmtM(amt)}.`);
+    B.players.push(p);setPl(p);B.budget=r1(B.budget-amt);changed.add(bid);mktBump('sale');
+    if(notable.length<6&&p.ovr>=70)notable.push(`${cname(bid)} ficha a ${p.n} (${p.ovr}, ${p.age} años) del ${cname(from)} por ${fmtM(amt)}.`);
   });
   changed.forEach(id=>{const T=state.teams[id];aiFillMin(id);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)});
   if(changed.size)invalidateSquads(Array.from(changed));
@@ -20304,14 +20382,15 @@ function playerCard(p,clubId,opts){
   const nm=cardName(p.n);
   const hasOffer=!mk&&(((p.offers||[]).length>0)||((p.loanOffers||[]).length>0));
   const due=!mk&&!p.loanIn&&contractDue(p);
-  return`<button class="pcard${hasOffer?' has-offer':''}${due?' has-renew':''}" data-act="${mk?'mkt-pl':'pl'}" data-id="${p.id}" data-club="${clubId}"${mk?` data-from="${mk.from||''}"${mk.free?' data-free="1"':''}`:''}>
+  const lock=!!(mk&&mk.locked);
+  return`<button class="pcard${hasOffer?' has-offer':''}${due?' has-renew':''}${lock?' locked':''}" data-act="${mk?'mkt-pl':'pl'}" data-id="${p.id}" data-club="${clubId}"${mk?` data-from="${mk.from||''}"${mk.free?' data-free="1"':''}`:''}>
     <div class="pc-av">${p.loanIn&&!p.famDown?'<span class="tag ced">CED</span>':''}${due?'<span class="tag ren">Renovar</span>':''}<div class="pc-photo">${avatarHTML(p)}</div></div>
     <div class="pc-main"><div class="pc-name"${nm!==p.n?` title="${esc(p.n)}"`:''}>${esc(nm)}${opts.starter?'<i class="tt" title="Titular"></i>':''}</div>
       <div class="pc-meta"><span class="pc-age">${p.age}a.</span>${ppOf(p).map((x,k)=>`<span class="pc-pos${k===0?' main':''}">${x}</span>`).join('')}${opts.tags?tagsHTML(p):''}</div>
       <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${mk?(mk.free?'Libre · '+fmtW(p.wage):'Pide '+fmtM(mk.price)):fmtW(p.wage)}</span></div></div>
     <div class="pc-right">
       <div class="pc-num"><div><b style="color:${ratingColor(p.ovr)}">${p.ovr}</b><small>GRL${dlHTML(p)}</small></div><div><b style="color:${ratingColor(pot)}">${pot}</b><small>POT</small></div></div>
-      <div class="pc-role">${mk?(mk.free?'<span class="pc-club lib">Agente libre</span>':`<span class="pc-club">${mc?crestHTML(mc,16):''}<span>${esc(mc?mc.short:cname(mk.from))}</span></span>`):roleChip(role)}</div>
+      <div class="pc-role">${mk?(mk.free?(lock?'<span class="pc-club lib">No está interesado</span>':'<span class="pc-club lib">Agente libre</span>'):`<span class="pc-club">${mc?crestHTML(mc,16):''}<span>${esc(mc?mc.short:cname(mk.from))}</span></span>`):roleChip(role)}</div>
       <div class="pc-nat">${flagHTML(nat)} <span>${esc(NATNAME[nat]||'')}</span></div></div></button>`;
 }
 /* ===================== palmarés ===================== */
@@ -21574,7 +21653,7 @@ function mktResHTML(){
   if(f.page>=pages)f.page=pages-1;if(f.page<0)f.page=0;
   const page=list.slice(f.page*MKT_PER,(f.page+1)*MKT_PER);
   const active=['pos','nat','age','val','ovr','country','league','team'].filter(k=>f[k]!=='ALL').length;
-  const rows=page.map(({p,from,price,free})=>playerCard(p,from,{mkt:{from,price,free}})).join('');
+  const rows=page.map(({p,from,price,free,locked})=>playerCard(p,from,{mkt:{from,price,free,locked}})).join('');
   const pg=pages>1?`<div class="mkt-pg"><button class="btn ghost sm" data-act="mkt-page" data-d="-1" aria-label="Página anterior" ${f.page<=0?'disabled':''}>Anterior</button><span>Pág. ${f.page+1} de ${pages}</span><button class="btn ghost sm" data-act="mkt-page" data-d="1" aria-label="Página siguiente" ${f.page>=pages-1?'disabled':''}>Siguiente</button></div>`:'';
   const rule=BASQUE_ONLY.has(state.club)?`<p class="muted-s" style="margin:8px 0 0">${esc(cname(state.club))} solo ficha jugadores con nombre o apellido vasco.</p>`:'';
   return`${rule}<div class="mkt-tools"><button class="btn ghost sm" data-act="mkt-open">Filtros${active?` (${active})`:''}</button><button class="btn ${f.freeOnly?'primary':'ghost'} sm" data-act="mkt-free">Agentes libres</button>${pg}</div>
@@ -22424,6 +22503,7 @@ const H={
   'offer-accept'(t){const id=t.dataset.id,c=CLUBBY[id];switchClub(id);renderGame();toast(`Fichas por ${c?c.name:id}`);afterOffers()},
   'offer-reject'(t){const id=t.dataset.id;state.jobOffers=(state.jobOffers||[]).filter(x=>x!==id);offersSheet()},
   'offers-close'(){afterOffers()},
+  'after-retired'(){closeSheet();if(state.freedNow&&state.freedNow.length)setTimeout(()=>freedSheet(state.freedNow),350)},
   'offers-world'(){worldBrowserSheet()},
   'wb-list'(){worldBrowserSheet()},
   'wb-country'(t){worldBrowserSheet(t.dataset.co)},
@@ -23722,7 +23802,7 @@ Object.assign(TROPHY_IMG_CO,{GR:{league:'https://cdn.resfu.com/img_data/competic
   Object.assign(REAL_FOOT,{'Yevhenii Kucherenko':'I','Nikola Stajić':'I','Apostolos Apostolopoulos':'I','Elias Oskar Olsson':'I','Marvelous Nakamba':'I','Diego Esteban Pérez':'I','Salifou Soumah':'I','Kwadwo Opoku':'I','Athanasios Prodromitis':'A','Lampros Smyrlis':'A'});
   Object.entries({'Yevhenii Kucherenko':427242,'Vasilis Xenopoulos':337193,'Efthymios Papazois':3610910,'Michalis Pardalos':828100,'Gustav Frans Vallentin Granath':372289,'Charalampos Mavrias':83821,'Nikola Stajić':662373,'Christian Manrique Díaz':423693,'Apostolos Apostolopoulos':895930,'Elias Oskar Olsson':886521,'David Galiatsos':3448008,'Athanasios Prodromitis':3206009,'Amine Bassi':353169,'Lazar Kojić':435164,'Novica Eraković':385980,'Giannis Satsias':814500,'Marvelous Nakamba':218823,'Adriano Bregou':3271174,'Vangelis Nikolaou':889608,'Konstantinos Thymianis':465021,'Vasilios Rados':3340518,'Diego Esteban Pérez':478844,'Kosta Aleksić':824645,'Youssouph Mamadou Badji':844161,'Salifou Soumah':1012972,'Moussa Djenepo':381039,'Kwadwo Opoku':986813,'Lampros Smyrlis':888421,'José Mateo Mejía Piedrahita':878207}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
   REAL_LOANS.push(
-    ['Salifou Soumah','MALM','PGE',1,'Rotación',['Salifou Soumah','FW',2003,'GN',57,null,5.25,null,'ED/DC']],
+    ['Sekou Soumah','MALM','PGE',1,'Rotación',['Sekou Soumah','FW',2007,'GN',48,null,0.25,null,'DC/EI/ED']],
     ['J. Chura','PGE','BLOO',1,'Rotación',['J. Chura','MD',2004,'GR',50,null,0.2,null,'MC']],
     ['L. Lobato','PGE','CEA',1,'Rotación',['L. Lobato','FW',2003,'GR',50,null,0.2,null,'DC']],
     ['D. Hoxha','PGE','EGN',1,'Rotación',['D. Hoxha','FW',2003,'GR',50,null,0.2,null,'DC']]
@@ -24454,7 +24534,7 @@ Object.assign(STADIUM,{ARK:'Stadion GOSiR',CHR:'Stadion Miejski w Głogowie',PGR
    Göteborgs IF, IFK Eskilstuna, IK Sleipner) se crean solo para que aparezcan en el palmarés.
    Nota: Göteborgs IF no tiene escudo en BeSoccer (queda sin logo). */
 (function(){
-  const SE_PAL={MALM:{league:24,cup:16},IFK:{uel:2,league:18,cup:8,d3:1},ORG:{league:14,cup:1},IFKN:{league:13,cup:6},AIK:{league:12,cup:8},DIF:{league:12,cup:5},HIF:{league:7,cup:5},GAIS:{league:6,cup:1},IFE:{league:6,cup:3},HAL:{league:4,cup:1},OSTE:{league:4,cup:1,d2:2},ATV:{league:2,cup:2},BKH:{league:1,cup:4},BRY:{league:1},FAS:{league:1},GOT:{league:1},HAM:{league:1,cup:1},IFKE:{league:1},SLE:{league:1},KALM:{league:1,cup:3},MJA:{league:1,cup:1,d2:2}};
+  const SE_PAL={MALM:{league:24,cup:16},IFK:{uel:2,league:18,cup:8,d3:1},ORG:{league:14,cup:1},IFKN:{league:13,cup:6},AIK:{league:12,cup:8},DIF:{league:12,cup:5},HIF:{league:7,cup:5},GAIS:{league:6,cup:1},IFE:{league:6,cup:3},HAL:{league:4,cup:1},OSTE:{league:4,cup:1},ATV:{league:2,cup:2},BKH:{league:1,cup:4},BRY:{league:1},FAS:{league:1},GOT:{league:1},HAM:{league:1,cup:1},IFKE:{league:1},SLE:{league:1},KALM:{league:1,cup:3},MJA:{league:1,cup:1,d2:2},FLKB:{d2:1},GIFS:{d2:1},VARN:{d2:1},LBOS:{cup:1},OSU:{cup:1},NUNI:{d3:1},VARB:{d3:1}};
   Object.entries(SE_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
   /* nombres e imágenes de las competiciones suecas (Svenska Cupen, Superettan, Ettan) */
   Object.assign(TROPHY_CUP,{SE:'Svenska Cupen'});
@@ -24475,29 +24555,286 @@ Object.assign(STADIUM,{ARK:'Stadion GOSiR',CHR:'Stadion Miejski w Głogowie',PGR
 })();
 /* ===== SUEcia: Superettan (2ª división simulada) + Svenska Cupen (96 equipos) =====
    SE_CUP_TEAMS = 16 Allsvenskan + 16 Superettan + 64 clubes inferiores/regionales. */
-const SE_CUP_TEAMS=['AIK','BRP','DEG','DIF','GAIS','HAL','HAM','BKH','IFE','IFK','SIR','KALM','MALM','MJA','ORG','VSK','IFKN','FALK','VARB','OSU','LBOS','ODD','SDSV','OSTE','NUNI','HIF','VARN','NORB','BRAG','LJUN','OREB','GIFS','ACST','AFCE','AFCM','ANGE','ARLA','ASSY','ASTR','OLYM','BOLJ','BOLL','DALS','EKER','ENKS','ESKI','FALU','FBKB','FBKK','JARF','FPRT','FORS','FRAN','FRIS','GEFL','GUTE','HANI','HASS','HOGA','HOVS','HUDI','HUSQ','IFKA','OSTD','IFKS','IFKT','STUR','JONK','KARB','KARL','KONY','KUBI','LANDV','LIDK','LIND','MLMS','ONSA','OERS','PITE','RAGS','RAPP','SAVE','SKOV','SOLL','SINT','STOC','TROL','UNIK','UTSI','VASA','VAST','VFRO','VAXN','VEND','VIGG','VIKE'];
+const SE_CUP_TEAMS=['AIK','BRP','DEG','DIF','GAIS','HAL','HAM','BKH','IFE','IFK','SIR','KALM','MALM','MJA','ORG','VSK','IFKN','FLKB','VARB','OSU','LBOS','ODDV','SDSV','OSTE','NUNI','HIF','VARN','NORB','BRGE','LJUN','OREB','GIFS','ACST','AFCE','AFCM','ANGE','ARLA','ASSY','ASRI','OLYM','BOLJ','BOLL','DALS','EKER','ENKS','ESKM','FALU','FBKB','FBKK','JARF','FPRT','FORS','FRAN','FRIS','GEFL','GUTE','HANI','HASS','HOGA','HOVS','HUDI','HUSQ','IFKA','OSTD','IFKS','IFKT','STUR','JONK','KBKG','KARL','KOYK','KUBI','LANDV','LIDK','LNDO','MLMS','ONSA','OERS','PITE','RAGS','RPGO','SAVE','SKOV','SOLL','SINT','STOC','TROL','UNIK','UTSI','VASA','VAST','VFRO','VAXN','VEND','VIGG','VIKE'];
 (function(){
   const SE2=[
-    K('IFKN','IFK Norrköping','Norrköping','Norrköping','SE','#f4f4f4','#1c3f94',52,2),K('FALK','Falkenbergs FF','Falkenberg','Falkenberg','SE','#f2d31b','#1a1a1a',46,2),K('VARB','Varbergs BoIS','Varberg','Varberg','SE','#0a8a3d','#f4f4f4',46,2),K('OSU','Östersunds FK','Östersund','Östersund','SE','#d4192b','#1a1a1a',46,2),K('LBOS','Landskrona BoIS','Landskrona','Landskrona','SE','#1a1a1a','#f4f4f4',46,2),K('ODD','IK Oddevold','Oddevold','Uddevalla','SE','#1c3f94','#f4f4f4',44,2),K('SDSV','Sandvikens IF','Sandviken','Sandviken','SE','#f4f4f4','#1a1a1a',44,2),K('OSTE','Östers IF','Östers','Växjö','SE','#f4f4f4','#1c3f94',46,2),
-    K('NUNI','Nordic United','Nordic Utd','Södertälje','SE','#1a1a1a','#f4f4f4',44,2),K('HIF','Helsingborgs IF','Helsingborg','Helsingborg','SE','#1c3f94','#d4192b',50,2),K('VARN','IFK Värnamo','Värnamo','Värnamo','SE','#0a8a3d','#f4f4f4',48,2),K('NORB','Norrby IF','Norrby','Borås','SE','#f4f4f4','#1c3f94',44,2),K('BRAG','IK Brage','Brage','Borlänge','SE','#0a8a3d','#f4f4f4',46,2),K('LJUN','Ljungskile SK','Ljungskile','Ljungskile','SE','#1c3f94','#f4f4f4',44,2),K('OREB','Örebro SK','Örebro','Örebro','SE','#f4f4f4','#1a1a1a',48,2),K('GIFS','GIF Sundsvall','Sundsvall','Sundsvall','SE','#1c3f94','#f4f4f4',46,2)
+    K('IFKN','IFK Norrköping','Norrköping','Norrköping','SE','#f4f4f4','#1c3f94',52,2),K('FLKB','Falkenbergs FF','Falkenberg','Falkenberg','SE','#f2d31b','#1a1a1a',46,2),K('VARB','Varbergs BoIS','Varberg','Varberg','SE','#0a8a3d','#f4f4f4',46,2),K('OSU','Östersunds FK','Östersund','Östersund','SE','#d4192b','#1a1a1a',46,2),K('LBOS','Landskrona BoIS','Landskrona','Landskrona','SE','#1a1a1a','#f4f4f4',46,2),K('ODDV','IK Oddevold','Oddevold','Uddevalla','SE','#1c3f94','#f4f4f4',44,2),K('SDSV','Sandvikens IF','Sandviken','Sandviken','SE','#f4f4f4','#1a1a1a',44,2),K('OSTE','Östers IF','Östers','Växjö','SE','#f4f4f4','#1c3f94',46,2),
+    K('NUNI','Nordic United','Nordic Utd','Södertälje','SE','#1a1a1a','#f4f4f4',44,2),K('HIF','Helsingborgs IF','Helsingborg','Helsingborg','SE','#1c3f94','#d4192b',50,2),K('VARN','IFK Värnamo','Värnamo','Värnamo','SE','#0a8a3d','#f4f4f4',48,2),K('NORB','Norrby IF','Norrby','Borås','SE','#f4f4f4','#1c3f94',44,2),K('BRGE','IK Brage','Brage','Borlänge','SE','#0a8a3d','#f4f4f4',46,2),K('LJUN','Ljungskile SK','Ljungskile','Ljungskile','SE','#1c3f94','#f4f4f4',44,2),K('OREB','Örebro SK','Örebro','Örebro','SE','#f4f4f4','#1a1a1a',48,2),K('GIFS','GIF Sundsvall','Sundsvall','Sundsvall','SE','#1c3f94','#f4f4f4',46,2)
   ];
   CLUBS.push(...SE2);
   SE2.forEach(c=>{BASE_DIV[c.id]=2;});   /* BASE_DIV se captura antes de este bloque: hay que registrar la 2ª división */
   Object.assign(CLUBBY,Object.fromEntries(SE2.map(c=>[c.id,c])));
-  Object.assign(CLUB_LOGO,{IFKN:'https://cdn.resfu.com/img_data/equipos/1360.png?size=120x&lossy=1',FALK:'https://cdn.resfu.com/img_data/equipos/12828.png?size=120x&lossy=1',VARB:'https://cdn.resfu.com/img_data/equipos/12816.png?size=120x&lossy=1',OSU:'https://cdn.resfu.com/img_data/equipos/16476.png?size=120x&lossy=1',LBOS:'https://cdn.resfu.com/img_data/equipos/3047.png?size=120x&lossy=1',ODD:'https://cdn.resfu.com/img_data/equipos/12803.png?size=120x&lossy=1',SDSV:'https://cdn.resfu.com/img_data/equipos/12797.png?size=120x&lossy=1',OSTE:'https://cdn.resfu.com/img_data/equipos/62407.png?size=120x&lossy=1',NUNI:'https://cdn.resfu.com/img_data/equipos/136273.png?size=120x&lossy=1',HIF:'https://cdn.resfu.com/img_data/equipos/1307.png?size=120x&lossy=1',VARN:'https://cdn.resfu.com/img_data/equipos/12818.png?size=120x&lossy=1',NORB:'https://cdn.resfu.com/img_data/equipos/17713.png?size=120x&lossy=1',BRAG:'https://cdn.resfu.com/img_data/equipos/12826.png?size=120x&lossy=1',LJUN:'https://cdn.resfu.com/img_data/equipos/12825.png?size=120x&lossy=1',OREB:'https://cdn.resfu.com/img_data/equipos/1876.png?size=120x&lossy=1',GIFS:'https://cdn.resfu.com/img_data/equipos/1221.png?size=120x&lossy=1'});
+  Object.assign(CLUB_LOGO,{IFKN:'https://cdn.resfu.com/img_data/equipos/1360.png?size=120x&lossy=1',FLKB:'https://cdn.resfu.com/img_data/equipos/12828.png?size=120x&lossy=1',VARB:'https://cdn.resfu.com/img_data/equipos/12816.png?size=120x&lossy=1',OSU:'https://cdn.resfu.com/img_data/equipos/16476.png?size=120x&lossy=1',LBOS:'https://cdn.resfu.com/img_data/equipos/3047.png?size=120x&lossy=1',ODDV:'https://cdn.resfu.com/img_data/equipos/12803.png?size=120x&lossy=1',SDSV:'https://cdn.resfu.com/img_data/equipos/12797.png?size=120x&lossy=1',OSTE:'https://cdn.resfu.com/img_data/equipos/62407.png?size=120x&lossy=1',NUNI:'https://cdn.resfu.com/img_data/equipos/136273.png?size=120x&lossy=1',HIF:'https://cdn.resfu.com/img_data/equipos/1307.png?size=120x&lossy=1',VARN:'https://cdn.resfu.com/img_data/equipos/12818.png?size=120x&lossy=1',NORB:'https://cdn.resfu.com/img_data/equipos/17713.png?size=120x&lossy=1',BRGE:'https://cdn.resfu.com/img_data/equipos/12826.png?size=120x&lossy=1',LJUN:'https://cdn.resfu.com/img_data/equipos/12825.png?size=120x&lossy=1',OREB:'https://cdn.resfu.com/img_data/equipos/1876.png?size=120x&lossy=1',GIFS:'https://cdn.resfu.com/img_data/equipos/1221.png?size=120x&lossy=1'});
   Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
-  Object.assign(FORM_MAIN,{IFKN:'4-3-3',FALK:'4-4-2',VARB:'4-4-2',OSU:'4-2-3-1',LBOS:'4-4-2',ODD:'4-4-2',SDSV:'4-4-2',OSTE:'4-3-3',NUNI:'4-2-3-1',HIF:'4-2-3-1',VARN:'4-3-3',NORB:'4-4-2',BRAG:'4-4-2',LJUN:'4-4-2',OREB:'4-2-3-1',GIFS:'4-4-2'});
+  Object.assign(FORM_MAIN,{IFKN:'4-3-3',FLKB:'4-4-2',VARB:'4-4-2',OSU:'4-2-3-1',LBOS:'4-4-2',ODDV:'4-4-2',SDSV:'4-4-2',OSTE:'4-3-3',NUNI:'4-2-3-1',HIF:'4-2-3-1',VARN:'4-3-3',NORB:'4-4-2',BRGE:'4-4-2',LJUN:'4-4-2',OREB:'4-2-3-1',GIFS:'4-4-2'});
   /* 64 clubes inferiores (Ettan + División 2), solo para el cuadro de la copa (no están en CLUBS: no compiten en liga) */
   const SEL=[
-    ['ACST','AC Studenterna','AC Studenterna','Estocolmo',171188],['AFCE','AFC Eskilstuna','AFC Eskilstuna','Eskilstuna',12792],['AFCM','AFC Malmö','AFC Malmö','Malmö',150022],['ANGE','Ängelholms FF','Ängelholm','Ängelholm',60372],['ARLA','FC Arlanda','Arlanda','Märsta',101282],['ASSY','Assyriska FF','Assyriska','Södertälje',3050],['ASTR','Astrio','Astrio','Göteborg',64451],['OLYM','BK Olympic','Olympic','Malmö',84250],['BOLJ','Boljan','Boljan','Estocolmo',136176],['BOLL','Bollstanäs SK','Bollstanäs','Upplands Väsby',136353],['DALS','Dalstorps IF','Dalstorp','Dalstorp',61928],['EKER','Eker Örebro','Eker Örebro','Örebro',165644],['ENKS','Enköpings SK','Enköping','Enköping',3048],['ESKI','Eskilsminne IF','Eskilsminne','Helsingborg',61769],['FALU','Falu BS','Falu BS','Falun',162855],['FBKB','FBK Balkan','FBK Balkan','Malmö',142619],
+    ['ACST','AC Studenterna','AC Studenterna','Estocolmo',171188],['AFCE','AFC Eskilstuna','AFC Eskilstuna','Eskilstuna',12792],['AFCM','AFC Malmö','AFC Malmö','Malmö',150022],['ANGE','Ängelholms FF','Ängelholm','Ängelholm',60372],['ARLA','FC Arlanda','Arlanda','Märsta',101282],['ASSY','Assyriska FF','Assyriska','Södertälje',3050],['ASRI','Astrio','Astrio','Göteborg',64451],['OLYM','BK Olympic','Olympic','Malmö',84250],['BOLJ','Boljan','Boljan','Estocolmo',136176],['BOLL','Bollstanäs SK','Bollstanäs','Upplands Väsby',136353],['DALS','Dalstorps IF','Dalstorp','Dalstorp',61928],['EKER','Eker Örebro','Eker Örebro','Örebro',165644],['ENKS','Enköpings SK','Enköping','Enköping',3048],['ESKM','Eskilsminne IF','Eskilsminne','Helsingborg',61769],['FALU','Falu BS','Falu BS','Falun',162855],['FBKB','FBK Balkan','FBK Balkan','Malmö',142619],
     ['FBKK','FBK Karlstad','FBK Karlstad','Karlstad',64716],['JARF','FC Järfälla','Järfälla','Järfälla',142614],['FPRT','Football Primetime','Primetime','Estocolmo',169619],['FORS','Forssa','Forssa','Estocolmo',120983],['FRAN','IK Franke','Franke','Västerås',84245],['FRIS','Friska Viljor FC','Friska Viljor','Örnsköldsvik',63789],['GEFL','Gefle IF','Gefle','Gävle',1211],['GUTE','FC Gute','Gute','Visby',61979],['HANI','Haninge','Haninge','Haninge',88481],['HASS','Hässleholms IF','Hässleholm','Hässleholm',61915],['HOGA','Högaborgs BK','Högaborg','Helsingborg',101543],['HOVS','Hovshaga AIF','Hovshaga','Växjö',171186],['HUDI','Hudiksvalls FF','Hudiksvall','Hudiksvall',60370],['HUSQ','Husqvarna FF','Husqvarna','Huskvarna',12810],['IFKA','IF Karlstad','IF Karlstad','Karlstad',135074],['OSTD','IFK Östersund','IFK Östersund','Östersund',61968],
-    ['IFKS','IFK Skövde','IFK Skövde','Skövde',61941],['IFKT','IFK Trelleborg','IFK Trelleborg','Trelleborg',110374],['STUR','IK Sturehov','Sturehov','Örebro',171191],['JONK','Jönköpings Södra IF','Jönköping S.','Jönköping',16475],['KARB','Karlbergs BK','Karlberg','Estocolmo',84247],['KARL','Karlskrona','Karlskrona','Karlskrona',61918],['KONY','Konyaspor KIF','Konyaspor KIF','Estocolmo',61981],['KUBI','Kubikenborgs','Kubikenborg','Sundsvall',88068],['LANDV','Landvetter IS','Landvetter','Landvetter',101298],['LIDK','Lidköpings FK','Lidköping','Lidköping',61943],['LIND','Lindö FF','Lindö','Norrköping',88063],['MLMS','Malmslätts AIK','Malmslätt','Linköping',136194],['ONSA','Onsala BK','Onsala','Onsala',88484],['OERS','Östra Ersboda','Ö. Ersboda','Umeå',171185],['PITE','Piteå IF','Piteå','Piteå',61767],['RAGS','Rågsveds IF','Rågsved','Estocolmo',142998],
-    ['RAPP','Räppe GOIF','Räppe','Växjö',100500],['SAVE','Sävedalens IF','Sävedalen','Partille',84254],['SKOV','Skövde AIK','Skövde','Skövde',12804],['SOLL','Sollentuna FK','Sollentuna','Sollentuna',61958],['SINT','Stockholm Internazionale','Stk. Internazionale','Estocolmo',120312],['STOC','IFK Stocksund','Stocksund','Danderyd',110631],['TROL','FC Trollhättan','Trollhättan','Trollhättan',12805],['UNIK','Unik FK','Unik','Uppsala',171190],['UTSI','Utsiktens BK','Utsikten','Gotemburgo',12806],['VASA','Vasalunds IF','Vasalund','Solna',12794],['VAST','Västkurd BK','Västkurd','Gotemburgo',171187],['VFRO','Västra Frölunda IF','V. Frölunda','Gotemburgo',3044],['VAXN','Växjö Norra IF','Växjö Norra','Växjö',135705],['VEND','Vendelsö IK','Vendelsö','Vendelsö',121040],['VIGG','Viggbyholms IK','Viggbyholm','Täby',156133],['VIKE','Vikens IK','Viken','Viken',89084]
+    ['IFKS','IFK Skövde','IFK Skövde','Skövde',61941],['IFKT','IFK Trelleborg','IFK Trelleborg','Trelleborg',110374],['STUR','IK Sturehov','Sturehov','Örebro',171191],['JONK','Jönköpings Södra IF','Jönköping S.','Jönköping',16475],['KBKG','Karlbergs BK','Karlberg','Estocolmo',84247],['KARL','Karlskrona','Karlskrona','Karlskrona',61918],['KOYK','Konyaspor KIF','Konyaspor KIF','Estocolmo',61981],['KUBI','Kubikenborgs','Kubikenborg','Sundsvall',88068],['LANDV','Landvetter IS','Landvetter','Landvetter',101298],['LIDK','Lidköpings FK','Lidköping','Lidköping',61943],['LNDO','Lindö FF','Lindö','Norrköping',88063],['MLMS','Malmslätts AIK','Malmslätt','Linköping',136194],['ONSA','Onsala BK','Onsala','Onsala',88484],['OERS','Östra Ersboda','Ö. Ersboda','Umeå',171185],['PITE','Piteå IF','Piteå','Piteå',61767],['RAGS','Rågsveds IF','Rågsved','Estocolmo',142998],
+    ['RPGO','Räppe GOIF','Räppe','Växjö',100500],['SAVE','Sävedalens IF','Sävedalen','Partille',84254],['SKOV','Skövde AIK','Skövde','Skövde',12804],['SOLL','Sollentuna FK','Sollentuna','Sollentuna',61958],['SINT','Stockholm Internazionale','Stk. Internazionale','Estocolmo',120312],['STOC','IFK Stocksund','Stocksund','Danderyd',110631],['TROL','FC Trollhättan','Trollhättan','Trollhättan',12805],['UNIK','Unik FK','Unik','Uppsala',171190],['UTSI','Utsiktens BK','Utsikten','Gotemburgo',12806],['VASA','Vasalunds IF','Vasalund','Solna',12794],['VAST','Västkurd BK','Västkurd','Gotemburgo',171187],['VFRO','Västra Frölunda IF','V. Frölunda','Gotemburgo',3044],['VAXN','Växjö Norra IF','Växjö Norra','Växjö',135705],['VEND','Vendelsö IK','Vendelsö','Vendelsö',121040],['VIGG','Viggbyholms IK','Viggbyholm','Täby',156133],['VIKE','Vikens IK','Viken','Viken',89084]
   ];
   const seL=SEL.map(([id,name,short,city])=>K(id,name,short,city,'SE','#f4f4f4','#1c3f94',40,3));
   Object.assign(CLUBBY,Object.fromEntries(seL.map(c=>[c.id,c])));
   Object.assign(CLUB_LOGO,Object.fromEntries(SEL.map(([id,,,,n])=>[id,'https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'])));
   Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+})();
+/* ===== Suecia: palmarés completo de la Superettan (d2) y la Svenska Cupen (cup) =====
+   Campeones históricos por club. Se crean los que faltaban (Syrianska FC, Trelleborgs FF, Råå IF), solo para el palmarés. */
+(function(){
+  const PAL_D2={VSK:2,BRP:2,MJA:2,OSTE:2,KALM:2,DEG:1,VARN:1,HAL:1,HIF:1,SIR:1,JONK:1,HAM:1,FLKB:1,SYRF:1,ORG:1,IFKN:1,TREL:1,AIK:1,BKH:1,DIF:1};
+  const PAL_CUP={MALM:16,AIK:8,IFK:8,IFKN:6,HIF:5,DIF:5,BKH:4,IFE:3,KALM:3,ATV:2,MJA:1,DEG:1,HAL:1,HAM:1,LBOS:1,OSTE:1,ORG:1,OSU:1,GAIS:1,RAA:1};
+  Object.entries(PAL_D2).forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.d2=n});
+  Object.entries(PAL_CUP).forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.cup=n});
+  if(PALMARES.GIFS)delete PALMARES.GIFS.d2;   /* GIF Sundsvall: su título de 1999 es anterior a la Superettan moderna */
+  Object.assign(CLUBBY,{
+    SYRF:K('SYRF','Syrianska FC','Syrianska','Södertälje','SE','#d4192b','#f4f4f4',44,2),
+    TREL:K('TREL','Trelleborgs FF','Trelleborg','Trelleborg','SE','#1c3f94','#f4f4f4',44,2),
+    RAA:K('RAA','Råå IF','Råå','Helsingborg','SE','#1c3f94','#f4f4f4',36,3)
+  });
+  Object.assign(CLUB_LOGO,{SYRF:'https://cdn.resfu.com/img_data/equipos/5640.png?size=120x&lossy=1',TREL:'https://cdn.resfu.com/img_data/equipos/2531.png?size=120x&lossy=1',RAA:'https://cdn.resfu.com/img_data/escudos/medium/85675.jpg'});
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+})();
+/* ===== Malmö FF (MALM, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{MALM:[
+    ['Robin Olsen','GK',1990,'SE',61,null,0.212,null,'POR'],['Johan Dahlin','GK',1986,'SE',65,null,0.042,null,'POR'],['William Nieroth','GK',2006,'SE',43,null,0.109,null,'POR'],
+    ['Pontus Jansson','DF',1991,'SE',76,null,1.44,null,'DFC'],['Jens Stryger Larsen','DF',1991,'DK',76,null,1.52,null,'LD/LI/MD/MI'],['Gabriel Busanello','DF',1999,'BR',75,null,6.72,null,'LI/MI'],['Andrej Đurić','DF',2003,'ME',67,null,5.25,null,'DFC'],['Stian Gregersen','DF',1995,'NO',68,null,2.10,null,'DFC/MCD'],['Warren Kamanzi','DF',2001,'NO',63,null,2.68,null,'LD/LI/MD'],['Bleon Kurtulus','DF',2007,'SE',57,null,5.74,null,'DFC/LD'],
+    ['Otto Rosengren','MD',2003,'SE',70,null,11.83,null,'MC/MCO/MCD'],['Adrian Skogmar','MD',2006,'SE',57,null,4.20,null,'MC/MD/LD'],['Kenan Busuladžić','MD',2007,'BA',51,null,1.92,null,'MCD/MC'],['Anders Christiansen','MD',1990,'DK',66,null,0.521,null,'MCO/MC'],['Yani Karabelyov','MD',1996,'BG',66,null,2.94,null,'MCD/MC'],
+    ['Sead Hakšabanović','FW',1999,'ME',60,null,5.41,null,'EI/ED/MCO'],['Diego García','FW',2000,'ES',67,null,2.61,null,'DC/MCO'],['Emmanuel Ekong','FW',2002,'SE',57,null,2.38,null,'DC/EI/ED'],['Moustafa Lahdo','FW',2003,'SE',66,null,10.10,null,'ED/EI/DC'],['Daníel Guðjohnsen','FW',2006,'IS',53,null,4.41,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Robin Olsen':{EST:61,PAR:58,SAQ:56,REF:62,COL:64},'Johan Dahlin':{EST:63,PAR:61,SAQ:58,REF:64,COL:67},'William Nieroth':{EST:44,PAR:41,SAQ:39,REF:46,COL:42},
+    'Pontus Jansson':{RIT:52,TIR:40,PAS:68,REG:52,DEF:78,FÍS:77},'Jens Stryger Larsen':{RIT:74,TIR:54,PAS:72,REG:68,DEF:75,FÍS:70},'Gabriel Busanello':{RIT:76,TIR:52,PAS:72,REG:73,DEF:71,FÍS:70},'Andrej Đurić':{RIT:56,TIR:34,PAS:52,REG:50,DEF:68,FÍS:70},'Stian Gregersen':{RIT:54,TIR:36,PAS:52,REG:50,DEF:70,FÍS:69},'Warren Kamanzi':{RIT:67,TIR:42,PAS:54,REG:62,DEF:54,FÍS:60},'Bleon Kurtulus':{RIT:56,TIR:30,PAS:52,REG:52,DEF:58,FÍS:60},
+    'Otto Rosengren':{RIT:60,TIR:56,PAS:72,REG:71,DEF:58,FÍS:68},'Adrian Skogmar':{RIT:63,TIR:44,PAS:54,REG:60,DEF:48,FÍS:54},'Kenan Busuladžić':{RIT:52,TIR:32,PAS:48,REG:48,DEF:54,FÍS:56},'Anders Christiansen':{RIT:52,TIR:68,PAS:73,REG:67,DEF:42,FÍS:50},'Yani Karabelyov':{RIT:54,TIR:38,PAS:52,REG:50,DEF:66,FÍS:68},
+    'Sead Hakšabanović':{RIT:66,TIR:62,PAS:60,REG:68,DEF:34,FÍS:52},'Diego García':{RIT:56,TIR:69,PAS:46,REG:52,DEF:30,FÍS:66},'Emmanuel Ekong':{RIT:64,TIR:54,PAS:44,REG:52,DEF:28,FÍS:60},'Moustafa Lahdo':{RIT:72,TIR:58,PAS:52,REG:70,DEF:30,FÍS:50},'Daníel Guðjohnsen':{RIT:50,TIR:48,PAS:38,REG:42,DEF:28,FÍS:58}
+  });
+  Object.assign(REAL_FOOT,{'Gabriel Busanello':'I'});
+  Object.entries({'Robin Olsen':152509,'Johan Dahlin':152508,'William Nieroth':3199135,'Pontus Jansson':152517,'Jens Stryger Larsen':148973,'Gabriel Busanello':359766,'Andrej Đurić':3145084,'Stian Gregersen':227075,'Warren Kamanzi':867431,'Bleon Kurtulus':3360834,'Otto Rosengren':3138301,'Adrian Skogmar':3218017,'Kenan Busuladžić':3298433,'Anders Christiansen':66515,'Yani Karabelyov':206199,'Sead Hakšabanović':274951,'Diego García':825261,'Emmanuel Ekong':825638,'Moustafa Lahdo':954694,'Daníel Guðjohnsen':3182487}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{MALM:'4-2-3-1'});
+  REAL_LOANS.push(
+    ['Zakaria Loukili','MALM','LBOS',1,null,['Zakaria Loukili','MD',2006,'SE',52,null,0.45,null,'MCO/MC']]
+  );
+})();
+/* ===== AIK Solna (AIK, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{AIK:[
+    ['Kristoffer Nordfeldt','GK',1989,'SE',75,null,0.182,null,'POR'],['Kalle Joelsson','GK',1998,'SE',56,null,0.764,null,'POR'],['Norton Otterud','GK',2008,'SE',30,null,0.001,null,'POR'],
+    ['Sotirios Papagiannopoulos','DF',1990,'SE',73,null,0.988,null,'DFC'],['Ibrahim Cissé','DF',1999,'CI',70,null,3.85,null,'DFC/LD'],['Mads Thychosen','DF',1997,'DK',73,null,4.96,null,'LD/LI/MD'],['Herve Matthys','DF',1996,'BE',64,null,1.67,null,'DFC/LI'],['Lucas Bergquist','DF',2000,'SE',62,null,1.61,null,'LI/MI'],['Eskil Edh','DF',2002,'NO',65,null,4.10,null,'LD/LI/MD'],['Sebastian Hausner','DF',2000,'DK',68,null,1.67,null,'DFC/LD'],
+    ['Johan Hove','MD',2000,'NO',72,null,7.11,null,'MC/MCO/MCD'],['Dino Beširović','MD',1994,'BA',69,null,1.86,null,'MCO/MC/EI'],['Aboubacar Kouame','MD',2004,'CI',62,null,3.72,null,'MCD/MC'],['Amel Mujanić','MD',2001,'SE',60,null,2.32,null,'MC/MCO'],['Lucas Assadi','MD',2004,'CL',58,null,4.45,null,'MCO/EI'],
+    ['Linus Carlstrand','FW',2004,'SE',49,null,1.45,null,'DC/MCO'],['Taha Ayari','FW',2005,'SE',56,null,4.46,null,'EI/ED/MCO'],['Adrián Helm','FW',2005,'SE',47,null,0.822,null,'DC/ED'],['Kevin Filling','FW',2009,'SE',40,null,0.043,null,'DC'],['Nana Donkor','FW',2007,'GH',31,null,0.144,null,'DC/EI']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Kristoffer Nordfeldt':{EST:74,PAR:71,SAQ:68,REF:73,COL:77},'Kalle Joelsson':{EST:60,PAR:57,SAQ:55,REF:63,COL:58},'Norton Otterud':{EST:30,PAR:26,SAQ:24,REF:32,COL:28},
+    'Sotirios Papagiannopoulos':{RIT:50,TIR:38,PAS:56,REG:50,DEF:75,FÍS:74},'Ibrahim Cissé':{RIT:60,TIR:36,PAS:52,REG:54,DEF:71,FÍS:72},'Mads Thychosen':{RIT:74,TIR:48,PAS:70,REG:68,DEF:69,FÍS:66},'Herve Matthys':{RIT:56,TIR:34,PAS:58,REG:54,DEF:66,FÍS:65},'Lucas Bergquist':{RIT:63,TIR:38,PAS:56,REG:56,DEF:64,FÍS:60},'Eskil Edh':{RIT:68,TIR:42,PAS:56,REG:64,DEF:56,FÍS:60},'Sebastian Hausner':{RIT:54,TIR:36,PAS:54,REG:50,DEF:70,FÍS:69},
+    'Johan Hove':{RIT:62,TIR:58,PAS:73,REG:69,DEF:60,FÍS:71},'Dino Beširović':{RIT:54,TIR:65,PAS:72,REG:68,DEF:40,FÍS:48},'Aboubacar Kouame':{RIT:56,TIR:34,PAS:50,REG:50,DEF:63,FÍS:65},'Amel Mujanić':{RIT:58,TIR:46,PAS:63,REG:60,DEF:48,FÍS:52},'Lucas Assadi':{RIT:62,TIR:50,PAS:56,REG:65,DEF:30,FÍS:46},
+    'Linus Carlstrand':{RIT:58,TIR:52,PAS:38,REG:44,DEF:26,FÍS:52},'Taha Ayari':{RIT:66,TIR:50,PAS:50,REG:64,DEF:28,FÍS:46},'Adrián Helm':{RIT:52,TIR:51,PAS:34,REG:40,DEF:26,FÍS:56},'Kevin Filling':{RIT:48,TIR:42,PAS:30,REG:36,DEF:24,FÍS:44},'Nana Donkor':{RIT:36,TIR:30,PAS:26,REG:30,DEF:22,FÍS:36},
+    'Victor Andersson':{RIT:60,TIR:48,PAS:56,REG:58,DEF:36,FÍS:48},'Emmanuel Gono':{RIT:54,TIR:52,PAS:36,REG:44,DEF:28,FÍS:56}
+  });
+  Object.assign(REAL_FOOT,{'Herve Matthys':'I','Lucas Bergquist':'I','Victor Andersson':'D','Emmanuel Gono':'D'});
+  Object.entries({'Kristoffer Nordfeldt':66819,'Kalle Joelsson':370567,'Norton Otterud':3496371,'Sotirios Papagiannopoulos':209174,'Ibrahim Cissé':856821,'Mads Thychosen':290763,'Herve Matthys':228801,'Lucas Bergquist':896244,'Eskil Edh':972671,'Sebastian Hausner':343300,'Johan Hove':342932,'Dino Beširović':331068,'Aboubacar Kouame':3439152,'Amel Mujanić':652391,'Lucas Assadi':887766,'Linus Carlstrand':3181844,'Taha Ayari':3182459,'Adrián Helm':3262673,'Kevin Filling':3496226,'Nana Donkor':3745074}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{AIK:'4-3-3'});
+  REAL_LOANS.push(
+    ['Sebastian Hausner','HOR','AIK',1,'Rotación',['Sebastian Hausner','DF',2000,'DK',68,null,1.67,null,'DFC/LD']],
+    ['Kaj Karlsson','AIK','DEG',1,'Rotación',['Kaj Karlsson','MD',2005,'SE',51,null,1.74,null,'MC/MCO']],
+    ['Emmanuel Gono','AIK','ODDV',1,null,['Emmanuel Gono','FW',2006,'LR',48,null,0.15,null,'DC']]
+  );
+})();
+/* ===== Suecia: presupuestos reales de la Allsvenskan y la Superettan (BUDGET, en millones de €) ===== */
+Object.assign(BUDGET,{AIK:4.5,BRP:1.2,DEG:0.95,DIF:5,GAIS:1.1,BKH:3.8,HAL:1.3,HAM:4.2,IFE:3.5,IFK:3.2,SIR:1.6,KALM:1.5,MALM:12,MJA:1.4,ORG:0.75,VSK:1,FLKB:0.45,GIFS:0.9,HIF:1.2,IFKN:2.8,VARN:1.5,BRGE:0.85,ODDV:0.6,LBOS:1.1,LJUN:0.25,NORB:0.35,OREB:0.95,OSTE:1.1,OSU:0.7,SDSV:0.75,NUNI:0.55,VARB:0.8});
+/* ===== Suecia: estadios de la Superettan ===== */
+Object.assign(STADIUM,{FLKB:'Falcon Alkoholfri Arena',GIFS:'NP3 Arena',HIF:'Olympia',IFKN:'PlatinumCars Arena',VARN:'Finnvedsvallen',BRGE:'Domnarvsvallen',ODDV:'Rimnersvallen',LBOS:'Landskrona IP',LJUN:'Skarsjövallen',NORB:'Borås Arena',OREB:'Behrn Arena',OSTE:'Visma Arena',OSU:'Jämtkraft Arena',SDSV:'Jernvallen',NUNI:'Södertälje Fotbollsarena',VARB:'Påskbergsvallen'});
+/* ===== Brommapojkarna (BRP, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{BRP:[
+    ['Lucas Cavallius','GK',2005,'SE',46,null,1.01,null,'POR'],['Davor Blažević','GK',1993,'SE',54,null,0.311,null,'POR'],['John Aslan','GK',2008,'SE',38,null,0.034,null,'POR'],
+    ['Andreas Troelsen','DF',2003,'DK',60,null,1.57,null,'LI/MI'],['Oliver Zandén','DF',2001,'SE',61,null,2.52,null,'LI/MI'],['Simon Strand','DF',1993,'SE',60,null,0.840,null,'LD/LI/MD'],['Pavle Vagić','DF',2000,'SE',68,null,3.08,null,'DFC/MCD'],['Jordan Simpson','DF',2003,'SE',51,null,0.300,null,'DFC/LD'],['Benjamin Apiiga','DF',2007,'GH',52,null,0.612,null,'LD/MD'],['Emir El-Kathemi','DF',2006,'SE',44,null,0.076,null,'DFC/LI'],
+    ['Oliver Berg','MD',1993,'NO',65,null,1.68,null,'MCO/MC/EI'],['Kaare Barslund','MD',2004,'DK',58,null,2.22,null,'MC/MCD/DFC'],['Lukas Björklund','MD',2004,'SE',61,null,4.05,null,'MCO/MC'],['Rasmus Örqvist','MD',1999,'SE',55,null,1.16,null,'MCO/MD/ED'],['Wilmer Odefalk','MD',2005,'SE',63,null,5.14,null,'MCO/MI/EI'],['Serge-Junior Ngouali','MD',1992,'GA',62,null,0.719,null,'MCD/MC'],
+    ['Mads Hansen','FW',2002,'DK',59,null,3.14,null,'DC/MCO'],['Ohikhuaeme Okeke','FW',2002,'NO',60,null,3.56,null,'EI/ED'],['Anton Kurochkin','FW',2003,'SE',53,null,1.21,null,'ED/EI/MCO'],['Kamil Sever','FW',2006,'TR',45,null,0.486,null,'DC/ED']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Lucas Cavallius':{EST:49,PAR:46,SAQ:44,REF:52,COL:47},'Davor Blažević':{EST:56,PAR:53,SAQ:51,REF:58,COL:60},'John Aslan':{EST:38,PAR:34,SAQ:32,REF:40,COL:36},
+    'Andreas Troelsen':{RIT:64,TIR:42,PAS:58,REG:60,DEF:61,FÍS:58},'Oliver Zandén':{RIT:66,TIR:44,PAS:59,REG:62,DEF:54,FÍS:56},'Simon Strand':{RIT:60,TIR:42,PAS:56,REG:54,DEF:62,FÍS:61},'Pavle Vagić':{RIT:54,TIR:38,PAS:66,REG:54,DEF:69,FÍS:71},'Jordan Simpson':{RIT:52,TIR:30,PAS:46,REG:46,DEF:54,FÍS:58},'Benjamin Apiiga':{RIT:63,TIR:34,PAS:46,REG:54,DEF:48,FÍS:56},'Emir El-Kathemi':{RIT:50,TIR:28,PAS:40,REG:42,DEF:46,FÍS:48},
+    'Oliver Berg':{RIT:54,TIR:64,PAS:68,REG:66,DEF:40,FÍS:48},'Kaare Barslund':{RIT:54,TIR:40,PAS:56,REG:52,DEF:61,FÍS:60},'Lukas Björklund':{RIT:56,TIR:52,PAS:64,REG:62,DEF:44,FÍS:52},'Rasmus Örqvist':{RIT:60,TIR:57,PAS:56,REG:56,DEF:36,FÍS:50},'Wilmer Odefalk':{RIT:62,TIR:52,PAS:59,REG:65,DEF:34,FÍS:48},'Serge-Junior Ngouali':{RIT:52,TIR:38,PAS:54,REG:50,DEF:63,FÍS:64},
+    'Mads Hansen':{RIT:63,TIR:60,PAS:48,REG:54,DEF:30,FÍS:56},'Ohikhuaeme Okeke':{RIT:68,TIR:56,PAS:50,REG:64,DEF:28,FÍS:50},'Anton Kurochkin':{RIT:56,TIR:50,PAS:50,REG:58,DEF:30,FÍS:44},'Kamil Sever':{RIT:54,TIR:48,PAS:34,REG:42,DEF:26,FÍS:54},
+    'Hlynur Karlsson':{RIT:52,TIR:32,PAS:48,REG:48,DEF:60,FÍS:62},'Oskar Cotton':{RIT:50,TIR:28,PAS:42,REG:44,DEF:51,FÍS:54},'Elias Hedström':{RIT:52,TIR:50,PAS:34,REG:40,DEF:26,FÍS:52}
+  });
+  Object.assign(REAL_FOOT,{'Andreas Troelsen':'I','Oliver Zandén':'I','Hlynur Karlsson':'D','Oskar Cotton':'D','Elias Hedström':'D'});
+  Object.entries({'Lucas Cavallius':3243877,'Davor Blažević':212334,'John Aslan':3360733,'Andreas Troelsen':709885,'Oliver Zandén':796312,'Simon Strand':217272,'Pavle Vagić':343443,'Jordan Simpson':3182008,'Benjamin Apiiga':3313548,'Emir El-Kathemi':3269389,'Oliver Berg':213877,'Kaare Barslund':835095,'Lukas Björklund':882901,'Rasmus Örqvist':304557,'Wilmer Odefalk':3162386,'Serge-Junior Ngouali':212314,'Mads Hansen':709615,'Ohikhuaeme Okeke':1007125,'Anton Kurochkin':3186430,'Kamil Sever':3558620}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{BRP:'4-2-3-1'});
+  Object.assign(CLUBBY,{BREI:K('BREI','Breiðablik','Breiðablik','Kópavogur','IS','#1c3f94','#f4f4f4',50,1)});
+  CLUBBY.BREI.logo='https://cdn.resfu.com/img_data/equipos/11349.png?size=120x&lossy=1';
+  Object.assign(CLUB_LOGO,{BREI:'https://cdn.resfu.com/img_data/equipos/11349.png?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Hlynur Karlsson','BRP','BREI',1,null,['Hlynur Karlsson','DF',2000,'IS',58,null,0.3,null,'DFC']],
+    ['Oskar Cotton','BRP','ODDV',1,null,['Oskar Cotton','DF',2005,'SE',50,null,0.15,null,'DFC']],
+    ['Elias Hedström','BRP','LJUN',1,null,['Elias Hedström','FW',2006,'SE',46,null,0.1,null,'DC']]
+  );
+})();
+/* ===== Degerfors IF (DEG, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{DEG:[
+    ['Matvei Igonen','GK',1996,'EE',60,null,1.48,null,'POR'],['Wille Jakobsson','GK',2002,'SE',50,null,0.621,null,'POR'],
+    ['Daniel Sundgren','DF',1991,'SE',69,null,0.776,null,'LD/DFC/MD'],['Juhani Pikkarainen','DF',1998,'FI',66,null,2.36,null,'DFC/LI'],['Ahmad Faqa','DF',2003,'SY',54,null,1.73,null,'DFC/LD'],['Sebastian Ohlsson','DF',1993,'SE',62,null,0.562,null,'LI/MI'],['Nikolai Skuseth','DF',2004,'NO',48,null,0.560,null,'DFC/LD'],['Nuhu Moro','DF',1996,'GH',53,null,0.590,null,'DFC/MCD'],['Samba Diatara','DF',2004,'SN',37,null,0.015,null,'LI/MI'],['Juan Hernández','DF',2004,'ES',45,null,0.143,null,'LD/DFC/MD'],
+    ['Nahom Netabay','MD',1994,'ER',65,null,1.57,null,'MC/MCO/MI'],['Sebastian Ohlsson','MD',1993,'SE',65,null,1.15,null,'MC/MCD'],['Ludvig Fritzson','MD',1995,'SE',67,null,0.612,null,'MCO/MC'],['Kaj Karlsson','MD',2005,'SE',51,null,1.74,null,'MC/MCO'],['Elias Barsoum','MD',2002,'SE',57,null,2.05,null,'MCO/MD/ED'],['Rami Hajal','MD',2001,'SE',62,null,2.11,null,'MCO/EI/MI'],['Bilal Hussein','MD',2000,'SE',55,null,0.450,null,'MC/MCD'],['Gideon Yiriyon','MD',2007,'GH',33,null,0.199,null,'MCO/MD'],
+    ['Dušan Vukojević','FW',1995,'SE',63,null,1.62,null,'DC/EI/ED'],['Arman Taranis','FW',2001,'DK',58,null,1.17,null,'DC/EI'],['Noel Milleskog','FW',2002,'SE',66,null,3.33,null,'DC/ED/EI'],['Karim Boutera','FW',2005,'DZ',36,null,0.001,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Matvei Igonen':{EST:59,PAR:56,SAQ:54,REF:61,COL:63},'Wille Jakobsson':{EST:51,PAR:48,SAQ:46,REF:54,COL:50},
+    'Daniel Sundgren':{RIT:60,TIR:44,PAS:58,REG:56,DEF:71,FÍS:68},'Juhani Pikkarainen':{RIT:54,TIR:36,PAS:56,REG:52,DEF:68,FÍS:67},'Ahmad Faqa':{RIT:56,TIR:30,PAS:46,REG:46,DEF:55,FÍS:58},'Sebastian Ohlsson':{RIT:63,TIR:44,PAS:58,REG:56,DEF:61,FÍS:58},'Nikolai Skuseth':{RIT:52,TIR:28,PAS:44,REG:44,DEF:55,FÍS:58},'Nuhu Moro':{RIT:52,TIR:30,PAS:44,REG:42,DEF:56,FÍS:58},'Samba Diatara':{RIT:48,TIR:26,PAS:36,REG:38,DEF:42,FÍS:46},'Juan Hernández':{RIT:50,TIR:28,PAS:40,REG:42,DEF:46,FÍS:48},
+    'Nahom Netabay':{RIT:58,TIR:56,PAS:67,REG:64,DEF:46,FÍS:52},'Ludvig Fritzson':{RIT:56,TIR:61,PAS:68,REG:64,DEF:44,FÍS:52},'Kaj Karlsson':{RIT:59,TIR:46,PAS:56,REG:54,DEF:44,FÍS:50},'Elias Barsoum':{RIT:59,TIR:52,PAS:56,REG:61,DEF:34,FÍS:46},'Rami Hajal':{RIT:60,TIR:54,PAS:63,REG:64,DEF:36,FÍS:48},'Bilal Hussein':{RIT:54,TIR:38,PAS:60,REG:54,DEF:50,FÍS:56},'Gideon Yiriyon':{RIT:44,TIR:32,PAS:40,REG:40,DEF:28,FÍS:38},
+    'Dušan Vukojević':{RIT:58,TIR:62,PAS:48,REG:54,DEF:30,FÍS:65},'Arman Taranis':{RIT:61,TIR:57,PAS:44,REG:50,DEF:28,FÍS:54},'Noel Milleskog':{RIT:69,TIR:65,PAS:48,REG:58,DEF:30,FÍS:54},'Karim Boutera':{RIT:42,TIR:38,PAS:28,REG:32,DEF:24,FÍS:40},
+    'Zakaria Salifu':{RIT:58,TIR:44,PAS:34,REG:42,DEF:26,FÍS:46},'Alexander Hedén Lindskog':{RIT:48,TIR:28,PAS:38,REG:40,DEF:46,FÍS:55},'Olle Leonardsson':{RIT:44,TIR:38,PAS:28,REG:32,DEF:24,FÍS:38}
+  });
+  Object.assign(REAL_FOOT,{'Juhani Pikkarainen':'I','Sebastian Ohlsson':'I','Samba Diatara':'I','Zakaria Salifu':'D','Alexander Hedén Lindskog':'D','Olle Leonardsson':'D'});
+  Object.entries({'Matvei Igonen':175557,'Wille Jakobsson':737197,'Daniel Sundgren':213326,'Juhani Pikkarainen':344608,'Ahmad Faqa':3182005,'Sebastian Ohlsson':221528,'Nikolai Skuseth':3171539,'Nuhu Moro':380483,'Samba Diatara':3602595,'Juan Hernández':3461179,'Nahom Netabay':219601,'Ludvig Fritzson':280431,'Kaj Karlsson':3181931,'Elias Barsoum':3181978,'Rami Hajal':827673,'Bilal Hussein':430946,'Gideon Yiriyon':3709850,'Dušan Vukojević':232752,'Arman Taranis':707627,'Noel Milleskog':894873,'Karim Boutera':3210161}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{DEG:'4-3-3'});
+  Object.assign(CLUBBY,{ROSE:K('ROSE','FC Rosengård','Rosengård','Malmö','SE','#1c6b3d','#f4f4f4',38,3)});
+  CLUBBY.ROSE.logo='https://cdn.resfu.com/img_data/equipos/61923.png?size=120x&lossy=1';
+  Object.assign(CLUB_LOGO,{ROSE:'https://cdn.resfu.com/img_data/equipos/61923.png?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Noel Milleskog','SIR','DEG',1,'Titular',['Noel Milleskog','FW',2002,'SE',66,null,3.33,null,'DC/ED/EI']],
+    ['Rami Hajal','SDJ','DEG',1,'Rotación',['Rami Hajal','MD',2001,'SE',62,null,2.11,null,'MCO/EI/MI']],
+    ['Nikolai Skuseth','SAR','DEG',1,'Rotación',['Nikolai Skuseth','DF',2004,'NO',48,null,0.560,null,'DFC/LD']],
+    ['Zakaria Salifu','DEG','ROSE',1,null,['Zakaria Salifu','FW',2005,'SE',46,null,0.1,null,'DC/EI']],
+    ['Alexander Hedén Lindskog','DEG','FBKK',1,null,['Alexander Hedén Lindskog','DF',2005,'SE',44,null,0.08,null,'DFC']],
+    ['Olle Leonardsson','DEG','SINT',1,null,['Olle Leonardsson','FW',2006,'SE',41,null,0.05,null,'DC']]
+  );
+})();
+/* ===== Djurgårdens IF (DIF, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{DIF:[
+    ['Jacob Rinne','GK',1993,'SE',66,null,1.25,null,'POR'],['Lukas Jonsson','GK',1993,'SE',63,null,0.251,null,'POR'],
+    ['Miro Tenho','DF',1995,'FI',71,null,4.24,null,'DFC'],['Anton Ståhl','DF',1994,'FI',75,null,4.16,null,'LD/MD'],['Jacob Une-Larsson','DF',1994,'SE',68,null,2.15,null,'DFC/LD'],['Piotr Johansson','DF',1995,'SE',64,null,1.23,null,'LD/LI/MD'],['Mattias Larsson','DF',2003,'SE',61,null,2.52,null,'LI/MI'],['Malcolm Marques','DF',2001,'SE',50,null,0.349,null,'DFC/LD'],['Daryl Nana','DF',2007,'DE',45,null,0.016,null,'DFC'],
+    ['Matias Siltanen','MD',2007,'FI',67,null,18.85,null,'MC/MCO'],['Bo Åsulv','MD',2004,'NO',58,null,3.31,null,'MC/MCD'],['Daniel Stensson','MD',1997,'SE',67,null,3.57,null,'MCD/MC'],['Patric Åslund','MD',2002,'SE',62,null,4.51,null,'MCO/MD/ED'],['Peter Langhoff','MD',2004,'DK',57,null,2.46,null,'MCO/MI/EI'],['Christos Almyras','MD',2005,'GR',45,null,0.602,null,'MC/MCO'],
+    ['Kristian Lien','FW',2001,'NO',63,null,5.37,null,'DC/MCO'],['Oskar Fallenius','FW',2002,'SE',64,null,3.79,null,'ED/EI/DC'],['Jeppe Okkels','FW',1999,'DK',60,null,3.72,null,'EI/ED/MI'],['Charlie Rosenqvist','FW',2007,'SE',42,null,0.007,null,'DC/ED'],['Ademola Abdulmalik','FW',2003,'EN',48,null,0.207,null,'DC/EI'],['Sondre Ringberg','FW',1999,'NO',53,null,0.201,null,'DC/EI']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Jacob Rinne':{EST:66,PAR:63,SAQ:60,REF:68,COL:65},'Lukas Jonsson':{EST:63,PAR:60,SAQ:58,REF:62,COL:65},
+    'Miro Tenho':{RIT:54,TIR:38,PAS:60,REG:52,DEF:73,FÍS:72},'Anton Ståhl':{RIT:76,TIR:50,PAS:62,REG:64,DEF:74,FÍS:68},'Jacob Une-Larsson':{RIT:56,TIR:36,PAS:56,REG:52,DEF:70,FÍS:68},'Piotr Johansson':{RIT:66,TIR:46,PAS:58,REG:60,DEF:63,FÍS:62},'Mattias Larsson':{RIT:64,TIR:40,PAS:56,REG:60,DEF:56,FÍS:58},'Malcolm Marques':{RIT:52,TIR:28,PAS:44,REG:44,DEF:52,FÍS:56},'Daryl Nana':{RIT:50,TIR:26,PAS:40,REG:42,DEF:48,FÍS:50},
+    'Matias Siltanen':{RIT:64,TIR:58,PAS:70,REG:68,DEF:48,FÍS:54},'Bo Åsulv':{RIT:56,TIR:42,PAS:56,REG:54,DEF:60,FÍS:62},'Daniel Stensson':{RIT:54,TIR:42,PAS:65,REG:56,DEF:68,FÍS:66},'Patric Åslund':{RIT:60,TIR:56,PAS:64,REG:62,DEF:40,FÍS:50},'Peter Langhoff':{RIT:59,TIR:52,PAS:58,REG:60,DEF:36,FÍS:46},'Christos Almyras':{RIT:50,TIR:40,PAS:48,REG:46,DEF:36,FÍS:42},
+    'Kristian Lien':{RIT:56,TIR:62,PAS:46,REG:52,DEF:30,FÍS:65},'Oskar Fallenius':{RIT:67,TIR:58,PAS:52,REG:64,DEF:30,FÍS:50},'Jeppe Okkels':{RIT:63,TIR:55,PAS:54,REG:61,DEF:30,FÍS:48},'Charlie Rosenqvist':{RIT:46,TIR:42,PAS:30,REG:36,DEF:24,FÍS:42},'Ademola Abdulmalik':{RIT:59,TIR:46,PAS:36,REG:48,DEF:26,FÍS:44},'Sondre Ringberg':{RIT:57,TIR:52,PAS:40,REG:46,DEF:28,FÍS:50},
+    'Nino Žugelj':{RIT:65,TIR:56,PAS:52,REG:62,DEF:30,FÍS:46},'Max Croon':{EST:44,PAR:40,SAQ:38,REF:46,COL:42},'Kalipha Jawla':{RIT:54,TIR:52,PAS:34,REG:42,DEF:26,FÍS:48},'Saeed Abueljanah':{RIT:46,TIR:40,PAS:30,REG:36,DEF:24,FÍS:38}
+  });
+  Object.assign(REAL_FOOT,{'Mattias Larsson':'I','Nino Žugelj':'D','Max Croon':'D','Kalipha Jawla':'D','Saeed Abueljanah':'D'});
+  Object.entries({'Jacob Rinne':211810,'Lukas Jonsson':280442,'Miro Tenho':214250,'Anton Ståhl':213825,'Jacob Une-Larsson':321699,'Piotr Johansson':231815,'Mattias Larsson':3180516,'Malcolm Marques':699456,'Daryl Nana':3437920,'Matias Siltanen':3222173,'Bo Åsulv':3267150,'Daniel Stensson':280527,'Patric Åslund':886934,'Peter Langhoff':964416,'Christos Almyras':3219323,'Kristian Lien':858053,'Oskar Fallenius':831873,'Jeppe Okkels':320716,'Charlie Rosenqvist':3360800,'Sondre Ringberg':654567}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{DIF:'4-3-3'});
+  REAL_LOANS.push(
+    ['Nino Žugelj','DIF','IFK',1,null,['Nino Žugelj','FW',2001,'SI',62,null,0.8,null,'ED/EI']],
+    ['Max Croon','DIF','GEFL',1,null,['Max Croon','GK',2007,'SE',45,null,0.05,null,'POR']],
+    ['Kalipha Jawla','DIF','OSTE',1,null,['Kalipha Jawla','FW',2006,'SE',49,null,0.1,null,'DC']],
+    ['Saeed Abueljanah','DIF','ARLA',1,null,['Saeed Abueljanah','FW',2008,'SE',40,null,0.03,null,'DC']]
+  );
+})();
+/* ===== GAIS (GAIS, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{GAIS:[
+    ['Mergim Krasniqi','GK',1992,'SE',70,null,1.07,null,'POR'],['Aske Hermansen','GK',2004,'DK',51,null,1.21,null,'POR'],['Adin Tihić','GK',2008,'SE',28,null,0.001,null,'POR'],
+    ['August Wängberg','DF',1994,'SE',71,null,1.82,null,'LD/DFC/MD'],['Robin Frej','DF',1998,'SE',67,null,2.80,null,'DFC/LI'],['Oskar Ågren','DF',1998,'SE',63,null,1.92,null,'DFC/LD'],['Michael Brienne','DF',2002,'CA',61,null,2.70,null,'LI/MI'],['Filip Beckman','DF',2003,'SE',61,null,2.93,null,'DFC'],['Anes Čardaklija','DF',2005,'BA',52,null,2.19,null,'DFC'],['Robin Thomasson','DF',1999,'SE',61,null,1.16,null,'LI/MI'],
+    ['William Milovanovic','MD',2002,'SE',67,null,5.14,null,'MC/MCO/MD'],['Joackim Åberg','MD',1998,'SE',62,null,2.02,null,'MCD/MC'],['Kevin Holmén','MD',2002,'SE',62,null,3.78,null,'MC/MCD'],['Róbert Thorkelsson','MD',2005,'IS',57,null,3.41,null,'MCD/DFC'],['Harun Sletsjøe','MD',2000,'NO',60,null,1.85,null,'MC/MCD'],['Christos Gravius','MD',1998,'SE',61,null,1.90,null,'MC/MCD'],['Jonas Lindberg','MD',1989,'SE',50,null,0.032,null,'MCO/MI'],
+    ['Gustav Lundgren','FW',1995,'SE',72,null,4.83,null,'ED/EI/MCO'],['Rasmus Niklasson','FW',2003,'SE',57,null,4.67,null,'DC/ED'],['Simon Salter','FW',2000,'CA',63,null,2.98,null,'DC/MCO'],['Nikola Vasić','FW',1991,'SE',65,null,0.746,null,'DC'],['Oscar Pettersson','FW',2000,'SE',57,null,1.51,null,'ED/EI/DC'],['Simon Jørgensen','FW',2005,'DK',49,null,1.51,null,'DC/MCO'],['Blessing Dankwah','FW',2006,'GH',49,null,1.01,null,'DC/ED'],['Lucas Hedlund','FW',1998,'SE',54,null,0.896,null,'DC/EI']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Mergim Krasniqi':{EST:69,PAR:66,SAQ:63,REF:71,COL:72},'Aske Hermansen':{EST:54,PAR:51,SAQ:48,REF:52,COL:50},'Adin Tihić':{EST:28,PAR:25,SAQ:23,REF:30,COL:26},
+    'August Wängberg':{RIT:62,TIR:46,PAS:60,REG:58,DEF:73,FÍS:72},'Robin Frej':{RIT:56,TIR:36,PAS:56,REG:52,DEF:69,FÍS:68},'Oskar Ågren':{RIT:56,TIR:34,PAS:54,REG:52,DEF:65,FÍS:64},'Michael Brienne':{RIT:64,TIR:44,PAS:56,REG:60,DEF:56,FÍS:60},'Filip Beckman':{RIT:52,TIR:32,PAS:50,REG:48,DEF:62,FÍS:64},'Anes Čardaklija':{RIT:54,TIR:30,PAS:44,REG:46,DEF:52,FÍS:56},'Robin Thomasson':{RIT:60,TIR:38,PAS:58,REG:56,DEF:62,FÍS:58},
+    'William Milovanovic':{RIT:62,TIR:58,PAS:70,REG:66,DEF:54,FÍS:68},'Joackim Åberg':{RIT:54,TIR:40,PAS:58,REG:52,DEF:64,FÍS:63},'Kevin Holmén':{RIT:58,TIR:50,PAS:63,REG:58,DEF:54,FÍS:61},'Róbert Thorkelsson':{RIT:56,TIR:34,PAS:52,REG:50,DEF:58,FÍS:60},'Harun Sletsjøe':{RIT:56,TIR:42,PAS:62,REG:54,DEF:56,FÍS:61},'Christos Gravius':{RIT:54,TIR:38,PAS:63,REG:56,DEF:59,FÍS:56},'Jonas Lindberg':{RIT:48,TIR:50,PAS:56,REG:52,DEF:34,FÍS:42},
+    'Gustav Lundgren':{RIT:74,TIR:67,PAS:58,REG:71,DEF:32,FÍS:52},'Rasmus Niklasson':{RIT:63,TIR:59,PAS:46,REG:54,DEF:28,FÍS:54},'Simon Salter':{RIT:56,TIR:62,PAS:44,REG:50,DEF:30,FÍS:65},'Nikola Vasić':{RIT:50,TIR:66,PAS:46,REG:50,DEF:30,FÍS:68},'Oscar Pettersson':{RIT:63,TIR:54,PAS:48,REG:60,DEF:30,FÍS:48},'Simon Jørgensen':{RIT:58,TIR:50,PAS:38,REG:44,DEF:26,FÍS:46},'Blessing Dankwah':{RIT:61,TIR:48,PAS:34,REG:44,DEF:28,FÍS:56},'Lucas Hedlund':{RIT:54,TIR:54,PAS:38,REG:44,DEF:28,FÍS:58},
+    'Ibrahima Diabate':{RIT:52,TIR:54,PAS:36,REG:44,DEF:28,FÍS:60},'Kees Sims':{EST:55,PAR:52,SAQ:50,REF:57,COL:51},'Shalom Ekong':{RIT:60,TIR:48,PAS:40,REG:50,DEF:28,FÍS:46},'Douglas Bengtsson':{RIT:50,TIR:44,PAS:32,REG:38,DEF:26,FÍS:48}
+  });
+  Object.assign(REAL_FOOT,{'Michael Brienne':'I','Robin Thomasson':'I','Róbert Thorkelsson':'I','Christos Gravius':'I','Gustav Lundgren':'I','Ibrahima Diabate':'D','Kees Sims':'D','Shalom Ekong':'D','Douglas Bengtsson':'D'});
+  Object.entries({'Mergim Krasniqi':289569,'Aske Hermansen':885742,'Adin Tihić':3495738,'August Wängberg':218865,'Robin Frej':373553,'Oskar Ågren':963123,'Michael Brienne':961838,'Filip Beckman':3181501,'Anes Čardaklija':3235408,'Robin Thomasson':3395049,'William Milovanovic':796432,'Joackim Åberg':699282,'Kevin Holmén':796306,'Róbert Thorkelsson':3245968,'Harun Sletsjøe':898581,'Christos Gravius':275019,'Jonas Lindberg':222402,'Gustav Lundgren':3242188,'Rasmus Niklasson':3182074,'Simon Salter':3161942,'Nikola Vasić':305394,'Oscar Pettersson':319452,'Simon Jørgensen':3587442,'Blessing Dankwah':3536218,'Lucas Hedlund':323399}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{GAIS:'4-2-3-1'});
+  Object.assign(CLUBBY,{HAUG:K('HAUG','FK Haugesund','Haugesund','Haugesund','NO','#f4f4f4','#1c3f94',50,1)});
+  CLUBBY.HAUG.logo='https://cdn.resfu.com/img_data/equipos/3020.png?size=120x&lossy=1';
+  Object.assign(CLUB_LOGO,{HAUG:'https://cdn.resfu.com/img_data/equipos/3020.png?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Ibrahima Diabate','GAIS','ERZU',1,null,['Ibrahima Diabate','FW',2001,'CI',56,null,0.3,null,'DC']],
+    ['Kees Sims','GAIS','HAUG',1,null,['Kees Sims','GK',2003,'NZ',55,null,0.4,null,'POR']],
+    ['Shalom Ekong','GAIS','GIFS',1,null,['Shalom Ekong','FW',2005,'NG',52,null,0.2,null,'EI/DC']],
+    ['Douglas Bengtsson','GAIS','UTSI',1,null,['Douglas Bengtsson','FW',2006,'SE',48,null,0.1,null,'DC']]
+  );
+})();
+/* ===== BK Häcken (BKH, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{BKH:[
+    ['Etrit Berisha','GK',1989,'AL',64,null,0.100,null,'POR'],['Andreas Linde','GK',1993,'SE',58,null,0.762,null,'POR'],['David Andersson','GK',2003,'SE',54,null,1.78,null,'POR'],
+    ['Adam Lundqvist','DF',1994,'SE',68,null,1.98,null,'LI/MI'],['Filip Helander','DF',1993,'SE',62,null,1.28,null,'DFC'],['Brice Wembangomo','DF',1997,'NO',60,null,2.54,null,'LD/LI/MD'],['Leo Väisänen','DF',1997,'FI',56,null,4.71,null,'DFC/LD'],['Harry Hilvenius','DF',2007,'SE',48,null,0.833,null,'DFC/LI'],['Olle Samuelsson','DF',2004,'SE',55,null,2.16,null,'DFC'],['Filip Öhman','DF',2008,'SE',46,null,0.787,null,'LD/MD'],
+    ['Julius Lindberg','MD',1999,'SE',68,null,4.46,null,'MCO/ED/EI'],['Mikkel Rygaard','MD',1991,'DK',71,null,1.12,null,'MCO/MC'],['Sander Hestnes','MD',1996,'NO',72,null,3.33,null,'MC/MCD'],['David Seger','MD',1999,'SE',67,null,3.00,null,'MC/MD/MCD'],['Abdoulaye Doumbia','MD',2008,'CI',32,null,0.150,null,'MCD/MC'],
+    ['Adrian Svanbäck','FW',2004,'FI',63,null,6.44,null,'DC/EI'],['Gustav Lindgren','FW',2001,'SE',59,null,0.968,null,'DC/ED'],['Mikkel Agger','FW',2000,'DK',66,null,3.78,null,'DC/MCO'],['Markus Haaland','FW',2005,'NO',50,null,1.85,null,'DC'],['Bamir Sadiku','FW',2007,'SE',37,null,0.007,null,'DC/EI']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Etrit Berisha':{EST:62,PAR:59,SAQ:57,REF:64,COL:66},'Andreas Linde':{EST:63,PAR:60,SAQ:58,REF:61,COL:59},'David Andersson':{EST:55,PAR:52,SAQ:50,REF:58,COL:53},
+    'Adam Lundqvist':{RIT:70,TIR:48,PAS:64,REG:62,DEF:66,FÍS:62},'Filip Helander':{RIT:52,TIR:34,PAS:56,REG:48,DEF:70,FÍS:69},'Brice Wembangomo':{RIT:68,TIR:44,PAS:54,REG:58,DEF:56,FÍS:64},'Leo Väisänen':{RIT:56,TIR:34,PAS:54,REG:52,DEF:66,FÍS:65},'Harry Hilvenius':{RIT:54,TIR:28,PAS:44,REG:46,DEF:50,FÍS:56},'Olle Samuelsson':{RIT:54,TIR:30,PAS:48,REG:48,DEF:56,FÍS:58},'Filip Öhman':{RIT:59,TIR:30,PAS:44,REG:50,DEF:44,FÍS:50},
+    'Julius Lindberg':{RIT:68,TIR:56,PAS:65,REG:70,DEF:36,FÍS:52},'Mikkel Rygaard':{RIT:54,TIR:70,PAS:75,REG:68,DEF:40,FÍS:48},'Sander Hestnes':{RIT:60,TIR:56,PAS:71,REG:62,DEF:68,FÍS:73},'David Seger':{RIT:58,TIR:50,PAS:68,REG:60,DEF:60,FÍS:65},'Abdoulaye Doumbia':{RIT:40,TIR:28,PAS:38,REG:38,DEF:42,FÍS:48},
+    'Adrian Svanbäck':{RIT:66,TIR:61,PAS:48,REG:63,DEF:28,FÍS:50},'Gustav Lindgren':{RIT:64,TIR:60,PAS:44,REG:50,DEF:28,FÍS:52},'Mikkel Agger':{RIT:54,TIR:68,PAS:46,REG:52,DEF:30,FÍS:65},'Markus Haaland':{RIT:54,TIR:52,PAS:36,REG:44,DEF:28,FÍS:58},'Bamir Sadiku':{RIT:46,TIR:40,PAS:30,REG:36,DEF:26,FÍS:44},
+    'Pontus Dahbo':{RIT:58,TIR:52,PAS:50,REG:56,DEF:32,FÍS:48},'Nikola Zečević':{RIT:56,TIR:34,PAS:52,REG:52,DEF:58,FÍS:60}
+  });
+  Object.assign(REAL_FOOT,{'Etrit Berisha':'I','Adam Lundqvist':'I','Filip Helander':'I','Harry Hilvenius':'I','Mikkel Rygaard':'I','Pontus Dahbo':'D','Nikola Zečević':'D'});
+  Object.entries({'Etrit Berisha':147584,'Andreas Linde':212379,'David Andersson':3181921,'Adam Lundqvist':195373,'Filip Helander':152516,'Brice Wembangomo':232586,'Leo Väisänen':290744,'Harry Hilvenius':3403153,'Olle Samuelsson':3181540,'Filip Öhman':3361223,'Julius Lindberg':922485,'Mikkel Rygaard':213770,'Sander Hestnes':229730,'David Seger':447669,'Abdoulaye Doumbia':3411659,'Adrian Svanbäck':3181669,'Gustav Lindgren':3160967,'Mikkel Agger':967551,'Markus Haaland':3165772,'Bamir Sadiku':3461285}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{BKH:'4-3-3'});
+  Object.assign(CLUBBY,{VITS:K2('VITS','Vitesse','Vitesse','Arnhem','NL','#f2d31b','#1a1a1a',54),RNIS:K2('RNIS','Radnički Niš','Radnički Niš','Niš','RS','#d4192b','#f4f4f4',48)});
+  CLUBBY.VITS.logo='https://cdn.resfu.com/img_data/equipos/2728.png?size=120x&lossy=1';
+  CLUBBY.RNIS.logo='https://cdn.resfu.com/img_data/equipos/13464.png?size=120x&lossy=1';
+  Object.assign(CLUB_LOGO,{VITS:'https://cdn.resfu.com/img_data/equipos/2728.png?size=120x&lossy=1',RNIS:'https://cdn.resfu.com/img_data/equipos/13464.png?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Markus Haaland','BRN','BKH',1,'Rotación',['Markus Haaland','FW',2005,'NO',50,null,1.85,null,'DC']],
+    ['Pontus Dahbo','BKH','VITS',1,null,['Pontus Dahbo','MD',2000,'SE',55,null,0.4,null,'MCO/MC']],
+    ['Nikola Zečević','BKH','RNIS',1,null,['Nikola Zečević','DF',2002,'RS',58,null,0.5,null,'DFC']]
+  );
+})();
+/* ===== Halmstads BK (HAL, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{HAL:[
+    ['Tim Rönning','GK',1999,'SE',58,null,1.57,null,'POR'],['Adam Wihed','GK',2007,'SE',33,null,0.001,null,'POR'],
+    ['Pascal Gregor','DF',1994,'DK',65,null,1.17,null,'DFC/LD'],['Erko Tougjas','DF',2003,'EE',67,null,5.21,null,'DFC'],['André Boman','DF',2002,'SE',61,null,2.16,null,'LD/MD/LI'],['Rami Kaib','DF',1997,'TN',59,null,1.45,null,'LI/MI'],['Gabriel Wallentin','DF',2001,'SE',62,null,2.08,null,'DFC/LD'],['Filip Schyberg','DF',1999,'SE',61,null,1.66,null,'DFC/MCD'],
+    ['Joel Allansson','MD',1993,'SE',66,null,1.27,null,'MC/MD/MCD'],['Rocco Ascone','MD',2003,'FR',46,null,1.13,null,'MCO/MC'],['Tom Trybull','MD',1993,'DE',61,null,0.577,null,'MCD/MC'],['Niilo Mäenpää','MD',1998,'FI',59,null,1.26,null,'MC/MCD/MCO'],['Albin Nilsson','MD',2002,'SE',56,null,2.00,null,'MCO/MD/ED'],
+    ['Adi Zeljković','FW',1998,'SE',69,null,3.43,null,'DC/EI/ED'],['Omar Faraj','FW',2002,'PS',62,null,1.78,null,'DC/MCO'],['Joel Nilsson','FW',1994,'SE',62,null,0.846,null,'ED/LD/MD'],['Ludvig Arvidsson','FW',2008,'SE',41,null,0.480,null,'DC/ED'],['Malte Persson','FW',2006,'SE',46,null,0.512,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Tim Rönning':{EST:64,PAR:61,SAQ:59,REF:62,COL:60},'Adam Wihed':{EST:36,PAR:32,SAQ:30,REF:38,COL:34},
+    'Pascal Gregor':{RIT:54,TIR:36,PAS:56,REG:52,DEF:67,FÍS:65},'Erko Tougjas':{RIT:56,TIR:34,PAS:52,REG:50,DEF:68,FÍS:70},'André Boman':{RIT:65,TIR:44,PAS:56,REG:61,DEF:56,FÍS:58},'Rami Kaib':{RIT:64,TIR:44,PAS:54,REG:60,DEF:54,FÍS:56},'Gabriel Wallentin':{RIT:54,TIR:32,PAS:50,REG:50,DEF:64,FÍS:63},'Filip Schyberg':{RIT:52,TIR:30,PAS:48,REG:48,DEF:62,FÍS:63},
+    'Joel Allansson':{RIT:56,TIR:54,PAS:68,REG:60,DEF:56,FÍS:64},'Rocco Ascone':{RIT:52,TIR:46,PAS:55,REG:58,DEF:36,FÍS:44},'Tom Trybull':{RIT:52,TIR:38,PAS:56,REG:52,DEF:64,FÍS:63},'Niilo Mäenpää':{RIT:56,TIR:44,PAS:62,REG:56,DEF:54,FÍS:60},'Albin Nilsson':{RIT:58,TIR:48,PAS:58,REG:61,DEF:36,FÍS:46},
+    'Adi Zeljković':{RIT:71,TIR:68,PAS:50,REG:67,DEF:30,FÍS:52},'Omar Faraj':{RIT:56,TIR:62,PAS:44,REG:50,DEF:30,FÍS:65},'Joel Nilsson':{RIT:65,TIR:52,PAS:54,REG:62,DEF:46,FÍS:56},'Ludvig Arvidsson':{RIT:56,TIR:46,PAS:32,REG:40,DEF:26,FÍS:48},'Malte Persson':{RIT:50,TIR:44,PAS:30,REG:38,DEF:24,FÍS:48},
+    'Albin Ahlstrand':{RIT:54,TIR:46,PAS:48,REG:52,DEF:30,FÍS:48},'Måns Andersson':{RIT:52,TIR:42,PAS:40,REG:46,DEF:28,FÍS:46}
+  });
+  Object.assign(REAL_FOOT,{'Rami Kaib':'I','Albin Ahlstrand':'D','Måns Andersson':'D'});
+  Object.entries({'Tim Rönning':361574,'Adam Wihed':3360833,'Pascal Gregor':230522,'Erko Tougjas':821950,'André Boman':853927,'Rami Kaib':290553,'Gabriel Wallentin':699219,'Filip Schyberg':699380,'Joel Allansson':152470,'Rocco Ascone':886154,'Tom Trybull':88005,'Niilo Mäenpää':291455,'Albin Nilsson':796417,'Adi Zeljković':370827,'Omar Faraj':894695,'Joel Nilsson':372412,'Ludvig Arvidsson':3586986,'Malte Persson':3403113}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{HAL:'4-2-3-1'});
+  Object.assign(CLUBBY,{LAHO:K2('LAHO','Laholms FK','Laholm','Laholm','SE','#f4f4f4','#d4192b',36)});
+  CLUBBY.LAHO.logo='https://cdn.resfu.com/img_data/equipos/84253.png?size=120x&lossy=1';
+  Object.assign(CLUB_LOGO,{LAHO:'https://cdn.resfu.com/img_data/equipos/84253.png?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Albin Ahlstrand','HAL','HASS',1,null,['Albin Ahlstrand','MD',2005,'SE',52,null,0.1,null,'MD/MI']],
+    ['Måns Andersson','HAL','LAHO',1,null,['Måns Andersson','FW',2005,'SE',50,null,0.08,null,'DC']]
+  );
+})();
+/* ===== Hammarby IF (HAM, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{HAM:[
+    ['Werner Hahn','GK',1992,'SR',70,null,1.15,null,'POR'],['Filip Jakobsson','GK',1999,'SE',54,null,0.855,null,'POR'],
+    ['Victor Eriksson','DF',2000,'SE',72,null,6.39,null,'DFC/LD'],['Noah Persson','DF',2003,'SE',72,null,11.20,null,'LI/MI/EI'],['Hampus Skoglund','DF',2004,'SE',69,null,7.99,null,'LD/MD/ED'],['Frederik Winther','DF',2001,'DK',57,null,2.78,null,'DFC/LI'],['Ibrahima Fofana','DF',2002,'GN',59,null,2.56,null,'DFC/MCD'],['Oscar Steinke','DF',2006,'SE',52,null,0.620,null,'LD/MD'],
+    ['Nahir Besara','MD',1991,'SE',75,null,1.61,null,'MCO/MC/EI'],['Markus Karlsson','MD',2004,'SE',69,null,13.10,null,'MC/MCD/MD'],['Frank Junior Adjei','MD',2004,'GH',62,null,6.01,null,'MCO/ED/MD'],['Tesfaldet Tekie','MD',1997,'ER',70,null,5.05,null,'MC/MCD'],['Oscar Johansson','MD',1995,'SE',68,null,2.46,null,'MCO/MD/ED'],['Abdelrahman Boudri','MD',2004,'SE',62,null,7.44,null,'MCO/EI'],
+    ['Paulos Abraham','FW',2002,'SE',68,null,9.37,null,'EI/ED/DC'],['Victor Lind','FW',2003,'DK',63,null,7.64,null,'DC/ED/EI'],['Montader Madjed','FW',2005,'IQ',59,null,6.52,null,'ED/EI/MCO'],['Oskar Moczarny','FW',2006,'SE',47,null,0.100,null,'DC/EI'],['Oliver Hagen','FW',2006,'NO',49,null,1.07,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Werner Hahn':{EST:69,PAR:66,SAQ:63,REF:71,COL:72},'Filip Jakobsson':{EST:55,PAR:52,SAQ:50,REF:58,COL:53},
+    'Victor Eriksson':{RIT:58,TIR:40,PAS:60,REG:54,DEF:74,FÍS:73},'Noah Persson':{RIT:76,TIR:50,PAS:71,REG:73,DEF:58,FÍS:64},'Hampus Skoglund':{RIT:72,TIR:48,PAS:58,REG:64,DEF:68,FÍS:70},'Frederik Winther':{RIT:54,TIR:32,PAS:54,REG:50,DEF:64,FÍS:62},'Ibrahima Fofana':{RIT:54,TIR:32,PAS:50,REG:48,DEF:61,FÍS:64},'Oscar Steinke':{RIT:60,TIR:34,PAS:48,REG:50,DEF:55,FÍS:56},
+    'Nahir Besara':{RIT:56,TIR:73,PAS:77,REG:72,DEF:42,FÍS:52},'Markus Karlsson':{RIT:56,TIR:50,PAS:71,REG:64,DEF:67,FÍS:69},'Frank Junior Adjei':{RIT:65,TIR:54,PAS:58,REG:63,DEF:34,FÍS:50},'Tesfaldet Tekie':{RIT:58,TIR:54,PAS:72,REG:68,DEF:56,FÍS:58},'Oscar Johansson':{RIT:58,TIR:58,PAS:70,REG:67,DEF:40,FÍS:50},'Abdelrahman Boudri':{RIT:60,TIR:52,PAS:56,REG:64,DEF:32,FÍS:46},
+    'Paulos Abraham':{RIT:72,TIR:65,PAS:52,REG:70,DEF:30,FÍS:50},'Victor Lind':{RIT:65,TIR:62,PAS:44,REG:52,DEF:28,FÍS:54},'Montader Madjed':{RIT:64,TIR:52,PAS:52,REG:62,DEF:30,FÍS:44},'Oskar Moczarny':{RIT:58,TIR:46,PAS:32,REG:40,DEF:24,FÍS:46},'Oliver Hagen':{RIT:50,TIR:46,PAS:30,REG:38,DEF:26,FÍS:56},
+    'Viktor Đukanović':{RIT:68,TIR:54,PAS:50,REG:65,DEF:30,FÍS:46},'Jonathan Karlsson':{RIT:48,TIR:28,PAS:38,REG:40,DEF:48,FÍS:55},'Wilmer Gibson':{RIT:46,TIR:40,PAS:30,REG:36,DEF:24,FÍS:44}
+  });
+  Object.assign(REAL_FOOT,{'Noah Persson':'I','Frederik Winther':'I','Montader Madjed':'I','Viktor Đukanović':'D','Jonathan Karlsson':'D','Wilmer Gibson':'D'});
+  Object.entries({'Werner Hahn':139543,'Filip Jakobsson':518995,'Victor Eriksson':865989,'Noah Persson':3134289,'Hampus Skoglund':3194713,'Frederik Winther':669805,'Ibrahima Fofana':893770,'Oscar Steinke':3199141,'Nahir Besara':225842,'Markus Karlsson':3181962,'Frank Junior Adjei':3211905,'Tesfaldet Tekie':274648,'Oscar Johansson':954244,'Abdelrahman Boudri':3191030,'Paulos Abraham':892613,'Victor Lind':709903,'Montader Madjed':1023826,'Oliver Hagen':3379371}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(FORM_MAIN,{HAM:'4-2-3-1'});
+  Object.assign(CLUBBY,{HTFF:K2('HTFF','Hammarby TFF','Hammarby TFF','Estocolmo','SE','#1a8a3a','#f4f4f4',36)});
+  CLUBBY.HTFF.logo='https://cdn.resfu.com/img_data/equipos/142349.png?size=120x&lossy=1';
+  Object.assign(CLUB_LOGO,{HTFF:'https://cdn.resfu.com/img_data/equipos/142349.png?size=120x&lossy=1'});
+  REAL_LOANS.push(
+    ['Victor Lind','MDJ','HAM',1,'Titular',['Victor Lind','FW',2003,'DK',63,null,7.64,null,'DC/ED/EI']],
+    ['Viktor Đukanović','HAM','GYO',1,null,['Viktor Đukanović','FW',2001,'ME',64,null,0.8,null,'EI/ED']],
+    ['Jonathan Karlsson','HAM','VSK',1,null,['Jonathan Karlsson','DF',2003,'SE',52,null,0.2,null,'DFC']],
+    ['Wilmer Gibson','HAM','HTFF',1,null,['Wilmer Gibson','FW',2005,'SE',44,null,0.05,null,'DC']]
+  );
 })();
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
