@@ -686,6 +686,12 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .act-b{display:block;width:100%;text-align:left;padding:14px 16px;border-radius:14px;background:rgba(220,240,228,.05);border:1px solid var(--line);margin-bottom:8px;font-weight:600;font-size:14.5px;transition:background .2s,border-color .2s}
 .act-b:hover{background:rgba(220,240,228,.09);border-color:var(--line2)}
 .act-b small{display:block;font-weight:400;color:var(--muted);font-size:12.5px;margin-top:2px}
+.act-ico-row{display:flex;flex-wrap:wrap;gap:12px;margin:4px 0 14px}
+.act-ico-wrap{position:relative;flex:none}
+.act-ico{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:rgba(220,240,228,.05);border:1px solid var(--line);transition:background .2s,border-color .2s}
+.act-ico:hover{background:rgba(220,240,228,.09);border-color:var(--line2)}
+.act-ico svg{width:21px;height:21px}
+.act-info.ibtn{position:absolute;top:-5px;right:-5px;width:18px;height:18px;font-size:10px}
 .act-c{display:flex;align-items:center;gap:12px}
 .offer{padding:14px;border-radius:16px;background:rgba(220,240,228,.045);border:1px solid var(--line);margin-bottom:10px}
 .offer-h{display:flex;align-items:center;gap:12px}
@@ -21357,6 +21363,16 @@ function offerHTML(p,o){
     <div class="offer-b"><button class="btn ghost sm" data-act="of-ctr-x">Cancelar</button></div></div>`;
   return`<div class="offer">${head}<div class="offer-b"><button class="btn primary sm" data-act="of-acc" data-p="${p.id}" data-o="${o.id}">Aceptar</button><button class="btn danger sm" data-act="of-rej" data-p="${p.id}" data-o="${o.id}">Rechazar</button>${o.final?'':`<button class="btn ghost sm" data-act="of-ctr" data-p="${p.id}" data-o="${o.id}">Contraoferta</button>`}</div>${o.final?'<p class="pm-note" style="margin:10px 0 0">Oferta final: solo puedes aceptarla o rechazarla.</p>':''}</div>`;
 }
+const ICO_ACT_TRANSFER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13M13 4l4 4-4 4"/><path d="M20 16H7M11 20l-4-4 4-4"/></svg>';
+const ICO_ACT_LOAN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>';
+const ICO_ACT_RENEW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0113.657-5.657L20 8"/><path d="M20 3v5h-5"/><path d="M20 12a8 8 0 01-13.657 5.657L4 16"/><path d="M4 21v-5h5"/></svg>';
+const ICO_ACT_RELEASE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 017-2.6"/></svg>';
+const ICO_ACT_DOWN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10m0 0l-4-4m4 4l4-4"/><path d="M4 18h16"/></svg>';
+const ICO_ACT_UP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10m0 0l-4 4m4-4l4 4"/><path d="M4 6h16"/></svg>';
+const ICO_ACT_RECALL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-5-5 5-5"/><path d="M4 9h8a7 7 0 017 7v2"/></svg>';
+function actIco(act,icon,label,desc,attrs){
+  return `<div class="act-ico-wrap"><button class="act-ico" data-act="${act}" ${attrs||''} aria-label="${esc(label)}" title="${esc(label)}">${icon}</button><button class="ibtn act-info" data-act="act-info" data-title="${esc(label)}" data-desc="${esc(desc)}" aria-label="Información: ${esc(label)}">i</button></div>`;
+}
 function pmActions(f){
   const p=f.p,back='<div class="pm-back"><button class="btn ghost sm" data-act="pm-back">Volver a la ficha</button></div>';
   if(ui.pm.sub==='loan'){
@@ -21382,26 +21398,28 @@ function pmActions(f){
     <div class="row-btns"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn primary" data-act="renew-send">Ofrecer renovación</button></div>`;
   }
   let h=back+'<div class="subh" style="margin-top:6px">Acciones</div>';
+  let acts=[];
   if(f.ctx==='mine'&&!p.loanIn){
-    h+=`<button class="act-b" data-act="pm-list">${p.list?'Retirar oferta de traspaso':'Ofrecer traspaso'}<small>${p.list?'Dejarás de recibir ofertas por este jugador':'Los clubes te enviarán ofertas: podrás aceptar, rechazar o hacer contraoferta'}</small></button>`;
+    acts.push(actIco('pm-list',ICO_ACT_TRANSFER,p.list?'Retirar oferta de traspaso':'Ofrecer traspaso',p.list?'Dejarás de recibir ofertas por este jugador':'Los clubes te enviarán ofertas: podrás aceptar, rechazar o hacer contraoferta'));
   }
   if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn){
-    h+=`<button class="act-b" data-act="pm-cedible">${p.loanList?'Retirar oferta de cesión':'Ofrecer cesión'}<small>${p.loanList?'Dejarás de recibir propuestas de cesión':'Los clubes te enviarán propuestas de cesión con el rol que le prometen'}</small></button>`;
+    acts.push(actIco('pm-cedible',ICO_ACT_LOAN,p.loanList?'Retirar oferta de cesión':'Ofrecer cesión',p.loanList?'Dejarás de recibir propuestas de cesión':'Los clubes te enviarán propuestas de cesión con el rol que le prometen'));
   }
   if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn&&p.cy!=null){
-    h+=`<button class="act-b" data-act="pm-renew">Renovar contrato<small>Contrato: ${contractTxt(p)}${contractDue(p)?' · ¡expira al terminar la temporada!':''}. Ofrécele un sueldo y una duración (1-5 años).</small></button>`;
+    acts.push(actIco('pm-renew',ICO_ACT_RENEW,'Renovar contrato',`Contrato: ${contractTxt(p)}${contractDue(p)?' · ¡expira al terminar la temporada!':''}. Ofrécele un sueldo y una duración (1-5 años).`));
   }
   if(f.ctx==='mine'&&!p.loanIn){
-    h+=`<button class="act-b" data-act="pm-rel">Liberar<small>Rescindes su contrato y queda como agente libre. Pagas una indemnización del 10 % de su valor (${fmtM(r1(p.val*.1))}).</small></button>`;
+    acts.push(actIco('pm-rel',ICO_ACT_RELEASE,'Liberar',`Rescindes su contrato y queda como agente libre. Pagas una indemnización del 10 % de su valor (${fmtM(r1(p.val*.1))}).`));
   }
   if(f.ctx==='mine'&&p.loanIn)h+=`<p class="pm-note">Cedido por ${esc(cname(p.loanIn.from))} hasta final de temporada. No se puede vender ni ceder.</p>`;
-  if(f.ctx==='loan')h+=`<button class="act-b" data-act="pm-recall">Recuperar de la cesión<small>Vuelve ahora a su plantilla</small></button>`;
+  if(f.ctx==='loan')acts.push(actIco('pm-recall',ICO_ACT_RECALL,'Recuperar de la cesión','Vuelve ahora a su plantilla'));
   if(f.ctx==='fam'&&!p.loanIn){
-    h+=`<button class="act-b" data-act="pm-move">Subir a ${esc(cname(state.club))}<small>Pasa a la plantilla de ${esc(cname(state.club))}. Entre equipos vinculados no hay compra ni venta.</small></button>`;
+    acts.push(actIco('pm-move',ICO_ACT_UP,`Subir a ${cname(state.club)}`,`Pasa a la plantilla de ${cname(state.club)}. Entre equipos vinculados no hay compra ni venta.`));
   }
   if(f.ctx==='mine'&&!p.loanIn&&famList().length){
-    famList().forEach(fm=>{h+=`<button class="act-b" data-act="pm-move" data-fam="${fm.id}">Bajar a ${esc(cname(fm.id))}<small>Pasa a la plantilla de ${esc(cname(fm.id))}. Entre equipos vinculados no hay compra ni venta.</small></button>`});
+    famList().forEach(fm=>{acts.push(actIco('pm-move',ICO_ACT_DOWN,`Bajar a ${cname(fm.id)}`,`Pasa a la plantilla de ${cname(fm.id)}. Entre equipos vinculados no hay compra ni venta.`,`data-fam="${fm.id}"`))});
   }
+  if(acts.length)h+=`<div class="act-ico-row">${acts.join('')}</div>`;
   if(f.ctx==='mine'&&!p.loanIn){
     const offs=p.offers||[];
     h+=`<div class="subh">Ofertas recibidas</div>`;
@@ -21432,7 +21450,7 @@ function renderPM(){
   const PM_VIEWS={stats:pmStats,hist:pmHistoria,pal:pmPalmares,pos:pmPositions};
   const body=v==='neg'?pmNeg(f):v==='act'?pmActions(f):tabs+(PM_VIEWS[v]?PM_VIEWS[v](f):pmInfo(f));
   const foot=f.ctx==='academy'?'<div class="pm-foot2"><button class="btn primary" data-act="acad-up">Ascender a la plantilla</button><button class="btn danger" data-act="acad-out">Liberar</button></div>':f.ctx==='market'?(v==='neg'?(ui.pm.kind==='loan'&&loanBlock(p,ui.pm.prole)?'<div class="pm-foot2 one"><button class="btn ghost" data-act="pm-back">Volver a la ficha</button></div>':'<div class="pm-foot2"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn primary" data-act="neg-send">Negociar</button></div>'):(p.free?'<div class="pm-foot2 one"><button class="btn primary" data-act="pm-neg" data-k="buy">Fichar libre</button></div>':'<div class="pm-foot2"><button class="btn primary" data-act="pm-neg" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-neg" data-k="loan">Ofrecer cesión</button></div>')):(f.ctx==='other'&&canOfferOther(f)?'<div class="pm-foot2"><button class="btn primary" data-act="pm-offer-other" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-offer-other" data-k="loan">Ofrecer cesión</button></div>':canAct&&v!=='act'?`<button class="btn ghost pm-act" data-act="pm-act">Acciones${nOff?`<span class="badge">${nOff}</span>`:''}</button>`:'');
-  const card=$('#pm-body');card.className='pm-card'+(['info','stats','hist','pal','pos'].includes(v)?' pm-fixed':'');
+  const card=$('#pm-body');card.className='pm-card'+(['info','stats','hist','pal','pos','act'].includes(v)?' pm-fixed':'');
   card.innerHTML=head+`<div class="pm-scroll">${body}</div>${foot}`;
   if(v==='neg')updateNegLabels();
 }
@@ -22177,6 +22195,7 @@ const H={
   'pt-info'(){openInfo('Aprender posiciones','<p>Con más nivel de instalaciones hay más plazas y se tarda menos. Mientras aprende, el jugador entrena los atributos de esa posición.</p>')},
   'acad-info'(){openInfo('Hornada de la academia',`<p>Cada ${ACAD_EVERY} jornadas llega una nueva hornada de juveniles. Cuando llegue la próxima jornada, los juveniles aparecerán aquí.</p>`)},
   'cc-info'(){openInfo('Crear club personalizado','<p>Elige el país donde quieres fundar tu club. Sustituirás a uno de los tres equipos peor valorados de su división más baja.</p>')},
+  'act-info'(t){openInfo(t.dataset.title,`<p>${esc(t.dataset.desc)}</p>`)},
   'cv-close'(){closeCV()},
   'ip-close'(){closeInfo()},
   pl(t){openPlayer(t.dataset.id,t.dataset.club)},
