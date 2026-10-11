@@ -7578,7 +7578,7 @@ const REAL_LOANS=[
  ['S. Andreou','WID','ESTP',1,'Rotación',['S. Andreou','DF',2005,'CY',63,71,0.8,2.5,'DFC/LD']],
  ['Samuel Akere','WID','WPL',1,'Rotación',['Samuel Akere','FW',2004,'NG',66,70,1.2,2.4,'ED/MD/EI/MI']],
  ['B. Borowski','WPL','CHOJ',1,'Rotación',['B. Borowski','FW',2005,'PL',58,68,0.3,1,'DC']],
- ['Szymon Karasinski','ZAGL','LKS',1,'Rotación',['Szymon Karasinski','DF',2005,'PL',58,68,0.3,1,'DFC/LD']],
+ ['Szymon Karasiński','ZAGL','LKS',1,'Rotación',['Szymon Karasiński','DF',2004,'PL',58,68,0.919,1,'LI/LD/MI']],
  ['M. Matys','ZAGL','POD',1,'Rotación',['M. Matys','GK',2005,'PL',57,66,0.25,0.9,'POR']],
  ['T. Teklić','WID','MARD',1,'Rotación',['T. Teklić','MD',2004,'HR',63,71,0.8,2.5,'MCO/MC']],
  ['Osman Bukari','WID','CRV',1,'Rotación',['Osman Bukari','FW',1998,'GH',72,74,3,8,'ED/EI/MD']],
@@ -13255,7 +13255,7 @@ Object.entries({'Marcel Łubik':856513,'Patryk Letkiewicz':3186395,'Bartosz Neug
 /* Wisła Płock: avatares de su plantilla real (27/29; Wadas y Rogowski no figuran con foto) y de su cedido. */
 Object.entries({'Rafał Leszczyński':191776,'Jakub Burek':894766,'Žan Rogelj':445181,'Fabian Hiszpański':283079,'Przemysław Misiak':3161318,'Marcus Haglind-Sangré':226998,'Marcin Kamiński':142159,'Marcin Flis':220552,'Afonso Silva':1030515,'Marcin Więckowski':3581725,'Dion Gallapeni':3375796,'Dani Pacheco':65720,'Kyriakos Savvidis':210853,'Sidnei Tavares':511418,'Krystian Pomorski':403876,'Patryk Kun':289873,'Olaf Kobacki':463496,'Gleb Kuchko':3195767,'Adam Radwański':511103,'Jorge Jiménez':736023,'Jurica Pršir':374526,'Michał Król':367224,'Samuel Akere':3277578,'Saïd Hamulić':860281,'Łukasz Sekulski':279467,'Deni Jurić':361254,'Marcin Kościelecki':3427597,'B. Borowski':3356013}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 /* Zagłębie Lubin: avatares de su plantilla real (27/28; Franciszek Nowak no figura con foto) y de sus cedidos. */
-Object.entries({'Jasmin Burić':142155,'Zlatan Alomerović':128272,'Dominik Hładun':307269,'Mateusz Grzybek':218543,'Josip Ćorluka':291706,'Igor Orlikowski':3218584,'Michał Nalepa':184344,'Aleks Ławniczak':647050,'Damian Michalski':329174,'Roman Yakuba':1027504,'David Čolina':319476,'Filip Kocaba':997855,'Damian Dąbrowski':99053,'Jakub Kolan':886657,'Marcel Reguła':3355912,'Jakub Sypek':770014,'Szymon Łyczko':3244347,'Kamil Nowogoński':3356639,'Jakub Ligocki':3353307,'Mateusz Dziewiatowski':3244882,'Sebastian Kerk':179383,'Cyprian Popielec':3243010,'Michalis Kosidis':889386,'Filip Szymczak':706456,'Levente Szabó':350347,'Mihael Mlinarić':878023,'Arkadiusz Woźniak':143155,'Szymon Karasinski':997851,'M. Matys':3207949}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+Object.entries({'Jasmin Burić':142155,'Zlatan Alomerović':128272,'Dominik Hładun':307269,'Mateusz Grzybek':218543,'Josip Ćorluka':291706,'Igor Orlikowski':3218584,'Michał Nalepa':184344,'Aleks Ławniczak':647050,'Damian Michalski':329174,'Roman Yakuba':1027504,'David Čolina':319476,'Filip Kocaba':997855,'Damian Dąbrowski':99053,'Jakub Kolan':886657,'Marcel Reguła':3355912,'Jakub Sypek':770014,'Szymon Łyczko':3244347,'Kamil Nowogoński':3356639,'Jakub Ligocki':3353307,'Mateusz Dziewiatowski':3244882,'Sebastian Kerk':179383,'Cyprian Popielec':3243010,'Michalis Kosidis':889386,'Filip Szymczak':706456,'Levente Szabó':350347,'Mihael Mlinarić':878023,'Arkadiusz Woźniak':143155,'Szymon Karasiński':997851,'M. Matys':3207949}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 /* GKS Katowice: avatares de su plantilla real. Dos de los 29 se quedan sin avatar: Patryk Szczuka no
    tiene ficha en BeSoccer, y Wojciech Pankowski (3806836) sale con foto de relleno, por lo que su URL
    devuelve 404. L. Trepka (3516765) va aparte: cedido a Pogoń Siedlce (POS). */
@@ -14317,7 +14317,7 @@ function genMarketGen(){
   });
 }
 /* ---------- agentes libres: jugadores sin club (liberados por un club o sin equipo) ---------- */
-const FREE_MAX=36,FREE_PER=8,FREE_FROM_WEEK=8,FREE_WANT={GK:3,DF:12,MD:11,FW:10};
+const FREE_MAX=80,FREE_PER=8,FREE_FROM_WEEK=8,FREE_WANT={GK:3,DF:12,MD:11,FW:10};
 const freePlan=()=>{const ps=[];for(const g in FREE_WANT)for(let i=0;i<FREE_WANT[g];i++)ps.push(g);return ps};
 /* potencial de un agente libre según su edad: con 30 años o más ya no progresa (pot = GRL); por debajo
    de 30 se le da un margen de mejora, mayor cuanto más joven sea. */
@@ -23950,6 +23950,49 @@ Object.assign(STADIUM,{ARK:'Stadion GOSiR',CHR:'Stadion Miejski w Głogowie',PGR
    CLUB_DEFAULTS/BUDGET_DEFAULTS se capturan antes de estos bloques; sin esta recaptura, resetClubOverrides()
    (al cargar/retomar una partida) borraba los escudos de clubes cuyo logo se añadió aquí (Chance Liga, Grecia,
    MOL Cup, etc.). */
+/* ===== ŁKS Łódź (LKS, Betclic 1. Liga): plantilla real + atributos + pies + avatares + cesiones ===== */
+(function(){
+  Object.assign(REAL_DB,{LKS:[
+    ['D. Węglarz','GK',1996,'PL',67,null,1.68,null,'POR'],['Łukasz Bomba','GK',2004,'PL',52,null,0.45,null,'POR'],['J. Rhodes','GK',2008,'CA',27,null,0.001,null,'POR'],['Mikołaj Ćwikliński','GK',2010,'PL',26,null,0.001,null,'POR'],
+    ['A. Crăciun','DF',1998,'MD',69,null,1.64,null,'DFC/MCD'],['S. Rudol','DF',1995,'PL',66,null,0.611,null,'DFC/LD'],['J. Keiblinger','DF',2001,'AT',65,null,1.16,null,'LD/MD'],['Krzysztof Falowski','DF',2007,'PL',57,null,0.754,null,'DFC/MCD'],['Marcel Blachewicz','DF',2003,'PL',63,null,1.97,null,'LI/MI'],['Szymon Karasiński','DF',2004,'PL',58,null,0.919,null,'LI/LD/MI'],['B. Farbiszewski','DF',2003,'PL',54,null,0.587,null,'DFC/LI/LD'],['M. Kupczak','DF',1992,'PL',62,null,0.474,null,'DFC/MCD/MC'],['L. Wiech','DF',1997,'PL',56,null,0.449,null,'DFC/MCD'],['Szymon Frakowski','DF',2007,'PL',40,null,0.057,null,'LI/MI'],
+    ['K. Terlecki','MD',2005,'PL',60,null,1.66,null,'MC/MCO/MI'],['M. Wysokiński','MD',2002,'PL',62,null,1.14,null,'MC/MCO/MCD'],['D. Sokół','MD',1999,'PL',64,null,0.997,null,'MCO/ED/EI'],['K. Hinokio','MD',2001,'JP',58,null,0.818,null,'MCO/MD/MC'],['I. Strzałek','MD',2004,'PL',63,null,2.99,null,'MCO/MI/EI'],['Kacper Nowakowski','MD',2006,'PL',59,null,0.995,null,'MCO/ED/MI'],['S. Krykun','FW',1997,'UA',64,null,0.588,null,'EI/ED/MI'],['M. Kaput','MD',1998,'PL',59,null,1.21,null,'MCD/MC/MD'],['L. Szczygiel','MD',2008,'PL',36,null,0.003,null,'MC/MCO'],['Sebastian Sopel','MD',2009,'PL',29,null,0.001,null,'MCO/MD'],
+    ['K. Podliński','FW',1998,'PL',64,null,1.11,null,'DC/MCO'],['Andreu Arasa','FW',1999,'ES',59,null,1.05,null,'ED/EI/DC'],['F. Piasecki','FW',1995,'PL',61,null,1.20,null,'DC/MCO'],['Kacper Prusiński','FW',2005,'PL',54,null,0.417,null,'DC/ED'],['Alan Siwek','FW',2007,'PL',47,null,0.301,null,'DC'],['Fabian Olejniczak','FW',2009,'PL',35,null,0.044,null,'DC/EI']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'D. Węglarz':{EST:68,PAR:64,SAQ:62,REF:69,COL:66},'Łukasz Bomba':{EST:53,PAR:48,SAQ:46,REF:55,COL:50},'J. Rhodes':{EST:30,PAR:28,SAQ:26,REF:32,COL:28},'Mikołaj Ćwikliński':{EST:28,PAR:26,SAQ:24,REF:30,COL:26},
+    'A. Crăciun':{RIT:58,TIR:40,PAS:62,REG:56,DEF:71,FÍS:72},'S. Rudol':{RIT:58,TIR:38,PAS:61,REG:56,DEF:68,FÍS:67},'J. Keiblinger':{RIT:70,TIR:48,PAS:58,REG:66,DEF:63,FÍS:64},'Krzysztof Falowski':{RIT:56,TIR:34,PAS:48,REG:50,DEF:58,FÍS:60},'Marcel Blachewicz':{RIT:69,TIR:46,PAS:60,REG:64,DEF:56,FÍS:60},'Szymon Karasiński':{RIT:66,TIR:40,PAS:54,REG:58,DEF:58,FÍS:62},'B. Farbiszewski':{RIT:56,TIR:32,PAS:46,REG:48,DEF:59,FÍS:66},'M. Kupczak':{RIT:50,TIR:38,PAS:60,REG:52,DEF:67,FÍS:65},'L. Wiech':{RIT:54,TIR:34,PAS:48,REG:48,DEF:61,FÍS:65},'Szymon Frakowski':{RIT:48,TIR:28,PAS:38,REG:42,DEF:42,FÍS:46},
+    'K. Terlecki':{RIT:61,TIR:52,PAS:64,REG:60,DEF:42,FÍS:52},'M. Wysokiński':{RIT:58,TIR:50,PAS:66,REG:60,DEF:54,FÍS:63},'D. Sokół':{RIT:67,TIR:58,PAS:65,REG:68,DEF:36,FÍS:50},'K. Hinokio':{RIT:65,TIR:56,PAS:61,REG:67,DEF:36,FÍS:48},'I. Strzałek':{RIT:64,TIR:56,PAS:68,REG:67,DEF:40,FÍS:50},'Kacper Nowakowski':{RIT:63,TIR:54,PAS:60,REG:62,DEF:38,FÍS:50},'S. Krykun':{RIT:70,TIR:58,PAS:62,REG:68,DEF:34,FÍS:52},'M. Kaput':{RIT:56,TIR:36,PAS:52,REG:52,DEF:61,FÍS:64},'L. Szczygiel':{RIT:42,TIR:30,PAS:44,REG:40,DEF:36,FÍS:42},'Sebastian Sopel':{RIT:36,TIR:26,PAS:38,REG:36,DEF:28,FÍS:34},
+    'K. Podliński':{RIT:58,TIR:64,PAS:50,REG:54,DEF:32,FÍS:69},'Andreu Arasa':{RIT:65,TIR:54,PAS:56,REG:62,DEF:32,FÍS:52},'F. Piasecki':{RIT:56,TIR:61,PAS:48,REG:52,DEF:32,FÍS:67},'Kacper Prusiński':{RIT:61,TIR:55,PAS:44,REG:50,DEF:30,FÍS:56},'Alan Siwek':{RIT:52,TIR:48,PAS:38,REG:44,DEF:30,FÍS:50},'Fabian Olejniczak':{RIT:42,TIR:38,PAS:32,REG:36,DEF:26,FÍS:40}
+  });
+  Object.assign(REAL_FOOT,{'Marcel Blachewicz':'I','Szymon Karasiński':'I','Szymon Frakowski':'I'});
+  Object.entries({'D. Węglarz':319516,'Łukasz Bomba':3258209,'J. Rhodes':3695347,'A. Crăciun':348133,'S. Rudol':221507,'J. Keiblinger':854110,'Krzysztof Falowski':3584377,'Marcel Blachewicz':899587,'Szymon Karasiński':997851,'B. Farbiszewski':894503,'M. Kupczak':191785,'L. Wiech':335803,'K. Terlecki':901578,'M. Wysokiński':3169005,'D. Sokół':468972,'K. Hinokio':868569,'I. Strzałek':3230057,'Kacper Nowakowski':3355932,'S. Krykun':416064,'M. Kaput':707593,'K. Podliński':366134,'Andreu Arasa':694403,'F. Piasecki':295265}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.assign(CLUBBY,{SOKK:K2('SOKK','Sokół Kleczew','Sokół','Kleczew','PL','#f4f4f4','#1a7d3c',38),AVIA:K2('AVIA','Avia Świdnik','Avia','Świdnik','PL','#0a5aa8','#f4f4f4',38)});
+  CLUBBY.SOKK.logo='https://cdn.resfu.com/img_data/equipos/60038.png?size=120x&lossy=1';
+  CLUBBY.AVIA.logo='https://cdn.resfu.com/img_data/equipos/60083.png?size=120x&lossy=1';
+  Object.assign(REAL_FOOT,{'Mateusz Książek':'D','A. Młynarczyk':'D','L. Jakubowski':'D'});
+  REAL_LOANS.push(
+    ['Mateusz Książek','LKS','SOKK',1,null,['Mateusz Książek','DF',2007,'PL',54,null,0.729,null,'DFC/LI']],
+    ['A. Młynarczyk','LKS','WAR',1,null,['A. Młynarczyk','MD',2005,'PL',54,null,0.983,null,'MC/EI/ED']],
+    ['L. Jakubowski','LKS','AVIA',1,null,['L. Jakubowski','GK',2007,'PL',50,null,0.149,null,'POR']]
+  );
+})();
+/* ===== Miedź Legnica (MIE, Betclic 1. Liga): plantilla real + atributos + pies + avatares ===== */
+(function(){
+  Object.assign(REAL_DB,{MIE:[
+    ['Ivan Lučić','GK',1995,'AT',65,null,0.875,null,'POR'],['D. Sydorenko','GK',2003,'UA',52,null,0.328,null,'POR'],['K. Narożny','GK',2010,'PL',36,null,0.001,null,'POR'],['Hubert Siniecki','GK',2008,'PL',39,null,0.001,null,'POR'],['Franciszek Chojak','GK',2005,'PL',42,null,0.014,null,'POR'],['V. Diachenko','GK',2006,'UA',26,null,0.013,null,'POR'],
+    ['A. Kovačević','DF',1993,'BA',60,null,0.518,null,'DFC/MCD'],['M. Mazur','DF',1998,'UA',62,null,0.792,null,'DFC/LI'],['M. Grudziński','DF',2000,'PL',65,null,1.33,null,'DFC/LI'],['G. Norlin','DF',1997,'SE',64,null,1.30,null,'LI/MI/EI'],['M. Jovičić','DF',1995,'RS',63,null,0.537,null,'DFC/MCD'],['K. Noiszewski','DF',2000,'PL',64,null,0.930,null,'DFC/MCD'],['Oliwier Olewiński','DF',2006,'PL',55,null,0.614,null,'LD/MD'],['J. Podgórski','DF',1996,'PL',58,null,0.476,null,'LD/MD/ED'],['Szymon Pączek','DF',2008,'PL',43,null,0.004,null,'LI/MI'],['Wojciech Rezacz','DF',2008,'PL',44,null,0.064,null,'DFC/MCD'],['Marcin Umnicki','DF',2007,'PL',40,null,0.023,null,'LD/MD'],['B. Diallo','DF',2005,'SN',40,null,0.108,null,'LI/MI'],['K. Michaleczko','DF',2007,'PL',34,null,0.001,null,'DFC'],
+    ['K. Antonik','MD',1999,'PL',67,null,1.78,null,'MC/ED/EI/MD'],['W. Hajda','MD',2000,'PL',60,null,0.689,null,'MC/MCD/MCO'],['Z. Petrović','MD',2001,'BA',56,null,0.529,null,'MCO/EI/DC'],['J. Letniowski','MD',1998,'PL',61,null,0.817,null,'MCO/MC'],['J. Serafin','MD',1996,'PL',64,null,1.52,null,'MCD/MC'],['M. Bochnak','MD',1998,'PL',64,null,0.679,null,'MD/MI/ED'],['Igor Korczakowski','MD',1998,'PL',55,null,0.329,null,'MCO/MI/MD'],['Oliwier Szymoniak','MD',2007,'PL',54,null,0.415,null,'MI/EI/ED'],['Filip Żur','MD',2008,'PL',43,null,0.059,null,'MCD/MCO'],['Marceli Zwan','MD',2008,'PL',37,null,0.004,null,'MC/MCO'],
+    ['Asier Córdoba','FW',2000,'ES',63,null,1.10,null,'EI/ED/MI'],['Igor Maliszewski','FW',2008,'PL',43,null,0.122,null,'EI/DC'],['D. Stanclik','FW',2000,'PL',66,null,1.39,null,'DC/MCO'],['K. Fućak','FW',1999,'HR',55,null,0.598,null,'DC/ED/EI'],['M. Mansfeld','FW',2001,'DE',54,null,0.575,null,'DC/EI'],['Sebastian Herbut','FW',2009,'PL',40,null,0.003,null,'DC/ED'],['M. Keita','FW',2006,'GM',36,null,0.001,null,'EI/DC'],['M. Sy','FW',2007,'SN',37,null,0.176,null,'DC']
+  ]});
+  Object.assign(REAL_ATTR,{
+    'Ivan Lučić':{EST:65,PAR:62,SAQ:60,REF:67,COL:64},'D. Sydorenko':{EST:54,PAR:50,SAQ:48,REF:56,COL:50},'K. Narożny':{EST:36,PAR:32,SAQ:30,REF:38,COL:34},'Hubert Siniecki':{EST:40,PAR:36,SAQ:34,REF:42,COL:38},'Franciszek Chojak':{EST:44,PAR:40,SAQ:38,REF:46,COL:42},'V. Diachenko':{EST:26,PAR:24,SAQ:22,REF:28,COL:24},
+    'A. Kovačević':{RIT:54,TIR:38,PAS:52,REG:50,DEF:63,FÍS:65},'M. Mazur':{RIT:58,TIR:36,PAS:54,REG:52,DEF:65,FÍS:64},'M. Grudziński':{RIT:58,TIR:36,PAS:62,REG:54,DEF:68,FÍS:66},'G. Norlin':{RIT:69,TIR:46,PAS:61,REG:66,DEF:54,FÍS:58},'M. Jovičić':{RIT:54,TIR:38,PAS:54,REG:50,DEF:66,FÍS:65},'K. Noiszewski':{RIT:56,TIR:38,PAS:60,REG:52,DEF:66,FÍS:65},'Oliwier Olewiński':{RIT:63,TIR:44,PAS:54,REG:58,DEF:52,FÍS:56},'J. Podgórski':{RIT:66,TIR:48,PAS:61,REG:58,DEF:54,FÍS:58},'Szymon Pączek':{RIT:52,TIR:30,PAS:42,REG:44,DEF:44,FÍS:46},'Wojciech Rezacz':{RIT:50,TIR:30,PAS:40,REG:42,DEF:46,FÍS:50},'Marcin Umnicki':{RIT:50,TIR:28,PAS:38,REG:44,DEF:44,FÍS:46},'B. Diallo':{RIT:55,TIR:30,PAS:40,REG:46,DEF:44,FÍS:48},'K. Michaleczko':{RIT:44,TIR:26,PAS:32,REG:36,DEF:42,FÍS:44},
+    'K. Antonik':{RIT:70,TIR:60,PAS:65,REG:71,DEF:40,FÍS:52},'Asier Córdoba':{RIT:65,TIR:56,PAS:60,REG:66,DEF:34,FÍS:50},'W. Hajda':{RIT:58,TIR:48,PAS:62,REG:58,DEF:56,FÍS:64},'Z. Petrović':{RIT:59,TIR:52,PAS:58,REG:60,DEF:38,FÍS:48},'J. Letniowski':{RIT:58,TIR:56,PAS:65,REG:62,DEF:44,FÍS:50},'J. Serafin':{RIT:54,TIR:38,PAS:56,REG:52,DEF:67,FÍS:66},'M. Bochnak':{RIT:69,TIR:56,PAS:62,REG:66,DEF:38,FÍS:52},'Igor Korczakowski':{RIT:56,TIR:48,PAS:61,REG:58,DEF:36,FÍS:46},'Oliwier Szymoniak':{RIT:60,TIR:48,PAS:54,REG:58,DEF:38,FÍS:50},'Filip Żur':{RIT:50,TIR:38,PAS:52,REG:48,DEF:44,FÍS:50},'Marceli Zwan':{RIT:44,TIR:32,PAS:44,REG:42,DEF:36,FÍS:42},
+    'Igor Maliszewski':{RIT:55,TIR:46,PAS:42,REG:48,DEF:30,FÍS:48},'D. Stanclik':{RIT:64,TIR:69,PAS:52,REG:56,DEF:32,FÍS:67},'K. Fućak':{RIT:62,TIR:56,PAS:44,REG:50,DEF:32,FÍS:65},'M. Mansfeld':{RIT:56,TIR:56,PAS:44,REG:48,DEF:30,FÍS:66},'Sebastian Herbut':{RIT:50,TIR:44,PAS:36,REG:42,DEF:28,FÍS:48},'M. Keita':{RIT:58,TIR:40,PAS:36,REG:44,DEF:28,FÍS:44},'M. Sy':{RIT:46,TIR:40,PAS:34,REG:38,DEF:28,FÍS:48}
+  });
+  Object.assign(REAL_FOOT,{'M. Mazur':'I','M. Grudziński':'I','G. Norlin':'I','Szymon Pączek':'I','B. Diallo':'I','Asier Córdoba':'I','Igor Korczakowski':'I'});
+  Object.entries({'Ivan Lučić':160026,'D. Sydorenko':981196,'Franciszek Chojak':3243078,'V. Diachenko':3474486,'A. Kovačević':156132,'M. Mazur':386469,'M. Grudziński':651151,'G. Norlin':305905,'M. Jovičić':451893,'K. Noiszewski':822469,'Oliwier Olewiński':3244459,'J. Podgórski':326479,'Szymon Pączek':3352918,'Wojciech Rezacz':3630343,'B. Diallo':3584083,'K. Antonik':708277,'Asier Córdoba':342276,'W. Hajda':618180,'Z. Petrović':828307,'J. Letniowski':332447,'J. Serafin':243022,'M. Bochnak':376676,'Igor Korczakowski':708142,'Oliwier Szymoniak':3245106,'Igor Maliszewski':3355867,'D. Stanclik':646808,'K. Fućak':848760,'M. Mansfeld':627346,'Sebastian Herbut':3685131,'M. Sy':3404278}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
@@ -23989,7 +24032,29 @@ const REAL_FREE=[
   ['Ulises Rivas','MD',1996,'MX',52,null,2.79,null,'MC/MCD'],
   ['Renzo Saravia','DF',1993,'AR',61,null,1.20,null,'LD/MD'],
   ['Olivier Ntcham','MD',1996,'CM',69,null,4.83,null,'MC/MCO/MI'],
-  ['Yazan Al-Naimat','FW',1999,'JO',64,null,1.00,null,'DC/ED/EI']
+  ['Yazan Al-Naimat','FW',1999,'JO',64,null,1.00,null,'DC/ED/EI'],
+  ['Beni Baningime','MD',1998,'CD',64,null,1.00,null,'MCD/MC'],
+  ['Yahav Gurfinkel','DF',1998,'IL',73,null,4.37,null,'LI/MI'],
+  ['Manuel Benson','FW',1997,'AO',53,null,2.04,null,'ED/EI/MD'],
+  ['Pol Lirola','DF',1997,'ES',56,null,2.78,null,'LD/MD'],
+  ['Ryan Kent','FW',1997,'EN',62,null,1.00,null,'EI/ED/MCO'],
+  ['Rifat Zhemaletdinov','MD',1996,'RU',66,null,1.00,null,'MCO/ED/MD'],
+  ['Fábio Martins','FW',1993,'PT',69,null,2.98,null,'EI/ED/MCO'],
+  ['Riechedly Bazoer','DF',1997,'CW',67,null,1.00,null,'DFC/MCD/MC'],
+  ['Ricardo Pereira','DF',1993,'PT',70,null,1.00,null,'LD/MD/LI'],
+  ['Cedric Teuchert','FW',1997,'DE',65,null,1.00,null,'DC/MCO/EI'],
+  ['Adrien Tamèze','MD',1994,'FR',61,null,2.56,null,'MCD/MC'],
+  ['Daniel Bessa','MD',1993,'IT',66,null,1.00,null,'MC/MCO/MI'],
+  ['Christian Eriksen','MD',1992,'DK',70,null,1.00,null,'MCO/MC'],
+  ['Luan','MD',1999,'BR',55,null,0.90,null,'MCD'],
+  ['Joseph Aidoo','DF',1995,'GH',58,null,1.88,null,'DFC/LD'],
+  ['Nemanja Radonjić','FW',1996,'RS',60,null,0.90,null,'EI/ED/MI'],
+  ['Romain Saïss','DF',1990,'MA',63,null,0.90,null,'DFC/MCD/LI'],
+  ['Iuri Medeiros','FW',1994,'PT',66,null,0.90,null,'ED/MCO/EI'],
+  ['Adnan Januzaj','FW',1995,'BE',68,null,2.11,null,'ED/EI/MCO'],
+  ['Mayke','DF',1993,'BR',67,null,0.90,null,'LD/MD'],
+  ['Matías Vecino','MD',1991,'UY',70,null,1.45,null,'MC/MCD/MCO'],
+  ['Dani Parejo','MD',1989,'ES',72,null,1.95,null,'MC/MCO/MCD']
 ];
 Object.assign(REAL_ATTR,{
   'Jadon Sancho':{RIT:79,TIR:72,PAS:76,REG:85,DEF:49,FÍS:69},
@@ -24024,10 +24089,32 @@ Object.assign(REAL_ATTR,{
   'Ulises Rivas':{RIT:58,TIR:42,PAS:56,REG:56,DEF:56,FÍS:60},
   'Renzo Saravia':{RIT:69,TIR:48,PAS:58,REG:62,DEF:66,FÍS:64},
   'Olivier Ntcham':{RIT:62,TIR:71,PAS:73,REG:70,DEF:60,FÍS:76},
-  'Yazan Al-Naimat':{RIT:72,TIR:66,PAS:52,REG:66,DEF:32,FÍS:60}
+  'Yazan Al-Naimat':{RIT:72,TIR:66,PAS:52,REG:66,DEF:32,FÍS:60},
+  'Beni Baningime':{RIT:62,TIR:40,PAS:62,REG:62,DEF:64,FÍS:70},
+  'Yahav Gurfinkel':{RIT:74,TIR:55,PAS:70,REG:70,DEF:66,FÍS:66},
+  'Manuel Benson':{RIT:74,TIR:56,PAS:55,REG:70,DEF:30,FÍS:52},
+  'Pol Lirola':{RIT:72,TIR:50,PAS:62,REG:68,DEF:64,FÍS:64},
+  'Ryan Kent':{RIT:76,TIR:62,PAS:64,REG:75,DEF:35,FÍS:62},
+  'Rifat Zhemaletdinov':{RIT:70,TIR:66,PAS:68,REG:68,DEF:42,FÍS:64},
+  'Fábio Martins':{RIT:70,TIR:70,PAS:68,REG:73,DEF:38,FÍS:60},
+  'Riechedly Bazoer':{RIT:60,TIR:42,PAS:68,REG:60,DEF:70,FÍS:72},
+  'Ricardo Pereira':{RIT:73,TIR:52,PAS:69,REG:68,DEF:71,FÍS:66},
+  'Cedric Teuchert':{RIT:68,TIR:70,PAS:58,REG:62,DEF:34,FÍS:64},
+  'Adrien Tamèze':{RIT:75,TIR:42,PAS:58,REG:58,DEF:68,FÍS:67},
+  'Daniel Bessa':{RIT:62,TIR:62,PAS:71,REG:69,DEF:48,FÍS:58},
+  'Christian Eriksen':{RIT:62,TIR:74,PAS:82,REG:72,DEF:45,FÍS:58},
+  'Luan':{RIT:58,TIR:38,PAS:56,REG:56,DEF:58,FÍS:64},
+  'Joseph Aidoo':{RIT:64,TIR:38,PAS:52,REG:54,DEF:66,FÍS:71},
+  'Nemanja Radonjić':{RIT:76,TIR:65,PAS:58,REG:71,DEF:32,FÍS:58},
+  'Romain Saïss':{RIT:52,TIR:40,PAS:64,REG:52,DEF:71,FÍS:70},
+  'Iuri Medeiros':{RIT:68,TIR:69,PAS:67,REG:71,DEF:35,FÍS:58},
+  'Adnan Januzaj':{RIT:68,TIR:68,PAS:74,REG:77,DEF:35,FÍS:58},
+  'Mayke':{RIT:72,TIR:48,PAS:64,REG:66,DEF:68,FÍS:66},
+  'Matías Vecino':{RIT:58,TIR:58,PAS:68,REG:64,DEF:71,FÍS:76},
+  'Dani Parejo':{RIT:52,TIR:76,PAS:85,REG:72,DEF:64,FÍS:60}
 });
-Object.assign(REAL_FOOT,{'Oleksandr Zinchenko':'I','Riyad Mahrez':'I','Jadon Sancho':'D','Karim Benzema':'D','Daniel Carvajal':'D','Oleksiy Gutsulyak':'I','Anthony Martial':'D','Mauro Icardi':'D','Felipe Carballo':'D','Wilfried Zaha':'D','Rodrigão':'D','Rodrigo Schlegel':'D','Tanguy Ndombélé':'D','Carlos Júnior':'D','Abdoulaye Touré':'D','Raphaël Guerreiro':'I','Paul Pogba':'A','Habib Keïta':'I','Marcel Beifus':'D','Jordan Sierra':'D','Youcef Atal':'D','Renato Sanches':'D','Adam Webster':'D','Tozé':'D','Bruno Varela':'D','Raheem Sterling':'D','Francesco Acerbi':'I','Praxedes':'I','Luka Ilic':'I','Ulises Rivas':'D','Renzo Saravia':'D','Olivier Ntcham':'D','Yazan Al-Naimat':'D'});
-Object.entries({'Jadon Sancho':341319,'Oleksandr Zinchenko':201788,'Karim Benzema':3318,'Riyad Mahrez':149354,'Daniel Carvajal':74892,'Oleksiy Gutsulyak':287798,'Anthony Martial':183706,'Mauro Icardi':87988,'Felipe Carballo':284568,'Wilfried Zaha':70052,'Rodrigão':231324,'Rodrigo Schlegel':371705,'Tanguy Ndombélé':334902,'Carlos Júnior':207738,'Abdoulaye Touré':186567,'Raphaël Guerreiro':149462,'Paul Pogba':130126,'Habib Keïta':996936,'Marcel Beifus':754601,'Jordan Sierra':314430,'Youcef Atal':380235,'Renato Sanches':240679,'Adam Webster':212725,'Tozé':162826,'Bruno Varela':148103,'Raheem Sterling':106034,'Francesco Acerbi':83656,'Praxedes':906194,'Luka Ilic':320813,'Ulises Rivas':208894,'Renzo Saravia':178237,'Olivier Ntcham':206986,'Yazan Al-Naimat':846171}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+Object.assign(REAL_FOOT,{'Oleksandr Zinchenko':'I','Riyad Mahrez':'I','Jadon Sancho':'D','Karim Benzema':'D','Daniel Carvajal':'D','Oleksiy Gutsulyak':'I','Anthony Martial':'D','Mauro Icardi':'D','Felipe Carballo':'D','Wilfried Zaha':'D','Rodrigão':'D','Rodrigo Schlegel':'D','Tanguy Ndombélé':'D','Carlos Júnior':'D','Abdoulaye Touré':'D','Raphaël Guerreiro':'I','Paul Pogba':'A','Habib Keïta':'I','Marcel Beifus':'D','Jordan Sierra':'D','Youcef Atal':'D','Renato Sanches':'D','Adam Webster':'D','Tozé':'D','Bruno Varela':'D','Raheem Sterling':'D','Francesco Acerbi':'I','Praxedes':'I','Luka Ilic':'I','Ulises Rivas':'D','Renzo Saravia':'D','Olivier Ntcham':'D','Yazan Al-Naimat':'D','Beni Baningime':'D','Yahav Gurfinkel':'I','Manuel Benson':'I','Pol Lirola':'D','Ryan Kent':'D','Rifat Zhemaletdinov':'D','Fábio Martins':'D','Riechedly Bazoer':'D','Ricardo Pereira':'D','Cedric Teuchert':'D','Adrien Tamèze':'D','Daniel Bessa':'D','Christian Eriksen':'D','Luan':'D','Joseph Aidoo':'D','Nemanja Radonjić':'D','Romain Saïss':'I','Iuri Medeiros':'I','Adnan Januzaj':'I','Mayke':'D','Matías Vecino':'D','Dani Parejo':'D'});
+Object.entries({'Jadon Sancho':341319,'Oleksandr Zinchenko':201788,'Karim Benzema':3318,'Riyad Mahrez':149354,'Daniel Carvajal':74892,'Oleksiy Gutsulyak':287798,'Anthony Martial':183706,'Mauro Icardi':87988,'Felipe Carballo':284568,'Wilfried Zaha':70052,'Rodrigão':231324,'Rodrigo Schlegel':371705,'Tanguy Ndombélé':334902,'Carlos Júnior':207738,'Abdoulaye Touré':186567,'Raphaël Guerreiro':149462,'Paul Pogba':130126,'Habib Keïta':996936,'Marcel Beifus':754601,'Jordan Sierra':314430,'Youcef Atal':380235,'Renato Sanches':240679,'Adam Webster':212725,'Tozé':162826,'Bruno Varela':148103,'Raheem Sterling':106034,'Francesco Acerbi':83656,'Praxedes':906194,'Luka Ilic':320813,'Ulises Rivas':208894,'Renzo Saravia':178237,'Olivier Ntcham':206986,'Yazan Al-Naimat':846171,'Beni Baningime':345942,'Yahav Gurfinkel':344322,'Manuel Benson':228955,'Pol Lirola':171266,'Ryan Kent':235157,'Rifat Zhemaletdinov':198197,'Fábio Martins':148097,'Riechedly Bazoer':209217,'Ricardo Pereira':149127,'Cedric Teuchert':242973,'Adrien Tamèze':224478,'Daniel Bessa':125629,'Christian Eriksen':64944,'Luan':475246,'Joseph Aidoo':276807,'Nemanja Radonjić':234543,'Romain Saïss':200520,'Iuri Medeiros':149018,'Adnan Januzaj':186599,'Mayke':180927,'Matías Vecino':130739,'Dani Parejo':29364}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 function buildRealFree(r,i){
   const age=seasonYear()-r[2];
   const p={id:'FA_'+i,n:r[0],nat:r[3],pos:r[1],age,ovr:r[4],pot:r[5]!=null?r[5]:freePot(age,r[4],'FA_'+r[0]),en:100,inj:0,g:0,ap:0,real:1,free:1,price:0};
