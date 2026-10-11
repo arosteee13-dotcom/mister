@@ -412,6 +412,7 @@ button.posc:hover{transform:translateY(-1px)}
 .pc-num small{display:block;font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:.06em}
 .pc-role{line-height:1}
 .pc-club{display:inline-flex;align-items:center;gap:5px;font:600 11.5px var(--ui);color:var(--muted)}
+.pc-club.lib{color:#9fe6bd;border:1px solid rgba(159,230,189,.35);border-radius:999px;padding:1px 8px}
 /* contrato de fichaje / cesión */
 .pm-foot2.one{grid-template-columns:1fr}
 .cto{margin:12px 0;border-radius:20px;border:1px solid var(--line2);background:linear-gradient(180deg,#141d19,#0a100d);overflow:hidden}
@@ -14295,6 +14296,7 @@ const mktPlan=()=>{const ps=[];for(const g in MKT_WANT)for(let i=0;i<MKT_WANT[g]
 function mktPick(x,out,used,r){used.add(x.p.id);delete x.p.tries;delete x.p.blk;x.p.price=Math.round(x.p.val*(1.05+r()*.3)*10)/10;x.p.from=x.id;out.push(x.p)}
 /* ============ MERCADO / TRASPASOS ============ */
 function genMarket(){
+  ensureFreeAgents();
   if(curMode()!=='real')return genMarketGen();
   const r=rng(hashStr('mkr'+state.seed+'_'+state.season+'_'+state.week));
   const clubs=Object.keys(REAL_DB).filter(id=>CLUBBY[id]&&!state.teams[id]&&id!==FAMILY[state.club]&&id!==state.club);
@@ -14313,6 +14315,37 @@ function genMarketGen(){
     const p=mkPlayer(r,`m${state.season}_${state.week}_${i}`,pos,clamp(Math.round(avg-8+r()*22),45,90),Math.round(19+r()*14),state.country,new Set());
     p.price=Math.round(p.val*(1.05+r()*.3)*10)/10;p.from=pick(CLUBS.filter(c=>gameClub(c)&&c.id!==state.club),r).id;return p;
   });
+}
+/* ---------- agentes libres: jugadores sin club (liberados por un club o sin equipo) ---------- */
+const FREE_MAX=36,FREE_PER=8,FREE_FROM_WEEK=8,FREE_WANT={GK:3,DF:12,MD:11,FW:10};
+const freePlan=()=>{const ps=[];for(const g in FREE_WANT)for(let i=0;i<FREE_WANT[g];i++)ps.push(g);return ps};
+/* potencial de un agente libre según su edad: con 30 años o más ya no progresa (pot = GRL); por debajo
+   de 30 se le da un margen de mejora, mayor cuanto más joven sea. */
+function freePot(age,ovr,seed){
+  if(age>=30)return ovr;
+  const q=rng(hashStr('fap'+seed))();
+  const gap=age<=21?6+Math.floor(q*6):age<=25?3+Math.floor(q*4):1+Math.floor(q*3);
+  return clamp(Math.round(ovr+gap),ovr,92);
+}
+function genFreeAgents(n){
+  const out=state.freeAgents=state.freeAgents||[];
+  const r=rng(hashStr('fa'+state.seed+'_'+state.season+'_'+state.week+'_'+out.length));
+  const used=new Set(out.map(p=>p.n));
+  const base=clamp(Math.round(repOf(state.club)-4),40,78),plan=freePlan();
+  for(let i=0;i<n&&out.length<FREE_MAX;i++){
+    const pos=plan[i%plan.length];
+    const p=mkPlayer(r,'fa'+state.season+'_'+state.week+'_'+(out.length)+'_'+i,pos,clamp(Math.round(base-6+r()*20),44,84),19+Math.floor(r()*17),state.country,used);
+    p.pot=freePot(p.age,p.ovr,p.id);
+    p.free=1;p.price=0;delete p.from;
+    out.push(p);
+  }
+}
+function ensureFreeAgents(){
+  state.freeAgents=state.freeAgents||[];
+  /* al principio de la primera temporada no se inventan libres: solo los reales que fija el juego.
+     Transcurridas unas semanas (o en temporadas posteriores) los clubes empiezan a liberar jugadores. */
+  if(state.season<=1&&(state.week||0)<FREE_FROM_WEEK)return;
+  if(state.freeAgents.length<FREE_MAX)genFreeAgents(Math.min(FREE_PER,FREE_MAX-state.freeAgents.length));
 }
 /* ---------- filtros del mercado ---------- */
 const MKT_AGE=[['ALL','Cualquiera'],['u21','21 o menos'],['21-24','22-24'],['25-28','25-28'],['29-32','29-32'],['33+','33 o más']];
@@ -14348,6 +14381,7 @@ const mktPrice=p=>Math.round(p.val*(1.05+rng(hashStr('pr'+p.id+'|'+state.seed))(
 /* siempre se recorren todos los clubes del juego (con o sin filtros), así aparecen absolutamente todos los jugadores y se pagina entre todos */
 function mktEntries(f){
   const out=[],wk=mktWk(),fams=new Set(famIds());
+  if(!f.freeOnly)
   CLUBS.forEach(c=>{
     if(!gameClub(c))return;
     if((f.country!=='ALL'&&c.co!==f.country)||c.id===state.club||fams.has(c.id))return;
@@ -14360,6 +14394,12 @@ function mktEntries(f){
       if(!mktMatch(p,f,c.id))return;
       out.push({p,from:c.id,price:(p.from===c.id&&p.price!=null)?p.price:mktPrice(p)});
     });
+  });
+  /* agentes libres: no pertenecen a ningún club (solo con filtros de posición/nacionalidad/edad/valor/GRL) */
+  (state&&state.freeAgents||[]).forEach(p=>{
+    if((p.blk||0)>wk)return;
+    if(!mktMatch(p,f,null))return;
+    out.push({p,from:null,price:0,free:true});
   });
   return out;
 }
@@ -14389,7 +14429,7 @@ function mktSheetHTML(){
   <div class="row-btns"><button class="btn ghost" data-act="mkt-clear">Limpiar filtros</button><button class="btn primary" data-act="sheet-close">Ver ${n} jugador${n!==1?'es':''}</button></div>`;
 }
 const refreshMktSheet=()=>{if($('#sheet-body .mkt-f'))$('#sheet-body').innerHTML=mktSheetHTML()};
-const mktDefault=()=>({q:'',pos:'ALL',nat:'ALL',age:'ALL',val:'ALL',ovr:'ALL',country:'ALL',league:'ALL',team:'ALL',page:0,open:false});
+const mktDefault=()=>({q:'',pos:'ALL',nat:'ALL',age:'ALL',val:'ALL',ovr:'ALL',country:'ALL',league:'ALL',team:'ALL',freeOnly:false,page:0,open:false});
 function mktMatch(p,f,from){
   const fr=from||p.from;
   if(f.q){const nm=normTxt(p.n);if(!normTxt(f.q).split(' ').every(w=>nm.includes(w)))return false}
@@ -14434,7 +14474,7 @@ function newGame(slot,clubId){
   const mxInit=(co==='MX')?mxBuild(hashStr('mx|'+seed)):null;
   state={v:1,slot,created:Date.now(),saved:Date.now(),seed,mode:ui.gmode||'fict',country:co,div:club.div,club:clubId,season:1,week:0,phase:'play',teams,
     leagueConfig,leagueTeams,
-    fixtures:arInit?arInit.fixtures:(mxInit?mxInit.fixtures:multiFixtures(co+club.div,ids,rng(seed^0x9e37))),table:emptyTable(ids),news:[],market:[],fin:null,loans:[],loansOut:[],
+    fixtures:arInit?arInit.fixtures:(mxInit?mxInit.fixtures:multiFixtures(co+club.div,ids,rng(seed^0x9e37))),table:emptyTable(ids),news:[],market:[],freeAgents:[],fin:null,loans:[],loansOut:[],
     mgrStints:[{club:clubId,from:1}],mgrLog:[],jobOffers:[],split:null,ageNorm:1,affiliations:[]};
   if(arInit)arInitState(arInit);
   if(mxInit)mxInitState(mxInit);
@@ -14443,6 +14483,7 @@ function newGame(slot,clubId){
   initWorld();initFam();initFacilities();
   invalidateSquads();applyInitialLoans();aiMarket('start');   /* primero las cesiones reales: así los cedidos no se venden ni se duplican */
   state.market=genMarket();
+  seedRealFreeAgents();
   archiveSquads();
 }
 /* ===================== ascensos, descensos y playoffs ===================== */
@@ -15399,6 +15440,22 @@ function sellPlayer(id){
   ensureFinTotal().transferIn+=price;
   fixLineup(t);news(`Vendes a ${p.n} por ${fmtM(price)}.`);saveGame();return null;
 }
+/* liberar: rescindes el contrato pagando una indemnización (10 % del valor) y el jugador queda como agente libre */
+function releasePlayer(id){
+  const t=me(),p=t.players.find(x=>x.id===id);if(!p)return'No encontrado';
+  if(p.loanIn)return'No puedes liberar a un jugador cedido.';
+  if(t.players.length<=16)return'Necesitas al menos 16 jugadores.';
+  if(p.pos==='GK'&&t.players.filter(x=>x.pos==='GK').length<=2)return'Necesitas al menos 2 porteros.';
+  const cost=r1(p.val*.1);
+  if(t.budget<cost)return`No tienes presupuesto para la indemnización (${fmtM(cost)}).`;
+  t.budget=r1(t.budget-cost);ensureFinTotal().transferOut+=cost;
+  t.players=t.players.filter(x=>x.id!==id);
+  ['tr','list','loanList','offers','loanOffers','from','price','tries','blk','role','note'].forEach(k=>delete p[k]);
+  Object.assign(p,{free:1,price:0,en:100,inj:0,g:0,ap:0});
+  (state.freeAgents=state.freeAgents||[]).push(p);
+  fixLineup(t);
+  news(`Liberas a ${p.n}: pagas ${fmtM(cost)} de indemnización y queda libre.`);saveGame();return null;
+}
 const fmtM=v=>{const s=v<0?'-':'',a=Math.abs(v);return s+'€'+(a<1?Math.round(a*1000)+'K':(a>=100?Math.round(a):a.toFixed(1))+'M')};
 
 /* ===================== filiales, ofertas y cesiones ===================== */
@@ -15984,6 +16041,8 @@ function ensureState(){
   }
   if(!state.loansOut)state.loansOut=[];
   if(!state.loans)state.loans=[];
+  if(!state.freeAgents)state.freeAgents=[];
+  if(!state.freeSeeded)seedRealFreeAgents();
   /* partidas creadas por versiones anteriores podían guardar GRL o potencial con decimales (p. ej. POT 80.8):
      al cargar se normalizan a enteros para que la ficha muestre 81, 70, etc. */
   const rNum=p=>{if(!p)return;if(typeof p.ovr==='number')p.ovr=Math.round(p.ovr);if(typeof p.pot==='number')p.pot=Math.round(p.pot);if(typeof p.potReal==='number')p.potReal=Math.round(p.potReal)};
@@ -15991,6 +16050,7 @@ function ensureState(){
   (state.academy||[]).forEach(rNum);
   famList().forEach(f=>f.players&&f.players.forEach(rNum));
   (state.market||[]).forEach(rNum);
+  (state.freeAgents||[]).forEach(rNum);
   ['loans','loansOut','loansAbroad'].forEach(k=>(state[k]||[]).forEach(l=>rNum(l&&l.p)));
   Object.values(state.arrivals||{}).forEach(a=>(a||[]).forEach(rNum));
   Object.values(state.squadArchive||{}).forEach(a=>(a||[]).forEach(rNum));
@@ -16015,6 +16075,7 @@ function ensureState(){
     const clean=p=>{if(p&&p.age>=RETIRE_AGE)return false;adj(p);return true};
     famList().forEach(f=>{if(f.players)f.players=f.players.filter(clean)});
     state.market=(state.market||[]).filter(clean);
+    state.freeAgents=(state.freeAgents||[]).filter(clean);
     (state.academy||[]).forEach(adj);
     ['loans','loansOut','loansAbroad'].forEach(k=>{state[k]=(state[k]||[]).filter(l=>l&&l.p&&l.p.age<RETIRE_AGE);(state[k]||[]).forEach(l=>adj(l.p))});
     Object.values(state.arrivals||{}).forEach(a=>{for(let i=(a||[]).length-1;i>=0;i--)if(!clean(a[i]))a.splice(i,1)});
@@ -16028,6 +16089,7 @@ function ensureState(){
     Object.values(state.teams||{}).forEach(T=>(T.players||[]).forEach(fixPot));
     famList().forEach(f=>f.players&&f.players.forEach(fixPot));
     (state.market||[]).forEach(fixPot);
+    (state.freeAgents||[]).forEach(fixPot);
     ['loans','loansOut','loansAbroad'].forEach(k=>(state[k]||[]).forEach(l=>fixPot(l&&l.p)));
     Object.values(state.arrivals||{}).forEach(a=>(a||[]).forEach(fixPot));
     Object.values(state.squadArchive||{}).forEach(a=>(a||[]).forEach(fixPot));
@@ -16575,7 +16637,8 @@ function loanBlock(p,promised){
   return null;
 }
 function joinSquad(p,extra){
-  const t=me();state.market.splice(state.market.indexOf(p),1);
+  const t=me();const mi=state.market.indexOf(p);if(mi>=0)state.market.splice(mi,1);
+  if(state.freeAgents){const fi=state.freeAgents.indexOf(p);if(fi>=0)state.freeAgents.splice(fi,1)}
   if(p.from&&CLUBBY[p.from]){
     if(state.teams[p.from]){const T=state.teams[p.from],ix=T.players.indexOf(p);if(ix>=0){T.players.splice(ix,1);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)}}
     else{
@@ -16584,7 +16647,7 @@ function joinSquad(p,extra){
       const src=squadFor(p.from),ix=src.indexOf(p);if(ix>=0)src.splice(ix,1);const base=SQC[p.from+'|'+state.seed+'|'+curMode()],jx=base?base.indexOf(p):-1;if(jx>=0)base.splice(jx,1);
     }
   }
-  ['price','from','tries','blk'].forEach(k=>delete p[k]);
+  ['price','from','tries','blk','free'].forEach(k=>delete p[k]);
   Object.assign(p,{en:100,inj:0,g:0,ge:0,sv:0,ap:0,as:0,yc:0,rc:0,sus:0,rt:0},extra);t.players.push(p);
 }
 function negotiateBuy(id,fee,sal,promised){
@@ -16592,6 +16655,19 @@ function negotiateBuy(id,fee,sal,promised){
   if(!p)return{msgs:['El jugador ya no está disponible.'],end:true};
   {const sb=signBlock(p);if(sb)return{msgs:[sb],block:true}}
   if(t.players.length>=30)return{msgs:['La plantilla está completa (máximo 30).']};
+  if(p.free){
+    const T=terms(p,promised),msgs=[],plOk=sal>=T.wmin;
+    if(plOk){
+      joinSquad(p,Object.assign({wage:Math.round(sal)},promised?{role:promised}:{}));
+      (p.career=p.career||[]).push({s:state.season,ev:'in',from:null,to:state.club,fee:0});
+      news(`Fichas libre a ${p.n} (${p.ovr}) sin coste de traspaso, con un sueldo de €${Math.round(sal)}K semanales.`);saveGame();
+      return{msgs:[`Fichaje cerrado: ${p.n} ya es jugador de tu club.`],done:true};
+    }
+    msgs.push(`${p.n} pide un sueldo de unos €${T.wmin}K semanales.`);
+    p.tries=(p.tries||0)+1;
+    if(p.tries>=3){p.blk=mktWk()+8;const ix=state.market.indexOf(p);if(ix>=0)state.market.splice(ix,1);return{msgs:msgs.concat(['Las negociaciones se rompen y el jugador deja de estar disponible.']),end:true}}
+    return{msgs,left:3-p.tries,ctr:sal>=T.wmin*.9?{sal:T.wmin}:null};
+  }
   if(t.budget<fee)return{msgs:['No tienes presupuesto suficiente para esa cifra.']};
   const T=terms(p,promised),cl=cname(p.from),msgs=[],clubOk=fee>=T.min,plOk=sal>=T.wmin;
   if(clubOk)msgs.push(`${cl} acepta el traspaso.`);
@@ -16630,14 +16706,21 @@ function negotiateLoan(id,share,promised){
   return{msgs,left:3-p.tries,ctr:share>=T.need-.15?{share:T.need}:null};
 }
 function pmNeg(f){
-  const p=f.p,k=ui.pm.kind,T=terms(p,ui.pm.prole),c=CLUBBY[p.from],mine=CLUBBY[state.club],left=3-(p.tries||0),auto=roleAt(p,state.club),prole=ui.pm.prole||auto;
-  const pot=Math.round(Math.max(p.pot||p.ovr,p.ovr)),block=signBlock(p)||(k==='loan'?loanBlock(p,ui.pm.prole):null);
-  const parts=`<div class="cto-parts"><div class="cto-club">${crestHTML(c,38)}<small>Club actual</small><b>${esc(c.name)}</b></div><span class="cto-arrow">→</span><div class="cto-club">${crestHTML(mine,38)}<small>Tu club</small><b>${esc(mine.name)}</b></div></div>`;
+  const p=f.p,k=ui.pm.kind,free=!!p.free,T=terms(p,ui.pm.prole),c=CLUBBY[p.from],mine=CLUBBY[state.club],left=3-(p.tries||0),auto=roleAt(p,state.club),prole=ui.pm.prole||auto;
+  const pot=Math.round(Math.max(p.pot||p.ovr,p.ovr)),block=signBlock(p)||(!free&&k==='loan'?loanBlock(p,ui.pm.prole):null);
+  const parts=free?`<div class="cto-parts"><div class="cto-club"><span class="tag">Agente libre</span><small>Sin club</small><b>Libre</b></div><span class="cto-arrow">→</span><div class="cto-club">${crestHTML(mine,38)}<small>Tu club</small><b>${esc(mine.name)}</b></div></div>`
+    :`<div class="cto-parts"><div class="cto-club">${crestHTML(c,38)}<small>Club actual</small><b>${esc(c.name)}</b></div><span class="cto-arrow">→</span><div class="cto-club">${crestHTML(mine,38)}<small>Tu club</small><b>${esc(mine.name)}</b></div></div>`;
   const who=`<div class="cto-pl"><div class="pc-photo">${avatarHTML(p)}</div><div class="cto-pl-t"><b>${esc(p.n)}</b><small>${p.age} años · ${ppOf(p).join(' · ')}</small><small>GRL <b style="color:${ratingColor(p.ovr)}">${p.ovr}</b> · POT <b style="color:${ratingColor(pot)}">${pot}</b> · Valor ${esc(fmtV(p.val))}</small></div></div>`;
-  const roles=`<div class="cto-sec">Rol prometido</div><div class="cto-body"><p class="cto-note">Rol en su club: ${roleChip(T.roleFrom)}</p><div class="rolepick">${ROLES.map(r=>`<button class="role ${ROLE_CLS[r]}${r===prole?' sel':''}" data-act="neg-role" data-r="${r}">${r}</button>`).join('')}</div><p class="cto-note">Sugerido según tu plantilla: ${roleChip(auto)}. Si le prometes mucho más de lo que le corresponde y no juega, se enfadará.</p></div>`;
+  const roles=`<div class="cto-sec">Rol prometido</div><div class="cto-body">${free?'<p class="cto-note">Es agente libre: busca un nuevo destino.</p>':`<p class="cto-note">Rol en su club: ${roleChip(T.roleFrom)}</p>`}<div class="rolepick">${ROLES.map(r=>`<button class="role ${ROLE_CLS[r]}${r===prole?' sel':''}" data-act="neg-role" data-r="${r}">${r}</button>`).join('')}</div><p class="cto-note">Sugerido según tu plantilla: ${roleChip(auto)}. Si le prometes mucho más de lo que le corresponde y no juega, se enfadará.</p></div>`;
   const affNote=T.aff?`<p class="cto-note good">🤝 Club afiliado: condiciones ventajosas.</p>`:'';
   let econ;
-  if(k==='buy'){
+  if(k==='buy'&&free){
+    econ=`<div class="cto-sec">Condiciones económicas</div><div class="cto-body">
+    <div class="cto-k"><span>Tipo de operación</span><b>Fichaje libre</b></div>
+    <div class="cto-k"><span>Coste de traspaso</span><b>Sin coste</b></div>
+    <p class="cto-note good">Es agente libre: no pagas traspaso, solo su sueldo.</p>
+    <div class="neg-row"><label>Sueldo semanal <b id="neg-sal"></b></label><input type="range" data-rng="sal" min="${Math.round(p.wage*.8)}" max="${Math.round(p.wage*1.6)}" step="1" value="${Math.round(ui.pm.sal)}"></div><p class="cto-note" id="neg-sal-vs"></p></div>`;
+  }else if(k==='buy'){
     const feeMin=T.affDiscount?r1(p.val*.4):r1(p.price*.6);
     econ=`<div class="cto-sec">Condiciones económicas</div><div class="cto-body">
     <div class="cto-k"><span>Tipo de operación</span><b>Traspaso definitivo</b></div>${affNote}${T.affDiscount?`<p class="cto-note good">Elegible para el 50% de descuento por afiliación (no imprescindible en su club).</p>`:''}
@@ -16662,7 +16745,11 @@ function pmNeg(f){
 function updateNegLabels(){
   if(!ui.pm||ui.pm.view!=='neg')return;const f=pmFind();if(!f)return;
   const p=f.p,cur=wageBill(),set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t},pc=(a,b)=>{const v=Math.round((a/b-1)*100);return v?` · tu oferta: ${v>0?'+':''}${v} %`:''};
-  if(ui.pm.kind==='buy'){
+  if(ui.pm.kind==='buy'&&p.free){
+    set('neg-sal','€'+Math.round(ui.pm.sal)+'K');
+    set('neg-sal-vs','Sueldo actual: €'+p.wage+'K por semana'+pc(ui.pm.sal,p.wage));
+    set('neg-imp',`Impacto en tus cuentas: la masa salarial pasa de ${fmtK(cur)} a ${fmtK(cur+ui.pm.sal)} por semana. Al ser agente libre no hay coste de traspaso.`);
+  }else if(ui.pm.kind==='buy'){
     set('neg-fee',fmtM(ui.pm.fee));set('neg-sal','€'+Math.round(ui.pm.sal)+'K');
     set('neg-fee-vs','El club pide '+fmtM(p.price)+pc(ui.pm.fee,p.price));
     set('neg-sal-vs','Sueldo actual: €'+p.wage+'K por semana'+pc(ui.pm.sal,p.wage));
@@ -17802,8 +17889,15 @@ function advanceWorld(r){
     }
     cup.rounds.forEach((R,ri)=>{
       if(R.done)return;
-      if(R.w===r)playCupRound(cup,ri,0).forEach(t=>mine.push({cup,ri,t,leg:0}));
-      else if(typeof R.w2==='number'&&R.w2===r)playCupRound(cup,ri,1).forEach(t=>mine.push({cup,ri,t,leg:1}));
+      /* una ronda se juega cuando su semana ha llegado O PASADO, y solo si la anterior ya está resuelta. Sin este
+         "catch-up", las rondas que caen en una semana en la que el usuario juega copa (y por tanto el mundo no
+         avanza ese día) se quedaban colgadas para siempre (p. ej. la Copa Intercontinental, semanas 15-18). */
+      if(ri>0&&!cup.rounds[ri-1].done)return;
+      const two=typeof R.w2==='number'&&R.w2>R.w;
+      if(two){
+        if(typeof R.w==='number'&&R.w<=r)playCupRound(cup,ri,0).forEach(t=>mine.push({cup,ri,t,leg:0}));
+        if(typeof R.w2==='number'&&R.w2<=r)playCupRound(cup,ri,1).forEach(t=>mine.push({cup,ri,t,leg:1}));
+      }else if(typeof R.w==='number'&&R.w<=r)playCupRound(cup,ri,0).forEach(t=>mine.push({cup,ri,t,leg:0}));
     });
   }
   return mine;
@@ -20036,14 +20130,14 @@ function playerCard(p,clubId,opts){
   const nat=natOf(p,clubId),pot=Math.round(Math.max(p.pot||p.ovr,p.ovr)),role=mk?'':(p.role||roleAt(p,clubId));
   const nm=cardName(p.n);
   const hasOffer=!mk&&(((p.offers||[]).length>0)||((p.loanOffers||[]).length>0));
-  return`<button class="pcard${hasOffer?' has-offer':''}" data-act="${mk?'mkt-pl':'pl'}" data-id="${p.id}" data-club="${clubId}"${mk?` data-from="${mk.from}"`:''}>
+  return`<button class="pcard${hasOffer?' has-offer':''}" data-act="${mk?'mkt-pl':'pl'}" data-id="${p.id}" data-club="${clubId}"${mk?` data-from="${mk.from||''}"${mk.free?' data-free="1"':''}`:''}>
     <div class="pc-av">${p.loanIn&&!p.famDown?'<span class="tag ced">CED</span>':''}<div class="pc-photo">${avatarHTML(p)}</div></div>
     <div class="pc-main"><div class="pc-name"${nm!==p.n?` title="${esc(p.n)}"`:''}>${esc(nm)}${opts.starter?'<i class="tt" title="Titular"></i>':''}</div>
       <div class="pc-meta"><span class="pc-age">${p.age}a.</span>${ppOf(p).map((x,k)=>`<span class="pc-pos${k===0?' main':''}">${x}</span>`).join('')}${opts.tags?tagsHTML(p):''}</div>
-      <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${mk?'Pide '+fmtM(mk.price):fmtW(p.wage)}</span></div></div>
+      <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${mk?(mk.free?'Libre · '+fmtW(p.wage):'Pide '+fmtM(mk.price)):fmtW(p.wage)}</span></div></div>
     <div class="pc-right">
       <div class="pc-num"><div><b style="color:${ratingColor(p.ovr)}">${p.ovr}</b><small>GRL${dlHTML(p)}</small></div><div><b style="color:${ratingColor(pot)}">${pot}</b><small>POT</small></div></div>
-      <div class="pc-role">${mk?`<span class="pc-club">${mc?crestHTML(mc,16):''}<span>${esc(mc?mc.short:cname(mk.from))}</span></span>`:roleChip(role)}</div>
+      <div class="pc-role">${mk?(mk.free?'<span class="pc-club lib">Agente libre</span>':`<span class="pc-club">${mc?crestHTML(mc,16):''}<span>${esc(mc?mc.short:cname(mk.from))}</span></span>`):roleChip(role)}</div>
       <div class="pc-nat">${flagHTML(nat)} <span>${esc(NATNAME[nat]||'')}</span></div></div></button>`;
 }
 /* ===================== palmarés ===================== */
@@ -21068,12 +21162,12 @@ function pmPositions(f){
 function pmInfo(f){
   const p=f.p,nat=natOf(p,f.club),pot=Math.round(Math.max(p.pot||p.ovr,p.ovr)),own=f.ctx==='mine'||f.ctx==='fam';
   const extra=(own?`<div><i>Energía</i><b>${Math.round(p.en)}%</b></div><div><i>Estado</i><b>${p.inj>0?`Lesionado, ${p.inj} jornada${p.inj>1?'s':''}`:p.sus>0?`Sancionado, ${p.sus} partido${p.sus>1?'s':''}`:p.disc>=3?'Descontento':'Disponible'}</b></div>`:'')
-   +(f.ctx==='academy'?`<div><i>Origen</i><b>Academia de ${esc(cname(state.club))}</b></div><div><i>Rol en tu equipo</i><b>${roleChip(pmRole(f))}</b></div>`:'')+(f.ctx==='market'?`<div><i>Club actual</i><b>${esc(cname(p.from))}</b></div><div><i>Precio</i><b>${fmtV(p.price)}</b></div>`:'');
+   +(f.ctx==='academy'?`<div><i>Origen</i><b>Academia de ${esc(cname(state.club))}</b></div><div><i>Rol en tu equipo</i><b>${roleChip(pmRole(f))}</b></div>`:'')+(f.ctx==='market'?(p.free?`<div><i>Situación</i><b>Agente libre</b></div><div><i>Coste</i><b>Sin traspaso, solo sueldo</b></div>`:`<div><i>Club actual</i><b>${esc(cname(p.from))}</b></div><div><i>Precio</i><b>${fmtV(p.price)}</b></div>`):'');
   const loanBox=p.loanIn?(()=>{const from=p.loanIn.from,to=f.ctx==='loan'?(f.loan&&f.loan.to)||f.club:f.ctx==='mine'?(state&&state.club):f.club;const a=esc(cname(from)),b=esc(cname(to));return`<div class="pm-loanbox"><div class="pm-loan-team">${crestHTML(CLUBBY[from]||ensureClub(from),30)}<div><small>${p.famDown?'Del primer equipo':'Cedido por'}</small><b title="${a}">${a}</b></div></div><span class="pm-loan-arrow">→</span><div class="pm-loan-team">${crestHTML(CLUBBY[to]||ensureClub(to),30)}<div><small>${p.famDown?'En el filial':'Cedido a'}</small><b title="${b}">${b}</b></div></div></div>`})():'';
   const at=attrsOf(p),akeys=p.pos==='GK'?ATTR_GK:ATTR_OUT;
   const attrBox=`<div class="subh">Atributos</div><div class="attrgrid${akeys.length>6?' a7':''}">${akeys.map(k=>`<div class="attr" title="${ATTR_NAME[k]}"><small>${k}</small><b style="color:${ratingColor(at[k])}">${at[k]}${atDl(p,k)}</b></div>`).join('')}</div>`;
   return`${loanBox}<div class="pm-nums"><div><small>GRL</small><b style="color:${ratingColor(p.ovr)}">${p.ovr}${dlHTML(p)}</b><div class="meter"><i style="width:${p.ovr}%;background:${ratingColor(p.ovr)}"></i></div></div><div><small>POT</small><b style="color:${ratingColor(pot)}">${pot}</b><div class="meter dual"><i class="pot" style="width:${pot}%;background:${ratingColor(pot)}55"></i><i style="width:${p.ovr}%;background:${ratingColor(p.ovr)}"></i></div></div></div>${attrBox}
-  <div class="defs"><div><i>Posiciones</i><b class="posc-w">${posChips(f)}</b></div>${p.tr?`<div><i>Aprendiendo</i><b>${p.tr.pos} · ${p.tr.left} jornada${p.tr.left>1?'s':''}</b></div>`:''}${f.ctx==='market'?`<div><i>Rol en su club</i><b>${roleChip(pmRole(f))}</b></div><div><i>Rol en tu equipo</i><b>${roleChip(roleAt(p,state.club))}</b></div>`:''}<div><i>Edad</i><b>${p.age}a.</b></div><div><i>Nacionalidad</i><b>${flagHTML(nat)} ${NATNAME[nat]||nat||'—'}</b></div><div><i>Valor de mercado</i><b>${fmtV(p.val)}</b></div><div><i>Sueldo semanal</i><b>${fmtW(p.wage)}${p.loanIn&&p.loanIn.share!=null&&p.loanIn.share<1?' (pagas el '+Math.round(p.loanIn.share*100)+'%)':''}</b></div><div><i>Pie dominante</i><b>${footOf(p)}</b></div>${extra}</div>${posNote(f)}`;
+  <div class="defs"><div><i>Posiciones</i><b class="posc-w">${posChips(f)}</b></div>${p.tr?`<div><i>Aprendiendo</i><b>${p.tr.pos} · ${p.tr.left} jornada${p.tr.left>1?'s':''}</b></div>`:''}${f.ctx==='market'?`${p.free?'':`<div><i>Rol en su club</i><b>${roleChip(pmRole(f))}</b></div>`}<div><i>Rol en tu equipo</i><b>${roleChip(roleAt(p,state.club))}</b></div>`:''}<div><i>Edad</i><b>${p.age}a.</b></div><div><i>Nacionalidad</i><b>${flagHTML(nat)} ${NATNAME[nat]||nat||'—'}</b></div><div><i>Valor de mercado</i><b>${fmtV(p.val)}</b></div><div><i>Sueldo semanal</i><b>${fmtW(p.wage)}${p.loanIn&&p.loanIn.share!=null&&p.loanIn.share<1?' (pagas el '+Math.round(p.loanIn.share*100)+'%)':''}</b></div><div><i>Pie dominante</i><b>${footOf(p)}</b></div>${extra}</div>${posNote(f)}`;
 }
 function pmStats(f){
   const p=f.p,ap=p.ap||0,gk=p.pos==='GK',g=gk?(p.ge||0):(p.g||0),a=p.as||0;
@@ -21100,12 +21194,21 @@ function pmActions(f){
   if(ui.pm.sub==='loan'){
     return back+`<div class="subh" style="margin-top:6px">Ceder a otro club</div><p class="pm-note">Se marcha hasta final de temporada y vuelve después. El club receptor asume su sueldo. Estos clubes lo quieren para jugar.</p>`+(ui.pm.cands||[]).map(x=>`<button class="act-b" data-act="pm-loan-to" data-to="${x.club.id}"><span class="act-c">${crestHTML(x.club,30)}<span>${esc(x.club.name)}<small>${esc(divName(x.club.co,x.club.div))}</small><small>Le prometen: ${roleChip(x.role)}</small></span></span></button>`).join('');
   }
+  if(ui.pm.sub==='release'){
+    const cost=r1(p.val*.1);
+    return back+`<div class="subh" style="margin-top:6px">Liberar jugador</div>
+    <p class="pm-note">¿Seguro que quieres liberar a <b>${esc(p.n)}</b>? Saldrá de tu plantilla y quedará como <b>agente libre</b>. Para rescindir su contrato debes pagarle una indemnización de <b>${fmtM(cost)}</b> (10 % de su valor de mercado).</p>
+    <div class="row-btns"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn danger" data-act="pm-rel-go">Sí, liberar y pagar ${fmtM(cost)}</button></div>`;
+  }
   let h=back+'<div class="subh" style="margin-top:6px">Acciones</div>';
   if(f.ctx==='mine'&&!p.loanIn){
     h+=`<button class="act-b" data-act="pm-list">${p.list?'Retirar oferta de traspaso':'Ofrecer traspaso'}<small>${p.list?'Dejarás de recibir ofertas por este jugador':'Los clubes te enviarán ofertas: podrás aceptar, rechazar o hacer contraoferta'}</small></button>`;
   }
   if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn){
     h+=`<button class="act-b" data-act="pm-cedible">${p.loanList?'Retirar oferta de cesión':'Ofrecer cesión'}<small>${p.loanList?'Dejarás de recibir propuestas de cesión':'Los clubes te enviarán propuestas de cesión con el rol que le prometen'}</small></button>`;
+  }
+  if(f.ctx==='mine'&&!p.loanIn){
+    h+=`<button class="act-b" data-act="pm-rel">Liberar<small>Rescindes su contrato y queda como agente libre. Pagas una indemnización del 10 % de su valor (${fmtM(r1(p.val*.1))}).</small></button>`;
   }
   if(f.ctx==='mine'&&p.loanIn)h+=`<p class="pm-note">Cedido por ${esc(cname(p.loanIn.from))} hasta final de temporada. No se puede vender ni ceder.</p>`;
   if(f.ctx==='loan')h+=`<button class="act-b" data-act="pm-recall">Recuperar de la cesión<small>Vuelve ahora a su plantilla</small></button>`;
@@ -21140,11 +21243,11 @@ function renderPM(){
   const role=pmRole(f),p=f.p,v=ui.pm.view,canAct=!!state&&f.ctx!=='other'&&f.ctx!=='market'&&f.ctx!=='academy',nOff=(p.offers||[]).length;
   const sur=surname(p.n),given=p.n.slice(0,p.n.length-sur.length).trim();
   const nmHTML=given?`<span>${esc(given)}</span><span>${esc(sur)}</span>`:`<span>${esc(p.n)}</span>`;
-  const head=`<div class="pm-head">${posChip(p)}<div class="pm-tags">${roleChip(role)}${f.ctx==='market'?`<span class="tag">${esc(cname(p.from))}</span>`:tagsHTML(p)}</div><button class="cc-x" data-act="pm-close" aria-label="Cerrar">${xIcon}</button></div><div class="pm-top"><div class="pm-photo">${avatarHTML(p)}</div><h3 class="pm-name">${nmHTML}</h3></div>`;
+  const head=`<div class="pm-head">${posChip(p)}<div class="pm-tags">${roleChip(role)}${f.ctx==='market'?`<span class="tag">${esc(p.free?'Agente libre':cname(p.from))}</span>`:tagsHTML(p)}</div><button class="cc-x" data-act="pm-close" aria-label="Cerrar">${xIcon}</button></div><div class="pm-top"><div class="pm-photo">${avatarHTML(p)}</div><h3 class="pm-name">${nmHTML}</h3></div>`;
   const tabs=`<div class="subtabs five">${PM_TABS.map(([k,ic,l])=>`<button class="${v===k?'on':''}" data-act="pm-tab" data-v="${k}" aria-label="${l}" title="${l}">${ic}</button>`).join('')}</div>`;
   const PM_VIEWS={stats:pmStats,hist:pmHistoria,pal:pmPalmares,pos:pmPositions};
   const body=v==='neg'?pmNeg(f):v==='act'?pmActions(f):tabs+(PM_VIEWS[v]?PM_VIEWS[v](f):pmInfo(f));
-  const foot=f.ctx==='academy'?'<div class="pm-foot2"><button class="btn primary" data-act="acad-up">Ascender a la plantilla</button><button class="btn danger" data-act="acad-out">Liberar</button></div>':f.ctx==='market'?(v==='neg'?(ui.pm.kind==='loan'&&loanBlock(p,ui.pm.prole)?'<div class="pm-foot2 one"><button class="btn ghost" data-act="pm-back">Volver a la ficha</button></div>':'<div class="pm-foot2"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn primary" data-act="neg-send">Negociar</button></div>'):'<div class="pm-foot2"><button class="btn primary" data-act="pm-neg" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-neg" data-k="loan">Ofrecer cesión</button></div>'):(f.ctx==='other'&&canOfferOther(f)?'<div class="pm-foot2"><button class="btn primary" data-act="pm-offer-other" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-offer-other" data-k="loan">Ofrecer cesión</button></div>':canAct&&v!=='act'?`<button class="btn ghost pm-act" data-act="pm-act">Acciones${nOff?`<span class="badge">${nOff}</span>`:''}</button>`:'');
+  const foot=f.ctx==='academy'?'<div class="pm-foot2"><button class="btn primary" data-act="acad-up">Ascender a la plantilla</button><button class="btn danger" data-act="acad-out">Liberar</button></div>':f.ctx==='market'?(v==='neg'?(ui.pm.kind==='loan'&&loanBlock(p,ui.pm.prole)?'<div class="pm-foot2 one"><button class="btn ghost" data-act="pm-back">Volver a la ficha</button></div>':'<div class="pm-foot2"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn primary" data-act="neg-send">Negociar</button></div>'):(p.free?'<div class="pm-foot2 one"><button class="btn primary" data-act="pm-neg" data-k="buy">Fichar libre</button></div>':'<div class="pm-foot2"><button class="btn primary" data-act="pm-neg" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-neg" data-k="loan">Ofrecer cesión</button></div>')):(f.ctx==='other'&&canOfferOther(f)?'<div class="pm-foot2"><button class="btn primary" data-act="pm-offer-other" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-offer-other" data-k="loan">Ofrecer cesión</button></div>':canAct&&v!=='act'?`<button class="btn ghost pm-act" data-act="pm-act">Acciones${nOff?`<span class="badge">${nOff}</span>`:''}</button>`:'');
   const card=$('#pm-body');card.className='pm-card'+(['info','stats','hist','pal','pos'].includes(v)?' pm-fixed':'');
   card.innerHTML=head+`<div class="pm-scroll">${body}</div>${foot}`;
   if(v==='neg')updateNegLabels();
@@ -21268,10 +21371,10 @@ function mktResHTML(){
   if(f.page>=pages)f.page=pages-1;if(f.page<0)f.page=0;
   const page=list.slice(f.page*MKT_PER,(f.page+1)*MKT_PER);
   const active=['pos','nat','age','val','ovr','country','league','team'].filter(k=>f[k]!=='ALL').length;
-  const rows=page.map(({p,from,price})=>playerCard(p,from,{mkt:{from,price}})).join('');
+  const rows=page.map(({p,from,price,free})=>playerCard(p,from,{mkt:{from,price,free}})).join('');
   const pg=pages>1?`<div class="mkt-pg"><button class="btn ghost sm" data-act="mkt-page" data-d="-1" aria-label="Página anterior" ${f.page<=0?'disabled':''}>Anterior</button><span>Pág. ${f.page+1} de ${pages}</span><button class="btn ghost sm" data-act="mkt-page" data-d="1" aria-label="Página siguiente" ${f.page>=pages-1?'disabled':''}>Siguiente</button></div>`:'';
   const rule=BASQUE_ONLY.has(state.club)?`<p class="muted-s" style="margin:8px 0 0">${esc(cname(state.club))} solo ficha jugadores con nombre o apellido vasco.</p>`:'';
-  return`${rule}<div class="mkt-tools"><button class="btn ghost sm" data-act="mkt-open">Filtros${active?` (${active})`:''}</button>${pg}</div>
+  return`${rule}<div class="mkt-tools"><button class="btn ghost sm" data-act="mkt-open">Filtros${active?` (${active})`:''}</button><button class="btn ${f.freeOnly?'primary':'ghost'} sm" data-act="mkt-free">Agentes libres</button>${pg}</div>
   <p class="mkt-count">${list.length} jugador${list.length!==1?'es':''}</p>
   ${page.length?`<div class="pcs">${rows}</div>`:`<div class="card"><p class="muted-s">${f.q?'No hay jugadores que cumplan la búsqueda y los filtros.':'No hay jugadores que cumplan esos filtros.'}</p></div>`}`;
 }
@@ -21902,6 +22005,8 @@ const H={
   'lo-acc'(t){const o=t.dataset.o,v=ui.pm.ls&&ui.pm.ls[o],e=acceptLoanOffer(t.dataset.p,o,v==null?null:100-v);if(e){toast(e);renderPM();return}toast('Cesión completada');closePlayer();renderGame()},
   'lo-rej'(t){rejectLoanOffer(t.dataset.p,t.dataset.o);renderPM();renderGame()},
   'pm-loan'(){ui.pm.sub='loan';ui.pm.cands=loanCandidates(ui.pm.id);renderPM()},
+  'pm-rel'(){ui.pm.sub='release';renderPM()},
+  'pm-rel-go'(){const e=releasePlayer(ui.pm.id);if(e){toast(e);return}toast('Jugador liberado');closePlayer();renderGame()},
   'pm-offer-other'(t){
     const f=pmFind();if(!f||!canOfferOther(f))return;
     const from=f.club,q=squadFor(from).find(x=>x.id===f.p.id)||f.p;
@@ -22076,13 +22181,19 @@ const H={
   'mkt-pl'(t){
     const id=t.dataset.id,from=t.dataset.from;let p=state.market.find(x=>x.id===id);
     if(!p){
-      p=CLUBBY[from]?squadFor(from).find(x=>x.id===id):null;if(!p)return;
-      if(p.blk!=null&&p.blk<=mktWk()){delete p.blk;delete p.tries}
-      p.from=from;p.price=mktPrice(p);state.market.push(p);
+      if(t.dataset.free){
+        p=(state.freeAgents||[]).find(x=>x.id===id);if(!p)return;p.free=1;p.price=0;delete p.from;
+      }else{
+        p=CLUBBY[from]?squadFor(from).find(x=>x.id===id):null;if(!p)return;
+        if(p.blk!=null&&p.blk<=mktWk()){delete p.blk;delete p.tries}
+        p.from=from;p.price=mktPrice(p);
+      }
+      state.market.push(p);
     }
     openPlayer(id);
   },
   'mkt-clear'(){ui.mkt=mktDefault();refreshMktSheet();renderGame()},
+  'mkt-free'(){if(!ui.mkt||typeof ui.mkt!=='object')ui.mkt=mktDefault();ui.mkt.freeOnly=!ui.mkt.freeOnly;ui.mkt.page=0;renderGame()},
   'mkt-page'(t){if(!ui.mkt||typeof ui.mkt!=='object')ui.mkt=mktDefault();ui.mkt.page=Math.max(0,ui.mkt.page+(+t.dataset.d));renderGame()},
   cco(t){ui.cco=t.dataset.k;const g=GROUPS.find(x=>x.id===ui.cco);ui.cc=g.comps.includes(userKey())?userKey():g.comps[0];renderGame()},
   'cco-pick'(){ui.ccoQ='';openSheet(ccoListHTML())},
@@ -23835,6 +23946,104 @@ Object.assign(STADIUM,{ARK:'Stadion GOSiR',CHR:'Stadion Miejski w Głogowie',PGR
     ['Jakub Zbróg','LGW2','PGR',1,'Rotación']
   );
 })();
+/* ===== recaptura de "defaults" DESPUÉS de todos los escudos/clubes añadidos al final del script =====
+   CLUB_DEFAULTS/BUDGET_DEFAULTS se capturan antes de estos bloques; sin esta recaptura, resetClubOverrides()
+   (al cargar/retomar una partida) borraba los escudos de clubes cuyo logo se añadió aquí (Chance Liga, Grecia,
+   MOL Cup, etc.). */
+CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
+BUDGET_DEFAULTS=Object.assign({},BUDGET);
+/* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
+   [nombre, pos, birthYear, ISO2nat, ovr, pot|null, valueM€, wage|null (miles €/sem), posiciones]
+   GRL, valor y edad del paste; pot = GRL (veteranos, sin progresión); sueldo null → 4×valor (regla del juego).
+   Pie por defecto derecho (REAL_FOOT solo para zurdos). */
+const REAL_FREE=[
+  ['Jadon Sancho','FW',2000,'EN',75,77,10.0,null,'EI/ED/MCO/MI/MD'],
+  ['Oleksandr Zinchenko','DF',1997,'UA',72,null,15.15,null,'LI/MC/MI'],
+  ['Karim Benzema','FW',1988,'FR',83,83,4.0,null,'DC/MCO'],
+  ['Riyad Mahrez','FW',1991,'DZ',74,null,3.5,null,'ED/MD/MCO'],
+  ['Daniel Carvajal','DF',1992,'ES',72,null,5.16,null,'LD/DFC/MD'],
+  ['Oleksiy Gutsulyak','FW',1998,'UA',75,null,15.21,null,'ED/DC/EI'],
+  ['Anthony Martial','FW',1996,'FR',76,null,6.78,null,'DC/EI'],
+  ['Mauro Icardi','FW',1993,'AR',75,null,5.29,null,'DC'],
+  ['Felipe Carballo','MD',1996,'UY',75,null,9.92,null,'MC/MCO/MCD'],
+  ['Wilfried Zaha','FW',1993,'CI',72,null,5.17,null,'EI/ED/DC'],
+  ['Rodrigão','DF',1995,'BR',65,null,3.29,null,'DFC/MCD'],
+  ['Rodrigo Schlegel','DF',1997,'AR',62,null,2.00,null,'DFC/LD'],
+  ['Tanguy Ndombélé','MD',1997,'FR',61,null,4.55,null,'MC/MCO/MCD'],
+  ['Carlos Júnior','FW',1995,'BR',71,null,2.00,null,'ED/DC/EI'],
+  ['Abdoulaye Touré','MD',1994,'GN',68,null,2.45,null,'MCD/MC'],
+  ['Raphaël Guerreiro','DF',1994,'PT',74,null,4.73,null,'LI/MI/MC'],
+  ['Paul Pogba','MD',1993,'FR',76,76,1.10,null,'MC/MCO/MI'],
+  ['Habib Keïta','MD',2002,'ML',67,null,4.65,null,'MC/MCD/MI'],
+  ['Marcel Beifus','DF',2003,'DE',66,null,3.90,null,'DFC/LD'],
+  ['Jordan Sierra','MD',1997,'EC',67,null,1.80,null,'MC/MCO/MD'],
+  ['Youcef Atal','DF',1996,'DZ',65,null,4.04,null,'LD/MD/ED'],
+  ['Renato Sanches','MD',1997,'PT',61,null,3.19,null,'MC/MCO/MD'],
+  ['Adam Webster','DF',1995,'EN',78,null,11.32,null,'DFC/LD'],
+  ['Tozé','MD',1993,'PT',71,null,2.69,null,'MCO/ED/MD'],
+  ['Bruno Varela','GK',1995,'CV',73,null,3.71,null,'POR'],
+  ['Raheem Sterling','FW',1995,'EN',69,null,12.40,null,'ED/EI/DC'],
+  ['Francesco Acerbi','DF',1988,'IT',73,null,2.15,null,'DFC'],
+  ['Praxedes','MD',2002,'BR',64,null,5.40,null,'MC/MCO/MCD'],
+  ['Luka Ilic','MD',1999,'RS',73,null,5.01,null,'MCO/MC/EI'],
+  ['Ulises Rivas','MD',1996,'MX',52,null,2.79,null,'MC/MCD'],
+  ['Renzo Saravia','DF',1993,'AR',61,null,1.20,null,'LD/MD'],
+  ['Olivier Ntcham','MD',1996,'CM',69,null,4.83,null,'MC/MCO/MI'],
+  ['Yazan Al-Naimat','FW',1999,'JO',64,null,1.00,null,'DC/ED/EI']
+];
+Object.assign(REAL_ATTR,{
+  'Jadon Sancho':{RIT:79,TIR:72,PAS:76,REG:85,DEF:49,FÍS:69},
+  'Oleksandr Zinchenko':{RIT:63,TIR:74,PAS:79,REG:75,DEF:76,FÍS:68},
+  'Karim Benzema':{RIT:60,TIR:81,PAS:77,REG:79,DEF:40,FÍS:70},
+  'Riyad Mahrez':{RIT:70,TIR:75,PAS:79,REG:84,DEF:38,FÍS:58},
+  'Daniel Carvajal':{RIT:76,TIR:59,PAS:79,REG:78,DEF:81,FÍS:79},
+  'Oleksiy Gutsulyak':{RIT:77,TIR:74,PAS:70,REG:75,DEF:40,FÍS:71},
+  'Anthony Martial':{RIT:77,TIR:72,PAS:72,REG:79,DEF:46,FÍS:72},
+  'Mauro Icardi':{RIT:57,TIR:73,PAS:70,REG:66,DEF:47,FÍS:69},
+  'Felipe Carballo':{RIT:66,TIR:62,PAS:74,REG:72,DEF:70,FÍS:70},
+  'Wilfried Zaha':{RIT:80,TIR:71,PAS:70,REG:83,DEF:36,FÍS:68},
+  'Rodrigão':{RIT:58,TIR:38,PAS:52,REG:52,DEF:69,FÍS:68},
+  'Rodrigo Schlegel':{RIT:58,TIR:35,PAS:50,REG:50,DEF:66,FÍS:68},
+  'Tanguy Ndombélé':{RIT:66,TIR:60,PAS:70,REG:72,DEF:58,FÍS:65},
+  'Carlos Júnior':{RIT:77,TIR:72,PAS:68,REG:74,DEF:35,FÍS:70},
+  'Abdoulaye Touré':{RIT:60,TIR:45,PAS:65,REG:63,DEF:70,FÍS:74},
+  'Raphaël Guerreiro':{RIT:72,TIR:75,PAS:81,REG:80,DEF:66,FÍS:62},
+  'Paul Pogba':{RIT:55,TIR:72,PAS:78,REG:76,DEF:62,FÍS:77},
+  'Habib Keïta':{RIT:66,TIR:52,PAS:68,REG:66,DEF:64,FÍS:72},
+  'Marcel Beifus':{RIT:60,TIR:38,PAS:52,REG:52,DEF:69,FÍS:68},
+  'Jordan Sierra':{RIT:66,TIR:58,PAS:70,REG:68,DEF:62,FÍS:64},
+  'Youcef Atal':{RIT:76,TIR:55,PAS:62,REG:74,DEF:65,FÍS:66},
+  'Renato Sanches':{RIT:64,TIR:58,PAS:70,REG:71,DEF:58,FÍS:67},
+  'Adam Webster':{RIT:56,TIR:40,PAS:58,REG:58,DEF:80,FÍS:79},
+  'Tozé':{RIT:62,TIR:68,PAS:73,REG:71,DEF:45,FÍS:60},
+  'Bruno Varela':{EST:74,PAR:72,SAQ:68,REF:75,COL:71},
+  'Raheem Sterling':{RIT:76,TIR:68,PAS:67,REG:75,DEF:40,FÍS:66},
+  'Francesco Acerbi':{RIT:52,TIR:40,PAS:68,REG:55,DEF:81,FÍS:78},
+  'Praxedes':{RIT:66,TIR:55,PAS:68,REG:66,DEF:62,FÍS:64},
+  'Luka Ilic':{RIT:68,TIR:70,PAS:74,REG:73,DEF:48,FÍS:62},
+  'Ulises Rivas':{RIT:58,TIR:42,PAS:56,REG:56,DEF:56,FÍS:60},
+  'Renzo Saravia':{RIT:69,TIR:48,PAS:58,REG:62,DEF:66,FÍS:64},
+  'Olivier Ntcham':{RIT:62,TIR:71,PAS:73,REG:70,DEF:60,FÍS:76},
+  'Yazan Al-Naimat':{RIT:72,TIR:66,PAS:52,REG:66,DEF:32,FÍS:60}
+});
+Object.assign(REAL_FOOT,{'Oleksandr Zinchenko':'I','Riyad Mahrez':'I','Jadon Sancho':'D','Karim Benzema':'D','Daniel Carvajal':'D','Oleksiy Gutsulyak':'I','Anthony Martial':'D','Mauro Icardi':'D','Felipe Carballo':'D','Wilfried Zaha':'D','Rodrigão':'D','Rodrigo Schlegel':'D','Tanguy Ndombélé':'D','Carlos Júnior':'D','Abdoulaye Touré':'D','Raphaël Guerreiro':'I','Paul Pogba':'A','Habib Keïta':'I','Marcel Beifus':'D','Jordan Sierra':'D','Youcef Atal':'D','Renato Sanches':'D','Adam Webster':'D','Tozé':'D','Bruno Varela':'D','Raheem Sterling':'D','Francesco Acerbi':'I','Praxedes':'I','Luka Ilic':'I','Ulises Rivas':'D','Renzo Saravia':'D','Olivier Ntcham':'D','Yazan Al-Naimat':'D'});
+Object.entries({'Jadon Sancho':341319,'Oleksandr Zinchenko':201788,'Karim Benzema':3318,'Riyad Mahrez':149354,'Daniel Carvajal':74892,'Oleksiy Gutsulyak':287798,'Anthony Martial':183706,'Mauro Icardi':87988,'Felipe Carballo':284568,'Wilfried Zaha':70052,'Rodrigão':231324,'Rodrigo Schlegel':371705,'Tanguy Ndombélé':334902,'Carlos Júnior':207738,'Abdoulaye Touré':186567,'Raphaël Guerreiro':149462,'Paul Pogba':130126,'Habib Keïta':996936,'Marcel Beifus':754601,'Jordan Sierra':314430,'Youcef Atal':380235,'Renato Sanches':240679,'Adam Webster':212725,'Tozé':162826,'Bruno Varela':148103,'Raheem Sterling':106034,'Francesco Acerbi':83656,'Praxedes':906194,'Luka Ilic':320813,'Ulises Rivas':208894,'Renzo Saravia':178237,'Olivier Ntcham':206986,'Yazan Al-Naimat':846171}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+function buildRealFree(r,i){
+  const age=seasonYear()-r[2];
+  const p={id:'FA_'+i,n:r[0],nat:r[3],pos:r[1],age,ovr:r[4],pot:r[5]!=null?r[5]:freePot(age,r[4],'FA_'+r[0]),en:100,inj:0,g:0,ap:0,real:1,free:1,price:0};
+  p.val=r[6]!=null?r[6]:calcVal(p);
+  p.wage=r[7]!=null?r[7]:Math.round(p.val*4);
+  if(r[8])p.pp=r[8].split('/');
+  p.at=fixAt(p,REAL_ATTR[p.n]);const ph=photoFor(p.n,null);if(ph)p.photo=ph;
+  return p;
+}
+function seedRealFreeAgents(){
+  if(!state)return;
+  state.freeAgents=state.freeAgents||[];
+  const have=new Set(state.freeAgents.map(p=>p.n));
+  REAL_FREE.forEach((r,i)=>{if(!have.has(r[0]))state.freeAgents.push(buildRealFree(r,i))});
+  state.freeSeeded=1;
+}
 init();
 </script>
 </body>
