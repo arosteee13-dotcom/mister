@@ -1326,20 +1326,115 @@ const DBMGR={
     REAL_DB=d;
     this.activeId=id;
     Store.set('mister.realdb.active',id);
+    this._invalidate(d);
     return true;
+  },
+  /* al cambiar/actualizar la base activa, las plantillas cacheadas (SQC/ui.preview) quedan obsoletas:
+     fuera de partida se limpian TODAS; con partida en curso, solo los clubes de la base nueva (para no
+     perder las estadísticas de temporada del resto). */
+  _invalidate(data){
+    try{
+      if(typeof state!=='undefined'&&state)invalidateSquads(data?Object.keys(data):null);
+      else invalidateSquads();
+    }catch(e){}
+  },
+  /* enlaza una base a un archivo local del disco (File System Access API): guarda el handle en IndexedDB para
+     poder releerlo luego (botón "Actualizar") sin volver a subir el archivo. */
+  async link(id,handle){
+    await this.loadIndex();
+    const e=this.list.find(x=>x.id===id);if(e){e.linked=true;IDB.put('realdb.index',this.list)}
+    IDB.put('realdb.handle.'+id,handle);
+    return true;
+  },
+  async getHandle(id){try{return await IDB.get('realdb.handle.'+id)}catch(e){return null}},
+  /* lee el contenido del archivo enlazado (parseado y validado) o null. prompt=false para no pedir permiso
+     (relectura silenciosa al arrancar). */
+  async readHandle(id,prompt){
+    const h=await this.getHandle(id);if(!h||!h.getFile)return null;
+    try{
+      let perm=h.queryPermission?await h.queryPermission({mode:'read'}):'granted';
+      if(perm!=='granted'&&prompt&&h.requestPermission)perm=await h.requestPermission({mode:'read'});
+      if(perm!=='granted')return null;
+      return await dbReadFile(await h.getFile());
+    }catch(e){return null}
+  },
+  /* "Actualizar": relee el archivo enlazado y reemplaza el contenido de esa base (mismo id, sigue activa). */
+  async refresh(id){
+    const data=await this.readHandle(id,true);
+    if(!data)return null;
+    await this.loadIndex();
+    const e=this.list.find(x=>x.id===id);
+    if(e){e.date=Date.now();e.size=Object.keys(data).length;IDB.put('realdb.index',this.list)}
+    IDB.put('realdb.data.'+id,data);
+    await this.use(id);
+    return {size:Object.keys(data).length,name:e?e.name:'Base de datos'};
+  },
+  /* "Sustituir": reemplaza en sitio el contenido de una base ya importada (sin cambiar id ni nombre).
+     Se suelta el vínculo previo, porque el archivo nuevo puede ser otro distinto del enlazado. */
+  async replace(id,data){
+    await this.loadIndex();
+    const e=this.list.find(x=>x.id===id);if(!e)return false;
+    e.date=Date.now();e.size=Object.keys(data).length;e.linked=false;IDB.put('realdb.index',this.list);
+    IDB.del('realdb.handle.'+id);
+    IDB.put('realdb.data.'+id,data);
+    await this.use(id);
+    return true;
+  },
+  /* relee EN SILENCIO todas las bases enlazadas (al arrancar o al volver a la pestaña): devuelve cuántas se
+     actualizaron (changed) y cuántas no se pudieron leer por permiso pendiente (blocked). No pide permiso. */
+  async refreshAll(){
+    await this.loadIndex();
+    let changed=0,blocked=0,activeData=null;
+    for(const e of this.list){
+      if(!e.linked)continue;
+      const data=await this.readHandle(e.id,false);
+      if(data){e.date=Date.now();e.size=Object.keys(data).length;IDB.put('realdb.data.'+e.id,data);changed++;if(e.id===this.activeId)activeData=data;}
+      else blocked++;
+    }
+    if(changed)IDB.put('realdb.index',this.list);
+    if(activeData){REAL_DB=activeData;this._invalidate(activeData)}   /* solo afecta a partidas nuevas; la partida en curso no se toca */
+    return {changed,blocked};
   },
   /* carga automática al arrancar: no bloqueante (el título/menú funcionan igual mientras termina),
      pero cualquier punto que vaya a entrar en modo "real" debe esperar DBMGR.ready primero. */
   autoload(){
     this.ready=(async()=>{
       await this.loadIndex();
+      /* Versión web (http/https): si el repo sirve players-db.json, se refresca solo como base "del servidor".
+         NO manda por defecto: solo queda activa si el usuario la eligió ("Usar"). En file:// no aplica. */
+      try{
+        if(typeof location!=='undefined'&&/^https?:$/.test(location.protocol)&&typeof fetch==='function'){
+          const r=await fetch('players-db.json',{cache:'no-store'});
+          if(r&&r.ok){const data=await r.json();
+            if(this.validate(data)){
+              const SID='server:players-db.json';let e=this.list.find(x=>x.id===SID);
+              if(!e){e={id:SID,name:'players-db.json (servidor)',date:Date.now(),size:Object.keys(data).length,server:true};this.list.push(e)}
+              e.date=Date.now();e.size=Object.keys(data).length;
+              IDB.put('realdb.index',this.list);IDB.put('realdb.data.'+SID,data);
+              if(Store.get('mister.realdb.active')===SID){REAL_DB=data;this.activeId=SID}
+            }}
+        }
+      }catch(e){}
       const activeId=Store.get('mister.realdb.active');
-      if(activeId&&this.list.some(e=>e.id===activeId)){try{await this.use(activeId)}catch(e){}}
+      if(activeId&&this.list.some(e=>e.id===activeId)){
+        try{
+          await this.refreshAll();     /* relee en silencio todas las bases enlazadas */
+          await this.use(activeId);    /* vuelca la activa (ya refrescada) en REAL_DB */
+        }catch(e){}
+      }
     })();
     return this.ready;
   }
 };
 
+/* lee un archivo de disco (File/FileSystemFile) y devuelve los datos JSON ya validados, o null */
+async function dbReadFile(file){
+  try{
+    const txt=file.text?await file.text():await new Promise(res=>{const rd=new FileReader();rd.onload=()=>res(String(rd.result||''));rd.onerror=()=>res('');rd.readAsText(file)});
+    const data=JSON.parse(txt);
+    return DBMGR.validate(data)?data:null;
+  }catch(e){return null}
+}
 /* ===================== geografía (lon,lat) ===================== */
 const P=s=>s.trim().split(/\s+/).map(q=>q.split(',').map(Number));
 const EURASIA=P(`-5.6,36 -6.3,36.6 -7.4,37.2 -8.9,37 -8.8,38.5 -9.5,38.8 -8.8,40.2 -8.8,42 -9.3,43 -8,43.7 -5.8,43.6 -3.5,43.5 -1.8,43.4 -1.3,44.6 -1.2,46 -2.3,47.2 -4.5,47.8 -4.7,48.4 -3,48.8 -1.6,48.7 -1.9,49.7 -1.2,49.4 0.2,49.5 1.6,50.2 2.5,51.1 3.4,51.4 4,52 4.7,53 5.8,53.4 7,53.6 8.6,53.9 8.7,54.5 8.6,55.2 8.1,56 8.2,57 9.5,57.2 10.6,57.7 10.5,56.6 10.3,55.6 9.8,55 9.6,54.5 10.2,54.3 10.9,54 12,54.2 13.1,54.4 13.8,54 14.3,53.9 15.5,54.2 16.5,54.6 18.3,54.8 18.7,54.4 19.6,54.4 21,55.2 21,56.4 21.6,57.5 22.6,57.7 23.3,57 24.3,57.2 24.4,58.3 23.5,59.2 26,59.6 28,59.5 29.6,60 28,60.5 26,60.4 23.5,59.9 22,60.2 21.4,60.7 21.3,61.6 21.5,63 22.5,64 24.5,64.8 25.4,65.4 25.3,65.8 22.5,65.8 21.5,65.3 21,64.5 19.5,63.4 17.6,62.3 17.3,61 17.3,60.5 18.8,59.5 17.5,58.7 16.6,57.9 16.6,57 16.4,56.4 15.3,56.1 14.3,55.5 13.3,55.35 12.9,55.6 12.5,56.3 12.1,57.1 11.9,57.8 11.3,58.9 10.6,59.9 10.5,59.5 10.4,59 9.6,59 8.6,58.5 8,58.1 6.7,58.1 5.7,58.6 5.2,59.9 5,61 5,62 6.3,62.6 8.5,63.6 10.5,64.6 12.4,66 14.5,67.5 16,68.4 18,69.5 20.5,70 23,70.5 26,71.1 28.5,70.9 31,70.2 33,69.4 36,69.2 40.5,67.9 41.2,66.7 38,66.2 34.5,66.6 34.5,64.5 37,63.9 40,64.5 43,66.4 44,66.1 44,68.3 47,68 53,68.5 58,68.9 60,69.8 66,69 66.5,71 70,73.5 78,72.4 80,73.6 87,75 100,76.5 104,77.7 113,73.8 126,73.5 140,72.5 150,71.5 160,70 170,69.7 180,68.8
@@ -6049,7 +6144,7 @@ function genAttrs(p){
   const bias={DF:{DEF:1.08,FÍS:1.05,RIT:.99,TIR:.86,PAS:.95,REG:.9},MD:{PAS:1.06,REG:1.02,RIT:1,DEF:.97,TIR:.97,FÍS:.97},FW:{RIT:1.05,TIR:1.05,REG:1.03,PAS:.99,DEF:.72,FÍS:.95}}[p.pos]||{};
   const o={};ATTR_OUT.forEach(k=>{o[k]=clamp(Math.round(base*(bias[k]||1)+j()),20,99)});return o;
 }
-function fixAt(p,at){if(!at)return genAttrs(p);return at}
+function fixAt(p,at){if(!at)return genAttrs(p);const g=genAttrs(p),list=p.pos==='GK'?ATTR_GK:ATTR_OUT,o={};list.forEach(k=>{o[k]=at[k]!=null?at[k]:g[k]});return o}
 function attrsOf(p){if(p.at){if(p.at.SAL!=null)delete p.at.SAL;return p.at}p.at=fixAt(p,REAL_ATTR[p.n]);return p.at}
 /* Puntuaciones de juego a partir de los atributos (los porteros usan los suyos: paradas, reflejos, estirada, colocación).
    Si falta un atributo se usa el GRL del jugador. */
@@ -7823,6 +7918,8 @@ Object.entries({'Andrey Nikolaev Krastev':3610540,'Samuele Massolo':234586,'Ales
 REAL_PHOTO['Liam Henderson']={SAM:'https://cdn.resfu.com/img_data/players/medium/24077.jpg?size=120x&lossy=1',FALK:'https://cdn.resfu.com/img_data/players/medium/280516.jpg?size=120x&lossy=1'};
 /* Arezzo */
 Object.entries({'Andrea Seculin':27108,'Luca Trombini':692696,'Alessandro Renzi':885885,'Filippo De Col':203075,'Matteo Gilli':582408,'Julián Illanes':229745,'Mauro Coppolaro':206989,'Davide Mancini':3149346,'Marco Chiosa':201077,'Samuele Righetti':692733,'Andrea Cagnano':413841,'Mattia Viviani':584310,'Artur Ioniță':184638,'Gennaro Iaccarino':879064,'Shaka Eklu Mawuli':425334,'Luca Chierico':427015,'Mattia Sala':3192114,'Aleandro Manes':3376625,'Alessandro Arena':871741,'Pietro Cianci':288877,'Alberto Cerri':174091,'Leonardo Mancuso':207459,'Camillo Tavernelli':735883,'Alessandro Nunziante':3215452,'Marlon Mena Martínez':3191661,'Giuseppe Kevin Leone':904173,'Marco Olivieri':319387,'Alessandro Capello':232084,'Mario Ravasio':296054,'Matteo Cortesi':682532,'Muhamed Varela Djamanca':683974,'Mattia Damiani':893965}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* colisión de nombre: Alessandro Renzi (ARE, Arézzo) tiene foto global; se acota por club para que el del Faetano no la herede */
+REAL_PHOTO['Alessandro Renzi']={ARE:'https://cdn.resfu.com/img_data/players/medium/885885.jpg?size=120x&lossy=1'};
 /* Vicenza */
 Object.entries({'Riccardo Gagno':305712,'Elia Tantalocchi':980314,'Fabrizio Bagheria':429716,'Lorenzo Caferri':977318,'Maxime Leverbe':225603,'Giuseppe Cuomo':339546,'Thomas Sandon':983081,'Nicolò Brighenti':205296,'Andrea Papetti':693147,'Riccardo Marchizza':274819,'Filippo Costa':203691,'Raul Talarico':983083,'Marco Carraro':374828,'Mattia Valoti':85141,'Alessandro Bellemo':201509,'Loris Zonta':311228,'Armand Rada':429739,'Gabriele Moncini':201225,'Silvio Merkaj':413249,'Claudio Morra':292830,'Nicola Rauti':596794,'Filippo Alessio':983460,'Frank Tsadjout':480534,'Alessandro Pietrelli':885049,'Tommaso Corazza':983623}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 /* Entella */
@@ -16605,26 +16702,33 @@ function askDataMode(){
    (se abrió desde el botón del menú principal: solo gestiona qué base queda activa para el futuro). */
 function dbManagerHTML(){
   const ctx=ui.dbCtx,list=DBMGR.list;
+  const canLink=typeof window!=='undefined'&&!!window.showOpenFilePicker;
   /* tres acciones por base de datos, claramente distintas: "Usar" la marca activa GLOBALMENTE (Museo
      y selección de liga/club sin partida en curso pasan a mostrar nombres/jugadores reales); "Quitar"
      solo aparece en la que está activa y la desactiva SIN borrarla (vuelve a ficticio por defecto, pero
      sigue en la lista); "Borrar" la elimina por completo de este navegador (y la desactiva si lo estaba). */
   const rows=list.length?list.map(e=>{
-    const active=DBMGR.activeId===e.id;
+    const active=DBMGR.activeId===e.id,linked=!!e.linked;
     /* en el flujo de "nueva partida" (ctx 'newgame') siempre hace falta un botón que continúe hacia el
        mapa, incluso con la base que ya está activa — "Quitar" no pinta nada ahí (no tiene sentido
        desactivar justo cuando se quiere seguir en modo real). Fuera de ese flujo (gestión desde el
        menú principal), la activa muestra "Quitar" en vez de "Usar", ya que usarla no tendría efecto. */
-    const primaryBtn=ctx==='newgame'
-      ?`<button class="btn primary sm" data-act="db-use" data-id="${e.id}">${active?'Continuar':'Usar'}</button>`
-      :(active?`<button class="btn ghost sm" data-act="db-remove" data-id="${e.id}">Quitar</button>`:`<button class="btn primary sm" data-act="db-use" data-id="${e.id}">Usar</button>`);
+    let primaryBtn;
+    /* En el flujo de "nueva partida" el botón principal SIEMPRE es elegir (Usar/Continuar), para poder
+       seleccionar la base; "Actualizar" solo aparece en la gestión del menú principal (fuera de partida). */
+    if(ctx==='newgame')primaryBtn=`<button class="btn primary sm" data-act="db-use" data-id="${e.id}">${active?'Continuar':'Usar'}</button>`;
+    else if(linked)primaryBtn=`<button class="btn primary sm" data-act="db-refresh" data-id="${e.id}">Actualizar</button>`;
+    else primaryBtn=active?`<button class="btn ghost sm" data-act="db-remove" data-id="${e.id}">Quitar</button>`:`<button class="btn primary sm" data-act="db-use" data-id="${e.id}">Usar</button>`;
+    const linkBtn=(!linked&&!e.server&&canLink)?`<button class="btn ghost sm" data-act="db-link" data-id="${e.id}">Enlazar…</button>`:'';
+    const replaceBtn=e.server?'':`<button class="btn ghost sm" data-act="db-replace" data-id="${e.id}">Cambiar archivo…</button>`;
+    const tag=e.server?'Del servidor · se actualiza sola':(linked?'Enlazada · se actualiza sola':'Sin enlazar · no se actualiza sola');
     return`<div class="slot"><div class="slot-ico" style="color:var(--accent)">${ICO_DB.replace('<svg ','<svg width="26" height="26" ')}</div>
-      <div class="slot-info"><div class="slot-h">${esc(e.name)}</div><div class="slot-l">${e.size} club${e.size===1?'':'es'} con plantilla</div><div class="slot-l">Importada el ${fmtDate(e.date)}</div>${active?'<div class="slot-l"><span class="tag" style="margin-left:0">En uso</span></div>':''}</div>
-      <div class="slot-act">${primaryBtn}<button class="btn danger sm" data-act="db-delete" data-id="${e.id}">Borrar</button></div></div>`;
+      <div class="slot-info"><div class="slot-h">${esc(e.name)}</div><div class="slot-l">${e.size} club${e.size===1?'':'es'} con plantilla</div><div class="slot-l">Importada el ${fmtDate(e.date)}</div>${active?'<div class="slot-l"><span class="tag" style="margin-left:0">En uso</span></div>':''}<div class="slot-l"><span class="tag" style="margin-left:0">${tag}</span></div></div>
+      <div class="slot-act">${primaryBtn}${linkBtn}${replaceBtn}<button class="btn danger sm" data-act="db-delete" data-id="${e.id}">Borrar</button></div></div>`;
   }).join(''):'<p class="muted-s" style="padding:8px 2px">Todavía no has importado ninguna base de datos de jugadores reales.</p>';
   const note=ctx==='newgame'
     ?'Elige qué base de datos usar en esta partida nueva. "Usar" también la deja activa globalmente (Museo y selección de liga fuera de partida). Para importar una base nueva, hazlo desde "Importar base de datos" en el menú principal.'
-    :'"Usar" la deja activa globalmente: el Museo y la selección de liga/club (fuera de una partida en curso) mostrarán nombres y jugadores reales. "Quitar" vuelve a ficticio sin borrar nada. Una partida ya en curso sigue tal cual se creó.';
+    :'"Usar" la deja activa globalmente: el Museo y la selección de liga/club (fuera de una partida en curso) mostrarán nombres y jugadores reales. "Enlazar…" vincula una base ya importada con su archivo para que se actualice sola: se relee al abrir el juego y al volver a la pestaña (pulsa "Actualizar" si el navegador pide permiso). "Quitar" la desactiva sin borrarla. Al pulsar "Actualizar" las plantillas se regeneran al momento (si no ves el cambio, vuelve a abrir la vista de la liga o del club). Las plantillas nuevas entran al empezar una partida nueva; una partida ya en curso sigue tal cual se creó.';
   const uploadBtn=ctx==='newgame'?'':'<button class="btn primary" data-act="db-upload">Subir archivo…</button>';
   ui.dbNote=note;
   return`<div class="sec-h" style="margin-bottom:0"><h3 style="margin:0;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1">Bases de datos de jugadores reales</h3><button class="ibtn" data-act="db-info" aria-label="Información">i</button></div>
@@ -18856,39 +18960,100 @@ const H={
     openSheet(dbManagerHTML(),true);
     toast('Base de datos borrada');
   },
+  /* "Subir archivo…": importa una base. Si el navegador lo permite (Chromium), usa showOpenFilePicker para
+     ADEMÁS enlazar el archivo y poder actualizarlo luego con "Actualizar" sin volver a elegirlo. Si la API no
+     está (Safari) o falla (p. ej. en file://), cae al <input type=file> clásico (importa sin enlazar). */
   'db-upload'(){
-    const inp=document.createElement('input');
-    inp.type='file';inp.accept='.json,application/json';
-    inp.onchange=()=>{
-      const file=inp.files&&inp.files[0];if(!file)return;
-      const r=new FileReader();
-      r.onload=()=>{
-        let data;try{data=JSON.parse(String(r.result||''))}catch(e){data=null}
-        if(!DBMGR.validate(data)){toast('Ese archivo no tiene el formato esperado: debe ser un JSON con forma {idClub:[[...jugador...],...]}');return}
-        ui.dbPending=data;
+    const fallback=()=>{
+      const inp=document.createElement('input');
+      inp.type='file';inp.accept='.json,application/json';
+      inp.onchange=async()=>{
+        const file=inp.files&&inp.files[0];if(!file)return;
+        const data=await dbReadFile(file);
+        if(!data){toast('Ese archivo no tiene el formato esperado.');return}
+        ui.dbPending=data;ui.dbPendingHandle=null;
         openSheet(dbNamePromptHTML('Temporada 26/27'),true);
       };
-      r.onerror=()=>toast('No se pudo leer el archivo');
-      r.readAsText(file);
+      inp.click();
     };
-    inp.click();
+    if(typeof window==='undefined'||!window.showOpenFilePicker){fallback();return}
+    window.showOpenFilePicker({multiple:false,types:[{description:'Base de datos de jugadores',accept:{'application/json':['.json']}}]}).then(async res=>{
+      const handle=res&&res[0];if(!handle)return;
+      try{
+        const file=await handle.getFile();
+        const data=await dbReadFile(file);
+        if(!data){toast('Ese archivo no tiene el formato esperado.');return}
+        ui.dbPending=data;ui.dbPendingHandle=handle;
+        openSheet(dbNamePromptHTML((file.name||'Temporada 26/27').replace(/\.json$/i,'')),true);
+      }catch(e){toast('No se pudo leer el archivo')}
+    }).catch(err=>{
+      /* AbortError = el usuario canceló; otro error = la API no sirve aquí → selector clásico */
+      if(err&&err.name==='AbortError')return;
+      fallback();
+    });
   },
-  'db-upload-cancel'(){ui.dbPending=null;openSheet(dbManagerHTML(),true)},
+  'db-upload-cancel'(){ui.dbPending=null;ui.dbPendingHandle=null;openSheet(dbManagerHTML(),true)},
   async 'db-upload-confirm'(){
     const data=ui.dbPending;
     if(!data){openSheet(dbManagerHTML(),true);return}
+    const handle=ui.dbPendingHandle||null;
     const nameInp=document.getElementById('dbname-input');
     const name=(nameInp&&nameInp.value||'').trim()||'Base de datos';
-    ui.dbPending=null;
+    ui.dbPending=null;ui.dbPendingHandle=null;
     const id=await DBMGR.save(name,data);
+    if(handle){try{await DBMGR.link(id,handle)}catch(e){}}
     await DBMGR.use(id);
     if(ui.dbCtx==='newgame'){
       ui.gmode='real';ui.modeChosen=true;applyModeNames();$('#sheet').classList.remove('open');
       if(ui.customFlow){startCustomFlow()}else{startMap()}
     }else{
-      toast('Base de datos importada y activada.');
+      toast(handle?'Base de datos vinculada y activada.':'Base de datos importada y activada.');
       openSheet(dbManagerHTML(),true);
     }
+  },
+  /* "Actualizar": relee el archivo vinculado y reemplaza el contenido de la base (mismo id, sigue activa). */
+  async 'db-refresh'(t){
+    const id=t.dataset.id;
+    const res=await DBMGR.refresh(id);
+    if(!res){toast('No se pudo actualizar (archivo movido o permiso denegado). Usa "Cambiar archivo…".');openSheet(dbManagerHTML(),true);return}
+    toast('Base actualizada: '+res.size+' club'+(res.size===1?'':'es'));
+    openSheet(dbManagerHTML(),true);
+  },
+  /* "Enlazar…": enlaza una base YA importada a un archivo del disco (guarda la referencia y la relee) →
+     queda "enlazada" y se auto-refresca, sin borrarla ni volver a subirla. */
+  async 'db-link'(t){
+    const id=t.dataset.id;
+    if(typeof window==='undefined'||!window.showOpenFilePicker){toast('Este navegador no permite enlazar archivos');return}
+    let handle=null;
+    try{const res=await window.showOpenFilePicker({multiple:false,types:[{description:'Base de datos de jugadores',accept:{'application/json':['.json']}}]});handle=res&&res[0]}
+    catch(e){return}   /* cancelado */
+    if(!handle)return;
+    try{
+      await DBMGR.link(id,handle);
+      const res2=await DBMGR.refresh(id);
+      toast(res2?('Base enlazada y actualizada: '+res2.size+' club'+(res2.size===1?'':'es')):'Base enlazada');
+      openSheet(dbManagerHTML(),true);
+    }catch(e){toast('No se pudo enlazar el archivo')}
+  },
+  /* "Sustituir": elige un .json y reemplaza EN SITIO el contenido de esa base (sin borrarla ni recrearla). */
+  'db-replace'(t){
+    const id=t.dataset.id;
+    const inp=document.createElement('input');
+    inp.type='file';inp.accept='.json,application/json';
+    inp.onchange=()=>{
+      const file=inp.files&&inp.files[0];if(!file)return;
+      const r=new FileReader();
+      r.onload=async()=>{
+        let data;try{data=JSON.parse(String(r.result||''))}catch(e){data=null}
+        if(!DBMGR.validate(data)){toast('Ese archivo no tiene el formato esperado.');return}
+        await DBMGR.replace(id,data);
+        toast('Archivo cambiado: '+Object.keys(data).length+' clubes');
+        openSheet(dbManagerHTML(),true);
+      };
+      r.onerror=()=>toast('No se pudo leer el archivo');
+      r.readAsText(file);
+    };
+    inp.click();
   },
   'custom-country'(t){openCustomDivisionSheet(t.dataset.c)},
   'custom-data-back'(){askDataMode()},
@@ -19547,6 +19712,25 @@ function init(){
   /* carga en segundo plano (no bloqueante) la última base de datos de jugadores reales que el usuario
      haya elegido, si tiene alguna guardada; cualquier flujo que entre en modo "real" espera DBMGR.ready. */
   DBMGR.autoload();
+  /* al volver a la pestaña (foco/visibilidad), reintento en silencio releer TODAS las bases enlazadas; si
+     alguna no se pudo (permiso pendiente, típico en file://) aviso una vez para que el usuario pulse
+     "Actualizar". Solo actualiza REAL_DB → afecta a partidas nuevas, nunca a la partida en curso. */
+  (function(){
+    let noticeUntil=0;
+    const retry=()=>{
+      try{
+        if(document.hidden)return;
+        if(!DBMGR.list||!DBMGR.list.some(e=>e.linked))return;
+        DBMGR.refreshAll().then(r=>{
+          if(r.changed)toast('Bases actualizadas');
+          if(r.blocked&&Date.now()>noticeUntil){noticeUntil=Date.now()+120000;
+            toast(r.blocked+(r.blocked>1?' bases enlazadas':' base enlazada')+': pulsa Actualizar');}
+        }).catch(()=>{});
+      }catch(e){}
+    };
+    window.addEventListener('focus',retry);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)retry()});
+  })();
   /* la vista mapa/listado elegida por el usuario se recuerda entre recargas/entradas: localStorage (rápido)
      + IndexedDB (durable). Si localStorage no persiste (p. ej. file://), se restaura desde IndexedDB. */
   IDB.whenReady().then(()=>IDB.get('mister.vmode')).then(v=>{
@@ -20858,8 +21042,8 @@ Object.assign(STADIUM,{ARK:'Stadion GOSiR',CHR:'Stadion Miejski w Głogowie',PGR
   Object.assign(TROPHY_CUP,{SM:'Coppa Titano'});
   Object.assign(TROPHY_SC,{SM:'Supercoppa San Marino'});
   Object.assign(CUPNAME,{SM:'Coppa Titano'});
-  /* imagen real del trofeo de la Coppa Titano (BeSoccer); la Supercoppa usa el placeholder */
-  Object.assign(TROPHY_IMG_CO,{SM:{cup:'1534'}});
+  /* imágenes reales de los trofeos de San Marino (BeSoccer): liga y Coppa Titano; la Supercoppa no tiene propia */
+  Object.assign(TROPHY_IMG_CO,{SM:{league:'305',cup:'1534',sc:NOFOTO_TROPHY}});
 })();
   Object.assign(CLUBBY,{
     IFKN:K('IFKN','IFK Norrköping','Norrköping','Norrköping','SE','#f4f4f4','#1c3f94',54),
@@ -22070,6 +22254,49 @@ REAL_LOANS.push(
 (function(){
   Object.assign(REAL_FOOT,{'Nils Emil Leif Hellman':'I','Anton Ulf Thorsson':'I','Wilhelm Fredrik Ärlig':'I','Oliver Bertil Brynéus':'I'});
   Object.entries({'Johan Oscar Ekman':372411,'Karl Daniel Bernhard Strindholm':878999,'Gustav Åke Broman':796309,'Edvin Mattias Tellgren':949557,'Nils Emil Leif Hellman':899341,'Niklas Birger Dahlström':726762,'Noah Mattias Johansson':1023825,'Joakim Magnus Bertil Lindner':183381,'Karl Hampus Zackrisson':152482,'Erion Sadiku':637750,'Axel Johannes Vidjeskog':374712,'Albin Eric Winbo':384469,'Isak Valentin Vidjeskog':882835,'Jonathan Evald Wilhelm Nilsson':3297594,'Lucas Carl-Fredrik Kåhed':796415,'Anton Ulf Thorsson':699386,'Wilhelm Fredrik Ärlig':699876,'Shanyder Antonio Borgelin':834270,'Laorent Shabani':476614,'Dante Oliver Alfonsi':3155057,'Oliver Bertil Brynéus':699275,'Olle Erik Werner':3476384}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== Tre Penne (TPEN, Campionato Sammarinese): atributos (parciales: lo que falta se rellena desde el GRL),
+   pie y avatares ===== */
+(function(){
+  Object.assign(REAL_ATTR,{'Mattia Migani':{EST:60,REF:62,COL:64},'Manuel Ferrani':{DEF:58},'Francesco Sottile':{FÍS:52},'Lorenzo Pastorelli':{PAS:62,REG:59},'Katriel Islamaj':{PAS:58,REG:56},'Simone Loiodice':{PAS:60},'Paolo Casadio':{FÍS:52},'Danilo Rinaldi':{PAS:54},'Domenico Scarcella':{PAS:49},'Luca Ceccaroli':{RIT:58,REG:55},'Riccardo Pieri':{TIR:52,FÍS:52},'Lucio Peluso':{TIR:48,FÍS:46},'Thomas Bastianelli':{RIT:50},'Maurice Kamouni':{FÍS:48}});
+  Object.assign(REAL_FOOT,{'Gino Meriano':'I'});
+  Object.entries({'Mattia Migani':207317,'Manuel Ferrani':206651,'Francesco Sottile':710823,'Katriel Islamaj':683456,'Simone Loiodice':458859,'Danilo Rinaldi':159527,'Luca Ceccaroli':191407,'Riccardo Pieri':682681,'Lucio Peluso':685955}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== AC Virtus (VIRT, Campionato Sammarinese): pie y avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Daniel Piscaglia':'I'});
+  Object.entries({'Samuele Guddo':347914,'Giacomo Venturini':3190663,'Daniel Piscaglia':484389,'Umberto De Lucia':207902,'Nicola Gori':835983,'Leonardo Nunzella':207040,'Jacopo Muggeo':614628,'Ivan Buonocunto':206644,'Alessandro Golinucci':191396,'Armando Amati':206684,'Elia Ciacci':463523,'Giammario Piscitella':130304,'Imre Badalassi':207424,'Simone Benincasa':693319,'Marco Gasperoni':3185738,'Arda Kaan Yazici':3205512}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== Cailungo (CAIL, Campionato Sammarinese): pies + avatares + cesión entrante (Santi, de La Fiorita) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Federico De Paoli':'I','Manuel Iuzzolino':'I','Maurizio Ciro Parisi':'I','Giacomo Cecconi':'I','Edoardo Bernardi':'I','Davide Montalti':'A'});
+  Object.entries({'Massimo Francioni':177034,'Filippo Santi':342238,'Filippo Quaranta':344632,'Kevin Zonzini':380303,'Matteo Valli Casadei':3205500,'Adolfo José Hirsch':234067,'Giacomo Cecconi':496892,'Edoardo Bernardi':884777}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  REAL_LOANS.push(['Filippo Santi','LAFI','CAIL',1,null,['Filippo Santi','DF',2001,'SM',53,null,0.412,null,'DFC/LD']]);
+})();
+/* ===== AC Cosmos (COSM, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Leon Cremonini':'I','Roberto Guidotti':'A'});
+  Object.entries({'Alessandro Semprini':356259,'Mirko Palazzi':196261,'Giacomo Matteoni':463527,'Lorenzo Braschi':3620633,'David Tomassini':342230,'Davide Lisi':978412,"Nicola D'Addario":3212790}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== FC Domagnano (DOM, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Giammaria Rigoni':'I','Giacomo Buda':'I','Diego Perazzini':'A'});
+  Object.entries({'Simone Nanni':342226,'Giacomo Valentini':463521,'Filippo Valentini':3619311,'Simone Santi':895122}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== SC Faetano (FAE, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Antonio Marchese':'I','Enrico Golinucci':'I'});
+  Object.entries({'Simone Venturini':682537,'Simone Riccardi':893942,'Enrico Golinucci':157390,'Ernesto Gentile':3520213,'Marco Bernardi':191410}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== AC Fiorentino (FIOR, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Antonio Azzurro':'I','Francesco Mariano':'I'});
+  Object.entries({'Michele Berardi':3704964,'Mattia Costantini':725246,'Simone Benedettini':283626}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== SS Folgore/Falciano (FOLG, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Alex Cavalli':'I','Francesco Ramires':'I','Raul Ura':'I','Samuel Pancotti':'I'});
+  Object.entries({'Mirco De Angelis':342233,'Fabio Borasco':3205487,'Manuel Battistini':191403,'Cristian Brolli':234066,'Assane Fall':822858,'Adam Adami Martins':844016,'Raul Ura':458901,'Samuel Pancotti':342227,'Jacopo Raschi':458853,'Matias Gabriel Sahud Scutella':3451045}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 })();
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
