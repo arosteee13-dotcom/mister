@@ -22265,8 +22265,10 @@ REAL_LOANS.push(
 /* ===== AC Virtus (VIRT, Campionato Sammarinese): pie y avatares (el paste no traía atributos) ===== */
 (function(){
   Object.assign(REAL_FOOT,{'Daniel Piscaglia':'I'});
-  Object.entries({'Samuele Guddo':347914,'Giacomo Venturini':3190663,'Daniel Piscaglia':484389,'Umberto De Lucia':207902,'Nicola Gori':835983,'Leonardo Nunzella':207040,'Jacopo Muggeo':614628,'Ivan Buonocunto':206644,'Alessandro Golinucci':191396,'Armando Amati':206684,'Elia Ciacci':463523,'Giammario Piscitella':130304,'Imre Badalassi':207424,'Simone Benincasa':693319,'Marco Gasperoni':3185738,'Arda Kaan Yazici':3205512}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  Object.entries({'Samuele Guddo':347914,'Giacomo Venturini':3190663,'Daniel Piscaglia':484389,'Umberto De Lucia':207902,'Leonardo Nunzella':207040,'Jacopo Muggeo':614628,'Ivan Buonocunto':206644,'Alessandro Golinucci':191396,'Armando Amati':206684,'Elia Ciacci':463523,'Giammario Piscitella':130304,'Imre Badalassi':207424,'Simone Benincasa':693319,'Marco Gasperoni':3185738,'Arda Kaan Yazici':3205512}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 })();
+/* colisión de nombre: Nicola Gori (VIRT) tiene foto; se acota por club para que el de Libertas no la herede */
+REAL_PHOTO['Nicola Gori']={VIRT:'https://cdn.resfu.com/img_data/players/medium/835983.jpg?size=120x&lossy=1'};
 /* ===== Cailungo (CAIL, Campionato Sammarinese): pies + avatares + cesión entrante (Santi, de La Fiorita) ===== */
 (function(){
   Object.assign(REAL_FOOT,{'Federico De Paoli':'I','Manuel Iuzzolino':'I','Maurizio Ciro Parisi':'I','Giacomo Cecconi':'I','Edoardo Bernardi':'I','Davide Montalti':'A'});
@@ -22297,6 +22299,49 @@ REAL_LOANS.push(
 (function(){
   Object.assign(REAL_FOOT,{'Alex Cavalli':'I','Francesco Ramires':'I','Raul Ura':'I','Samuel Pancotti':'I'});
   Object.entries({'Mirco De Angelis':342233,'Fabio Borasco':3205487,'Manuel Battistini':191403,'Cristian Brolli':234066,'Assane Fall':822858,'Adam Adami Martins':844016,'Raul Ura':458901,'Samuel Pancotti':342227,'Jacopo Raschi':458853,'Matias Gabriel Sahud Scutella':3451045}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== AC Juvenes/Dogana (JUVG, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Stefano Sartini':'I','Lorenzo Dormi':'I','Davide Merli':'I','Fabio Giovagnoli':'I','Andrea Comuniello':'I','Gianluca Benedetti':'I'});
+  Object.entries({'Davide Colonna':342239,'Nicola Della Valle':380304,'Lorenzo Dormi':504314,'Andrea Montanari':207754,'Lorenzo Lunadei':344428,'Fabio Giovagnoli':822873,'Nicolò Amadori':3201081}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== La Fiorita (LAFI, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Gianluca Vivan':'I','Andrea Grandoni':'I','Lorenzo Paramatti':'A','Giuseppe Serges':'A'});
+  Object.entries({'Gianluca Vivan':211081,'Matteo Zavoli':291391,'Andrea Grandoni':424841,'Giacomo Nigretti':583831,'Antonio Barretta':682248,'Marco Mazzotti':682639,'Tommaso Zafferani':291389,'Lorenzo Paramatti':288418,'Daniel Cicarelli De Morais':3452142,'Simone Errico':683019,'Marcello Mularoni':344631,'Marco Djuric':207084,'Umberto Nappello':207081,'Matthias Bonetti':3712588,'Tommaso Guidi':507858,'Filippo Berardi':207339,'Giuseppe Serges':3262463}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== AC Libertas (LIBS, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Paolo Vandi':'I','Angelo Gregorio':'I','Nicola Greco':'I','Hamza Hamidou Boureima':'I'});
+  Object.entries({'Paolo Vandi':713734,'Andrea Magi':693216}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== SS Murata (MUR, Campionato Sammarinese): pies + colisiones acotadas (sin avatares; el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Vincenzo Ruocco':'I','Mattia Sarti':'I','Alessandro Brisigotti':'I','Giacomo Peri':'A'});
+  /* colisiones de nombre: los de Murata NO tienen foto, así que se acotan los de Palermo/Wolfsberger por club */
+  REAL_PHOTO['Antonio Palumbo']={PAL:'https://cdn.resfu.com/img_data/players/medium/238974.jpg?size=120x&lossy=1'};
+  REAL_PHOTO['Luca Hassler']={WAC:'https://cdn.resfu.com/img_data/players/medium/3162788.jpg?size=120x&lossy=1'};
+})();
+/* ===== SS Pennarossa (PENN, Campionato Sammarinese): pies + avatares (el paste no traía atributos) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Hervé Diedhiou':'I','Giuliano Guida':'I'});
+  Object.entries({'Daniele Cagnina':3313434,'Marseljan Mema':919627,'Sami Abouzziane':3200635}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== AC San Giovanni (SGIO, Campionato Sammarinese): solo avatares (el paste no traía pies ni atributos) ===== */
+(function(){
+  Object.entries({'Emanuele Gregori':3136949,'Nicolò Chiaruzzi':3530522}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+})();
+/* ===== San Marino Academy (SMAC, Campionato Sammarinese): pies + avatares (todos con foto) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Pietro Amici':'I'});
+  Object.entries({'Alessandro Cenci':3355585,'Filippo Giulianelli':3781857,'Pietro Amici':895116,'Mattia Ciacci':3326882,'Diego Zavoli':3212789,'Gabriele Montali':3355579,'Samuele Forcellini':3484388,'Denis Giorgetti':3505881,'Nikolai Yordan Mirchev':3865998,'Christian Delvecchio':3865999,'Marco Zavoli':3551677,'Pietro Renzi':3205510,'Tommaso Famiglietti':3205517,'Giacomo Molinari':3326883,'Nicola Molinari':3355577,'Luca Pasolini':3336268,'Mattia Tamburini':3878631,'Loris Mattei':3884152,'Lorenzo Canarezza':3355567,'Giacomo Grandoni':3355569,'Alessandro Mularoni':3484382,'Tommaso Podeschi':3866000}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+  /* colisión: hay un Filippo Valentini en Domagnano y otro en San Marino Academy → se acota por club */
+  REAL_PHOTO['Filippo Valentini']={DOM:'https://cdn.resfu.com/img_data/players/medium/3619311.jpg?size=120x&lossy=1',SMAC:'https://cdn.resfu.com/img_data/players/medium/3484384.jpg?size=120x&lossy=1'};
+})();
+/* ===== Tre Fiori (TRF, Campionato Sammarinese): pies + avatares (todos con foto) ===== */
+(function(){
+  Object.assign(REAL_FOOT,{'Michele Nardi':'I','Alex Sirri':'I','Pietro Mengucci':'I','Tommaso Leon Bernardi':'I','Claudio Cuzzilla':'I','Federico Benedettini':'A'});
+  Object.entries({'Michele Nardi':207406,'Alex Castagnoli':3200666,"Alessandro D'Addario":291388,'Alex Sirri':206643,'Simone Rea':497003,'Federico Pesaresi':682299,'Mattia Sancisi':895121,'Pietro Mengucci':3260719,'Alberto Guerra':3212782,'Luca Terenzi':3212794,'Claudio Cuzzilla':413399,'Tommaso Leon Bernardi':830282,'Federico Benedettini':884523,'Brando Sami':693223,'Federico Dolcini':342236,'Luca Censoni':234156,'Matteo Mandorlini':11755,'Pavel Monceri':3720211,'Matteo Prandelli':147046,'Mohamed Ben Kacem':3200634,'Federico Ciccione':3206831,'Joas Tjakko Van Nek':3610641}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 })();
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
