@@ -391,6 +391,8 @@ button.posc:hover{transform:translateY(-1px)}
 .pcard.has-offer{animation:offerPulse 1.1s ease-in-out infinite}
 .pcard.has-renew{animation:offerPulse 1.1s ease-in-out infinite}
 .pcard.locked{opacity:.55;filter:grayscale(.4)}
+.act-ico-wrap.pulse .act-ico{animation:offerPulse 1.1s ease-in-out infinite}
+.pm-act.pulse{animation:offerPulse 1.1s ease-in-out infinite}
 @keyframes offerPulse{
   0%,100%{border-color:var(--line);box-shadow:none}
   50%{border-color:#ffc23d;box-shadow:0 0 0 2px rgba(255,194,61,.55),0 0 14px rgba(255,194,61,.5)}
@@ -10635,7 +10637,7 @@ function wear(t,clubId){
       const cost=(6.5+Math.random()*3)*clamp(1+((p.age||27)-27)*.03,.9,1.3)*(gk?.12:1)*fatMul;  /* el portero se cansa muy poco */
       p.en=clamp(p.en-cost,20,100);
       p.en=Math.min(100,p.en+(100-p.en)*.25+1);
-      if(Math.random()<(gk?.003:.008))p.inj=1+Math.floor(Math.random()*4);
+      if(Math.random()<(gk?.0012:.0035))p.inj=1+Math.floor(Math.random()*4);
     }else{
       p.en=Math.min(100,p.en+(100-p.en)*.6+8);if(p.inj>0)p.inj--;if(p.sus>0)p.sus--;
       if(p.fm!=null)p.fm+=((p.pos==='GK'?5.8:6.3)-p.fm)*.08;   /* la mala racha se olvida poco a poco */
@@ -14524,7 +14526,7 @@ function cupWear(t,store){
     if(!xi.has(p.id))return;
     const gk=p.pos==='GK',cost=(6.5+Math.random()*3)*clamp(1+((p.age||27)-27)*.03,.9,1.3)*(gk?.12:1);
     p.en=clamp(p.en-cost,20,100);p.en=Math.min(100,p.en+(100-p.en)*.08);   /* solo unos dias hasta el partido de liga: recupera poco */
-    if(Math.random()<(gk?.003:.008))p.inj=1+Math.floor(Math.random()*4);
+    if(Math.random()<(gk?.0012:.0035))p.inj=1+Math.floor(Math.random()*4);
     if(Math.random()<.07){p.yc=(p.yc||0)+1;if(p.yc%5===0)p.sus=Math.max(p.sus||0,1);if(store)psAdd(psRec(store,p,state.club),'y',1)}
     if(Math.random()<.008){p.rc=(p.rc||0)+1;p.sus=Math.max(p.sus||0,1+Math.floor(Math.random()*2));if(store)psAdd(psRec(store,p,state.club),'r',1)}
   });
@@ -17055,7 +17057,7 @@ function playerCard(p,clubId,opts){
   const nat=natOf(p,clubId),pot=Math.round(Math.max(p.pot||p.ovr,p.ovr)),role=mk?'':(p.role||roleAt(p,clubId));
   const nm=cardName(p.n);
   const hasOffer=!mk&&(((p.offers||[]).length>0)||((p.loanOffers||[]).length>0));
-  const due=!mk&&!p.loanIn&&contractDue(p);
+  const due=!mk&&!p.loanIn&&contractDue(p)&&!famOf(clubId);   /* el filial se renueva solo: no marcamos "Renovar" en sus fichas */
   const lock=!!(mk&&mk.locked);
   return`<button class="pcard${hasOffer?' has-offer':''}${due?' has-renew':''}${lock?' locked':''}" data-act="${mk?'mkt-pl':'pl'}" data-id="${p.id}" data-club="${clubId}"${mk?` data-from="${mk.from||''}"${mk.free?' data-free="1"':''}`:''}>
     <div class="pc-av">${p.loanIn&&!p.famDown?'<span class="tag ced">CED</span>':''}${due?'<span class="tag ren">Renovar</span>':''}<div class="pc-photo">${avatarHTML(p)}</div></div>
@@ -17827,9 +17829,11 @@ const honorsOf=id=>(typeof state!=='undefined'&&state&&state.honors&&state.honor
 const palTotalOf=(id,pal)=>(PAL_TOTAL[id]!=null?PAL_TOTAL[id]:pal.reduce((a,x)=>a+x.n-(x.add||0),0))+Object.values(honorsOf(id)).reduce((a,b)=>a+b,0);
 /* palmarés de un club: datos reales o generado de forma determinista según su reputación */
 function palmaresOf(club){
-  const real=PALMARES[club.id];
-  let counts=real;
-  if(!counts){
+  /* un club creado por el usuario empieza SIN palmarés: no hereda los títulos del club al que sustituye
+     (solo contarán los que gane en esta partida, vía honorsOf). */
+  const custom=!!(state&&state.customClub&&club.id===state.club);
+  let counts=custom?{}:PALMARES[club.id];
+  if(!custom&&!counts){
     const r=rng(hashStr('pal'+club.id)),rep=club.rep,base=Math.max(0,rep-60);
     counts={league:Math.round(base*1.1*r()),cup:Math.round(base*.9*r()),sc:Math.round(base*.5*r())};
     if(rep>=80)counts.ucl=Math.round((rep-74)*.5*r());
@@ -18129,8 +18133,8 @@ const ICO_ACT_RELEASE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
 const ICO_ACT_DOWN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10m0 0l-4-4m4 4l4-4"/><path d="M4 18h16"/></svg>';
 const ICO_ACT_UP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10m0 0l-4 4m4-4l4 4"/><path d="M4 6h16"/></svg>';
 const ICO_ACT_RECALL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-5-5 5-5"/><path d="M4 9h8a7 7 0 017 7v2"/></svg>';
-function actIco(act,icon,label,desc,attrs){
-  return `<div class="act-ico-wrap"><button class="act-ico" data-act="${act}" ${attrs||''} aria-label="${esc(label)}" title="${esc(label)}">${icon}</button><button class="ibtn act-info" data-act="act-info" data-title="${esc(label)}" data-desc="${esc(desc)}" aria-label="Información: ${esc(label)}">i</button></div>`;
+function actIco(act,icon,label,desc,attrs,pulse){
+  return `<div class="act-ico-wrap${pulse?' pulse':''}"><button class="act-ico" data-act="${act}" ${attrs||''} aria-label="${esc(label)}" title="${esc(label)}">${icon}</button><button class="ibtn act-info" data-act="act-info" data-title="${esc(label)}" data-desc="${esc(desc)}" aria-label="Información: ${esc(label)}">i</button></div>`;
 }
 function pmActions(f){
   const p=f.p,back='<div class="pm-back"><button class="btn ghost sm" data-act="pm-back">Volver a la ficha</button></div>';
@@ -18159,13 +18163,13 @@ function pmActions(f){
   let h=back+'<div class="subh" style="margin-top:6px">Acciones</div>';
   let acts=[];
   if(f.ctx==='mine'&&!p.loanIn){
-    acts.push(actIco('pm-list',ICO_ACT_TRANSFER,p.list?'Retirar oferta de traspaso':'Ofrecer traspaso',p.list?'Dejarás de recibir ofertas por este jugador':'Los clubes te enviarán ofertas: podrás aceptar, rechazar o hacer contraoferta'));
+    acts.push(actIco('pm-list',ICO_ACT_TRANSFER,p.list?'Retirar oferta de traspaso':'Ofrecer traspaso',p.list?'Dejarás de recibir ofertas por este jugador':'Los clubes te enviarán ofertas: podrás aceptar, rechazar o hacer contraoferta',null,(p.offers||[]).length>0));
   }
   if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn){
-    acts.push(actIco('pm-cedible',ICO_ACT_LOAN,p.loanList?'Retirar oferta de cesión':'Ofrecer cesión',p.loanList?'Dejarás de recibir propuestas de cesión':'Los clubes te enviarán propuestas de cesión con el rol que le prometen'));
+    acts.push(actIco('pm-cedible',ICO_ACT_LOAN,p.loanList?'Retirar oferta de cesión':'Ofrecer cesión',p.loanList?'Dejarás de recibir propuestas de cesión':'Los clubes te enviarán propuestas de cesión con el rol que le prometen',null,(p.loanOffers||[]).length>0));
   }
   if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn&&p.cy!=null){
-    acts.push(actIco('pm-renew',ICO_ACT_RENEW,'Renovar contrato',`Contrato: ${contractTxt(p)}${contractDue(p)?' · ¡expira al terminar la temporada!':''}. Ofrécele un sueldo y una duración (1-5 años).`));
+    acts.push(actIco('pm-renew',ICO_ACT_RENEW,'Renovar contrato',`Contrato: ${contractTxt(p)}${contractDue(p)?' · ¡expira al terminar la temporada!':''}. Ofrécele un sueldo y una duración (1-5 años).`,null,contractDue(p)));
   }
   if(f.ctx==='mine'&&!p.loanIn){
     acts.push(actIco('pm-rel',ICO_ACT_RELEASE,'Liberar',`Rescindes su contrato y queda como agente libre. Pagas una indemnización del 10 % de su valor (${fmtM(r1(p.val*.1))}).`));
@@ -18208,7 +18212,7 @@ function renderPM(){
   const tabs=`<div class="subtabs five">${PM_TABS.map(([k,ic,l])=>`<button class="${v===k?'on':''}" data-act="pm-tab" data-v="${k}" aria-label="${l}" title="${l}">${ic}</button>`).join('')}</div>`;
   const PM_VIEWS={stats:pmStats,hist:pmHistoria,pal:pmPalmares,pos:pmPositions};
   const body=v==='neg'?pmNeg(f):v==='act'?pmActions(f):tabs+(PM_VIEWS[v]?PM_VIEWS[v](f):pmInfo(f));
-  const foot=f.ctx==='academy'?'<div class="pm-foot2"><button class="btn primary" data-act="acad-up">Ascender a la plantilla</button><button class="btn danger" data-act="acad-out">Liberar</button></div>':f.ctx==='market'?(v==='neg'?(ui.pm.kind==='loan'&&loanBlock(p,ui.pm.prole)?'<div class="pm-foot2 one"><button class="btn ghost" data-act="pm-back">Volver a la ficha</button></div>':'<div class="pm-foot2"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn primary" data-act="neg-send">Negociar</button></div>'):(p.free?'<div class="pm-foot2 one"><button class="btn primary" data-act="pm-neg" data-k="buy">Fichar libre</button></div>':'<div class="pm-foot2"><button class="btn primary" data-act="pm-neg" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-neg" data-k="loan">Ofrecer cesión</button></div>')):(f.ctx==='other'&&canOfferOther(f)?'<div class="pm-foot2"><button class="btn primary" data-act="pm-offer-other" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-offer-other" data-k="loan">Ofrecer cesión</button></div>':canAct&&v!=='act'?`<button class="btn ghost pm-act" data-act="pm-act">Acciones${nOff?`<span class="badge">${nOff}</span>`:''}</button>`:'');
+  const foot=f.ctx==='academy'?'<div class="pm-foot2"><button class="btn primary" data-act="acad-up">Ascender a la plantilla</button><button class="btn danger" data-act="acad-out">Liberar</button></div>':f.ctx==='market'?(v==='neg'?(ui.pm.kind==='loan'&&loanBlock(p,ui.pm.prole)?'<div class="pm-foot2 one"><button class="btn ghost" data-act="pm-back">Volver a la ficha</button></div>':'<div class="pm-foot2"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn primary" data-act="neg-send">Negociar</button></div>'):(p.free?'<div class="pm-foot2 one"><button class="btn primary" data-act="pm-neg" data-k="buy">Fichar libre</button></div>':'<div class="pm-foot2"><button class="btn primary" data-act="pm-neg" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-neg" data-k="loan">Ofrecer cesión</button></div>')):(f.ctx==='other'&&canOfferOther(f)?'<div class="pm-foot2"><button class="btn primary" data-act="pm-offer-other" data-k="buy">Ofrecer fichaje</button><button class="btn ghost" data-act="pm-offer-other" data-k="loan">Ofrecer cesión</button></div>':canAct&&v!=='act'?`<button class="btn ghost pm-act${nOff?' pulse':''}" data-act="pm-act">Acciones${nOff?`<span class="badge">${nOff}</span>`:''}</button>`:'');
   const card=$('#pm-body');card.className='pm-card'+(['info','stats','hist','pal','pos','act'].includes(v)?' pm-fixed':'');
   card.innerHTML=head+`<div class="pm-scroll">${body}</div>${foot}`;
   if(v==='neg')updateNegLabels();
@@ -18304,10 +18308,12 @@ function renderGame(){
   $('#g-sub').textContent=`Temp. ${state.season} (${syTxt}) - ${state.phase==='end'?(state.po&&!state.po.done?'Playoffs':'Temporada terminada'):'Semana '+(state.week+1)}`;
   $('#g-budget').textContent=fmtM(t.budget);
   $$('#gnav [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===ui.tab));
-  $('#gnav [data-tab=club]').classList.toggle('has',!!state.acadNew||famList().some(f=>f.players.some(p=>contractDue(p))));
+  $('#gnav [data-tab=club]').classList.toggle('has',!!state.acadNew);
   $('#gnav [data-tab=tactics]').classList.toggle('has',lineupIssues(me()).length>0);
   const sqNews=p=>((p.offers||[]).length>0||(p.loanOffers||[]).length>0||contractDue(p));
-  $('#gnav [data-tab=squad]').classList.toggle('has',me().players.some(sqNews)||famList().some(f=>f.players.some(sqNews)));
+  /* el filial lo gestiona la IA (se renueva solo), así que sus contratos no cuentan como aviso: solo ofertas/cesiones */
+  const famNews=p=>((p.offers||[]).length>0||(p.loanOffers||[]).length>0);
+  $('#gnav [data-tab=squad]').classList.toggle('has',me().players.some(sqNews)||famList().some(f=>f.players.some(famNews)));
   /* nunca dejar una pestaña "muerta" si su vista falla: se muestra un aviso y el resto sigue funcionando */
   try{$('#gcontent').innerHTML=(VIEWS[ui.tab]||VIEWS.home)()}
   catch(err){$('#gcontent').innerHTML='<div class="card"><p class="muted-s">No se pudo mostrar esta sección. Cambia de pestaña y vuelve a intentarlo.</p></div>'}
