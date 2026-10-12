@@ -20804,7 +20804,7 @@ const SE_CUP_TEAMS=['AIK','BRP','DEG','DIF','GAIS','HAL','HAM','BKH','IFE','IFK'
   REAL_LOANS.push(
     ['Sebastian Hausner','HOR','AIK',1,'Rotación',['Sebastian Hausner','DF',2000,'DK',68,null,1.67,null,'DFC/LD']],
     ['Kaj Karlsson','AIK','DEG',1,'Rotación',['Kaj Karlsson','MD',2005,'SE',51,null,1.74,null,'MC/MCO']],
-    ['Emmanuel Gono','AIK','ODDV',1,null,['Emmanuel Gono','FW',2006,'LR',48,null,0.15,null,'DC']]
+    ['Emmanuel Gono','AIK','ODDV',1,null,['Emmanuel Gono','FW',2006,'LR',40,null,0.237,null,'DC']]
   );
 })();
 /* ===== Suecia: presupuestos reales de la Allsvenskan y la Superettan (BUDGET, en millones de €) ===== */
@@ -20828,7 +20828,7 @@ Object.assign(STADIUM,{FLKB:'Falcon Alkoholfri Arena',GIFS:'NP3 Arena',HIF:'Olym
   Object.assign(CLUB_LOGO,{BREI:'https://cdn.resfu.com/img_data/equipos/11349.png?size=120x&lossy=1'});
   REAL_LOANS.push(
     ['Hlynur Karlsson','BRP','BREI',1,null,['Hlynur Karlsson','DF',2000,'IS',58,null,0.3,null,'DFC']],
-    ['Oskar Cotton','BRP','ODDV',1,null,['Oskar Cotton','DF',2005,'SE',50,null,0.15,null,'DFC']],
+    ['Oskar Cotton','BRP','ODDV',1,null,['Oskar Cotton','DF',2006,'SE',49,null,1.43,null,'DFC']],
     ['Elias Hedström','BRP','LJUN',1,null,['Elias Hedström','FW',2006,'SE',46,null,0.1,null,'DC']]
   );
 })();
@@ -21210,7 +21210,7 @@ REAL_LOANS.push(
   ['William Anderson','KALM','KLKR',1,null,['William Anderson','MD',2006,'SE',44,null,null,null,'MC']],
   ['Zakarias Råvik','KALM','VARN',1,null,['Zakarias Råvik','DF',2006,'SE',44,null,null,null,'DFC']],
   ['Vilmer Tyrén','KALM','LJUN',1,null,['Vilmer Tyrén','MD',2005,'SE',45,null,null,null,'MC']],
-  ['Antonio Djoro','KALM','ODDV',1,null,['Antonio Djoro','MD',2005,'SE',45,null,null,null,'MC']]
+  ['Antonio Djoro','KALM','ODDV',1,null,['Antonio Djoro','MD',2006,'CI',35,null,0.075,null,'MC/MCO']]
 );
 /* ==== Mjällby AIF (MJA) — plantilla real ==== */
 Object.assign(REAL_ATTR,{
@@ -21453,6 +21453,289 @@ Object.assign(REAL_PHOTO,{
 /* cedido al GIF Sundsvall que no existía (Ekong ya estaba) */
 REAL_LOANS.push(
   ['Eron Gojani','HKM','GIFS',1,null,['Eron Gojani','FW',2006,'SE',46,null,null,null,'DC/EI']]
+);
+/* ==== Helsingborgs IF (HIF) — metadatos (los jugadores van en players-db.json) ==== */
+Object.assign(REAL_ATTR,{
+  'Jakob Brattberg':{EST:60,PAR:59,SAQ:58,REF:58,COL:57},
+  'Emil Rådahl':{EST:38,PAR:37,SAQ:34,REF:40,COL:37},
+  'Andersson Wagnborg':{EST:30,PAR:29,SAQ:27,REF:32,COL:28},
+  'Simon Bengtsson':{RIT:60,TIR:44,PAS:56,REG:57,DEF:56,FÍS:56},
+  'Jonatan Voelkerling Persson':{RIT:52,TIR:40,PAS:56,REG:48,DEF:62,FÍS:60},
+  'Marcus Gudmann':{RIT:54,TIR:40,PAS:56,REG:48,DEF:62,FÍS:60},
+  'Olle Awodesu':{RIT:52,TIR:38,PAS:50,REG:46,DEF:56,FÍS:58},
+  'Erik Lindell':{RIT:59,TIR:44,PAS:56,REG:54,DEF:57,FÍS:58},
+  "Demba N'Diaye":{RIT:48,TIR:34,PAS:42,REG:40,DEF:46,FÍS:52},
+  'Lukas Kjellnäs':{RIT:58,TIR:50,PAS:60,REG:57,DEF:50,FÍS:54},
+  'Loret Sadiku':{RIT:50,TIR:44,PAS:58,REG:52,DEF:61,FÍS:58},
+  'Daouda Amadou':{RIT:52,TIR:40,PAS:48,REG:46,DEF:50,FÍS:54},
+  'Simon Asoma':{RIT:52,TIR:46,PAS:54,REG:52,DEF:46,FÍS:50},
+  'Leo Hedenberg':{RIT:52,TIR:50,PAS:52,REG:54,DEF:34,FÍS:46},
+  'Timothé Rupil':{RIT:50,TIR:44,PAS:50,REG:48,DEF:32,FÍS:42},
+  'Alexander Johansson':{RIT:56,TIR:61,PAS:50,REG:52,DEF:32,FÍS:58},
+  'Max Svensson':{RIT:60,TIR:56,PAS:54,REG:58,DEF:30,FÍS:50},
+  'Alexander Fesshaie':{RIT:55,TIR:50,PAS:44,REG:48,DEF:30,FÍS:52}
+});
+Object.assign(REAL_FOOT,{'Simon Bengtsson':'I','Jonatan Voelkerling Persson':'I'});
+Object.assign(REAL_PHOTO,{
+  'Jakob Brattberg':'https://cdn.resfu.com/img_data/players/medium/222774.jpg?size=120x&lossy=1',
+  'Emil Rådahl':'https://cdn.resfu.com/img_data/players/medium/3535956.jpg?size=120x&lossy=1',
+  'Simon Bengtsson':'https://cdn.resfu.com/img_data/players/medium/882912.jpg?size=120x&lossy=1',
+  'Jonatan Voelkerling Persson':'https://cdn.resfu.com/img_data/players/medium/731141.jpg?size=120x&lossy=1',
+  'Marcus Gudmann':'https://cdn.resfu.com/img_data/players/medium/644288.jpg?size=120x&lossy=1',
+  'Olle Awodesu':'https://cdn.resfu.com/img_data/players/medium/926218.jpg?size=120x&lossy=1',
+  'Erik Lindell':'https://cdn.resfu.com/img_data/players/medium/332129.jpg?size=120x&lossy=1',
+  "Demba N'Diaye":'https://cdn.resfu.com/img_data/players/medium/3312951.jpg?size=120x&lossy=1',
+  'Lukas Kjellnäs':'https://cdn.resfu.com/img_data/players/medium/3201183.jpg?size=120x&lossy=1',
+  'Loret Sadiku':'https://cdn.resfu.com/img_data/players/medium/147543.jpg?size=120x&lossy=1',
+  'Daouda Amadou':'https://cdn.resfu.com/img_data/players/medium/893230.jpg?size=120x&lossy=1',
+  'Simon Asoma':'https://cdn.resfu.com/img_data/players/medium/776328.jpg?size=120x&lossy=1',
+  'Leo Hedenberg':'https://cdn.resfu.com/img_data/players/medium/968372.jpg?size=120x&lossy=1',
+  'Timothé Rupil':'https://cdn.resfu.com/img_data/players/medium/814645.jpg?size=120x&lossy=1',
+  'Alexander Johansson':'https://cdn.resfu.com/img_data/players/medium/634195.jpg?size=120x&lossy=1',
+  'Max Svensson':'https://cdn.resfu.com/img_data/players/medium/333832.jpg?size=120x&lossy=1',
+  'Alexander Fesshaie':'https://cdn.resfu.com/img_data/players/medium/3140447.jpg?size=120x&lossy=1',
+  'Osman Addo':'https://cdn.resfu.com/img_data/players/medium/862308.jpg?size=120x&lossy=1',
+  'Amin Al-Hamawi':'https://cdn.resfu.com/img_data/players/medium/3181662.jpg?size=120x&lossy=1',
+  'William Westerlund':'https://cdn.resfu.com/img_data/players/medium/887482.jpg?size=120x&lossy=1',
+  'Casper Hofvendahl':'https://cdn.resfu.com/img_data/players/medium/3243286.jpg?size=120x&lossy=1'
+});
+/* club destino de las cesiones salientes (Viborg=VIB y Randers=RND ya existen) */
+Object.assign(CLUBBY,{ESKL:K2('ESKL','Eskilsminne IF','Eskilsminne','Helsingborg','SE','#1c3f94','#f4f4f4',42)});
+CLUBBY.ESKL.logo='https://cdn.resfu.com/img_data/equipos/61769.png?size=120x&lossy=1';
+Object.assign(CLUB_LOGO,{ESKL:CLUBBY.ESKL.logo});
+/* cesiones del Helsingborg (Addo y Al-Hamawi llegan cedidos; Westerlund y Hofvendahl salen cedidos) */
+REAL_LOANS.push(
+  ['Osman Addo','VIB','HIF',1,null,['Osman Addo','FW',2004,'SO',58,null,1.52,null,'ED/EI/DC']],
+  ['Amin Al-Hamawi','RND','HIF',1,null,['Amin Al-Hamawi','FW',2004,'IQ',55,null,1.06,null,'DC/MCO']],
+  ['William Westerlund','HIF','ESKL',1,null,['William Westerlund','DF',2004,'SE',48,null,null,null,'DFC']],
+  ['Casper Hofvendahl','HIF','ESKL',1,null,['Casper Hofvendahl','FW',2005,'SE',45,null,null,null,'DC']]
+);
+/* ==== IFK Norrköping (IFKN) — metadatos (los jugadores van en players-db.json) ==== */
+Object.assign(REAL_ATTR,{
+  'Theo Krantz':{EST:36,PAR:35,SAQ:33,REF:38,COL:35},
+  'David Mitov Nilsson':{EST:61,PAR:60,SAQ:59,REF:62,COL:64},
+  'Hjalmar Fagerberg':{EST:40,PAR:39,SAQ:37,REF:41,COL:42},
+  'Moutaz Neffati':{RIT:66,TIR:48,PAS:58,REG:62,DEF:58,FÍS:60},
+  'Amadeus Eriksson':{RIT:53,TIR:38,PAS:52,REG:46,DEF:58,FÍS:56},
+  'Audun Opsahl':{RIT:52,TIR:38,PAS:50,REG:48,DEF:48,FÍS:50},
+  'Jesper Weber':{RIT:52,TIR:36,PAS:46,REG:46,DEF:44,FÍS:48},
+  'Fredrik Holst-Larsen':{RIT:50,TIR:34,PAS:46,REG:42,DEF:48,FÍS:54},
+  'Filip Dagerstål':{RIT:48,TIR:36,PAS:50,REG:42,DEF:52,FÍS:50},
+  'Noel Sernelius':{RIT:54,TIR:48,PAS:56,REG:54,DEF:46,FÍS:50},
+  'Ture Sandberg':{RIT:52,TIR:46,PAS:55,REG:50,DEF:48,FÍS:54},
+  'Alexander Fransson':{RIT:52,TIR:48,PAS:59,REG:54,DEF:52,FÍS:56},
+  'Viktor Christiansson':{RIT:50,TIR:46,PAS:48,REG:48,DEF:36,FÍS:46},
+  'Axel Bronner':{RIT:50,TIR:46,PAS:46,REG:50,DEF:32,FÍS:44},
+  'Christoffer Nyman':{RIT:54,TIR:73,PAS:50,REG:54,DEF:34,FÍS:71},
+  'Ísak Andri Sigurgeirsson':{RIT:66,TIR:60,PAS:56,REG:64,DEF:30,FÍS:52},
+  'Tim Prica':{RIT:60,TIR:61,PAS:48,REG:54,DEF:32,FÍS:56},
+  'Reiss Nelson':{RIT:62,TIR:56,PAS:54,REG:60,DEF:32,FÍS:52}
+});
+Object.assign(REAL_FOOT,{'Audun Opsahl':'I','Ísak Andri Sigurgeirsson':'I','Tim Prica':'I'});
+Object.assign(REAL_PHOTO,{
+  'Theo Krantz':'https://cdn.resfu.com/img_data/players/medium/3339397.jpg?size=120x&lossy=1',
+  'David Mitov Nilsson':'https://cdn.resfu.com/img_data/players/medium/211683.jpg?size=120x&lossy=1',
+  'Hjalmar Fagerberg':'https://cdn.resfu.com/img_data/players/medium/3201184.jpg?size=120x&lossy=1',
+  'Moutaz Neffati':'https://cdn.resfu.com/img_data/players/medium/3182141.jpg?size=120x&lossy=1',
+  'Amadeus Eriksson':'https://cdn.resfu.com/img_data/players/medium/435984.jpg?size=120x&lossy=1',
+  'Audun Opsahl':'https://cdn.resfu.com/img_data/players/medium/3165357.jpg?size=120x&lossy=1',
+  'Jesper Weber':'https://cdn.resfu.com/img_data/players/medium/3272984.jpg?size=120x&lossy=1',
+  'Fredrik Holst-Larsen':'https://cdn.resfu.com/img_data/players/medium/988566.jpg?size=120x&lossy=1',
+  'Filip Dagerstål':'https://cdn.resfu.com/img_data/players/medium/232816.jpg?size=120x&lossy=1',
+  'Noel Sernelius':'https://cdn.resfu.com/img_data/players/medium/3266502.jpg?size=120x&lossy=1',
+  'Ture Sandberg':'https://cdn.resfu.com/img_data/players/medium/3267546.jpg?size=120x&lossy=1',
+  'Alexander Fransson':'https://cdn.resfu.com/img_data/players/medium/211688.jpg?size=120x&lossy=1',
+  'Viktor Christiansson':'https://cdn.resfu.com/img_data/players/medium/694115.jpg?size=120x&lossy=1',
+  'Axel Bronner':'https://cdn.resfu.com/img_data/players/medium/3339389.jpg?size=120x&lossy=1',
+  'Christoffer Nyman':'https://cdn.resfu.com/img_data/players/medium/211692.jpg?size=120x&lossy=1',
+  'Ísak Andri Sigurgeirsson':'https://cdn.resfu.com/img_data/players/medium/795667.jpg?size=120x&lossy=1',
+  'Tim Prica':'https://cdn.resfu.com/img_data/players/medium/699572.jpg?size=120x&lossy=1',
+  'Reiss Nelson':'https://cdn.resfu.com/img_data/players/medium/346243.jpg?size=120x&lossy=1',
+  'Emmanuel Jemal':'https://cdn.resfu.com/img_data/players/medium/3182064.jpg?size=120x&lossy=1',
+  'Abubakar Tamba':'https://cdn.resfu.com/img_data/players/medium/3725672.jpg?size=120x&lossy=1'
+});
+/* club destino de la cesión de Tamba (Sandefjord=SDJ ya existe) */
+Object.assign(CLUBBY,{TPS:K2('TPS','TPS Turku','TPS','Turku','FI','#0a3a8a','#ffffff',48)});
+CLUBBY.TPS.logo='https://cdn.resfu.com/img_data/equipos/2526.png?size=120x&lossy=1';
+Object.assign(CLUB_LOGO,{TPS:CLUBBY.TPS.logo});
+/* cesiones del Norrköping (Jemal llega cedido; Tamba sale cedido) */
+REAL_LOANS.push(
+  ['Emmanuel Jemal','SDJ','IFKN',1,null,['Emmanuel Jemal','FW',2003,'SE',53,null,0.880,null,'DC/ED']],
+  ['Abubakar Tamba','IFKN','TPS',1,null,['Abubakar Tamba','DF',2006,'SE',46,null,null,null,'DFC']]
+);
+/* ==== IFK Värnamo (VARN) — metadatos (los jugadores van en players-db.json; sus cesiones ya existen) ==== */
+Object.assign(REAL_ATTR,{
+  'Hugo Keto':{EST:64,PAR:63,SAQ:62,REF:66,COL:63},
+  'Liam Selin':{EST:48,PAR:45,SAQ:42,REF:46,COL:44},
+  'Bartłomiej Sapielak':{EST:43,PAR:42,SAQ:40,REF:44,COL:43},
+  'Axel Björnström':{RIT:61,TIR:46,PAS:58,REG:58,DEF:63,FÍS:58},
+  'Douglas Bergqvist':{RIT:52,TIR:42,PAS:58,REG:48,DEF:64,FÍS:63},
+  'Albin Motaraghebjafarpour':{RIT:61,TIR:45,PAS:56,REG:58,DEF:56,FÍS:56},
+  'Hugo Andersson':{RIT:54,TIR:40,PAS:54,REG:48,DEF:58,FÍS:60},
+  'Simon Ohlsson':{RIT:56,TIR:40,PAS:52,REG:50,DEF:55,FÍS:54},
+  'Johan Rapp':{RIT:52,TIR:38,PAS:50,REG:46,DEF:54,FÍS:56},
+  'Simon Thern':{RIT:58,TIR:60,PAS:69,REG:67,DEF:40,FÍS:52},
+  'Logi Robertsson':{RIT:58,TIR:52,PAS:60,REG:56,DEF:58,FÍS:62},
+  'Calle Johansson':{RIT:48,TIR:38,PAS:44,REG:42,DEF:34,FÍS:42},
+  'Viktor Claesson':{RIT:65,TIR:76,PAS:74,REG:73,DEF:36,FÍS:60},
+  'Marcus Antonsson':{RIT:55,TIR:65,PAS:50,REG:52,DEF:32,FÍS:63},
+  'Kai Meriluoto':{RIT:62,TIR:59,PAS:48,REG:54,DEF:30,FÍS:56},
+  'Carl Johansson':{RIT:61,TIR:56,PAS:52,REG:58,DEF:30,FÍS:52}
+});
+Object.assign(REAL_FOOT,{'Axel Björnström':'I','Simon Ohlsson':'I'});
+Object.assign(REAL_PHOTO,{
+  'Hugo Keto':'https://cdn.resfu.com/img_data/players/medium/284632.jpg?size=120x&lossy=1',
+  'Liam Selin':'https://cdn.resfu.com/img_data/players/medium/3243337.jpg?size=120x&lossy=1',
+  'Bartłomiej Sapielak':'https://cdn.resfu.com/img_data/players/medium/964329.jpg?size=120x&lossy=1',
+  'Axel Björnström':'https://cdn.resfu.com/img_data/players/medium/288654.jpg?size=120x&lossy=1',
+  'Douglas Bergqvist':'https://cdn.resfu.com/img_data/players/medium/210022.jpg?size=120x&lossy=1',
+  'Albin Motaraghebjafarpour':'https://cdn.resfu.com/img_data/players/medium/872578.jpg?size=120x&lossy=1',
+  'Hugo Andersson':'https://cdn.resfu.com/img_data/players/medium/642185.jpg?size=120x&lossy=1',
+  'Simon Ohlsson':'https://cdn.resfu.com/img_data/players/medium/699525.jpg?size=120x&lossy=1',
+  'Johan Rapp':'https://cdn.resfu.com/img_data/players/medium/889820.jpg?size=120x&lossy=1',
+  'Simon Thern':'https://cdn.resfu.com/img_data/players/medium/152529.jpg?size=120x&lossy=1',
+  'Logi Robertsson':'https://cdn.resfu.com/img_data/players/medium/873238.jpg?size=120x&lossy=1',
+  'Calle Johansson':'https://cdn.resfu.com/img_data/players/medium/3332988.jpg?size=120x&lossy=1',
+  'Viktor Claesson':'https://cdn.resfu.com/img_data/players/medium/212353.jpg?size=120x&lossy=1',
+  'Marcus Antonsson':'https://cdn.resfu.com/img_data/players/medium/211771.jpg?size=120x&lossy=1',
+  'Kai Meriluoto':'https://cdn.resfu.com/img_data/players/medium/921317.jpg?size=120x&lossy=1',
+  'Carl Johansson':'https://cdn.resfu.com/img_data/players/medium/321567.jpg?size=120x&lossy=1'
+});
+/* ==== IK Brage (BRGE) — metadatos (los jugadores van en players-db.json) ==== */
+Object.assign(REAL_ATTR,{
+  'Viktor Frodig':{EST:59,PAR:58,SAQ:57,REF:62,COL:61},
+  'Jonathan Guadagno':{EST:52,PAR:50,SAQ:48,REF:54,COL:50},
+  'Alexander Engdahl':{EST:50,PAR:49,SAQ:48,REF:48,COL:52},
+  'Felix Hörberg':{RIT:63,TIR:46,PAS:56,REG:60,DEF:56,FÍS:58},
+  'Alexander Zetterström':{RIT:52,TIR:42,PAS:56,REG:48,DEF:63,FÍS:62},
+  'Tobias Stagaard':{RIT:52,TIR:38,PAS:52,REG:46,DEF:57,FÍS:59},
+  'Oskar Hellblom':{RIT:54,TIR:38,PAS:52,REG:48,DEF:55,FÍS:58},
+  'Teo Wålemark':{RIT:50,TIR:36,PAS:50,REG:44,DEF:54,FÍS:58},
+  'Malte Persson':{RIT:54,TIR:38,PAS:50,REG:50,DEF:54,FÍS:52},
+  'Pelayo Sporrong':{RIT:56,TIR:50,PAS:60,REG:56,DEF:58,FÍS:58},
+  'Gustav Berggren':{RIT:58,TIR:57,PAS:62,REG:60,DEF:42,FÍS:54},
+  'Anton Lundin':{RIT:52,TIR:54,PAS:58,REG:56,DEF:38,FÍS:50},
+  'Gideon Granström':{RIT:54,TIR:46,PAS:54,REG:50,DEF:48,FÍS:52},
+  'Roni York':{RIT:54,TIR:50,PAS:53,REG:55,DEF:34,FÍS:46},
+  'Jacob Stensson':{RIT:50,TIR:44,PAS:52,REG:48,DEF:54,FÍS:56},
+  'Pontus Jonsson':{RIT:56,TIR:52,PAS:50,REG:53,DEF:30,FÍS:50},
+  'Mass Sise':{RIT:50,TIR:48,PAS:42,REG:44,DEF:30,FÍS:56}
+});
+Object.assign(REAL_FOOT,{'Malte Persson':'I'});
+Object.assign(REAL_PHOTO,{
+  'Viktor Frodig':'https://cdn.resfu.com/img_data/players/medium/327352.jpg?size=120x&lossy=1',
+  'Jonathan Guadagno':'https://cdn.resfu.com/img_data/players/medium/893346.jpg?size=120x&lossy=1',
+  'Alexander Engdahl':'https://cdn.resfu.com/img_data/players/medium/280472.jpg?size=120x&lossy=1',
+  'Felix Hörberg':'https://cdn.resfu.com/img_data/players/medium/447986.jpg?size=120x&lossy=1',
+  'Alexander Zetterström':'https://cdn.resfu.com/img_data/players/medium/328471.jpg?size=120x&lossy=1',
+  'Tobias Stagaard':'https://cdn.resfu.com/img_data/players/medium/430652.jpg?size=120x&lossy=1',
+  'Oskar Hellblom':'https://cdn.resfu.com/img_data/players/medium/987585.jpg?size=120x&lossy=1',
+  'Teo Wålemark':'https://cdn.resfu.com/img_data/players/medium/463486.jpg?size=120x&lossy=1',
+  'Malte Persson':'https://cdn.resfu.com/img_data/players/medium/343440.jpg?size=120x&lossy=1',
+  'Pelayo Sporrong':'https://cdn.resfu.com/img_data/players/medium/831891.jpg?size=120x&lossy=1',
+  'Gustav Berggren':'https://cdn.resfu.com/img_data/players/medium/894648.jpg?size=120x&lossy=1',
+  'Gideon Granström':'https://cdn.resfu.com/img_data/players/medium/3214739.jpg?size=120x&lossy=1',
+  'Roni York':'https://cdn.resfu.com/img_data/players/medium/336350.jpg?size=120x&lossy=1',
+  'Jacob Stensson':'https://cdn.resfu.com/img_data/players/medium/329320.jpg?size=120x&lossy=1',
+  'Pontus Jonsson':'https://cdn.resfu.com/img_data/players/medium/480548.jpg?size=120x&lossy=1',
+  'Mass Sise':'https://cdn.resfu.com/img_data/players/medium/980388.jpg?size=120x&lossy=1'
+});
+REAL_PHOTO['Anton Lundin']={MJA:'https://cdn.resfu.com/img_data/players/medium/152536.jpg?size=120x&lossy=1',BRGE:'https://cdn.resfu.com/img_data/players/medium/219596.jpg?size=120x&lossy=1'};   /* colisión: portero en Mjällby, medio en Brage */
+/* ==== IK Oddevold (ODDV) — metadatos (los jugadores van en players-db.json) ==== */
+Object.assign(REAL_ATTR,{
+  'Morten Sætra':{EST:59,PAR:58,SAQ:58,REF:61,COL:63},
+  'Filip Järlesand':{EST:45,PAR:43,SAQ:40,REF:45,COL:42},
+  'Nils Hermansson':{EST:28,PAR:27,SAQ:25,REF:30,COL:26},
+  'John Adolfsson':{RIT:54,TIR:40,PAS:56,REG:48,DEF:61,FÍS:59},
+  'Erik Hedenquist':{RIT:53,TIR:38,PAS:52,REG:46,DEF:56,FÍS:58},
+  'Vincent Sundberg':{RIT:62,TIR:44,PAS:54,REG:58,DEF:54,FÍS:54},
+  'Daniel Krezic':{RIT:61,TIR:44,PAS:56,REG:58,DEF:56,FÍS:56},
+  'Alexander Engelbrektsson':{RIT:56,TIR:40,PAS:54,REG:50,DEF:59,FÍS:56},
+  'Pontus Engelbrektsson':{RIT:50,TIR:36,PAS:48,REG:44,DEF:50,FÍS:55},
+  'Gustav Sandberg Magnarsson':{RIT:54,TIR:46,PAS:54,REG:50,DEF:54,FÍS:56},
+  'Hampus Engström':{RIT:54,TIR:50,PAS:56,REG:54,DEF:36,FÍS:48},
+  'Liridon Shahin':{RIT:54,TIR:56,PAS:46,REG:50,DEF:32,FÍS:54},
+  'Oscar Kjellman Olblad':{RIT:56,TIR:50,PAS:48,REG:53,DEF:30,FÍS:48},
+  'Oskar Iglicar-Berntsson':{RIT:55,TIR:50,PAS:54,REG:52,DEF:34,FÍS:50}
+});
+Object.assign(REAL_FOOT,{'Daniel Krezic':'I','Alexander Engelbrektsson':'I'});
+Object.assign(REAL_PHOTO,{
+  'Morten Sætra':'https://cdn.resfu.com/img_data/players/medium/332272.jpg?size=120x&lossy=1',
+  'Filip Järlesand':'https://cdn.resfu.com/img_data/players/medium/3182121.jpg?size=120x&lossy=1',
+  'Nils Hermansson':'https://cdn.resfu.com/img_data/players/medium/3407742.jpg?size=120x&lossy=1',
+  'John Adolfsson':'https://cdn.resfu.com/img_data/players/medium/626655.jpg?size=120x&lossy=1',
+  'Erik Hedenquist':'https://cdn.resfu.com/img_data/players/medium/376439.jpg?size=120x&lossy=1',
+  'Vincent Sundberg':'https://cdn.resfu.com/img_data/players/medium/3182140.jpg?size=120x&lossy=1',
+  'Daniel Krezic':'https://cdn.resfu.com/img_data/players/medium/329007.jpg?size=120x&lossy=1',
+  'Alexander Engelbrektsson':'https://cdn.resfu.com/img_data/players/medium/292845.jpg?size=120x&lossy=1',
+  'Pontus Engelbrektsson':'https://cdn.resfu.com/img_data/players/medium/388701.jpg?size=120x&lossy=1',
+  'Gustav Sandberg Magnarsson':'https://cdn.resfu.com/img_data/players/medium/867207.jpg?size=120x&lossy=1',
+  'Hampus Engström':'https://cdn.resfu.com/img_data/players/medium/447361.jpg?size=120x&lossy=1',
+  'Liridon Shahin':'https://cdn.resfu.com/img_data/players/medium/982330.jpg?size=120x&lossy=1',
+  'Oscar Kjellman Olblad':'https://cdn.resfu.com/img_data/players/medium/3442363.jpg?size=120x&lossy=1',
+  'Oskar Iglicar-Berntsson':'https://cdn.resfu.com/img_data/players/medium/290557.jpg?size=120x&lossy=1',
+  'Oskar Cotton':'https://cdn.resfu.com/img_data/players/medium/3149482.jpg?size=120x&lossy=1',
+  'Antonio Djoro':'https://cdn.resfu.com/img_data/players/medium/3672363.jpg?size=120x&lossy=1',
+  'Aulon Bitiqi':'https://cdn.resfu.com/img_data/players/medium/3211831.jpg?size=120x&lossy=1',
+  'Emmanuel Gono':'https://cdn.resfu.com/img_data/players/medium/3394138.jpg?size=120x&lossy=1'
+});
+/* cedido al Oddevold que no existía (Gono/AIK, Cotton/BRP y Djoro/KALM ya estaban) */
+REAL_LOANS.push(
+  ['Aulon Bitiqi','VARB','ODDV',1,null,['Aulon Bitiqi','FW',2004,'XK',44,null,0.311,null,'DC/ED']]
+);
+/* ==== Landskrona BoIS (LBOS) — metadatos (los jugadores van en players-db.json) ==== */
+Object.assign(REAL_ATTR,{
+  'Amr Kaddoura':{EST:54,PAR:53,SAQ:52,REF:56,COL:58},
+  'Marcus Pettersson':{EST:52,PAR:50,SAQ:48,REF:52,COL:50},
+  'Gustaf Bruzelius':{RIT:56,TIR:42,PAS:58,REG:50,DEF:61,FÍS:59},
+  'Philip Karlsson':{RIT:52,TIR:40,PAS:56,REG:48,DEF:57,FÍS:58},
+  'André Álvarez Pérez':{RIT:54,TIR:38,PAS:52,REG:48,DEF:52,FÍS:54},
+  'Alex Murbeck':{RIT:48,TIR:34,PAS:46,REG:42,DEF:46,FÍS:52},
+  'Gabriel Westström':{RIT:52,TIR:36,PAS:46,REG:46,DEF:44,FÍS:46},
+  'Adam Egnell':{RIT:60,TIR:56,PAS:65,REG:61,DEF:48,FÍS:56},
+  'Christian Capotondi':{RIT:56,TIR:54,PAS:55,REG:57,DEF:38,FÍS:50},
+  'Kofi Sakurai':{RIT:54,TIR:48,PAS:56,REG:52,DEF:57,FÍS:56},
+  'Allen Smajic':{RIT:52,TIR:46,PAS:48,REG:50,DEF:34,FÍS:44},
+  'Samuli Ojala':{RIT:61,TIR:56,PAS:54,REG:58,DEF:30,FÍS:52},
+  'Edi Sylisufaj':{RIT:58,TIR:64,PAS:50,REG:54,DEF:32,FÍS:62},
+  'Kevin Jensen':{RIT:58,TIR:52,PAS:52,REG:55,DEF:30,FÍS:50},
+  'Roni Arabaci':{RIT:59,TIR:56,PAS:48,REG:52,DEF:30,FÍS:52},
+  'Marcus Andreasen':{RIT:48,TIR:48,PAS:40,REG:42,DEF:30,FÍS:52}
+});
+Object.assign(REAL_FOOT,{'Gabriel Westström':'I'});
+Object.assign(REAL_PHOTO,{
+  'Amr Kaddoura':'https://cdn.resfu.com/img_data/players/medium/217868.jpg?size=120x&lossy=1',
+  'Marcus Pettersson':'https://cdn.resfu.com/img_data/players/medium/3181470.jpg?size=120x&lossy=1',
+  'Gustaf Bruzelius':'https://cdn.resfu.com/img_data/players/medium/3236754.jpg?size=120x&lossy=1',
+  'Philip Karlsson':'https://cdn.resfu.com/img_data/players/medium/447810.jpg?size=120x&lossy=1',
+  'André Álvarez Pérez':'https://cdn.resfu.com/img_data/players/medium/3195445.jpg?size=120x&lossy=1',
+  'Alex Murbeck':'https://cdn.resfu.com/img_data/players/medium/290768.jpg?size=120x&lossy=1',
+  'Gabriel Westström':'https://cdn.resfu.com/img_data/players/medium/3186416.jpg?size=120x&lossy=1',
+  'Adam Egnell':'https://cdn.resfu.com/img_data/players/medium/379926.jpg?size=120x&lossy=1',
+  'Christian Capotondi':'https://cdn.resfu.com/img_data/players/medium/936275.jpg?size=120x&lossy=1',
+  'Kofi Sakurai':'https://cdn.resfu.com/img_data/players/medium/489167.jpg?size=120x&lossy=1',
+  'Allen Smajic':'https://cdn.resfu.com/img_data/players/medium/3187775.jpg?size=120x&lossy=1',
+  'Samuli Ojala':'https://cdn.resfu.com/img_data/players/medium/325819.jpg?size=120x&lossy=1',
+  'Edi Sylisufaj':'https://cdn.resfu.com/img_data/players/medium/346181.jpg?size=120x&lossy=1',
+  'Kevin Jensen':'https://cdn.resfu.com/img_data/players/medium/379170.jpg?size=120x&lossy=1',
+  'Roni Arabaci':'https://cdn.resfu.com/img_data/players/medium/709573.jpg?size=120x&lossy=1',
+  'Marcus Andreasen':'https://cdn.resfu.com/img_data/players/medium/885665.jpg?size=120x&lossy=1',
+  'Zakaria Loukili':'https://cdn.resfu.com/img_data/players/medium/3242794.jpg?size=120x&lossy=1',
+  'Markus Björkqvist':'https://cdn.resfu.com/img_data/players/medium/886534.jpg?size=120x&lossy=1',
+  'Gent Elezaj':'https://cdn.resfu.com/img_data/players/medium/3217128.jpg?size=120x&lossy=1',
+  'Christian Stark':'https://cdn.resfu.com/img_data/players/medium/3331495.jpg?size=120x&lossy=1',
+  'Xavier Odhiambo':'https://cdn.resfu.com/img_data/players/medium/3421623.jpg?size=120x&lossy=1'
+});
+/* club destino de la cesión de Odhiambo (AFC Eskilstuna=AFCE, Hammarby TFF=HTFF y Eskilsminne=ESKL ya existen) */
+Object.assign(CLUBBY,{VPS:K2('VPS','VPS Vaasa','VPS','Vaasa','FI','#1f5fa8','#ffffff',46)});
+CLUBBY.VPS.logo='https://cdn.resfu.com/img_data/equipos/2737.png?size=120x&lossy=1';
+Object.assign(CLUB_LOGO,{VPS:CLUBBY.VPS.logo});
+/* jugadores del Landskrona cedidos a otros clubes (Loukili ya llega cedido del Malmö) */
+REAL_LOANS.push(
+  ['Markus Björkqvist','LBOS','AFCE',1,null,['Markus Björkqvist','MD',2003,'SE',48,null,null,null,'MC']],
+  ['Gent Elezaj','LBOS','HTFF',1,null,['Gent Elezaj','MD',2005,'SE',46,null,null,null,'MC']],
+  ['Christian Stark','LBOS','ESKL',1,null,['Christian Stark','FW',2006,'SE',45,null,null,null,'DC']],
+  ['Xavier Odhiambo','LBOS','VPS',1,null,['Xavier Odhiambo','FW',2004,'SE',48,null,null,null,'DC/ED']]
 );
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
