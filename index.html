@@ -44,7 +44,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .btn.ghost:hover{background:rgba(220,240,228,.09)}
 .btn.danger{color:var(--bad);border:1px solid rgba(240,140,124,.32);background:rgba(240,140,124,.07)}
 .btn.sm{height:36px;padding:0 14px;font-size:13px;border-radius:11px}
-.btn.big{height:56px;padding:0 34px;font-size:16px;border-radius:18px;min-width:230px}
+.btn.big{height:auto;min-height:56px;padding:10px 18px;font-size:15px;line-height:1.25;border-radius:18px;white-space:normal;text-align:center}
 .btn[disabled]{opacity:.4;pointer-events:none}
 .icon-btn{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(220,240,228,.05);border:1px solid var(--line);transition:background .2s}
 .icon-btn:hover{background:rgba(220,240,228,.1)}
@@ -56,8 +56,8 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .title-map svg{width:min(150vw,1500px);height:auto;opacity:.55}
 .title-inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
 .wordmark{font:700 clamp(64px,15vw,138px)/.9 var(--display);letter-spacing:-.045em;background:linear-gradient(180deg,#fff 20%,#8fa197);-webkit-background-clip:text;background-clip:text;color:transparent;font-variation-settings:'opsz' 96}
-.lead{max-width:34ch;color:var(--muted);font-size:17px;margin-bottom:16px}
-.title-actions{display:flex;flex-direction:column;gap:12px;align-items:center}
+.lead{max-width:34ch;color:var(--muted);font-size:17px;margin-bottom:16px;text-wrap:balance}
+.title-actions{display:flex;flex-direction:column;gap:12px;align-items:stretch;width:100%;max-width:230px;margin:0 auto}
 .fine{margin-top:18px;font-size:12.5px;color:var(--dim)}
 
 /* barra superior de pantallas */
@@ -16486,13 +16486,13 @@ function askMode(n){
   ui.modeChosen=false;
   openSheet(`<h3>Modo de juego</h3><p>Elige cómo quieres empezar esta partida. La elección se guarda junto al slot ${n}.</p>
   <button class="mode-card" data-act="mode-kind" data-k="normal">${ICO_DB}<span><b>Modo carrera normal</b><small>Coge las riendas de un club ya existente, de la división que elijas.</small></span></button>
-  <button class="mode-card" data-act="mode-kind" data-k="custom">${ICO_CUSTOM}<span><b>Club personalizado</b><small>Elige un país, sustituye a uno de sus tres equipos peor valorados por tu propio club y personalízalo a tu gusto.</small></span></button>
+  <button class="mode-card" data-act="mode-kind" data-k="custom">${ICO_CUSTOM}<span><b>Club personalizado</b><small>Elige país, división y equipo a sustituir, y personalízalo.</small></span></button>
   <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Volver</button></div>`);
 }
 function askDataMode(){
   openSheet(`<h3>Datos de los futbolistas</h3><p>Elige cómo se generan los jugadores de esta partida.</p>
   <button class="mode-card" data-act="mode-pick" data-m="fict">${ICO_DICE}<span><b>Jugadores ficticios</b><small>Nombres, GRL, potenciales y sueldos aleatorios: cambian cada vez que empiezas una partida nueva.</small></span></button>
-  <button class="mode-card" data-act="mode-pick-real">${ICO_DB}<span><b>Base de datos (jugadores reales)</b><small>Futbolistas reales de ${Object.keys(REAL_DB).filter(id=>(REAL_DB[id]||[]).length>=16).length} clubes, con GRL y potencial estimados. El resto de plantillas se completa con jugadores generados.</small></span></button>
+  <button class="mode-card" data-act="mode-pick-real">${ICO_DB}<span><b>Base de datos (jugadores reales)</b><small>Futbolistas reales de ${Object.keys(REAL_DB).filter(id=>(REAL_DB[id]||[]).length>=16).length} clubes, con GRL y potencial estimados. El resto se completa con jugadores generados.</small></span></button>
   <div class="row-btns"><button class="btn ghost" data-act="data-back">Volver</button></div>`);
 }
 /* ============ gestor de bases de datos de jugadores reales: pantalla de subir/elegir/borrar ============
@@ -16519,11 +16519,13 @@ function dbManagerHTML(){
       <div class="slot-act">${primaryBtn}<button class="btn danger sm" data-act="db-delete" data-id="${e.id}">Borrar</button></div></div>`;
   }).join(''):'<p class="muted-s" style="padding:8px 2px">Todavía no has importado ninguna base de datos de jugadores reales.</p>';
   const note=ctx==='newgame'
-    ?'Elige qué base de datos usar en esta partida nueva, o sube un archivo nuevo (formato players-db.json). "Usar" también la deja activa globalmente (Museo y selección de liga fuera de partida).'
+    ?'Elige qué base de datos usar en esta partida nueva. "Usar" también la deja activa globalmente (Museo y selección de liga fuera de partida). Para importar una base nueva, hazlo desde "Importar base de datos" en el menú principal.'
     :'"Usar" la deja activa globalmente: el Museo y la selección de liga/club (fuera de una partida en curso) mostrarán nombres y jugadores reales. "Quitar" vuelve a ficticio sin borrar nada. Una partida ya en curso sigue tal cual se creó.';
-  return`<h3>Bases de datos de jugadores reales</h3><p>${esc(note)}</p>
-  <div class="res-scroll">${rows}</div>
-  <div class="row-btns"><button class="btn ghost" data-act="${ctx==='newgame'?'db-back-newgame':'sheet-close'}">${ctx==='newgame'?'Volver':'Cerrar'}</button><button class="btn primary" data-act="db-upload">Subir archivo…</button></div>`;
+  const uploadBtn=ctx==='newgame'?'':'<button class="btn primary" data-act="db-upload">Subir archivo…</button>';
+  ui.dbNote=note;
+  return`<div class="sec-h" style="margin-bottom:0"><h3 style="margin:0;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1">Bases de datos de jugadores reales</h3><button class="ibtn" data-act="db-info" aria-label="Información">i</button></div>
+  <div class="res-scroll" style="margin-top:14px">${rows}</div>
+  <div class="row-btns"><button class="btn ghost" data-act="${ctx==='newgame'?'db-back-newgame':'sheet-close'}">${ctx==='newgame'?'Volver':'Cerrar'}</button>${uploadBtn}</div>`;
 }
 function dbNamePromptHTML(base){
   return`<h3>Nombre de la base de datos</h3><p>Dale un nombre para reconocerla luego en la lista.</p>
@@ -16560,29 +16562,32 @@ function startCustomFlow(){
 function openCustomCountrySheet(){
   const cs=gamePlayable().slice().sort((a,b)=>COUNTRIES[a].name.localeCompare(COUNTRIES[b].name,'es'));
   const rows=cs.map(id=>`<button class="lrow cco" data-act="custom-country" data-c="${id}"><span class="fl">${flagHTML(id)}</span><span class="lt"><b>${esc(COUNTRIES[id].name)}</b></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`).join('');
-  openSheet(`<div class="sec-h" style="margin-bottom:0"><h3 style="margin:0">Crear club personalizado</h3><button class="ibtn" data-act="cc-info" aria-label="Información">i</button></div><div class="res-scroll" style="margin-top:5px">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="custom-data-back">Volver</button></div>`);
+  openSheet(`<div class="sec-h" style="margin-bottom:0"><h3 style="margin:0">Crear club personalizado</h3><button class="ibtn" data-act="cc-info" aria-label="Información">i</button></div><div class="res-scroll" style="margin-top:5px">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="custom-data-back">Volver</button></div>`,true);
 }
-function openCustomTeamSheet(co){
+function openCustomDivisionSheet(co){
+  const C=COUNTRIES[co];
+  const steps=legitDivSteps(co).filter(st=>st.divs.some(d=>CLUBS.some(c=>c.co===co&&(c.div||1)===d&&isLeagueEnabled(co,d))));
+  if(!steps.length){toast('Ese país no tiene equipos disponibles para sustituir todavía');openCustomCountrySheet();return}
+  ui.custom={country:co};
+  const rows=steps.map((st,i)=>{
+    const n=CLUBS.filter(c=>c.co===co&&st.divs.includes(c.div||1)&&isLeagueEnabled(co,c.div||1)).length;
+    return`<button class="lrow" style="width:100%;margin-bottom:8px" data-act="custom-div" data-i="${i}"><span class="lt"><b>${esc(st.label)}</b><small>${n} club${n===1?'':'es'}</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>`;
+  }).join('');
+  openSheet(`<h3>${flagHTML(co)} ${esc(C.name)}</h3><p>Elige la división donde quieres fundar tu club.</p><div class="res-scroll" style="margin-top:5px">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="custom-back-country">Otro país</button></div>`,true);
+}
+function openCustomTeamSheet(co,stepIdx){
   const C=COUNTRIES[co];
   /* La "Reputación" que muestra el juego es el GRL medio del mejor once (xiAvgOvr). No usar c.rep/repOf,
      que es la reputación de juego (presupuesto/objetivos) y en la pestaña de la competición figura como "Prestigio". */
   const repM=c=>xiAvgOvr(previewTeam(c.id));
-  const byRepAsc=(a,b)=>repM(a)-repM(b)||a.name.localeCompare(b.name,'es');
   const steps=legitDivSteps(co).filter(st=>st.divs.some(d=>CLUBS.some(c=>c.co===co&&(c.div||1)===d&&isLeagueEnabled(co,d))));
-  if(!steps.length){toast('Ese país no tiene equipos disponibles para sustituir todavía');openCustomCountrySheet();return}
-  /* los 3 peor valorados de la división más baja; si esa división no llega a 3 equipos (datos incompletos),
-     se sube a la siguiente división más baja, nunca a equipos sueltos de cualquier parte del país */
-  let idx=steps.length-1,cands=[];
-  while(cands.length<3&&idx>=0){
-    const pool=CLUBS.filter(c=>c.co===co&&steps[idx].divs.includes(c.div||1)&&isLeagueEnabled(co,c.div||1)&&!cands.includes(c)).sort(byRepAsc);
-    cands=cands.concat(pool.slice(0,3-cands.length));
-    idx--;
-  }
-  const tier=steps[steps.length-1];
-  cands=cands.sort((a,b)=>repM(b)-repM(a)||a.name.localeCompare(b.name,'es'));   /* en pantalla: de más a menos reputación */
-  ui.custom={country:co,divs:tier.divs,tierLabel:tier.label};
+  const tier=steps[stepIdx];
+  if(!tier){openCustomDivisionSheet(co);return}
+  const cands=CLUBS.filter(c=>c.co===co&&tier.divs.includes(c.div||1)&&isLeagueEnabled(co,c.div||1))
+    .sort((a,b)=>repM(b)-repM(a)||a.name.localeCompare(b.name,'es'));   /* de más a menos reputación */
+  ui.custom={country:co,divs:tier.divs,tierLabel:tier.label,stepIdx};
   const rows=cands.map(c=>`<button class="cc-team" data-act="custom-team" data-club="${c.id}">${crestHTML(c,34)}<span class="cc-lt"><b>${esc(c.name)}</b><small>${esc(c.city)}</small></span><span class="lstat"><small class="lrep">${starsFracHTML(repM(c))} ${repM(c)}</small></span></button>`).join('');
-  openSheet(`<h3>${flagHTML(co)} ${esc(C.name)}</h3><p>Estos son los tres equipos peor valorados de ${esc(tier.label)}. Elige a cuál quieres sustituir con tu club.</p>${rows}<div class="row-btns"><button class="btn ghost" data-act="custom-back-country">Otro país</button></div>`);
+  openSheet(`<h3>${flagHTML(co)} ${esc(C.name)}</h3><p>Estos son todos los equipos de ${esc(tier.label)}. Elige a cuál quieres sustituir con tu club.</p><div class="res-scroll">${rows}</div><div class="row-btns"><button class="btn ghost" data-act="custom-back-div">Otra división</button></div>`,true);
 }
 function openCustomConfirm(){
   const base=CLUBBY[ui.custom.baseId],co=ui.custom.country;
@@ -18753,8 +18758,7 @@ const H={
         let data;try{data=JSON.parse(String(r.result||''))}catch(e){data=null}
         if(!DBMGR.validate(data)){toast('Ese archivo no tiene el formato esperado: debe ser un JSON con forma {idClub:[[...jugador...],...]}');return}
         ui.dbPending=data;
-        const base=(file.name||'Base de datos').replace(/\.json$/i,'');
-        openSheet(dbNamePromptHTML(base),true);
+        openSheet(dbNamePromptHTML('Temporada 26/27'),true);
       };
       r.onerror=()=>toast('No se pudo leer el archivo');
       r.readAsText(file);
@@ -18778,11 +18782,13 @@ const H={
       openSheet(dbManagerHTML(),true);
     }
   },
-  'custom-country'(t){openCustomTeamSheet(t.dataset.c)},
+  'custom-country'(t){openCustomDivisionSheet(t.dataset.c)},
   'custom-data-back'(){askDataMode()},
   'custom-back-country'(){openCustomCountrySheet()},
+  'custom-div'(t){openCustomTeamSheet(ui.custom.country,+t.dataset.i)},
+  'custom-back-div'(){openCustomDivisionSheet(ui.custom.country)},
   'custom-team'(t){ui.custom.baseId=t.dataset.club;openCustomConfirm()},
-  'custom-back-team'(){openCustomTeamSheet(ui.custom.country)},
+  'custom-back-team'(){openCustomTeamSheet(ui.custom.country,ui.custom.stepIdx)},
   'custom-continue'(){openCustomClubForm()},
   'cform-squadmode'(t){ui.custom.form.squadMode=t.dataset.m;const b=$('#sheet-body');if(b)b.innerHTML=customClubFormHTML()},
   'cform-logo-pick'(){const i=document.getElementById('cform-logo-input');if(i)i.click()},
@@ -18997,7 +19003,8 @@ const H={
   },
   'pt-info'(){openInfo('Aprender posiciones','<p>Con más nivel de instalaciones hay más plazas y se tarda menos. Mientras aprende, el jugador entrena los atributos de esa posición.</p>')},
   'acad-info'(){openInfo('Hornada de la academia',`<p>Cada ${ACAD_EVERY} jornadas llega una nueva hornada de juveniles. Cuando llegue la próxima jornada, los juveniles aparecerán aquí.</p>`)},
-  'cc-info'(){openInfo('Crear club personalizado','<p>Elige el país donde quieres fundar tu club. Sustituirás a uno de los tres equipos peor valorados de su división más baja.</p>')},
+  'cc-info'(){openInfo('Crear club personalizado','<p>Elige el país, la división y el equipo que quieras sustituir con tu club.</p>')},
+  'db-info'(){openInfo('Bases de datos de jugadores reales',`<p>${esc(ui.dbNote||'')}</p>`)},
   'act-info'(t){openInfo(t.dataset.title,`<p>${esc(t.dataset.desc)}</p>`)},
   'cv-close'(){closeCV()},
   'ip-close'(){closeInfo()},
