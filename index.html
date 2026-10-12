@@ -58,6 +58,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .wordmark{font:700 clamp(64px,15vw,138px)/.9 var(--display);letter-spacing:-.045em;background:linear-gradient(180deg,#fff 20%,#8fa197);-webkit-background-clip:text;background-clip:text;color:transparent;font-variation-settings:'opsz' 96}
 .lead{max-width:34ch;color:var(--muted);font-size:17px;margin-bottom:16px;text-wrap:balance}
 .title-actions{display:flex;flex-direction:column;gap:12px;align-items:stretch;width:100%;max-width:230px;margin:0 auto}
+.title-actions .btn{width:100%;min-width:0;box-sizing:border-box}
 .fine{margin-top:18px;font-size:12.5px;color:var(--dim)}
 
 /* barra superior de pantallas */
@@ -11109,14 +11110,16 @@ function planPlayoffs(){
      único finalista; ese finalista juega una última eliminatoria a doble partido contra el 14º de la Jupiler
      Pro League por la plaza (BE2FPO, encadenada: sus asientos no se conocen hasta que termina el playoff
      anterior, así que empieza "pendiente" y se rellena en poAdvance() en cuanto el playoff tiene ganador).
-     Bajan siempre los 2 últimos de la Challenger Pro League. */
+     Sube y baja el mismo número de equipos para que BE1 y BE2 mantengan su tamaño: el campeón de la Challenger
+     sube directo; si el finalista del playoff le gana la plaza al 14º, suben 2 (y bajan el 14º + el último de la
+     Jupiler); si el 14º se salva, sube 1 y baja 1 (el último de la Jupiler). */
   {
     const be1=poOrder('BE',1),be2=poOrder('BE',2),be2elig=be2.filter(id=>!isB(id));
     if(be1.length>=14&&be2elig.length>=5){
       const seeds=be2elig.slice(1,5);
       po.items.push({co:'BE2PO',kind:'bepo',seeds,alive:seeds.slice(),rounds:[],winner:null});
       po.items.push({co:'BE2FPO',kind:'rel',seeds:[],alive:[],rounds:[],winner:null,pending:true});
-      po.be2={champ:be2elig[0],down:be2.slice(-2),d14:be1[13]};
+      po.be2={champ:be2elig[0],d14:be1[13],down1:be1[be1.length-1]};
     }
     /* el bucle genérico de poFinish() recorre gamePlayable() e indexa po.dir[co] para TODOS los países
        (incluido BE, aunque aquí no participe en el bloque genérico de arriba); sin esta entrada vacía,
@@ -11288,7 +11291,7 @@ function poFinish(){
   const en34=po.en34;if(en34){const it=po.items.find(x=>x.kind==='en34po');if(it&&it.winner)en34.up.push(it.winner);balanceUpDown(en34.up,en34.down)}
   const de3=po.de3;if(de3){const it=po.items.find(x=>x.co==='DE3PO');if(it&&it.winner&&it.winner!==it.seeds[0]){de3.up.push(it.winner);de3.down.push(it.seeds[0])}balanceUpDown(de3.up,de3.down)}
   const be2=po.be2;if(be2){
-    const up=[be2.champ],down=be2.down.slice();
+    const up=[be2.champ],down=be2.down1?[be2.down1]:[];
     const fIt=po.items.find(x=>x.co==='BE2FPO');
     if(fIt&&fIt.winner&&fIt.winner!==be2.d14){up.push(fIt.winner);down.push(be2.d14)}
     balanceUpDown(up,down);
@@ -11413,6 +11416,10 @@ function movesHTML(){
   const en45HTML=en45?`
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('EN',4))}</b>${teamsHTML(en45.up)}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName('EN',5))}</b>${teamsHTML(en45.down)}</div></div>`:'';
+  const en34=po.en34;
+  const en34HTML=en34?`
+    <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('EN',3))}</b>${teamsHTML(en34.up)}</div></div>
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName('EN',4))}</b>${teamsHTML(en34.down)}</div></div>`:'';
   const de3=po.de3;
   const de3HTML=de3?`
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('DE',2))}</b>${teamsHTML(de3.up)}</div></div>
@@ -11420,7 +11427,7 @@ function movesHTML(){
   return gamePlayable().filter(co=>COUNTRIES[co]).map(co=>{const r=po.res[co],up=r&&r.up||[],down=r&&r.down||[];
     return`<div class="subh">${flagHTML(co)} ${esc(COUNTRIES[co].name)}</div>
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName(co,1))}</b>${teamsHTML(up)}</div></div>
-    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML+esfHTML:co==='EN'?enHTML+en45HTML:co==='DE'?de3HTML:''}`}).join('');
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML+esfHTML:co==='EN'?enHTML+en34HTML+en45HTML:co==='DE'?de3HTML:''}`}).join('');
 }
 function myMoveTxt(){
   const po=state.po;if(!po||!po.done||!po.res)return'';
@@ -11529,8 +11536,19 @@ function applyMoves(){
    Ambas búsquedas de compensación se limitan al mismo país: si no, un ajuste en España podía deshacer el
    ascenso o descenso de un club de otro país que compartiera número de división, descuadrando esa otra liga. */
 function fixBTeams(){
-  const nd=id=>state.divs[id]!=null?state.divs[id]:CLUBBY[id].div;
-  const cancelRel=(tier,co,except)=>{for(const id in state.divs){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co)continue;if(TIER_OF(c.div)===tier&&TIER_OF(state.divs[id])>tier){delete state.divs[id];return true}}return false};
+  if(!state)return;
+  /* solo nos interesan los filiales que de verdad disputan una liga del juego (los U21/B "nominales", que creamos
+     con div=2 pero son solo destinos de cesión, no deben tocarse: moverlos rompía ascensos/descensos ajenos). */
+  const inLeagues=new Set(CLUBS.map(c=>c.id));
+  /* escalón de una división: en España los números no son contiguos (1,2,3,5,6…) así que se usa TIER_OF; en el
+     resto de países las divisiones jugables son contiguas, así que el propio número ya es el escalón. */
+  const tierOf=(co,d)=>co==='ES'?TIER_OF(d):(d||1);
+  const canDiv=(co,d)=>d!=null&&(typeof isLeagueEnabled!=='function'||isLeagueEnabled(co,d));
+  const nd=id=>state.divs[id]!=null?state.divs[id]:(CLUBBY[id].div!=null?CLUBBY[id].div:BASE_DIV[id]);
+  /* división jugable inmediatamente por debajo de la categoría de la división `pd` del país `co` */
+  const below=(co,pd)=>{if(co==='ES'){const t=Math.min(TIER_OF(pd)+1,4),cands=(TIERS[t]||[]).filter(d=>d!==pd);return cands.length?smallestGroup(cands):undefined}
+    const d=pd+1;return canDiv(co,d)?d:undefined};
+  const cancelRel=(co,tier,except)=>{for(const id in state.divs){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co)continue;if(tierOf(co,c.div)===tier&&tierOf(co,state.divs[id])>tier){delete state.divs[id];return true}}return false};
   /* último equipo que se salvó (el que marca justo el límite de la permanencia) del grupo `div`: el mejor
      clasificado de la tabla que no desciende y que todavía no se ha movido en el reparto. */
   const lastSaved=(co,div,except)=>{let o=[];try{o=poOrder(co,div)}catch(e){o=[]}
@@ -11538,31 +11556,31 @@ function fixBTeams(){
     const down=new Set(((state.po&&state.po.esf&&state.po.esf.down)||[]).map(x=>x.id));
     for(let i=o.length-1;i>=0;i--){const x=o[i];if(x===except||isB(x))continue;if(down.has(x))continue;if(state.divs[x]!=null)continue;return x}
     return null};
-  const pushDown=(tier,co,target,except)=>{for(const id in CLUBBY){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co||isB(id))continue;if(state.divs[id]!=null)continue;if(TIER_OF(c.div)===tier){state.divs[id]=target;return true}}return false};
+  const pushDown=(co,tier,target,except)=>{for(const id in CLUBBY){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co||isB(id))continue;if(state.divs[id]!=null)continue;if(tierOf(co,c.div)===tier){state.divs[id]=target;return true}}return false};
   for(let pass=0;pass<5;pass++){
     let changed=false;
     for(const id in CLUBBY){
       if(!isB(id))continue;const pid=FAMILY[id];if(!pid||!CLUBBY[pid])continue;
-      /* el sistema de escalones de filiales (TIERS/TIER_OF) está definido para las divisiones españolas;
-         en otros países (p. ej. los U21/B ingleses, que además son solo destinos de cesión) no aplica y
-         llegaba a borrar ascensos/descensos ajenos. */
-      if(CLUBBY[id].co!=='ES')continue;
-      const fd=nd(id),pd=nd(pid),co=CLUBBY[id].co;
-      if(TIER_OF(fd)<=TIER_OF(pd)){
-        const tt=Math.min(TIER_OF(pd)+1,4),ttCands=(TIERS[tt]||[]).filter(d=>d!==pd),target=ttCands.length?smallestGroup(ttCands):undefined;
-        if(target&&TIER_OF(fd)<tt){cancelRel(TIER_OF(fd),co,id);state.divs[id]=target;changed=true}
+      const co=CLUBBY[id].co;if(CLUBBY[pid].co!==co)continue;
+      if(!inLeagues.has(id))continue;
+      const fd=nd(id),pd=nd(pid);
+      /* la división 3 de España es la "liga de filiales" (B/afiliados de clubes de 1ª/2ª), no una categoría del
+         sistema TIERS: no la comparamos (un filial ahí con su padre en Segunda Federación daría un falso choque). */
+      if(co==='ES'&&fd===3)continue;
+      if(tierOf(co,fd)<=tierOf(co,pd)){
+        const target=below(co,pd);
+        if(target!=null&&tierOf(co,fd)<tierOf(co,target)){cancelRel(co,tierOf(co,fd),id);state.divs[id]=target;changed=true}
         else{
-          /* el filial ya está en la última categoría (Segunda Federación) y no puede bajar más. Si el primer
-             equipo ha descendido hasta esa categoría, se anula su descenso y baja en su lugar el último equipo
-             que se había salvado (el que marca justo el límite de la permanencia) de su grupo. Solo aplica si
-             el primer equipo realmente venía de descender: si ya estaba ahí, no hay nada que anular. */
-          const descended=state.divs[pid]!=null&&TIER_OF(state.divs[pid])>TIER_OF(CLUBBY[pid].div);
+          /* el filial no puede bajar más (ya está en la categoría más baja del país). Si el primer equipo ha
+             descendido hasta esa categoría, se anula su descenso y baja en su lugar el último equipo que se
+             había salvado (el que marca el límite de la permanencia) de su división anterior. */
+          const descended=state.divs[pid]!=null&&tierOf(co,state.divs[pid])>tierOf(co,CLUBBY[pid].div);
           if(!descended)continue;
-          const pt=CLUBBY[pid].div,ptCands=(TIERS[Math.min(TIER_OF(pt)+1,4)]||[]).filter(d=>d!==pt),ptarget=ptCands.length?smallestGroup(ptCands):undefined;
-          if(!ptarget)continue;
+          const pt=CLUBBY[pid].div,ptarget=below(co,pt);
+          if(ptarget==null)continue;
           const repl=lastSaved(co,pt,pid);
           if(repl){state.divs[repl]=ptarget;delete state.divs[pid];changed=true}
-          else if(pushDown(TIER_OF(pt),co,ptarget,pid)){delete state.divs[pid];changed=true}
+          else if(pushDown(co,tierOf(co,pt),ptarget,pid)){delete state.divs[pid];changed=true}
         }
       }
     }
@@ -11747,8 +11765,9 @@ function newSeason(){
     }).filter(Boolean);
     /* contratos: cada año baja 1 temporada; al expirar, la IA casi siempre renueva (a veces deja libre a un veterano
        o a alguien sin minutos) y en tu club el jugador queda libre si no lo renuevas, con guardas de 16 jugadores
-       y 2 porteros para no dejar la plantilla coja. */
-    if(!fil){
+        y 2 porteros para no dejar la plantilla coja. Tu propio club lleva contratos manuales aunque sea un
+        filial; el resto de filiales (que no gestionas) se renuevan solos. */
+    if(!fil||id===state.club){
       const exps=[];
       T.players.forEach(p=>{if(p.cy!=null&&--p.cy<=0)exps.push(p)});
       if(exps.length){
@@ -11774,7 +11793,10 @@ function newSeason(){
   famList().forEach(f=>{
     const aged=f.players.map(p=>ageUp(p,r)).filter(Boolean);
     f.players=aged;
-    aged.filter(p=>p.age>23&&!p.list).forEach(p=>{
+    /* el filial no lo gestionas tú: sus contratos bajan 1 temporada al año pero se renuevan solos al expirar
+       (la IA del filial renueva a todos, para no perder jugadores del filial por no gestionarlo tú) */
+    f.players.forEach(p=>{if(p.cy!=null&&--p.cy<=0)p.cy=1+Math.floor(r()*3)});
+    f.players.filter(p=>p.age>23&&!p.list).forEach(p=>{
       p.list=true;genOfferFor(p,true);genOfferFor(p,true);
       news(`${p.n} cumple ${p.age} años y supera la edad límite del filial de ${cname(f.id)}: decide si lo subes al primer equipo, lo vendes o lo cedes.`);
     });
@@ -12100,7 +12122,9 @@ function renewThreshold(p){
   return .95;
 }
 function renewPlayer(id,wage,years){
-  const t=me(),p=t.players.find(x=>x.id===id);if(!p)return{err:'No encontrado'};
+  let p=me().players.find(x=>x.id===id);
+  if(!p){for(const f of famList()){const q=(f.players||[]).find(x=>x.id===id);if(q){p=q;break}}}
+  if(!p)return{err:'No encontrado'};
   if(p.loanIn)return{err:'No puedes renovar a un jugador cedido.'};
   wage=Math.round(wage);years=Math.max(1,Math.min(5,Math.round(years)));
   const ask=p.wage,thr=renewThreshold(p),min=Math.round(ask*thr);
@@ -14871,9 +14895,13 @@ const GRC_TEAMS=['AEL','KART','APK','ARI','ASTT','KTH','ATRO','ELSY','IRKL','KAL
 const IFC_IDS=['AUC','HIL','AHL','PAC','FLA'];
 const IFC_WEEKS=[15,16,17,18];
 function computeNextTiesIFC(cup,ri){
-  if(ri===1)return[{h:IFC_IDS[2],a:cup.rounds[0].ties[0].w},{h:IFC_IDS[3],a:IFC_IDS[4]}].filter(t=>t.h&&t.a&&CLUBBY[t.h]&&CLUBBY[t.a]);
-  if(ri===2)return[{h:cup.rounds[1].ties[0].w,a:cup.rounds[1].ties[1].w}].filter(t=>t.h&&t.a&&CLUBBY[t.h]&&CLUBBY[t.a]);
-  if(ri===3)return[{h:cup.rounds[2].ties[0].w,a:cup._uefa}].filter(t=>t.h&&t.a&&CLUBBY[t.h]&&CLUBBY[t.a]);
+  /* defensivo: si por lo que sea un cruce anterior no dejó ganador, no reventamos (eso rompía advanceWorld
+     entero y dejaba el cuadro a medias); simplemente no se genera ese cruce. */
+  const ok=t=>t&&t.h&&t.a&&CLUBBY[t.h]&&CLUBBY[t.a];
+  const win=(r,i)=>{const R=cup.rounds[r];return R&&R.ties&&R.ties[i]&&R.ties[i].w};
+  if(ri===1)return[{h:IFC_IDS[2],a:win(0,0)},{h:IFC_IDS[3],a:IFC_IDS[4]}].filter(ok);
+  if(ri===2)return[{h:win(1,0),a:win(1,1)}].filter(ok);
+  if(ri===3)return[{h:win(2,0),a:cup._uefa}].filter(ok);
   return[];
 }
 function cupInitIFC(uefa){
@@ -18276,7 +18304,7 @@ function renderGame(){
   $('#g-sub').textContent=`Temp. ${state.season} (${syTxt}) - ${state.phase==='end'?(state.po&&!state.po.done?'Playoffs':'Temporada terminada'):'Semana '+(state.week+1)}`;
   $('#g-budget').textContent=fmtM(t.budget);
   $$('#gnav [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===ui.tab));
-  $('#gnav [data-tab=club]').classList.toggle('has',!!state.acadNew);
+  $('#gnav [data-tab=club]').classList.toggle('has',!!state.acadNew||famList().some(f=>f.players.some(p=>contractDue(p))));
   $('#gnav [data-tab=tactics]').classList.toggle('has',lineupIssues(me()).length>0);
   const sqNews=p=>((p.offers||[]).length>0||(p.loanOffers||[]).length>0||contractDue(p));
   $('#gnav [data-tab=squad]').classList.toggle('has',me().players.some(sqNews)||famList().some(f=>f.players.some(sqNews)));
@@ -21152,7 +21180,7 @@ Object.assign(CLUB_LOGO,{GNIS:CLUBBY.GNIS.logo,IFKA:CLUBBY.IFKA.logo});
 /* jugadores del Sirius cedidos a otros clubes (Milleskog ya estaba) */
 REAL_LOANS.push(
   ['Boris Milovanov','SIR','GNIS',1,null,['Boris Milovanov','DF',1998,'SE',56,null,null,null,'DFC/LD']],
-  ['Finlay Neat','SIR','NORB',1,null,['Finlay Neat','FW',2006,'EN',44,null,null,null,'DC']],
+  ['Finlay Neat','SIR','NORB',1,null,['Finlay Neat','FW',2006,'SC',41,null,null,null,'DC/MCO']],
   ['Adam Ljungberg','SIR','VARN',1,null,['Adam Ljungberg','FW',2005,'SE',48,null,null,null,'DC']],
   ['Filip Mella','SIR','VARN',1,null,['Filip Mella','MD',2007,'SE',49,null,null,null,'MC/MI']],
   ['Isaac Höök','SIR','IFKA',1,null,['Isaac Höök','DF',2007,'SE',46,null,null,null,'DFC']]
@@ -21266,7 +21294,7 @@ REAL_LOANS.push(
   ['Ali Youssef','APLM','MJA',1,null,['Ali Youssef','FW',2000,'TN',63,null,2.38,null,'DC/EI/MCO']],
   ['Manasse Kusu','MJA','OREB',1,null,['Manasse Kusu','MD',2001,'SE',50,null,null,null,'MC']],
   ['Christian Tchouante','MJA','ZELP',1,null,['Christian Tchouante','DF',2006,'SE',45,null,null,null,'DFC']],
-  ['Ibrahim Adewale','MJA','NORB',1,null,['Ibrahim Adewale','FW',2006,'SE',45,null,null,null,'DC']]
+  ['Ibrahim Adewale','MJA','NORB',1,null,['Ibrahim Adewale','FW',2006,'NG',43,null,0.385,null,'DC/ED']]
 );
 /* ==== Örgryte IS (ORG) — plantilla real ==== */
 Object.assign(REAL_ATTR,{
@@ -21743,6 +21771,143 @@ REAL_LOANS.push(
   ['Gent Elezaj','LBOS','HTFF',1,null,['Gent Elezaj','MD',2005,'SE',46,null,null,null,'MC']],
   ['Christian Stark','LBOS','ESKL',1,null,['Christian Stark','FW',2006,'SE',45,null,null,null,'DC']],
   ['Xavier Odhiambo','LBOS','VPS',1,null,['Xavier Odhiambo','FW',2004,'SE',48,null,null,null,'DC/ED']]
+);
+/* ==== Ljungskile SK (LJUN) — metadatos (los jugadores van en players-db.json; sus cesiones ya existen) ==== */
+Object.assign(REAL_ATTR,{
+  'Lukas Eriksson':{EST:45,PAR:44,SAQ:42,REF:47,COL:44},
+  'Cameron Hogg':{EST:50,PAR:49,SAQ:48,REF:50,COL:53},
+  'Ivan Marić':{RIT:54,TIR:42,PAS:58,REG:48,DEF:66,FÍS:64},
+  'Gideon Mensah':{RIT:52,TIR:40,PAS:50,REG:48,DEF:50,FÍS:53},
+  'Eiman Reljanović':{RIT:54,TIR:40,PAS:52,REG:50,DEF:52,FÍS:52},
+  'Gustav Hedin':{RIT:53,TIR:38,PAS:48,REG:50,DEF:50,FÍS:48},
+  'Filip Örnblom':{RIT:50,TIR:36,PAS:50,REG:44,DEF:52,FÍS:54},
+  'Filip Ambrož':{RIT:52,TIR:42,PAS:52,REG:48,DEF:53,FÍS:54},
+  'Daniel Lagerlöf':{RIT:50,TIR:46,PAS:50,REG:48,DEF:34,FÍS:44},
+  'Dennis Frisk':{RIT:52,TIR:44,PAS:50,REG:46,DEF:50,FÍS:52},
+  'Samuel Adrian':{RIT:48,TIR:40,PAS:50,REG:46,DEF:50,FÍS:54},
+  'Daniel Ljung':{RIT:64,TIR:56,PAS:54,REG:61,DEF:30,FÍS:52},
+  'Lukas Lindholm':{RIT:52,TIR:54,PAS:44,REG:48,DEF:30,FÍS:56},
+  'Isaac Shears':{RIT:52,TIR:48,PAS:44,REG:46,DEF:32,FÍS:54},
+  'Jesper Liljedahl':{RIT:52,TIR:46,PAS:46,REG:50,DEF:28,FÍS:46},
+  'William Nilsson':{RIT:52,TIR:48,PAS:40,REG:44,DEF:28,FÍS:48}
+});
+Object.assign(REAL_FOOT,{'Gideon Mensah':'I','Gustav Hedin':'I','Samuel Adrian':'I'});
+Object.assign(REAL_PHOTO,{
+  'Lukas Eriksson':'https://cdn.resfu.com/img_data/players/medium/3181696.jpg?size=120x&lossy=1',
+  'Cameron Hogg':'https://cdn.resfu.com/img_data/players/medium/557594.jpg?size=120x&lossy=1',
+  'Ivan Marić':'https://cdn.resfu.com/img_data/players/medium/849105.jpg?size=120x&lossy=1',
+  'Gideon Mensah':'https://cdn.resfu.com/img_data/players/medium/447142.jpg?size=120x&lossy=1',
+  'Eiman Reljanović':'https://cdn.resfu.com/img_data/players/medium/3168398.jpg?size=120x&lossy=1',
+  'Gustav Hedin':'https://cdn.resfu.com/img_data/players/medium/3182204.jpg?size=120x&lossy=1',
+  'Filip Örnblom':'https://cdn.resfu.com/img_data/players/medium/289408.jpg?size=120x&lossy=1',
+  'Filip Ambrož':'https://cdn.resfu.com/img_data/players/medium/887777.jpg?size=120x&lossy=1',
+  'Daniel Lagerlöf':'https://cdn.resfu.com/img_data/players/medium/3181849.jpg?size=120x&lossy=1',
+  'Dennis Frisk':'https://cdn.resfu.com/img_data/players/medium/949541.jpg?size=120x&lossy=1',
+  'Samuel Adrian':'https://cdn.resfu.com/img_data/players/medium/284410.jpg?size=120x&lossy=1',
+  'Daniel Ljung':'https://cdn.resfu.com/img_data/players/medium/759544.jpg?size=120x&lossy=1',
+  'Lukas Lindholm':'https://cdn.resfu.com/img_data/players/medium/920424.jpg?size=120x&lossy=1',
+  'Isaac Shears':'https://cdn.resfu.com/img_data/players/medium/726559.jpg?size=120x&lossy=1',
+  'William Nilsson':'https://cdn.resfu.com/img_data/players/medium/3181890.jpg?size=120x&lossy=1',
+  'Elias Hedström':'https://cdn.resfu.com/img_data/players/medium/3407739.jpg?size=120x&lossy=1'
+});
+/* ==== Norrby IF (NORB) — metadatos (los jugadores van en players-db.json; Neat y Adewale ya llegan cedidos) ==== */
+Object.assign(REAL_ATTR,{
+  'Sebastian Banožić':{EST:52,PAR:51,SAQ:50,REF:54,COL:52},
+  'Tim Svensson Lillvik':{EST:36,PAR:35,SAQ:33,REF:38,COL:34},
+  'Ture Spendler':{RIT:55,TIR:42,PAS:50,REG:52,DEF:50,FÍS:50},
+  'Vidar Svendsén':{RIT:53,TIR:40,PAS:50,REG:50,DEF:50,FÍS:50},
+  'Johannes Engvall':{RIT:52,TIR:36,PAS:48,REG:44,DEF:50,FÍS:53},
+  'Casper Axede':{RIT:52,TIR:36,PAS:48,REG:44,DEF:48,FÍS:52},
+  'Olle Backlund':{RIT:52,TIR:36,PAS:46,REG:46,DEF:46,FÍS:48},
+  'Kalle Liimatainen':{RIT:54,TIR:50,PAS:56,REG:54,DEF:36,FÍS:46},
+  'Joel Hjalmarsson':{RIT:52,TIR:46,PAS:50,REG:48,DEF:48,FÍS:52},
+  'Filip Gustafsson':{RIT:50,TIR:42,PAS:50,REG:46,DEF:50,FÍS:52},
+  'Abbas Yusuf':{RIT:59,TIR:54,PAS:44,REG:48,DEF:30,FÍS:56},
+  'Julius Johansson':{RIT:56,TIR:52,PAS:50,REG:53,DEF:30,FÍS:50},
+  'Jamie Bichis':{RIT:54,TIR:48,PAS:48,REG:52,DEF:28,FÍS:46},
+  'Hampus Tilly':{RIT:50,TIR:50,PAS:42,REG:44,DEF:30,FÍS:54},
+  'Magnus Holte':{RIT:48,TIR:48,PAS:40,REG:42,DEF:30,FÍS:54}
+});
+Object.assign(REAL_FOOT,{'Ture Spendler':'I','Olle Backlund':'I'});
+Object.assign(REAL_PHOTO,{
+  'Sebastian Banožić':'https://cdn.resfu.com/img_data/players/medium/3181712.jpg?size=120x&lossy=1',
+  'Tim Svensson Lillvik':'https://cdn.resfu.com/img_data/players/medium/447997.jpg?size=120x&lossy=1',
+  'Ture Spendler':'https://cdn.resfu.com/img_data/players/medium/3181643.jpg?size=120x&lossy=1',
+  'Vidar Svendsén':'https://cdn.resfu.com/img_data/players/medium/3181699.jpg?size=120x&lossy=1',
+  'Johannes Engvall':'https://cdn.resfu.com/img_data/players/medium/3266666.jpg?size=120x&lossy=1',
+  'Casper Axede':'https://cdn.resfu.com/img_data/players/medium/3263384.jpg?size=120x&lossy=1',
+  'Olle Backlund':'https://cdn.resfu.com/img_data/players/medium/3320286.jpg?size=120x&lossy=1',
+  'Kalle Liimatainen':'https://cdn.resfu.com/img_data/players/medium/326144.jpg?size=120x&lossy=1',
+  'Joel Hjalmarsson':'https://cdn.resfu.com/img_data/players/medium/3298643.jpg?size=120x&lossy=1',
+  'Filip Gustafsson':'https://cdn.resfu.com/img_data/players/medium/3181610.jpg?size=120x&lossy=1',
+  'Abbas Yusuf':'https://cdn.resfu.com/img_data/players/medium/842807.jpg?size=120x&lossy=1',
+  'Julius Johansson':'https://cdn.resfu.com/img_data/players/medium/845659.jpg?size=120x&lossy=1',
+  'Jamie Bichis':'https://cdn.resfu.com/img_data/players/medium/3214730.jpg?size=120x&lossy=1',
+  'Hampus Tilly':'https://cdn.resfu.com/img_data/players/medium/3168396.jpg?size=120x&lossy=1',
+  'Magnus Holte':'https://cdn.resfu.com/img_data/players/medium/3170904.jpg?size=120x&lossy=1',
+  'Finlay Neat':'https://cdn.resfu.com/img_data/players/medium/3242796.jpg?size=120x&lossy=1',
+  'Ibrahim Adewale':'https://cdn.resfu.com/img_data/players/medium/3674101.jpg?size=120x&lossy=1',
+  'Liam Björninger':'https://cdn.resfu.com/img_data/players/medium/3243973.jpg?size=120x&lossy=1'
+});
+/* club destino de la cesión de Björninger */
+Object.assign(CLUBBY,{BKO:K2('BKO','BK Olympic','BK Olympic','Malmö','SE','#1c3f94','#ffffff',40)});
+CLUBBY.BKO.logo='https://cdn.resfu.com/img_data/equipos/84250.png?size=120x&lossy=1';
+Object.assign(CLUB_LOGO,{BKO:CLUBBY.BKO.logo});
+/* jugadores del Norrby cedidos a otros clubes */
+REAL_LOANS.push(
+  ['Liam Björninger','NORB','BKO',1,null,['Liam Björninger','MD',2004,'SE',44,null,null,null,'MC']]
+);
+/* ==== Örebro SK (OREB) — metadatos (los jugadores van en players-db.json; Kusu ya llega cedido) ==== */
+Object.assign(REAL_ATTR,{
+  'Jakub Ojrzyński':{EST:50,PAR:49,SAQ:48,REF:52,COL:48},
+  'Buster Runheim':{EST:37,PAR:35,SAQ:33,REF:38,COL:34},
+  'Mark Watson':{RIT:56,TIR:44,PAS:58,REG:50,DEF:70,FÍS:68},
+  'Hampus Söderström':{RIT:54,TIR:40,PAS:56,REG:48,DEF:56,FÍS:59},
+  'Christoffer Redenstrand':{RIT:62,TIR:46,PAS:58,REG:58,DEF:59,FÍS:58},
+  'Jesper Stenberg':{RIT:50,TIR:38,PAS:54,REG:44,DEF:58,FÍS:56},
+  'Eric McCue':{RIT:54,TIR:40,PAS:52,REG:46,DEF:60,FÍS:63},
+  'Dino Salihović':{RIT:62,TIR:46,PAS:56,REG:58,DEF:56,FÍS:58},
+  'Jetmir Haliti':{RIT:52,TIR:40,PAS:52,REG:48,DEF:54,FÍS:56},
+  'Chovanie Amatkarijo':{RIT:65,TIR:60,PAS:58,REG:63,DEF:30,FÍS:54},
+  'Jacob Ortmark':{RIT:54,TIR:48,PAS:59,REG:54,DEF:52,FÍS:56},
+  'Erdal Rakip':{RIT:56,TIR:58,PAS:62,REG:60,DEF:46,FÍS:54},
+  'Ahmed Yasin':{RIT:58,TIR:58,PAS:64,REG:66,DEF:32,FÍS:50},
+  'Ammar Yakoub':{RIT:62,TIR:59,PAS:48,REG:54,DEF:30,FÍS:54},
+  'Karl Holmberg':{RIT:52,TIR:65,PAS:48,REG:52,DEF:32,FÍS:63},
+  'Ramon Wiedesheim-Paul':{RIT:61,TIR:58,PAS:50,REG:54,DEF:30,FÍS:54}
+});
+Object.assign(REAL_FOOT,{'Christoffer Redenstrand':'I'});
+Object.assign(REAL_PHOTO,{
+  'Jakub Ojrzyński':'https://cdn.resfu.com/img_data/players/medium/770135.jpg?size=120x&lossy=1',
+  'Buster Runheim':'https://cdn.resfu.com/img_data/players/medium/3244841.jpg?size=120x&lossy=1',
+  'Mark Watson':'https://cdn.resfu.com/img_data/players/medium/221602.jpg?size=120x&lossy=1',
+  'Hampus Söderström':'https://cdn.resfu.com/img_data/players/medium/430804.jpg?size=120x&lossy=1',
+  'Christoffer Redenstrand':'https://cdn.resfu.com/img_data/players/medium/447540.jpg?size=120x&lossy=1',
+  'Jesper Stenberg':'https://cdn.resfu.com/img_data/players/medium/292478.jpg?size=120x&lossy=1',
+  'Eric McCue':'https://cdn.resfu.com/img_data/players/medium/843539.jpg?size=120x&lossy=1',
+  'Dino Salihović':'https://cdn.resfu.com/img_data/players/medium/878355.jpg?size=120x&lossy=1',
+  'Jetmir Haliti':'https://cdn.resfu.com/img_data/players/medium/372279.jpg?size=120x&lossy=1',
+  'Chovanie Amatkarijo':'https://cdn.resfu.com/img_data/players/medium/391690.jpg?size=120x&lossy=1',
+  'Jacob Ortmark':'https://cdn.resfu.com/img_data/players/medium/212315.jpg?size=120x&lossy=1',
+  'Erdal Rakip':'https://cdn.resfu.com/img_data/players/medium/183924.jpg?size=120x&lossy=1',
+  'Ahmed Yasin':'https://cdn.resfu.com/img_data/players/medium/211794.jpg?size=120x&lossy=1',
+  'Ammar Yakoub':'https://cdn.resfu.com/img_data/players/medium/3146706.jpg?size=120x&lossy=1',
+  'Karl Holmberg':'https://cdn.resfu.com/img_data/players/medium/211802.jpg?size=120x&lossy=1',
+  'Ramon Wiedesheim-Paul':'https://cdn.resfu.com/img_data/players/medium/326559.jpg?size=120x&lossy=1',
+  'Giuseppe Bovalina':'https://cdn.resfu.com/img_data/players/medium/3226024.jpg?size=120x&lossy=1',
+  'Kim Dickson':'https://cdn.resfu.com/img_data/players/medium/845658.jpg?size=120x&lossy=1',
+  'Erman Hrastovina':'https://cdn.resfu.com/img_data/players/medium/3360826.jpg?size=120x&lossy=1',
+  'Manasse Kusu':'https://cdn.resfu.com/img_data/players/medium/463478.jpg?size=120x&lossy=1'
+});
+/* club destino de la cesión de Hrastovina (AFC Eskilstuna=AFCE y Vancouver=VWHT ya existen) */
+Object.assign(CLUBBY,{UMEF:K2('UMEF','Umeå FC','Umeå FC','Umeå','SE','#1f5fa8','#ffffff',44)});
+CLUBBY.UMEF.logo='https://cdn.resfu.com/img_data/equipos/12793.png?size=120x&lossy=1';
+Object.assign(CLUB_LOGO,{UMEF:CLUBBY.UMEF.logo});
+/* cesiones del Örebro (Bovalina llega cedido; Kusu ya estaba; Kim Dickson y Hrastovina salen cedidos) */
+REAL_LOANS.push(
+  ['Giuseppe Bovalina','VWHT','OREB',1,null,['Giuseppe Bovalina','DF',2004,'AU',47,null,0.290,null,'LD/MD']],
+  ['Kim Dickson','OREB','AFCE',1,null,['Kim Dickson','FW',2001,'SE',52,null,null,null,'DC/ED']],
+  ['Erman Hrastovina','OREB','UMEF',1,null,['Erman Hrastovina','FW',2006,'SE',45,null,null,null,'DC']]
 );
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
