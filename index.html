@@ -297,7 +297,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .defs.edit input:focus{color:var(--accent)}
 .cform-rep-rng{width:100%;margin:2px 0 18px}
 .cform-logo-btns{margin:10px 0 16px}
-.sq-list{display:flex;flex-direction:column;gap:10px;padding-top:12px}
+.sq-list{display:flex;flex-direction:column;gap:10px;padding-top:12px;padding-right:10px;overflow-x:hidden}
 .sq-pcard{position:relative}
 .sq-pcard .pc-edit-ov{position:absolute;inset:0;border:none;background:transparent;padding:0;border-radius:18px;z-index:1;cursor:pointer}
 .sq-pcard .sq-del{position:absolute;top:-10px;right:-10px;z-index:2;background:var(--bg,#0b1210);box-shadow:0 2px 8px rgba(0,0,0,.5)}
@@ -731,7 +731,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 /* hojas de resultado: arriba el marcador, en medio la lista de partidos con scroll y abajo el botón siempre visible */
 .sheet-panel.split{display:flex;flex-direction:column;overflow:hidden}
 .sheet-panel.split .res-top{flex:none}
-.sheet-panel.split .res-scroll{flex:1 1 auto;min-height:96px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:0 -6px;padding:0 6px}
+.sheet-panel.split .res-scroll{flex:1 1 auto;min-height:96px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:0 -6px;padding:0 6px}
 .sheet-panel.split .row-btns{flex:none;margin-top:14px}
 .sheet-panel.fixed-h{height:min(620px,88dvh)}
 @media(min-width:700px){.sheet-panel{bottom:auto;top:50%;border-radius:28px;transform:translate(-50%,-44%) scale(.97);opacity:0;transition:transform .5s var(--ease),opacity .3s}.sheet.open .sheet-panel{transform:translate(-50%,-50%);opacity:1}}
@@ -16827,13 +16827,14 @@ function customClubFormHTML(){
   <input class="cform-rep-rng" type="range" data-cform="rep" min="30" max="90" step="1" value="${f.rep}">
   <p class="muted-s" style="margin:0 0 8px">Plantilla</p>
   <div class="seg">
+    <button class="${f.squadMode==='original'?'on':''}" data-act="cform-squadmode" data-m="original">Plantilla original</button>
     <button class="${f.squadMode==='auto'?'on':''}" data-act="cform-squadmode" data-m="auto">Plantilla genérica</button>
     <button class="${f.squadMode==='custom'?'on':''}" data-act="cform-squadmode" data-m="custom">Plantilla personalizada</button>
   </div>
   <div class="row-btns"><button class="btn ghost" data-act="custom-back-team">Atrás</button><button class="btn primary" data-act="cform-continue">Continuar</button></div>`;
 }
 /* ============ CLUB PERSONALIZADO (Fase 3: plantilla jugador a jugador) ============ */
-const SQ_MIN=11,SQ_MAX=25;
+const SQ_MIN=1;
 /* fila de la plantilla con el mismo diseño que la tarjeta de un jugador real (.pcard), pero como div con
    un botón-overlay para editar y un botón de borrar aparte, en vez del <button> único que usa playerCard
    (ese iría a parar al modal del jugador real, que aquí todavía no existe) */
@@ -16855,12 +16856,13 @@ function sqCardHTML(e,i){
 }
 function squadEditorHTML(){
   const list=ui.custom.squad||[],n=list.length;
+  const orig=(ui.custom.club&&ui.custom.club.squadMode==='original');
   const rows=list.map((p,i)=>sqCardHTML(p,i)).join('');
-  return`<h3>Plantilla personalizada</h3><p>Añade entre ${SQ_MIN} y ${SQ_MAX} jugadores, con al menos un portero. Llevas <b>${n}</b>.</p>
+  return`<h3>${orig?'Plantilla original':'Plantilla personalizada'}</h3><p>${orig?'Esta es la plantilla actual del club: edítala, añade o quita jugadores.':'Añade los jugadores que quieras, con al menos un portero.'} Llevas <b>${n}</b>.</p>
   <div class="row-btns"><button class="btn ghost"${n?'':' disabled'} data-act="squad-export">Exportar a archivo</button><button class="btn ghost" data-act="squad-import">Importar de archivo</button></div>
   <div class="res-scroll"><div class="sq-list">${rows||'<p class="muted-s">Todavía no has añadido jugadores.</p>'}</div></div>
-  <div class="row-btns"><button class="btn ghost" data-act="custom-back-club">Atrás</button><button class="btn primary"${n>=SQ_MAX?' disabled':''} data-act="squad-add">Añadir jugador</button></div>
-  <div class="row-btns one"><button class="btn primary" data-act="squad-finish">Crear plantilla y empezar (${n}/${SQ_MIN})</button></div>`;
+  <div class="row-btns"><button class="btn ghost" data-act="custom-back-club">Atrás</button><button class="btn primary" data-act="squad-add">Añadir jugador</button></div>
+  <div class="row-btns one"><button class="btn primary" data-act="squad-finish">Crear plantilla y empezar (${n})</button></div>`;
 }
 const PFORM_POS=[['POR','Portero'],['LI','Lateral izquierdo'],['DFC','Defensa central'],['LD','Lateral derecho'],['MCD','Mediocentro defensivo'],['MC','Mediocentro'],['MCO','Mediapunta'],['MI','Medio izquierdo'],['MD','Medio derecho'],['EI','Extremo izquierdo'],['ED','Extremo derecho'],['DC','Delantero centro']];
 const PFORM_NATS=Object.keys(NATNAME).sort((a,b)=>NATNAME[a].localeCompare(NATNAME[b],'es'));
@@ -16940,6 +16942,18 @@ function pos2SheetHTML(){
   <div class="res-scroll">${rows}</div>
   <div class="row-btns"><button class="btn primary" data-act="pform-pos2-done">Listo</button></div>`;
 }
+/* plantilla "original" del club base, para precargar el editor jugador a jugador: toma a los jugadores
+   TAL COMO los muestra el juego (reales con una base activa, generados en ficticio) y los convierte al
+   formato de entrada del editor de plantilla. */
+function baseSquadEntries(baseId){
+  const t=(typeof previewTeam==='function')?previewTeam(baseId):null;
+  const list=(t&&t.players)||[];
+  const defP={GK:'POR',DF:'DFC',MD:'MC',FW:'DC'};
+  return list.map(p=>{
+    const pp=(p.pp&&p.pp.length)?p.pp.slice():[defP[p.pos]||'MC'];
+    return {name:p.n,pos:pp[0],pos2s:pp.slice(1),nat:p.nat,foot:(typeof footOf==='function'?footOf(p):'Derecha'),photo:p.photo||'',age:p.age,ovr:p.ovr,pot:Math.max(p.pot||p.ovr,p.ovr),at:p.at?Object.assign({},p.at):null};
+  });
+}
 function buildCustomPlayer(e,clubId,idx){
   const broad=POS_G[e.pos]||'MD',pp=[e.pos].concat((e.pos2s||[]).filter(x=>x!==e.pos));
   const p={id:clubId+'_cc'+idx,n:e.name,nat:e.nat||ui.custom.country,pos:broad,pp,age:e.age,ovr:e.ovr,pot:Math.max(e.pot,e.ovr),en:100,inj:0,g:0,ap:0,foot:e.foot||'Derecha'};
@@ -16995,7 +17009,7 @@ function finalizeCustomGame(){
   newGame(ui.slot,baseId);   /* ya con el club personalizado aplicado, así que el presupuesto inicial se calcula
     con la reputación elegida, no con la del club original */
   if(savedRealDB)REAL_DB[baseId]=savedRealDB;
-  if(cc.squadMode==='custom'&&Array.isArray(ui.custom.squad)&&ui.custom.squad.length){
+  if((cc.squadMode==='custom'||cc.squadMode==='original')&&Array.isArray(ui.custom.squad)&&ui.custom.squad.length){
     const t=state.teams[baseId];
     t.players=ui.custom.squad.map((p,i)=>buildCustomPlayer(p,baseId,i));
     t.lineup=bestXI(t);t.bench=autoBench(t);
@@ -19063,7 +19077,13 @@ const H={
   'custom-team'(t){ui.custom.baseId=t.dataset.club;openCustomConfirm()},
   'custom-back-team'(){openCustomTeamSheet(ui.custom.country,ui.custom.stepIdx)},
   'custom-continue'(){openCustomClubForm()},
-  'cform-squadmode'(t){ui.custom.form.squadMode=t.dataset.m;const b=$('#sheet-body');if(b)b.innerHTML=customClubFormHTML()},
+  'cform-squadmode'(t){
+    const m=t.dataset.m,f=ui.custom.form;f.squadMode=m;
+    /* "Plantilla original": autocompleta la ficha desde el club sustituido (todo editable) */
+    if(m==='original'&&CLUBBY[ui.custom.baseId]){const base=CLUBBY[ui.custom.baseId];
+      f.name=base.name;f.short=base.short;f.city=base.city;f.stadium=stadiumOf(ui.custom.baseId);f.logo=base.logo||'';f.rep=base.rep;}
+    const b=$('#sheet-body');if(b)b.innerHTML=customClubFormHTML();
+  },
   'cform-logo-pick'(){const i=document.getElementById('cform-logo-input');if(i)i.click()},
   'cform-logo-clear'(){ui.custom.form.logo='';const b=$('#sheet-body');if(b)b.innerHTML=customClubFormHTML()},
   'cform-continue'(){
@@ -19072,7 +19092,8 @@ const H={
     if(!name){toast('Ponle un nombre a tu club');return}
     if(!short){toast('Añade una abreviatura (2 a 4 letras)');return}
     ui.custom.club={name,short,city:(f.city||'').trim()||base.city,stadium:(f.stadium||'').trim(),logo:(f.logo||'').trim(),rep:f.rep||base.rep,squadMode:f.squadMode||'auto'};
-    if(ui.custom.club.squadMode==='custom'){ui.custom.squad=ui.custom.squad||[];openSheet(squadEditorHTML(),true)}
+    if(ui.custom.club.squadMode==='original'){ui.custom.squad=baseSquadEntries(ui.custom.baseId);openSheet(squadEditorHTML(),true)}
+    else if(ui.custom.club.squadMode==='custom'){ui.custom.squad=ui.custom.squad||[];openSheet(squadEditorHTML(),true)}
     else finalizeCustomGame();
   },
   'custom-back-club'(){openCustomClubForm()},
@@ -19115,7 +19136,7 @@ const H={
   },
   'squad-finish'(){
     const sq=ui.custom.squad||[];
-    if(sq.length<SQ_MIN){toast(`Necesitas al menos ${SQ_MIN} jugadores`);return}
+    if(sq.length<SQ_MIN){toast(`Necesitas al menos ${SQ_MIN} jugador`);return}
     if(!sq.some(p=>p.pos==='POR')){toast('Tu plantilla necesita al menos un portero');return}
     finalizeCustomGame();
   },
