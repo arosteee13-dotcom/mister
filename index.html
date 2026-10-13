@@ -528,8 +528,12 @@ button.foc.sel{opacity:1;background:var(--accent-soft);color:var(--accent);box-s
 .crop-frame:active{cursor:grabbing}
 .crop-frame img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
 .crop-grid{position:absolute;inset:0;pointer-events:none;opacity:.45;background-image:linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);background-size:33.334% 33.334%;background-position:-1px -1px}
-.crop-ctrls{display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:12px}
-.crop-ctrls input[type=range]{flex:1}
+.crop-ctrls{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--muted);font-size:12px;flex-wrap:wrap}
+.crop-ctrls input[type=range]{flex:1;min-width:110px}
+.crop-ctrls .btn.sm{padding:0 12px;min-width:42px}
+.crop-wrap{position:relative}
+.crop-prev{position:absolute;right:8px;bottom:8px;width:74px;height:74px;border-radius:50%;overflow:hidden;background:#0b1210;box-shadow:0 0 0 2px var(--line2),0 8px 20px rgba(0,0,0,.6);z-index:2}
+.crop-prev canvas{width:100%;height:100%;display:block}
 .ip-card h4{font:700 16px var(--display);margin:0 0 8px}
 .ip-card p{font-size:13.5px;line-height:1.5;margin:0 0 8px;color:var(--text)}
 .ip-card p:last-of-type{margin-bottom:0}
@@ -17208,17 +17212,29 @@ function pformOpen(){openSheet(playerFormHTML(),true);const sc=pformScroller();i
 function pformSaveScroll(){const sc=pformScroller();if(sc&&ui.custom)ui.custom.pformScroll=sc.scrollTop}
 /* ===================== recortador de fotos (marco cuadrado 1:1) ===================== */
 function openCrop(src,cb){
-  const c={src,cb:cb||function(){},img:null,W:1,H:1,scale:1,x:0,y:0};ui.crop=c;
+  const c={src,cb:cb||function(){},img:null,W:1,H:1,scale:1,x:0,y:0,bake:true};ui.crop=c;
   const b=document.getElementById('crop-body');if(!b)return;
   b.innerHTML=`<h4>Encuadrar foto (1:1)</h4>
-  <div class="crop-frame" id="crop-frame"><img id="crop-img" alt="" draggable="false"><div class="crop-grid"></div></div>
-  <div class="crop-ctrls"><span>Zoom</span><input type="range" id="crop-zoom" min="1" max="4" step="0.01" value="1"></div>
+  <div class="crop-wrap"><div class="crop-frame" id="crop-frame"><img id="crop-img" alt="" draggable="false"><div class="crop-grid"></div></div><div class="crop-prev"><canvas id="crop-prev" width="80" height="80"></canvas></div></div>
+  <div class="crop-ctrls"><button type="button" class="btn ghost sm" data-act="crop-zoomout" aria-label="Menos zoom">−</button><input type="range" id="crop-zoom" min="1" max="4" step="0.01" value="1" aria-label="Zoom"><button type="button" class="btn ghost sm" data-act="crop-zoomin" aria-label="Más zoom">＋</button><button type="button" class="btn ghost sm" data-act="crop-reset">Restablecer</button></div>
   <div class="row-btns"><button class="btn ghost" data-act="crop-cancel">Cancelar</button><button class="btn primary" data-act="crop-apply">Aplicar</button></div>`;
   document.getElementById('crop').classList.add('open');
-  const im=new Image();c.imgEl=im;
-  im.onload=()=>{c.img=im;c.W=im.naturalWidth||1;c.H=im.naturalHeight||1;cropInit()};
-  im.onerror=()=>{c.img=null;try{cropInit()}catch(e){}};
-  try{im.crossOrigin='anonymous'}catch(e){}
+  const im=document.getElementById('crop-img');if(!im)return;
+  c.imgEl=im;loadCropImg(im,src);
+}
+/* carga la imagen en el <img> visible. Para URLs http(s) intenta CORS (para poder recortar); si falla, reintenta
+   sin CORS para que al menos se VEA (y se marcará bake=false: no se podrá hornear, se usará la URL tal cual). */
+function loadCropImg(im,src){
+  const c=ui.crop;if(!c)return;
+  const onok=bake=>{c.img=im;c.W=im.naturalWidth||1;c.H=im.naturalHeight||1;c.bake=bake;cropInit()};
+  const onerr=()=>{c.img=null;try{cropInit()}catch(e){}};
+  if(/^https?:/i.test(src)){
+    im.crossOrigin='anonymous';
+    im.onload=()=>onok(true);
+    im.onerror=()=>{im.crossOrigin=null;im.onload=()=>onok(false);im.onerror=onerr;im.src=src;};
+  }else{
+    im.onload=()=>onok(true);im.onerror=onerr;
+  }
   im.src=src;
 }
 function cropFrameEl(){return document.getElementById('crop-frame')}
@@ -17234,6 +17250,14 @@ function cropView(){
   c.s=s;const w=c.W*s,h=c.H*s;c._w=w;c._h=h;
   c.x=Math.min(0,Math.max(F-w,c.x));c.y=Math.min(0,Math.max(F-h,c.y));
   const im=c.imgEl;if(im){im.style.width=w+'px';im.style.height=h+'px';im.style.left=c.x+'px';im.style.top=c.y+'px'}
+  cropPrev();
+}
+/* miniatura con el resultado exacto del encuadre (se redibuja al mover/zoom) */
+function cropPrev(){
+  const c=ui.crop;if(!c)return;const cv=document.getElementById('crop-prev');if(!cv)return;
+  const ctx=cv.getContext('2d');if(!ctx)return;const N=cv.width;ctx.clearRect(0,0,N,N);
+  if(!c.img)return;
+  try{const s=c.s||1,F=c.F||260;ctx.drawImage(c.img,(0-c.x)/s,(0-c.y)/s,F/s,F/s,0,0,N,N)}catch(e){}
 }
 function cropBind(frame){
   if(frame._bound)return;frame._bound=1;
@@ -19491,10 +19515,13 @@ const H={
   'pform-foot'(t){ui.custom.pform.foot=t.dataset.f;pformRender()},
   'pform-val-auto'(){ui.custom.pform.val=null;pformRender()},
   'crop-cancel'(){const c=ui.crop;closeCrop();if(c&&c.cb)c.cb(false)},
+  'crop-zoomin'(){const c=ui.crop;if(c)cropZoomTo(c.scale+0.15)},
+  'crop-zoomout'(){const c=ui.crop;if(c)cropZoomTo(c.scale-0.15)},
+  'crop-reset'(){const c=ui.crop,f=cropFrameEl();if(!c||!f)return;const F=c.F||f.clientWidth||260,cover=Math.max(F/c.W,F/c.H);c.scale=1;c._cover=cover;c.x=(F-c.W*cover)/2;c.y=(F-c.H*cover)/2;const z=document.getElementById('crop-zoom');if(z)z.value=1;cropView()},
   'crop-apply'(){
     const c=ui.crop;if(!c)return;const cb=c.cb;let out=null;
     try{const F=c.F||260,s=c.s||1,f=cropFrameEl();
-      if(c.img&&f){const N=200,cv=document.createElement('canvas');cv.width=N;cv.height=N;cv.getContext('2d').drawImage(c.img,(0-c.x)/s,(0-c.y)/s,F/s,F/s,0,0,N,N);out=cv.toDataURL('image/jpeg',.85)}
+      if(c.img&&f&&c.bake!==false){const N=200,cv=document.createElement('canvas');cv.width=N;cv.height=N;cv.getContext('2d').drawImage(c.img,(0-c.x)/s,(0-c.y)/s,F/s,F/s,0,0,N,N);out=cv.toDataURL('image/jpeg',.85)}
     }catch(e){out=null}
     closeCrop();if(cb)cb(out);
   },
