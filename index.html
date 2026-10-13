@@ -1520,7 +1520,7 @@ function exportDBFile(){
     if(REAL_ATTR[n])attr[n]=REAL_ATTR[n];
     let fv=REAL_FOOT[n];if(fv&&typeof fv==='object')fv=fv[cid]||null;
     if(fv&&fv!=='D')foot[n]=fv;
-    const ph=(typeof photoFor==='function'?photoFor(n,cid):null);if(ph&&/^https?:/.test(ph))photo[n]=ph;
+    const ph=(typeof photoFor==='function'?photoFor(n,cid):null);if(ph&&/^(https?:|data:)/.test(ph))photo[n]=ph;
   }));
   const payload={v:2,players:REAL_DB,attr,foot,photo};
   if(ui.dbclubs&&Object.keys(ui.dbclubs).length)payload.clubs=ui.dbclubs;
@@ -17045,7 +17045,7 @@ const SQ_MIN=1;
 function sqCardHTML(e,i){
   const broad=POS_G[e.pos]||'MD',pot=Math.max(e.pot,e.ovr);
   const tp={pos:broad,pp:[e.pos].concat((e.pos2s||[]).filter(x=>x!==e.pos)),photo:e.photo};
-  const val=calcVal({ovr:e.ovr,age:e.age}),wage=Math.round(val*4);
+  const val=(e.val!=null?e.val:calcVal({ovr:e.ovr,age:e.age})),wage=Math.round(val*4);
   return`<div class="pcard sq-pcard">
     <button type="button" class="pc-edit-ov" data-act="squad-edit" data-i="${i}" aria-label="Editar a ${esc(e.name)}"></button>
     <div class="pc-av"><div class="pc-photo">${avatarHTML(tp)}</div></div>
@@ -17095,7 +17095,7 @@ function playerFormHTML(){
   const f=ui.custom.pform;
   const isGK=f.pos==='POR',atKeys=isGK?ATTR_GK:ATTR_OUT;
   if(!f.at)f.at=genAttrs({pos:isGK?'GK':(POS_G[f.pos]||'MD'),ovr:f.ovr,id:'tmp'+(f.name||'x')});
-  const pot=Math.max(f.pot,f.ovr),val=calcVal({ovr:f.ovr,age:f.age});
+  const pot=Math.max(f.pot,f.ovr),val=calcVal({ovr:f.ovr,age:f.age}),effVal=(f.val!=null?f.val:val);
   return`<div class="res-scroll"><div class="pm-head"><span class="pb" style="color:${posCol(f.pos)};background:${posCol(f.pos)}26">${f.pos}</span><span class="tag">${esc(f.foot)}</span></div>
   <div class="pm-top"><button type="button" class="pm-photo" data-act="pform-avatar-pick" aria-label="Cambiar foto">${pformAvatarHTML(f)}</button><input class="pform-name" type="text" data-pform="name" maxlength="40" value="${esc(f.name)}" placeholder="Nombre y apellido" autocomplete="off"></div>
   <input type="file" id="pform-avatar-input" accept="image/*" style="display:none">
@@ -17119,8 +17119,9 @@ function playerFormHTML(){
   <input type="range" class="cform-rep-rng" data-pform="age" min="14" max="45" step="1" value="${f.age}">
   <div class="defs sm edit">
     <div><i>Nacionalidad</i><button type="button" class="pos2-btn" data-act="pform-nat-open">${flagHTML(f.nat)} ${esc(NATNAME[f.nat]||f.nat)}</button></div>
-    <div><i>Valor de mercado</i><b id="pform-val-val">${fmtV(val)}</b></div>
+    <div><i>Valor de mercado (M€)</i><input type="number" data-pform="val" min="0" step="0.1" value="${f.val!=null?f.val:val}" inputmode="decimal"></div>
   </div>
+  <p class="muted-s" id="pform-val-note" style="margin:6px 0 0">Valor aplicado: <b id="pform-val-val">${fmtV(effVal)}</b>${f.val!=null?' · <span class="tag">Manual</span>':''} <button type="button" class="btn ghost sm" data-act="pform-val-auto">Auto</button></p>
   <p class="muted-s" style="margin:12px 0 8px">Pie dominante</p>
   <div class="seg">
     <button class="${f.foot==='Derecha'?'on':''}" data-act="pform-foot" data-f="Derecha">Diestro</button>
@@ -17203,7 +17204,7 @@ function buildCustomPlayer(e,clubId,idx){
   const broad=POS_G[e.pos]||'MD',pp=[e.pos].concat((e.pos2s||[]).filter(x=>x!==e.pos));
   const p={id:clubId+'_cc'+idx,n:e.name,nat:e.nat||ui.custom.country,pos:broad,pp,age:e.age,ovr:e.ovr,pot:Math.max(e.pot,e.ovr),en:100,inj:0,g:0,ap:0,foot:e.foot||'Derecha'};
   if(e.photo)p.photo=e.photo;
-  p.val=calcVal(p);p.wage=Math.round(p.val*4);p.at=e.at?Object.assign({},e.at):genAttrs(p);
+  p.val=(e.val!=null?e.val:calcVal(p));p.wage=Math.round(p.val*4);p.at=e.at?Object.assign({},e.at):genAttrs(p);
   return p;
 }
 /* ============ IMPORTAR JUGADORES EN PARTIDA (solo clubes creados por el usuario) ============ */
@@ -19394,6 +19395,7 @@ const H={
   'squad-back'(){openSheet(squadEditorHTML(),true)},
   'pform-cancel'(){openSheet(squadEditorHTML(),true)},
   'pform-foot'(t){ui.custom.pform.foot=t.dataset.f;pformRender()},
+  'pform-val-auto'(){ui.custom.pform.val=null;pformRender()},
   'pform-avatar-pick'(){const i=document.getElementById('pform-avatar-input');if(i)i.click()},
   'pform-avatar-clear'(){ui.custom.pform.photo='';pformRender()},
   'pform-move-open'(){ui.moveQ='';ui.moveCo='ALL';ui.moveDiv='ALL';pformSaveScroll();openSheet(moveClubSheetHTML(),true)},
@@ -19414,7 +19416,7 @@ const H={
   'pform-save'(){
     const f=ui.custom.pform,name=(f.name||'').trim();
     if(!name){toast('Ponle un nombre al jugador');return}
-    const entry={name,pos:f.pos,pos2s:(f.pos2s||[]).filter(x=>x!==f.pos),nat:f.nat,foot:f.foot,photo:f.photo||'',age:f.age,ovr:f.ovr,pot:Math.max(f.pot,f.ovr),at:f.at?Object.assign({},f.at):null};
+    const entry={name,pos:f.pos,pos2s:(f.pos2s||[]).filter(x=>x!==f.pos),nat:f.nat,foot:f.foot,photo:f.photo||'',age:f.age,ovr:f.ovr,pot:Math.max(f.pot,f.ovr),val:(f.val!=null&&f.val!=='')?+f.val:null,at:f.at?Object.assign({},f.at):null};
     if(ui.custom.editIdx!=null)ui.custom.squad[ui.custom.editIdx]=entry;else ui.custom.squad.push(entry);
     openSheet(squadEditorHTML(),true);
   },
@@ -19878,10 +19880,11 @@ function bindEvents(){
     if(t&&t.dataset&&t.dataset.pform&&ui.custom&&ui.custom.pform){
       const k=t.dataset.pform,f=ui.custom.pform;
       if(k==='name'){f.name=t.value;return}
+      if(k==='val'){f.val=t.value===''?null:(+t.value||0);const vb=document.getElementById('pform-val-val');if(vb)vb.textContent=fmtV(f.val!=null?f.val:calcVal({ovr:f.ovr,age:f.age}));return}
       f[k]=+t.value;
       if(k==='age'){
         const b=document.getElementById('pform-age-val');if(b)b.textContent=f.age+' años';
-        const vb=document.getElementById('pform-val-val');if(vb)vb.textContent=fmtV(calcVal({ovr:f.ovr,age:f.age}));
+        const vb=document.getElementById('pform-val-val');if(vb)vb.textContent=fmtV(f.val!=null?f.val:calcVal({ovr:f.ovr,age:f.age}));
       }
       if(k==='ovr'){
         if(f.pot<f.ovr)f.pot=f.ovr;
@@ -19893,7 +19896,7 @@ function bindEvents(){
         const pn=document.getElementById('pform-pot-num'),pb=document.getElementById('pform-pot-bar');
         if(pn){pn.textContent=f.pot;pn.style.color=ratingColor(f.pot)}
         if(pb){pb.style.width=f.pot+'%';pb.style.background=ratingColor(f.pot)+'55'}
-        const vb=document.getElementById('pform-val-val');if(vb)vb.textContent=fmtV(calcVal({ovr:f.ovr,age:f.age}));
+        const vb=document.getElementById('pform-val-val');if(vb)vb.textContent=fmtV(f.val!=null?f.val:calcVal({ovr:f.ovr,age:f.age}));
       }
       if(k==='pot'){
         const pn=document.getElementById('pform-pot-num'),pb=document.getElementById('pform-pot-bar');
