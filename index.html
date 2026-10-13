@@ -517,6 +517,19 @@ button.foc.sel{opacity:1;background:var(--accent-soft);color:var(--accent);box-s
 .ip.open .ip-bg{opacity:1}
 .ip-card{position:relative;width:min(360px,100%);max-height:80dvh;overflow:auto;padding:18px 18px 16px;border-radius:22px;background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--line2);box-shadow:0 40px 90px -20px rgba(0,0,0,.9);opacity:0;transform:translateY(18px) scale(.96);transition:opacity .3s,transform .45s var(--ease)}
 .ip.open .ip-card{opacity:1;transform:none}
+.crop{position:fixed;inset:0;z-index:170;display:grid;place-items:center;padding:16px;pointer-events:none}
+.crop.open{pointer-events:auto}
+.crop-bg{position:absolute;inset:0;background:rgba(4,8,6,.74);opacity:0;transition:opacity .3s;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+.crop.open .crop-bg{opacity:1}
+.crop-card{position:relative;width:min(380px,100%);padding:16px;border-radius:22px;background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--line2);box-shadow:0 40px 90px -20px rgba(0,0,0,.9);opacity:0;transform:translateY(18px) scale(.96);transition:opacity .3s,transform .45s var(--ease)}
+.crop.open .crop-card{opacity:1;transform:none}
+.crop-card h4{margin:0 0 10px}
+.crop-frame{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:16px;background:#0b1210;touch-action:none;cursor:grab;box-shadow:0 0 0 1px var(--line2) inset}
+.crop-frame:active{cursor:grabbing}
+.crop-frame img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.crop-grid{position:absolute;inset:0;pointer-events:none;opacity:.45;background-image:linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);background-size:33.334% 33.334%;background-position:-1px -1px}
+.crop-ctrls{display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:12px}
+.crop-ctrls input[type=range]{flex:1}
 .ip-card h4{font:700 16px var(--display);margin:0 0 8px}
 .ip-card p{font-size:13.5px;line-height:1.5;margin:0 0 8px;color:var(--text)}
 .ip-card p:last-of-type{margin-bottom:0}
@@ -1214,6 +1227,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
   <div id="cv" class="cv"><div class="cv-bg" data-act="cv-close"></div><div class="cv-panel" id="cv-body" role="dialog" aria-label="Información del club"></div></div>
   <div id="pm" class="pm"><div class="pm-bg" data-act="pm-close"></div><div class="pm-card" id="pm-body" role="dialog" aria-label="Ficha del jugador"></div></div>
   <div id="ip" class="ip"><div class="ip-bg" data-act="ip-close"></div><div class="ip-card" id="ip-body" role="dialog" aria-label="Información"></div></div>
+  <div id="crop" class="crop"><div class="crop-bg" data-act="crop-cancel"></div><div class="crop-card" id="crop-body" role="dialog" aria-label="Recortar foto"></div></div>
   <div id="trophy" class="trophy-pop"><div class="trophy-bg" data-act="trophy-close"></div><div class="trophy-card" id="trophy-body" role="dialog" aria-label="Título conseguido"></div></div>
   <div id="toasts"></div>
 </div>
@@ -1337,6 +1351,7 @@ const DBMGR={
     this.activeId=id;
     Store.set('mister.realdb.active',id);
     this._invalidate(REAL_DB);
+    await applyLocalEdits();
     return true;
   },
   /* al cambiar/actualizar la base activa, las plantillas cacheadas (SQC/ui.preview) quedan obsoletas:
@@ -1421,7 +1436,7 @@ const DBMGR={
               if(!e){e={id:SID,name:'players-db.json (servidor)',date:Date.now(),size:Object.keys(data).length,server:true};this.list.push(e)}
               e.date=Date.now();e.size=Object.keys(data).length;
               IDB.put('realdb.index',this.list);IDB.put('realdb.data.'+SID,data);
-              if(Store.get('mister.realdb.active')===SID){applyContent(data);this.activeId=SID}
+              if(Store.get('mister.realdb.active')===SID){applyContent(data);this.activeId=SID;applyLocalEdits()}
             }}
         }
       }catch(e){}
@@ -1511,6 +1526,27 @@ function dbClubEntries(clubId){return (REAL_DB[clubId]||[]).map(r=>rowToEntry(r,
 function dbSaveClub(clubId,entries){
   REAL_DB[clubId]=entries.map(entryToRow);
   entries.forEach(e=>{if(e.at)REAL_ATTR[e.name]=Object.assign({},e.at);REAL_FOOT[e.name]=dbFootCode(e.foot);if(e.photo)REAL_PHOTO[e.name]=e.photo;});
+  dbLocalMerge(clubId,entries);
+}
+/* "overlay" local (IndexedDB): los cambios del editor se guardan aquí para que sobrevivan a recargas en ESTE
+   dispositivo, sin depender de exportar ni de GitHub. Se aplica DESPUÉS de cargar la base activa. */
+function dbLocalMerge(clubId,entries){
+  IDB.get('realdb.localedits').then(e=>{
+    if(!e||typeof e!=='object'||Array.isArray(e))e={};
+    e.players=e.players||{};e.players[clubId]=entries.map(entryToRow);
+    e.attr=e.attr||{};e.foot=e.foot||{};e.photo=e.photo||{};
+    entries.forEach(en=>{if(en.at)e.attr[en.name]=Object.assign({},en.at);e.foot[en.name]=dbFootCode(en.foot);if(en.photo)e.photo[en.name]=en.photo});
+    IDB.put('realdb.localedits',e);
+  }).catch(()=>{});
+}
+async function applyLocalEdits(){
+  let e=null;try{e=await IDB.get('realdb.localedits')}catch(err){e=null}
+  if(!e||typeof e!=='object'||Array.isArray(e))return;
+  if(e.players&&typeof e.players==='object'&&!Array.isArray(e.players))Object.keys(e.players).forEach(cid=>{REAL_DB[cid]=e.players[cid]});
+  if(e.attr&&typeof e.attr==='object')Object.assign(REAL_ATTR,e.attr);
+  if(e.foot&&typeof e.foot==='object')Object.assign(REAL_FOOT,e.foot);
+  if(e.photo&&typeof e.photo==='object')Object.keys(e.photo).forEach(n=>{REAL_PHOTO[n]=e.photo[n]});
+  try{if(typeof invalidateSquads==='function')invalidateSquads()}catch(err){}
 }
 /* exporta TODA la base en formato v2 (jugadores + atributos/pies/fotos conocidos) */
 function exportDBFile(){
@@ -1560,7 +1596,7 @@ function dbEditClubsHTML(){
     <label>División<select data-dbeditdiv="1" aria-label="Filtrar por división"${noCo?' disabled':''}>${divOpt.map(([v,l])=>`<option value="${v}"${(f.div||'ALL')===v?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
   </div>
   <div class="res-scroll" id="dbedit-list" style="margin-top:10px">${dbEditRowsHTML()}</div>
-  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button><button class="btn ghost" data-act="clubnew-open">Nuevo club</button><button class="btn primary" data-act="dbedit-export">Descargar players-db.json</button></div>`;
+  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button><button class="btn ghost" data-act="clubnew-open">Nuevo club</button><button class="btn ghost" data-act="dbedit-clearlocal">Descartar cambios locales</button><button class="btn primary" data-act="dbedit-export">Descargar players-db.json</button></div>`;
 }
 function openDbEdit(){ensureFilialesAll();ui.dbedit={club:null,q:'',co:'ALL',div:'ALL',info:false};openSheet(dbEditClubsHTML(),true);}
 /* formulario de club (crear/editar) del editor de base */
@@ -17099,7 +17135,9 @@ function playerFormHTML(){
   return`<div class="res-scroll"><div class="pm-head"><span class="pb" style="color:${posCol(f.pos)};background:${posCol(f.pos)}26">${f.pos}</span><span class="tag">${esc(f.foot)}</span></div>
   <div class="pm-top"><button type="button" class="pm-photo" data-act="pform-avatar-pick" aria-label="Cambiar foto">${pformAvatarHTML(f)}</button><input class="pform-name" type="text" data-pform="name" maxlength="40" value="${esc(f.name)}" placeholder="Nombre y apellido" autocomplete="off"></div>
   <input type="file" id="pform-avatar-input" accept="image/*" style="display:none">
-  <div class="row-btns cform-logo-btns"><button type="button" class="btn ghost" data-act="pform-avatar-pick">${f.photo?'Cambiar foto':'Subir foto desde el móvil'}</button>${f.photo?'<button type="button" class="btn ghost" data-act="pform-avatar-clear">Sin foto</button>':''}</div>
+  <div class="row-btns cform-logo-btns"><button type="button" class="btn ghost" data-act="pform-avatar-pick">${f.photo?'Cambiar foto':'Subir foto'}</button>${f.photo?'<button type="button" class="btn ghost" data-act="pform-avatar-clear">Sin foto</button>':''}</div>
+  <div class="defs sm edit"><div><i>Foto (URL)</i><input type="text" id="pform-photourl" value="${esc(f.photoSrc||'')}" placeholder="https://…" autocomplete="off"></div></div>
+  <div class="row-btns"><button type="button" class="btn ghost" data-act="pform-photourl-apply">Usar enlace y encuadrar</button></div>
   <div class="pm-nums">
     <div><small>GRL</small><b id="pform-ovr-num" style="color:${ratingColor(f.ovr)}">${f.ovr}</b><div class="meter"><i id="pform-ovr-bar" style="width:${f.ovr}%;background:${ratingColor(f.ovr)}"></i></div></div>
     <div><small>POT</small><b id="pform-pot-num" style="color:${ratingColor(pot)}">${pot}</b><div class="meter dual"><i class="pot" id="pform-pot-bar" style="width:${pot}%;background:${ratingColor(pot)}55"></i><i id="pform-pot-bar2" style="width:${f.ovr}%;background:${ratingColor(f.ovr)}"></i></div></div>
@@ -17168,6 +17206,61 @@ function pformScroller(){return document.querySelector('#sheet-body .res-scroll'
 function pformRender(){const b=document.getElementById('sheet-body');if(!b)return;const sc=pformScroller(),top=sc?sc.scrollTop:0;b.innerHTML=playerFormHTML();const sc2=pformScroller();if(sc2)sc2.scrollTop=top}
 function pformOpen(){openSheet(playerFormHTML(),true);const sc=pformScroller();if(sc&&ui.custom&&ui.custom.pformScroll!=null)sc.scrollTop=ui.custom.pformScroll}
 function pformSaveScroll(){const sc=pformScroller();if(sc&&ui.custom)ui.custom.pformScroll=sc.scrollTop}
+/* ===================== recortador de fotos (marco cuadrado 1:1) ===================== */
+function openCrop(src,cb){
+  const c={src,cb:cb||function(){},img:null,W:1,H:1,scale:1,x:0,y:0};ui.crop=c;
+  const b=document.getElementById('crop-body');if(!b)return;
+  b.innerHTML=`<h4>Encuadrar foto (1:1)</h4>
+  <div class="crop-frame" id="crop-frame"><img id="crop-img" alt="" draggable="false"><div class="crop-grid"></div></div>
+  <div class="crop-ctrls"><span>Zoom</span><input type="range" id="crop-zoom" min="1" max="4" step="0.01" value="1"></div>
+  <div class="row-btns"><button class="btn ghost" data-act="crop-cancel">Cancelar</button><button class="btn primary" data-act="crop-apply">Aplicar</button></div>`;
+  document.getElementById('crop').classList.add('open');
+  const im=new Image();c.imgEl=im;
+  im.onload=()=>{c.img=im;c.W=im.naturalWidth||1;c.H=im.naturalHeight||1;cropInit()};
+  im.onerror=()=>{c.img=null;try{cropInit()}catch(e){}};
+  try{im.crossOrigin='anonymous'}catch(e){}
+  im.src=src;
+}
+function cropFrameEl(){return document.getElementById('crop-frame')}
+function cropInit(){
+  const c=ui.crop,f=cropFrameEl();if(!c||!f)return;
+  const F=f.clientWidth||260;c.F=F;
+  if(c.img){const cover=Math.max(F/c.W,F/c.H);c.scale=1;c._cover=cover;c.x=(F-c.W*cover)/2;c.y=(F-c.H*cover)/2}
+  cropView();cropBind(f);
+}
+function cropView(){
+  const c=ui.crop,f=cropFrameEl();if(!c||!f)return;
+  const F=c.F||f.clientWidth||260,cov=c._cover||1,s=c.scale*cov;
+  c.s=s;const w=c.W*s,h=c.H*s;c._w=w;c._h=h;
+  c.x=Math.min(0,Math.max(F-w,c.x));c.y=Math.min(0,Math.max(F-h,c.y));
+  const im=c.imgEl;if(im){im.style.width=w+'px';im.style.height=h+'px';im.style.left=c.x+'px';im.style.top=c.y+'px'}
+}
+function cropBind(frame){
+  if(frame._bound)return;frame._bound=1;
+  const pts=new Map();
+  frame.addEventListener('pointerdown',e=>{if(!ui.crop)return;try{frame.setPointerCapture(e.pointerId)}catch(_){}pts.set(e.pointerId,{x:e.clientX,y:e.clientY});e.preventDefault()});
+  frame.addEventListener('pointermove',e=>{
+    const c=ui.crop;if(!c||!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
+    if(pts.size===1){c.x+=e.clientX-p.x;c.y+=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;cropView()}
+    else if(pts.size>=2){
+      const ids=[...pts.keys()],a=pts.get(ids[0]),b=pts.get(ids[1]),d0=Math.hypot(a.x-b.x,a.y-b.y);
+      p.x=e.clientX;p.y=e.clientY;const d1=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d0>4&&d1>4)cropZoomTo(c.scale*(d1/d0));
+    }
+    e.preventDefault();
+  });
+  const up=e=>{pts.delete(e.pointerId)};
+  frame.addEventListener('pointerup',up);frame.addEventListener('pointercancel',up);frame.addEventListener('pointerleave',up);
+}
+function cropZoomTo(nz){
+  const c=ui.crop,f=cropFrameEl();if(!c||!f)return;
+  const F=c.F||f.clientWidth||260,fx=((F/2)-c.x)/(c._w||1),fy=((F/2)-c.y)/(c._h||1);
+  c.scale=Math.max(1,Math.min(4,nz));
+  const z=document.getElementById('crop-zoom');if(z)z.value=c.scale;
+  const cov=c._cover||1,s=c.scale*cov,w=c.W*s,h=c.H*s;c._w=w;c._h=h;
+  c.x=(F/2)-fx*w;c.y=(F/2)-fy*h;cropView();
+}
+function closeCrop(){const el=document.getElementById('crop');if(el)el.classList.remove('open')}
 function pos1SheetHTML(){
   const f=ui.custom.pform;
   const rows=PFORM_POS.map(([c,l])=>{
@@ -19190,6 +19283,7 @@ const H={
   /* editor de base de datos (formato ampliado v2) */
   'dbedit-open'(){openDbEdit()},
   'dbedit-export'(){exportDBFile()},
+  'dbedit-clearlocal'(){IDB.del('realdb.localedits');toast('Cambios locales descartados (recarga para ver la base original)')},
   'dbedit-back'(){if(ui.dbedit)ui.dbedit.club=null;openSheet(dbEditClubsHTML(),true)},
   'dbedit-info'(){ui.dbedit=ui.dbedit||{};ui.dbedit.info=!ui.dbedit.info;const p=document.getElementById('dbedit-info-txt');if(p)p.hidden=!ui.dbedit.info;const b=document.querySelector('#sheet-body .de-info');if(b)b.classList.toggle('on',!!ui.dbedit.info)},
   'dbedit-club'(t){ui.dbedit=ui.dbedit||{};ui.dbedit.club=t.dataset.club;ui.custom=ui.custom||{};ui.custom.club=ui.custom.club||{};ui.custom.squad=dbClubEntries(ui.dbedit.club);openSheet(squadEditorHTML(),true)},
@@ -19396,6 +19490,20 @@ const H={
   'pform-cancel'(){openSheet(squadEditorHTML(),true)},
   'pform-foot'(t){ui.custom.pform.foot=t.dataset.f;pformRender()},
   'pform-val-auto'(){ui.custom.pform.val=null;pformRender()},
+  'crop-cancel'(){const c=ui.crop;closeCrop();if(c&&c.cb)c.cb(false)},
+  'crop-apply'(){
+    const c=ui.crop;if(!c)return;const cb=c.cb;let out=null;
+    try{const F=c.F||260,s=c.s||1,f=cropFrameEl();
+      if(c.img&&f){const N=200,cv=document.createElement('canvas');cv.width=N;cv.height=N;cv.getContext('2d').drawImage(c.img,(0-c.x)/s,(0-c.y)/s,F/s,F/s,0,0,N,N);out=cv.toDataURL('image/jpeg',.85)}
+    }catch(e){out=null}
+    closeCrop();if(cb)cb(out);
+  },
+  'pform-photourl-apply'(){
+    const i=document.getElementById('pform-photourl');const url=((i&&i.value)||'').trim();
+    if(!/^https?:\/\//.test(url)){toast('Pega un enlace de imagen (https://…)');return}
+    ui.custom.pform.photoSrc=url;
+    openCrop(url,res=>{if(res===false)return;if(res)ui.custom.pform.photo=res;else{ui.custom.pform.photo=url;toast('No se pudo recortar; se usará la imagen tal cual')}pformRender()});
+  },
   'pform-avatar-pick'(){const i=document.getElementById('pform-avatar-input');if(i)i.click()},
   'pform-avatar-clear'(){ui.custom.pform.photo='';pformRender()},
   'pform-move-open'(){ui.moveQ='';ui.moveCo='ALL';ui.moveDiv='ALL';pformSaveScroll();openSheet(moveClubSheetHTML(),true)},
@@ -19870,6 +19978,7 @@ const H={
 };
 function bindEvents(){
   document.addEventListener('input',e=>{const t=e.target;
+    if(t&&t.id==='crop-zoom'&&ui.crop){cropZoomTo(+t.value);return}
     if(t&&t.dataset&&t.dataset.cform&&ui.custom){
       const k=t.dataset.cform,f=ui.custom.form=ui.custom.form||{};
       f[k]=k==='short'?t.value.toUpperCase().slice(0,4):(k==='rep'?+t.value:t.value);
@@ -19947,19 +20056,7 @@ function bindEvents(){
       const file=t.files[0];
       if(!file.type.startsWith('image/')){toast('Elige un archivo de imagen');return}
       const reader=new FileReader();
-      reader.onload=ev=>{
-        const img=new Image();
-        img.onload=()=>{
-          const max=200,sc=Math.min(1,max/Math.max(img.width,img.height));
-          const w=Math.max(1,Math.round(img.width*sc)),h=Math.max(1,Math.round(img.height*sc));
-          const cv=document.createElement('canvas');cv.width=w;cv.height=h;
-          cv.getContext('2d').drawImage(img,0,0,w,h);
-          ui.custom.pform.photo=cv.toDataURL('image/jpeg',.85);
-          pformRender();
-        };
-        img.onerror=()=>toast('No se pudo leer esa imagen');
-        img.src=ev.target.result;
-      };
+      reader.onload=ev=>{const src=ev.target.result;openCrop(src,res=>{if(res===false)return;ui.custom.pform.photo=res||src;pformRender()})};
       reader.onerror=()=>toast('No se pudo leer esa imagen');
       reader.readAsDataURL(file);
       return;
