@@ -298,6 +298,8 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .cform-rep-rng{width:100%;margin:2px 0 18px}
 .cform-logo-btns{margin:10px 0 16px}
 .sq-list{display:flex;flex-direction:column;gap:10px;padding-top:12px;padding-right:10px;overflow-x:hidden}
+#dbedit-list,#move-list{display:flex;flex-direction:column;gap:8px}
+#dbedit-list .lrow,#move-list .lrow{width:100%}
 .sq-pcard{position:relative}
 .sq-pcard .pc-edit-ov{position:absolute;inset:0;border:none;background:transparent;padding:0;border-radius:18px;z-index:1;cursor:pointer}
 .sq-pcard .sq-del{position:absolute;top:-10px;right:-10px;z-index:2;background:var(--bg,#0b1210);box-shadow:0 2px 8px rgba(0,0,0,.5)}
@@ -1027,6 +1029,11 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .mkt-pg span{white-space:nowrap}
 .mkt-count{font-size:12px;color:var(--muted);margin:6px 0 0}
 .mkt-pg span{font-size:13px;color:var(--muted)}
+.de-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.de-head h3{margin:0}
+.de-info{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);background:var(--surface2);color:var(--muted);font:800 15px var(--display);line-height:28px;text-align:center;cursor:pointer;padding:0}
+.de-info.on,.de-info:hover{border-color:var(--accent-line);color:var(--text)}
+.de-info-txt{margin:8px 0 0;padding:12px 14px;border-radius:14px;background:rgba(220,240,228,.04);border:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.5}
 @media(max-width:520px){.mkt-f{grid-template-columns:1fr}}
 .rnav b{white-space:nowrap;font-size:14px}
 .rnav .btn{padding:0 12px}
@@ -1521,27 +1528,45 @@ function exportDBFile(){
   downloadSave(JSON.stringify(payload),'players-db.json');
   toast('Base exportada a archivo (players-db.json)');
 }
-/* filas de la lista de clubes (según la búsqueda de ui.dbedit.q) */
+/* filas de la lista de clubes (según búsqueda y filtros país/división de ui.dbedit) */
 function dbEditRowsHTML(){
-  const q=normTxt((ui.dbedit&&ui.dbedit.q)||''),ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]);
+  const f=ui.dbedit||{},q=normTxt(f.q||'');
+  let ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]);
+  if(f.co&&f.co!=='ALL')ids=ids.filter(id=>CLUBBY[id].co===f.co);
+  if(f.co&&f.co!=='ALL'&&f.div&&f.div!=='ALL'){
+    if(f.div==='FIL')ids=ids.filter(id=>inFiliales(id,f.co));
+    else{const set=String(f.div).split(',').map(Number);ids=ids.filter(id=>set.includes(CLUBBY[id].div||1));}
+  }
   const list=ids.filter(id=>{const c=CLUBBY[id];return !q||normTxt(c.name).includes(q)||normTxt(id).includes(q);}).sort((a,b)=>CLUBBY[a].name.localeCompare(CLUBBY[b].name,'es'));
   return list.slice(0,400).map(id=>{const c=CLUBBY[id],n=(REAL_DB[id]||[]).length;
     return`<button class="lrow" data-act="dbedit-club" data-club="${id}"><span class="lt"><b>${esc(c.name)}</b><small>${esc(c.short||id)} · ${n} jugador${n===1?'':'es'}</small></span><span class="lc">${crestHTML(c,34)}</span></button>`;}).join('')||'<p class="muted-s">Sin resultados.</p>';
 }
 /* pantalla: lista de clubes para editar la base */
 function dbEditClubsHTML(){
+  const f=ui.dbedit||{};
   const ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]);
-  return`<h3>Editar base de datos</h3><p class="muted-s">${ids.length} clubes. Elige uno para editar su plantilla. Los cambios se aplican a <b>partidas nuevas</b>; pulsa “Descargar players-db.json” y súbelo a GitHub para actualizar el servidor.</p>
-  <div class="mkt-q"><input type="search" data-dbeditq="1" value="${esc((ui.dbedit&&ui.dbedit.q)||'')}" placeholder="Buscar club" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" onkeydown="if(event.key==='Enter')this.blur()"></div>
+  const cos=[...new Set(ids.map(id=>CLUBBY[id].co))].filter(co=>COUNTRIES[co]).sort((a,b)=>COUNTRIES[a].name.localeCompare(COUNTRIES[b].name,'es'));
+  const noCo=!f.co||f.co==='ALL';
+  const divGroups=noCo?[]:coDivOptions(f.co);
+  const coOpt=[['ALL','Todos los países'],...cos.map(co=>[co,(FLAG[co]||'')+' '+COUNTRIES[co].name])];
+  const divOpt=noCo?[['ALL','Elige un país']]:[['ALL','Todas las divisiones'],...divGroups.map(g=>[g.fil?'FIL':g.divs.join(','),(g.disp?g.disp+' · ':'')+g.label])];
+  const info=!!f.info;
+  return`<div class="de-head"><h3>Editar base de datos</h3><button class="de-info${info?' on':''}" data-act="dbedit-info" aria-label="Información" title="Información">i</button></div>
+  <div class="de-info-txt" id="dbedit-info-txt"${info?'':' hidden'}>${ids.length} clubes. Elige uno para editar su plantilla. Los cambios se aplican a <b>partidas nuevas</b>; pulsa “Descargar players-db.json” y súbelo a GitHub para actualizar el servidor.</div>
+  <div class="mkt-q"><input type="search" data-dbeditq="1" value="${esc(f.q||'')}" placeholder="Buscar club" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" onkeydown="if(event.key==='Enter')this.blur()"></div>
+  <div class="mkt-f">
+    <label>País<select data-dbeditco="1" aria-label="Filtrar por país">${coOpt.map(([v,l])=>`<option value="${v}"${(f.co||'ALL')===v?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+    <label>División<select data-dbeditdiv="1" aria-label="Filtrar por división"${noCo?' disabled':''}>${divOpt.map(([v,l])=>`<option value="${v}"${(f.div||'ALL')===v?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+  </div>
   <div class="res-scroll" id="dbedit-list" style="margin-top:10px">${dbEditRowsHTML()}</div>
-  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button><button class="btn ghost" data-act="leaguenew-open">Nueva liga</button><button class="btn ghost" data-act="clubnew-open">Nuevo club</button><button class="btn primary" data-act="dbedit-export">Descargar players-db.json</button></div>`;
+  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button><button class="btn ghost" data-act="clubnew-open">Nuevo club</button><button class="btn primary" data-act="dbedit-export">Descargar players-db.json</button></div>`;
 }
-function openDbEdit(){ui.dbedit={club:null,q:''};openSheet(dbEditClubsHTML(),true);}
+function openDbEdit(){ui.dbedit={club:null,q:'',co:'ALL',div:'ALL',info:false};openSheet(dbEditClubsHTML(),true);}
 /* formulario de club (crear/editar) del editor de base */
 function clubFormHTML(){
   const f=ui.clubform||{},edit=!!f.edit;
   const cos=PLAYABLE.filter(co=>COUNTRIES[co]);
-  const nd=(f.co&&COUNTRIES[f.co])?COUNTRIES[f.co].divs.length:1;
+  const nd=Math.max((f.co&&COUNTRIES[f.co])?COUNTRIES[f.co].divs.length:1,(f.co?coDivCount(f.co):1),(+f.div||1));
   return`<h3>${edit?'Editar club':'Nuevo club'}</h3><p class="muted-s">El club se une a la liga del país/división elegidos. Se guarda en la base y se exporta con “Descargar players-db.json”.</p>
   <div class="defs sm edit">
     <div><i>ID</i><input type="text" data-cf="id" maxlength="6" value="${esc(f.id||'')}" placeholder="MIID" style="text-transform:uppercase"${edit?' disabled':''}></div>
@@ -1559,16 +1584,58 @@ function clubFormHTML(){
   <input class="cform-rep-rng" type="range" data-cf="rep" min="30" max="90" step="1" value="${+f.rep||50}">
   <div class="row-btns"><button class="btn ghost" data-act="clubform-cancel">Atrás</button><button class="btn primary" data-act="clubform-save">Guardar</button></div>`;
 }
-/* formulario de liga/país nuevo */
-function leagueFormHTML(){
-  const f=ui.leagueform||{};
-  return`<h3>Nueva liga</h3><p class="muted-s">Crea un país/liga nuevo. Después añade sus clubes con “Nuevo club” eligiendo ese país. Se exporta con “Descargar players-db.json”.</p>
-  <div class="defs sm edit">
-    <div><i>Código (2 letras)</i><input type="text" data-lf="co" maxlength="2" value="${esc(f.co||'')}" placeholder="XX" style="text-transform:uppercase" autocomplete="off"></div>
-    <div><i>País</i><input type="text" data-lf="name" maxlength="40" value="${esc(f.name||'')}" placeholder="Nombre del país" autocomplete="off"></div>
-  </div>
-  <div class="defs sm edit"><div><i>Divisiones (separadas por comas; la 1ª es la principal)</i><input type="text" data-lf="divs" maxlength="240" value="${esc(f.divs||'')}" placeholder="Primera División, Segunda División" autocomplete="off"></div></div>
-  <div class="row-btns"><button class="btn ghost" data-act="leagueform-cancel">Atrás</button><button class="btn primary" data-act="leagueform-save">Crear liga</button></div>`;
+/* nº de divisiones (ligas) que el juego modela para un país: competiciones del grupo que no son copa/supercopa/play-off */
+function coDivCount(co){
+  const dv=(COUNTRIES[co]&&COUNTRIES[co].divs)?COUNTRIES[co].divs.length:0;
+  const g=GROUPS.find(x=>x.id===co);
+  if(!g)return dv||1;
+  const notLeague=/(C|SC|LC|T|NC|CC|Q|PO|NL)$/;
+  const n=g.comps.filter(k=>k.startsWith(co)&&!notLeague.test(k)).length;
+  return Math.max(n,dv)||1;
+}
+/* nombre de liga de una división (sin el grupo): p.ej. ES 5/6 -> "Primera Federación" */
+function coDivLabel(co,d){
+  const groups=DIV_GROUPS[co]||[];
+  for(const grp of groups){if(grp.subs.some(x=>x[0]===d))return grp.label}
+  const C=COUNTRIES[co];
+  return (C&&C.divs&&C.divs[d-1])||divName(co,d)||(d+'ª División');
+}
+/* una división cuenta como liga "jugable" si tiene competición de liga (o, con partida, si isLeagueEnabled) */
+function isPlayableDiv(co,d){
+  try{if(state&&state.leagueConfig)return isLeagueEnabled(co,d)}catch(e){}
+  const dd=d||1,g=GROUPS.find(x=>x.id===co);
+  if(g&&g.comps.includes(co+dd))return true;
+  const dg=DIV_GROUPS[co]||[];
+  for(const grp of dg){if(grp.subs.some(x=>x[0]===dd))return true}
+  return false;
+}
+function isFilialId(id){try{return !!isB(id)}catch(e){return !!(CLUBBY[id]&&CLUBBY[id].bTeam)}}
+/* "Filiales" = clubes sin liga jugable, o filiales autogenerados (B / U21 / U23 / II / Jong ...) */
+function inFiliales(id,co){const c=CLUBBY[id];if(!c)return false;return !isPlayableDiv(co,c.div||1)||(isFilialId(id)&&!!c.autoFilial)}
+const _createdFil={};
+/* crea (una vez por país) los filiales por defecto que faltan: <Nombre> B/U21/U23/II o "Jong <Nombre>" */
+function ensureFilialesFor(co){
+  if(!ui.dbedit||!ui.dbedit.club||_createdFil[co])return;
+  _createdFil[co]=1;
+  Object.keys(REAL_DB).forEach(id=>{
+    const c=CLUBBY[id];if(!c||c.co!==co||isFilialId(id)||CLUBBY[id+'B']||FAMILY[id])return;
+    const bid=makeBTeam(id);if(bid&&CLUBBY[bid])CLUBBY[bid].autoFilial=1;
+  });
+}
+/* divisiones presentes en un país agrupadas por liga; los filiales y los que no tienen liga van a "Filiales" */
+const EDIT_LEAGUES={ES:[{disp:'1ª',label:'LaLiga EA Sports',divs:[1]},{disp:'2ª',label:'LaLiga Hypermotion',divs:[2]},{disp:'3ª',label:'Primera Federación',divs:[5,6]},{disp:'4ª',label:'Segunda Federación',divs:[7,8,9,10,11]}]};
+function coDivOptions(co){
+  ensureFilialesFor(co);
+  const clubIds=Object.keys(REAL_DB).filter(id=>CLUBBY[id]&&CLUBBY[id].co===co);
+  const play=[...new Set(clubIds.filter(id=>isPlayableDiv(co,CLUBBY[id].div||1)).map(id=>CLUBBY[id].div||1))].sort((a,b)=>a-b);
+  const filIds=clubIds.filter(id=>inFiliales(id,co));
+  const out=[],covered=new Set();
+  const map=EDIT_LEAGUES[co];
+  if(map)map.forEach(l=>{const ds=l.divs.filter(d=>play.includes(d));if(ds.length){out.push({disp:l.disp,label:l.label,divs:ds});l.divs.forEach(d=>covered.add(d))}});
+  const byLab={};
+  play.forEach(d=>{if(covered.has(d))return;const lab=coDivLabel(co,d);if(!byLab[lab]){byLab[lab]={disp:'',label:lab,divs:[]};out.push(byLab[lab])}byLab[lab].divs.push(d)});
+  if(filIds.length)out.push({disp:'',label:'Filiales',fil:true,divs:[...new Set(filIds.map(id=>CLUBBY[id].div||1))]});
+  return out;
 }
 /* ===================== geografía (lon,lat) ===================== */
 const P=s=>s.trim().split(/\s+/).map(q=>q.split(',').map(Number));
@@ -17059,9 +17126,46 @@ function playerFormHTML(){
     <button class="${f.foot==='Izquierda'?'on':''}" data-act="pform-foot" data-f="Izquierda">Zurdo</button>
     <button class="${f.foot==='Ambas'?'on':''}" data-act="pform-foot" data-f="Ambas">Ambidiestro</button>
   </div></div>
+  ${(ui.dbedit&&ui.dbedit.club&&ui.custom&&ui.custom.editIdx!=null)?'<div class="row-btns"><button class="btn ghost" data-act="pform-move-open">Mover a otro club</button></div>':''}
   <div class="row-btns"><button class="btn ghost" data-act="pform-cancel">Cancelar</button><button class="btn primary" data-act="pform-save">Guardar jugador</button></div>`;
 }
 const pos2RowDot=c=>{const col=posCol(c);return`<span class="pos2-dot" style="background:${col}"></span>`};
+/* hoja para mover un jugador a otro club (mismo diseño que el editor de base: buscador + filtros país/división) */
+function moveFilteredIds(){
+  const q=normTxt(ui.moveQ||''),co=ui.moveCo||'ALL',dv=ui.moveDiv||'ALL',src=ui.dbedit&&ui.dbedit.club;
+  let ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]&&id!==src);
+  if(co!=='ALL')ids=ids.filter(id=>CLUBBY[id].co===co);
+  if(co!=='ALL'&&dv!=='ALL'){
+    if(dv==='FIL')ids=ids.filter(id=>inFiliales(id,co));
+    else{const set=String(dv).split(',').map(Number);ids=ids.filter(id=>set.includes(CLUBBY[id].div||1));}
+  }
+  return ids.filter(id=>!q||normTxt(CLUBBY[id].name).includes(q)||normTxt(id).includes(q)).sort((a,b)=>CLUBBY[a].name.localeCompare(CLUBBY[b].name,'es'));
+}
+function moveRowsHTML(){
+  return moveFilteredIds().slice(0,300).map(id=>{const c=CLUBBY[id];return`<button class="lrow" data-act="pform-move-pick" data-club="${id}"><span class="lt"><b>${esc(c.name)}</b><small>${esc(c.short||id)}</small></span><span class="lc">${crestHTML(c,34)}</span></button>`}).join('')||'<p class="muted-s">Sin resultados.</p>';
+}
+function moveClubSheetHTML(){
+  const nm=(ui.custom&&ui.custom.pform&&ui.custom.pform.name)||'el jugador';
+  const src=ui.dbedit&&ui.dbedit.club,f={co:ui.moveCo||'ALL',div:ui.moveDiv||'ALL'};
+  const clubIds=Object.keys(REAL_DB).filter(id=>CLUBBY[id]&&id!==src);
+  const cos=[...new Set(clubIds.map(id=>CLUBBY[id].co))].filter(co=>COUNTRIES[co]).sort((a,b)=>COUNTRIES[a].name.localeCompare(COUNTRIES[b].name,'es'));
+  const noCo=!f.co||f.co==='ALL',divGroups=noCo?[]:coDivOptions(f.co);
+  const coOpt=[['ALL','Todos los países'],...cos.map(co=>[co,(FLAG[co]||'')+' '+COUNTRIES[co].name])];
+  const divOpt=noCo?[['ALL','Elige un país']]:[['ALL','Todas las divisiones'],...divGroups.map(g=>[g.fil?'FIL':g.divs.join(','),(g.disp?g.disp+' · ':'')+g.label])];
+  return`<h3>Mover a otro club</h3><p class="muted-s">Elige el club destino para ${esc(nm)}.</p>
+  <div class="mkt-q"><input type="search" data-moveq="1" value="${esc(ui.moveQ||'')}" placeholder="Buscar club" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" onkeydown="if(event.key==='Enter')this.blur()"></div>
+  <div class="mkt-f">
+    <label>País<select data-moveco="1" aria-label="Filtrar por país">${coOpt.map(([v,l])=>`<option value="${v}"${(f.co||'ALL')===v?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+    <label>División<select data-movediv="1" aria-label="Filtrar por división"${noCo?' disabled':''}>${divOpt.map(([v,l])=>`<option value="${v}"${(f.div||'ALL')===v?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+  </div>
+  <div class="res-scroll" id="move-list" style="margin-top:10px">${moveRowsHTML()}</div>
+  <div class="row-btns"><button class="btn ghost" data-act="pform-move-cancel">Cancelar</button></div>`;
+}
+/* repintado de la ficha del jugador conservando la posición de scroll (evita volver arriba al editar) */
+function pformScroller(){return document.querySelector('#sheet-body .res-scroll')||document.getElementById('sheet-body')}
+function pformRender(){const b=document.getElementById('sheet-body');if(!b)return;const sc=pformScroller(),top=sc?sc.scrollTop:0;b.innerHTML=playerFormHTML();const sc2=pformScroller();if(sc2)sc2.scrollTop=top}
+function pformOpen(){openSheet(playerFormHTML(),true);const sc=pformScroller();if(sc&&ui.custom&&ui.custom.pformScroll!=null)sc.scrollTop=ui.custom.pformScroll}
+function pformSaveScroll(){const sc=pformScroller();if(sc&&ui.custom)ui.custom.pformScroll=sc.scrollTop}
 function pos1SheetHTML(){
   const f=ui.custom.pform;
   const rows=PFORM_POS.map(([c,l])=>{
@@ -19085,6 +19189,7 @@ const H={
   'dbedit-open'(){openDbEdit()},
   'dbedit-export'(){exportDBFile()},
   'dbedit-back'(){if(ui.dbedit)ui.dbedit.club=null;openSheet(dbEditClubsHTML(),true)},
+  'dbedit-info'(){ui.dbedit=ui.dbedit||{};ui.dbedit.info=!ui.dbedit.info;const p=document.getElementById('dbedit-info-txt');if(p)p.hidden=!ui.dbedit.info;const b=document.querySelector('#sheet-body .de-info');if(b)b.classList.toggle('on',!!ui.dbedit.info)},
   'dbedit-club'(t){ui.dbedit=ui.dbedit||{};ui.dbedit.club=t.dataset.club;ui.custom=ui.custom||{};ui.custom.club=ui.custom.club||{};ui.custom.squad=dbClubEntries(ui.dbedit.club);openSheet(squadEditorHTML(),true)},
   'clubnew-open'(){ui.clubform={id:'',name:'',short:'',city:'',co:'ES',div:1,c1:'#1c3f94',c2:'#f4f4f4',rep:50,stadium:'',logo:'',edit:false};openSheet(clubFormHTML(),true)},
   'clubedit-open'(){const id=ui.dbedit&&ui.dbedit.club,c=id&&CLUBBY[id];if(!c)return;
@@ -19103,23 +19208,6 @@ const H={
     toast(f.edit?'Club actualizado':'Club creado: '+name);
     ui.dbedit=ui.dbedit||{};ui.dbedit.club=id;ui.custom=ui.custom||{};ui.custom.club=ui.custom.club||{};ui.custom.squad=dbClubEntries(id);
     openSheet(squadEditorHTML(),true);
-  },
-  'leaguenew-open'(){ui.leagueform={co:'',name:'',divs:''};openSheet(leagueFormHTML(),true)},
-  'leagueform-cancel'(){openSheet(dbEditClubsHTML(),true)},
-  'leagueform-save'(){
-    const f=ui.leagueform||{};const co=(f.co||'').trim().toUpperCase();
-    if(!/^[A-Z]{2}$/.test(co)){toast('El código debe ser 2 letras');return}
-    const name=(f.name||'').trim();if(!name){toast('Ponle nombre al país');return}
-    if(COUNTRIES[co]){toast('Ya existe un país con ese código');return}
-    let divs=(f.divs||'').split(',').map(s=>s.trim()).filter(Boolean);if(!divs.length)divs=['Primera División'];
-    const countries={[co]:{name,league:divs[0],divs}};
-    const groups={[co]:[co+'1',co+'C']};
-    registerCountries(countries,groups);
-    ui.dbcountries=ui.dbcountries||{};ui.dbcountries[co]=countries[co];
-    ui.dbgroups=ui.dbgroups||{};ui.dbgroups[co]=groups[co];
-    invalidateSquads();
-    toast('Liga creada: '+name);
-    openSheet(dbEditClubsHTML(),true);
   },
   /* "Usar": marca esa base como activa GLOBALMENTE (DBMGR.active/activeId), así que a partir de ahora
      el Museo y la selección de liga/club (sin partida en curso) muestran nombres/jugadores reales.
@@ -19279,15 +19367,15 @@ const H={
   'custom-back-club'(){openCustomClubForm()},
   'squad-add'(){ui.custom.editIdx=null;ui.custom.pform={name:'',pos:'DC',pos2s:[],nat:ui.custom.country,foot:'Derecha',age:24,ovr:60,pot:60,photo:''};openSheet(playerFormHTML(),true)},
   'squad-edit'(t){const i=+t.dataset.i;ui.custom.editIdx=i;ui.custom.pform=Object.assign({pos2s:[],foot:'Derecha',photo:''},ui.custom.squad[i]);openSheet(playerFormHTML(),true)},
-  'pform-pos1-open'(){openSheet(pos1SheetHTML(),true)},
+  'pform-pos1-open'(){pformSaveScroll();openSheet(pos1SheetHTML(),true)},
   'pform-pos1-pick'(t){
     const f=ui.custom.pform,wasGK=f.pos==='POR';
     f.pos=t.dataset.v;
     if((f.pos==='POR')!==wasGK)f.at=null;
     if(f.pos2s)f.pos2s=f.pos2s.filter(x=>x!==f.pos);
-    openSheet(playerFormHTML(),true);
+    pformOpen();
   },
-  'pform-pos2-open'(){openSheet(pos2SheetHTML(),true)},
+  'pform-pos2-open'(){pformSaveScroll();openSheet(pos2SheetHTML(),true)},
   'pform-pos2-toggle'(t){
     /* se toca el estado del propio botón en el DOM, sin redibujar toda la hoja: así no se pierde la
        posición de scroll (antes, al reabrir el modal entero, siempre volvía arriba del todo) */
@@ -19298,15 +19386,30 @@ const H={
     const ic=t.querySelector('svg');if(ic)ic.remove();
     if(on)t.insertAdjacentHTML('beforeend',checkIcon);
   },
-  'pform-pos2-done'(){openSheet(playerFormHTML(),true)},
-  'pform-nat-open'(){ui.custom.natQ='';openSheet(natSheetHTML(),true)},
-  'pform-nat-pick'(t){ui.custom.pform.nat=t.dataset.v;openSheet(playerFormHTML(),true)},
+  'pform-pos2-done'(){pformOpen()},
+  'pform-nat-open'(){pformSaveScroll();ui.custom.natQ='';openSheet(natSheetHTML(),true)},
+  'pform-nat-pick'(t){ui.custom.pform.nat=t.dataset.v;pformOpen()},
   'squad-del'(t){const i=+t.dataset.i;ui.custom.squad.splice(i,1);openSheet(squadEditorHTML(),true)},
   'squad-back'(){openSheet(squadEditorHTML(),true)},
   'pform-cancel'(){openSheet(squadEditorHTML(),true)},
-  'pform-foot'(t){ui.custom.pform.foot=t.dataset.f;const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML()},
+  'pform-foot'(t){ui.custom.pform.foot=t.dataset.f;pformRender()},
   'pform-avatar-pick'(){const i=document.getElementById('pform-avatar-input');if(i)i.click()},
-  'pform-avatar-clear'(){ui.custom.pform.photo='';const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML()},
+  'pform-avatar-clear'(){ui.custom.pform.photo='';pformRender()},
+  'pform-move-open'(){ui.moveQ='';ui.moveCo='ALL';ui.moveDiv='ALL';pformSaveScroll();openSheet(moveClubSheetHTML(),true)},
+  'pform-move-cancel'(){pformOpen()},
+  'pform-move-pick'(t){
+    const target=t.dataset.club,src=ui.dbedit&&ui.dbedit.club,idx=ui.custom&&ui.custom.editIdx;
+    if(!target||!src||target===src){toast('Elige otro club');return}
+    if(idx==null||!ui.custom.squad){toast('No se pudo mover');return}
+    const e=ui.custom.squad[idx];
+    const tEntries=dbClubEntries(target);if(tEntries.some(x=>x.name===e.name)){toast('Ese club ya tiene a '+e.name);return}
+    tEntries.push(e);dbSaveClub(target,tEntries);
+    const rest=ui.custom.squad.filter((_,i)=>i!==idx);dbSaveClub(src,rest);
+    ui.custom.squad=rest;ui.custom.editIdx=null;
+    invalidateSquads([src,target]);
+    toast(e.name+' → '+cname(target));
+    openSheet(squadEditorHTML(),true);
+  },
   'pform-save'(){
     const f=ui.custom.pform,name=(f.name||'').trim();
     if(!name){toast('Ponle un nombre al jugador');return}
@@ -19811,12 +19914,12 @@ function bindEvents(){
     }
     if(t&&t.dataset&&t.dataset.mktq&&ui.mkt&&typeof ui.mkt==='object'){ui.mkt.q=t.value;ui.mkt.page=0;clearTimeout(ui.mktT);ui.mktT=setTimeout(()=>{const r=document.getElementById('mkt-res');if(r)r.innerHTML=mktResHTML();refreshMktSheet()},120);return}
     if(t&&t.dataset&&t.dataset.dbeditq!==undefined&&ui.dbedit){ui.dbedit.q=t.value;clearTimeout(ui.dbedit.t);ui.dbedit.t=setTimeout(()=>{const r=document.getElementById('dbedit-list');if(r)r.innerHTML=dbEditRowsHTML()},140);return}
+    if(t&&t.dataset&&t.dataset.moveq!==undefined){ui.moveQ=t.value;clearTimeout(ui.moveT);ui.moveT=setTimeout(()=>{const r=document.getElementById('move-list');if(r)r.innerHTML=moveRowsHTML()},140);return}
     if(t&&t.dataset&&t.dataset.cf&&ui.clubform){const k=t.dataset.cf,f=ui.clubform;
       f[k]=(k==='rep'||k==='div')?+t.value:(k==='id'||k==='short')?t.value.toUpperCase():t.value;
       if(k==='rep'){const b=document.getElementById('cf-rep-val');if(b)b.innerHTML=starsFracHTML(f.rep)+' '+f.rep}
       if(k==='co'){f.div=1;const b=$('#sheet-body');if(b)b.innerHTML=clubFormHTML()}
       return}
-    if(t&&t.dataset&&t.dataset.lf&&ui.leagueform){const k=t.dataset.lf,f=ui.leagueform;f[k]=k==='co'?t.value.toUpperCase().slice(0,2):t.value;return}
     if(t&&t.dataset&&t.dataset.affq!==undefined){ui.affQ=t.value;clearTimeout(ui.affT);ui.affT=setTimeout(()=>{const r=document.getElementById('affil-res');if(r)r.innerHTML=affilResHTML()},180);return}
     if(t&&t.dataset&&t.dataset.ccoq!==undefined){ui.ccoQ=t.value;const r=document.getElementById('cco-list');if(r)r.innerHTML=ccoRowsHTML();return}
     if(t&&t.dataset&&t.dataset.lsl&&ui.pm){const id=t.dataset.lsl,v=+t.value,f=pmFind();(ui.pm.ls=ui.pm.ls||{})[id]=v;const l=document.getElementById('lo-l-'+id),h=document.getElementById('lo-t-'+id);if(l&&f)l.textContent=lsText(f.p,v);if(h)h.textContent=(100-v)+'%';return}
@@ -19828,10 +19931,14 @@ function bindEvents(){
       if(k==='pos'){
         if((f.pos==='POR')!==wasGK)f.at=null;
         if(f.pos2s)f.pos2s=f.pos2s.filter(x=>x!==f.pos);
-        const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML();
+        pformRender();
       }
       return;
     }
+    if(t&&t.dataset&&t.dataset.dbeditco!==undefined&&ui.dbedit){ui.dbedit.co=t.value;ui.dbedit.div='ALL';const b=$('#sheet-body');if(b)b.innerHTML=dbEditClubsHTML();return}
+    if(t&&t.dataset&&t.dataset.dbeditdiv!==undefined&&ui.dbedit){ui.dbedit.div=t.value;const r=document.getElementById('dbedit-list');if(r)r.innerHTML=dbEditRowsHTML();return}
+    if(t&&t.dataset&&t.dataset.moveco!==undefined){ui.moveCo=t.value;ui.moveDiv='ALL';const b=$('#sheet-body');if(b)b.innerHTML=moveClubSheetHTML();return}
+    if(t&&t.dataset&&t.dataset.movediv!==undefined){ui.moveDiv=t.value;const r=document.getElementById('move-list');if(r)r.innerHTML=moveRowsHTML();return}
     if(t&&t.id==='pform-avatar-input'&&t.files&&t.files[0]&&ui.custom&&ui.custom.pform){
       const file=t.files[0];
       if(!file.type.startsWith('image/')){toast('Elige un archivo de imagen');return}
@@ -19844,7 +19951,7 @@ function bindEvents(){
           const cv=document.createElement('canvas');cv.width=w;cv.height=h;
           cv.getContext('2d').drawImage(img,0,0,w,h);
           ui.custom.pform.photo=cv.toDataURL('image/jpeg',.85);
-          const b=$('#sheet-body');if(b)b.innerHTML=playerFormHTML();
+          pformRender();
         };
         img.onerror=()=>toast('No se pudo leer esa imagen');
         img.src=ev.target.result;
