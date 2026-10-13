@@ -1127,6 +1127,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
         <button class="btn ghost big" data-act="load">Cargar Partida</button>
         <button class="btn ghost big" data-act="museum">Museo</button>
         <button class="btn ghost big" data-act="db-manager">Importar base de datos</button>
+        <button class="btn ghost big" data-act="dbedit-open">Editar base de datos</button>
       </div>
       <p class="fine">Tus partidas se guardan en este navegador.</p>
     </div>
@@ -1281,6 +1282,8 @@ const DBMGR={
      en detalle: basta para detectar un archivo claramente equivocado. */
   validate(data){
     if(!data||typeof data!=='object'||Array.isArray(data))return false;
+    /* formato ampliado v2: {v:2, players:{...}, attr/foot/photo/loans/...} */
+    if(data.v===2)return !!data.players&&typeof data.players==='object'&&!Array.isArray(data.players);
     const keys=Object.keys(data);
     if(!keys.length)return false;
     for(const k of keys){
@@ -1323,10 +1326,10 @@ const DBMGR={
   async use(id){
     const d=await this.get(id);
     if(!d)return false;
-    REAL_DB=d;
+    if(!applyContent(d))return false;
     this.activeId=id;
     Store.set('mister.realdb.active',id);
-    this._invalidate(d);
+    this._invalidate(REAL_DB);
     return true;
   },
   /* al cambiar/actualizar la base activa, las plantillas cacheadas (SQC/ui.preview) quedan obsoletas:
@@ -1392,7 +1395,7 @@ const DBMGR={
       else blocked++;
     }
     if(changed)IDB.put('realdb.index',this.list);
-    if(activeData){REAL_DB=activeData;this._invalidate(activeData)}   /* solo afecta a partidas nuevas; la partida en curso no se toca */
+    if(activeData){applyContent(activeData);this._invalidate(REAL_DB)}   /* solo afecta a partidas nuevas; la partida en curso no se toca */
     return {changed,blocked};
   },
   /* carga automática al arrancar: no bloqueante (el título/menú funcionan igual mientras termina),
@@ -1411,7 +1414,7 @@ const DBMGR={
               if(!e){e={id:SID,name:'players-db.json (servidor)',date:Date.now(),size:Object.keys(data).length,server:true};this.list.push(e)}
               e.date=Date.now();e.size=Object.keys(data).length;
               IDB.put('realdb.index',this.list);IDB.put('realdb.data.'+SID,data);
-              if(Store.get('mister.realdb.active')===SID){REAL_DB=data;this.activeId=SID}
+              if(Store.get('mister.realdb.active')===SID){applyContent(data);this.activeId=SID}
             }}
         }
       }catch(e){}
@@ -1434,6 +1437,138 @@ async function dbReadFile(file){
     const data=JSON.parse(txt);
     return DBMGR.validate(data)?data:null;
   }catch(e){return null}
+}
+/* ===================== EDITOR DE CONTENIDO (formato ampliado v2) =====================
+   applyContent(data) acepta el formato clásico {idClub:[filas]} y el ampliado v2
+   ({v:2, players, attr, foot, photo, loans, ...}) y lo vuelca en el estado global del juego. */
+const DB_YEAR=()=>{try{const y=(typeof seasonYear==='function')?seasonYear():null;return (y&&y>2000)?y:2026}catch(e){return 2026}};
+/* registra (crea/actualiza) clubes aportados por el editor/contenido v2: CLUBBY + CLUBS + BASE_DIV.
+   El club se une a la liga del país/división indicados (la liga debe existir). */
+function registerClubs(clubs){
+  if(!clubs||typeof clubs!=='object')return;
+  Object.keys(clubs).forEach(id=>{
+    const d=clubs[id];if(!d||!d.co)return;
+    let c=CLUBBY[id];
+    if(!c){c=K(id,d.name||id,d.short||id,d.city||'',d.co,d.c1||'#666666',d.c2||'#ffffff',d.rep!=null?d.rep:50,d.div||1);CLUBBY[id]=c;CLUBS.push(c);}
+    else{Object.assign(c,{name:d.name||c.name,short:d.short||c.short,city:d.city||c.city,co:d.co||c.co,rep:(d.rep!=null?d.rep:c.rep)});if(d.c1)c.c1=d.c1;if(d.c2)c.c2=d.c2;}
+    if(d.div!=null)c.div=d.div;
+    if(d.stadium)c.stadium=d.stadium;
+    if(d.logo)c.logo=d.logo;
+    BASE_DIV[id]=c.div;
+  });
+}
+/* registra países/ligas nuevos aportados por el editor/contenido v2: COUNTRIES + PLAYABLE (+ GROUPS).
+   Los clubes de ese país vienen aparte (campo "clubs") y se unen por su co/div. */
+function registerCountries(countries,groups){
+  if(!countries||typeof countries!=='object')return;
+  Object.keys(countries).forEach(co=>{
+    const d=countries[co];if(!d||!d.name)return;
+    const divs=(Array.isArray(d.divs)&&d.divs.length)?d.divs:['Primera División'];
+    if(!COUNTRIES[co])COUNTRIES[co]={name:d.name,league:d.league||divs[0],divs:divs,pin:d.pin||[0,0],polys:[]};
+    else{COUNTRIES[co].name=d.name;COUNTRIES[co].divs=divs;COUNTRIES[co].league=d.league||divs[0];}
+    if(!PLAYABLE.includes(co))PLAYABLE.push(co);
+    if(!GROUPS.some(g=>g.id===co)){const comps=(groups&&groups[co])||[co+'1',co+'C'];GROUPS.push({id:co,name:d.name,comps:comps});}
+  });
+}
+function applyContent(data){
+  if(!data||typeof data!=='object'||Array.isArray(data))return false;
+  if(data.v===2){
+    if(data.attr&&typeof data.attr==='object'&&!Array.isArray(data.attr))Object.assign(REAL_ATTR,data.attr);
+    if(data.foot&&typeof data.foot==='object'&&!Array.isArray(data.foot))Object.assign(REAL_FOOT,data.foot);
+    if(data.photo&&typeof data.photo==='object'&&!Array.isArray(data.photo))Object.keys(data.photo).forEach(n=>{const i=data.photo[n];REAL_PHOTO[n]=(typeof i==='string')?i:('https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1')});
+    if(Array.isArray(data.loans))data.loans.forEach(l=>{if(Array.isArray(l)&&!REAL_LOANS.some(x=>x[0]===l[0]&&x[1]===l[1]&&x[2]===l[2]))REAL_LOANS.push(l)});
+    if(data.countries&&typeof data.countries==='object'&&!Array.isArray(data.countries))registerCountries(data.countries,data.groups);
+    if(data.clubs&&typeof data.clubs==='object'&&!Array.isArray(data.clubs))registerClubs(data.clubs);
+    if(data.players&&typeof data.players==='object')REAL_DB=data.players;
+    return true;
+  }
+  if(DBMGR.validate(data)){REAL_DB=data;return true}
+  return false;
+}
+/* pie a partir de REAL_FOOT (string u objeto por club) */
+function dbFootLabel(name,clubId){let v=REAL_FOOT[name];if(v&&typeof v==='object')v=v[clubId]||null;return v==='I'?'Izquierda':v==='A'?'Ambas':'Derecha';}
+function dbFootCode(label){return label==='Izquierda'?'I':label==='Ambas'?'A':'D';}
+/* fila de la BD -> entrada del editor de plantilla */
+function rowToEntry(row,clubId){
+  const pp=(row[8]||'').split('/').filter(Boolean);
+  return {name:row[0],pos:pp[0]||'MC',pos2s:pp.slice(1),nat:row[3],foot:dbFootLabel(row[0],clubId),photo:(typeof photoFor==='function'?(photoFor(row[0],clubId)||''):''),age:DB_YEAR()-row[2],ovr:row[4],pot:row[5]||row[4],val:(row[6]!=null?row[6]:null),at:REAL_ATTR[row[0]]?Object.assign({},REAL_ATTR[row[0]]):null};
+}
+/* entrada del editor -> fila de la BD */
+function entryToRow(e){
+  const broad=(typeof POS_G!=='undefined'&&POS_G[e.pos])||'MD';
+  const pp=[e.pos].concat((e.pos2s||[]).filter(x=>x!==e.pos));
+  return [e.name,broad,DB_YEAR()-e.age,e.nat,e.ovr,Math.max(e.pot,e.ovr),(e.val!=null?e.val:null),null,pp.join('/')];
+}
+function dbClubEntries(clubId){return (REAL_DB[clubId]||[]).map(r=>rowToEntry(r,clubId));}
+/* aplica la plantilla editada de un club a la base en memoria + sus metadatos */
+function dbSaveClub(clubId,entries){
+  REAL_DB[clubId]=entries.map(entryToRow);
+  entries.forEach(e=>{if(e.at)REAL_ATTR[e.name]=Object.assign({},e.at);REAL_FOOT[e.name]=dbFootCode(e.foot);if(e.photo)REAL_PHOTO[e.name]=e.photo;});
+}
+/* exporta TODA la base en formato v2 (jugadores + atributos/pies/fotos conocidos) */
+function exportDBFile(){
+  const attr={},foot={},photo={};
+  Object.keys(REAL_DB).forEach(cid=>(REAL_DB[cid]||[]).forEach(r=>{
+    const n=r[0];
+    if(REAL_ATTR[n])attr[n]=REAL_ATTR[n];
+    let fv=REAL_FOOT[n];if(fv&&typeof fv==='object')fv=fv[cid]||null;
+    if(fv&&fv!=='D')foot[n]=fv;
+    const ph=(typeof photoFor==='function'?photoFor(n,cid):null);if(ph&&/^https?:/.test(ph))photo[n]=ph;
+  }));
+  const payload={v:2,players:REAL_DB,attr,foot,photo};
+  if(ui.dbclubs&&Object.keys(ui.dbclubs).length)payload.clubs=ui.dbclubs;
+  if(ui.dbcountries&&Object.keys(ui.dbcountries).length){payload.countries=ui.dbcountries;payload.groups=ui.dbgroups||{}}
+  downloadSave(JSON.stringify(payload),'players-db.json');
+  toast('Base exportada a archivo (players-db.json)');
+}
+/* filas de la lista de clubes (según la búsqueda de ui.dbedit.q) */
+function dbEditRowsHTML(){
+  const q=normTxt((ui.dbedit&&ui.dbedit.q)||''),ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]);
+  const list=ids.filter(id=>{const c=CLUBBY[id];return !q||normTxt(c.name).includes(q)||normTxt(id).includes(q);}).sort((a,b)=>CLUBBY[a].name.localeCompare(CLUBBY[b].name,'es'));
+  return list.slice(0,400).map(id=>{const c=CLUBBY[id],n=(REAL_DB[id]||[]).length;
+    return`<button class="lrow" data-act="dbedit-club" data-club="${id}"><span class="lt"><b>${esc(c.name)}</b><small>${esc(c.short||id)} · ${n} jugador${n===1?'':'es'}</small></span><span class="lc">${crestHTML(c,34)}</span></button>`;}).join('')||'<p class="muted-s">Sin resultados.</p>';
+}
+/* pantalla: lista de clubes para editar la base */
+function dbEditClubsHTML(){
+  const ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]);
+  return`<h3>Editar base de datos</h3><p class="muted-s">${ids.length} clubes. Elige uno para editar su plantilla. Los cambios se aplican a <b>partidas nuevas</b>; pulsa “Descargar players-db.json” y súbelo a GitHub para actualizar el servidor.</p>
+  <div class="mkt-q"><input type="search" data-dbeditq="1" value="${esc((ui.dbedit&&ui.dbedit.q)||'')}" placeholder="Buscar club" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" onkeydown="if(event.key==='Enter')this.blur()"></div>
+  <div class="res-scroll" id="dbedit-list" style="margin-top:10px">${dbEditRowsHTML()}</div>
+  <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button><button class="btn ghost" data-act="leaguenew-open">Nueva liga</button><button class="btn ghost" data-act="clubnew-open">Nuevo club</button><button class="btn primary" data-act="dbedit-export">Descargar players-db.json</button></div>`;
+}
+function openDbEdit(){ui.dbedit={club:null,q:''};openSheet(dbEditClubsHTML(),true);}
+/* formulario de club (crear/editar) del editor de base */
+function clubFormHTML(){
+  const f=ui.clubform||{},edit=!!f.edit;
+  const cos=PLAYABLE.filter(co=>COUNTRIES[co]);
+  const nd=(f.co&&COUNTRIES[f.co])?COUNTRIES[f.co].divs.length:1;
+  return`<h3>${edit?'Editar club':'Nuevo club'}</h3><p class="muted-s">El club se une a la liga del país/división elegidos. Se guarda en la base y se exporta con “Descargar players-db.json”.</p>
+  <div class="defs sm edit">
+    <div><i>ID</i><input type="text" data-cf="id" maxlength="6" value="${esc(f.id||'')}" placeholder="MIID" style="text-transform:uppercase"${edit?' disabled':''}></div>
+    <div><i>Nombre</i><input type="text" data-cf="name" maxlength="40" value="${esc(f.name||'')}" placeholder="Mi Club" autocomplete="off"></div>
+    <div><i>Abreviatura</i><input type="text" data-cf="short" maxlength="4" value="${esc(f.short||'')}" placeholder="MCL" style="text-transform:uppercase" autocomplete="off"></div>
+    <div><i>Ciudad</i><input type="text" data-cf="city" maxlength="30" value="${esc(f.city||'')}" placeholder="Ciudad" autocomplete="off"></div>
+    <div><i>Estadio</i><input type="text" data-cf="stadium" maxlength="40" value="${esc(f.stadium||'')}" placeholder="Estadio" autocomplete="off"></div>
+    <div><i>País</i><select data-cf="co">${cos.map(co=>`<option value="${co}"${f.co===co?' selected':''}>${esc(COUNTRIES[co].name)}</option>`).join('')}</select></div>
+    <div><i>División</i><select data-cf="div">${Array.from({length:Math.max(1,nd)},(_,i)=>i+1).map(d=>`<option value="${d}"${(+f.div||1)===d?' selected':''}>${d}ª</option>`).join('')}</select></div>
+    <div><i>Color 1</i><input type="color" data-cf="c1" value="${esc(f.c1||'#1c3f94')}"></div>
+    <div><i>Color 2</i><input type="color" data-cf="c2" value="${esc(f.c2||'#f4f4f4')}"></div>
+    <div><i>Escudo (URL)</i><input type="text" data-cf="logo" maxlength="220" value="${esc(f.logo||'')}" placeholder="https://…" autocomplete="off"></div>
+  </div>
+  <div class="defs sm edit"><div><i>Reputación</i><b id="cf-rep-val">${starsFracHTML(+f.rep||50)} ${+f.rep||50}</b></div></div>
+  <input class="cform-rep-rng" type="range" data-cf="rep" min="30" max="90" step="1" value="${+f.rep||50}">
+  <div class="row-btns"><button class="btn ghost" data-act="clubform-cancel">Atrás</button><button class="btn primary" data-act="clubform-save">Guardar</button></div>`;
+}
+/* formulario de liga/país nuevo */
+function leagueFormHTML(){
+  const f=ui.leagueform||{};
+  return`<h3>Nueva liga</h3><p class="muted-s">Crea un país/liga nuevo. Después añade sus clubes con “Nuevo club” eligiendo ese país. Se exporta con “Descargar players-db.json”.</p>
+  <div class="defs sm edit">
+    <div><i>Código (2 letras)</i><input type="text" data-lf="co" maxlength="2" value="${esc(f.co||'')}" placeholder="XX" style="text-transform:uppercase" autocomplete="off"></div>
+    <div><i>País</i><input type="text" data-lf="name" maxlength="40" value="${esc(f.name||'')}" placeholder="Nombre del país" autocomplete="off"></div>
+  </div>
+  <div class="defs sm edit"><div><i>Divisiones (separadas por comas; la 1ª es la principal)</i><input type="text" data-lf="divs" maxlength="240" value="${esc(f.divs||'')}" placeholder="Primera División, Segunda División" autocomplete="off"></div></div>
+  <div class="row-btns"><button class="btn ghost" data-act="leagueform-cancel">Atrás</button><button class="btn primary" data-act="leagueform-save">Crear liga</button></div>`;
 }
 /* ===================== geografía (lon,lat) ===================== */
 const P=s=>s.trim().split(/\s+/).map(q=>q.split(',').map(Number));
@@ -16730,10 +16865,11 @@ function dbManagerHTML(){
     ?'Elige qué base de datos usar en esta partida nueva. "Usar" también la deja activa globalmente (Museo y selección de liga fuera de partida). Para importar una base nueva, hazlo desde "Importar base de datos" en el menú principal.'
     :'"Usar" la deja activa globalmente: el Museo y la selección de liga/club (fuera de una partida en curso) mostrarán nombres y jugadores reales. "Enlazar…" vincula una base ya importada con su archivo para que se actualice sola: se relee al abrir el juego y al volver a la pestaña (pulsa "Actualizar" si el navegador pide permiso). "Quitar" la desactiva sin borrarla. Al pulsar "Actualizar" las plantillas se regeneran al momento (si no ves el cambio, vuelve a abrir la vista de la liga o del club). Las plantillas nuevas entran al empezar una partida nueva; una partida ya en curso sigue tal cual se creó.';
   const uploadBtn=ctx==='newgame'?'':'<button class="btn primary" data-act="db-upload">Subir archivo…</button>';
+  const editBtn=ctx==='newgame'?'':'<button class="btn ghost" data-act="dbedit-open">Editar base de datos</button>';
   ui.dbNote=note;
   return`<div class="sec-h" style="margin-bottom:0"><h3 style="margin:0;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1">Bases de datos de jugadores reales</h3><button class="ibtn" data-act="db-info" aria-label="Información">i</button></div>
   <div class="res-scroll" style="margin-top:14px">${rows}</div>
-  <div class="row-btns"><button class="btn ghost" data-act="${ctx==='newgame'?'db-back-newgame':'sheet-close'}">${ctx==='newgame'?'Volver':'Cerrar'}</button>${uploadBtn}</div>`;
+  <div class="row-btns"><button class="btn ghost" data-act="${ctx==='newgame'?'db-back-newgame':'sheet-close'}">${ctx==='newgame'?'Volver':'Cerrar'}</button>${editBtn}${uploadBtn}</div>`;
 }
 function dbNamePromptHTML(base){
   return`<h3>Nombre de la base de datos</h3><p>Dale un nombre para reconocerla luego en la lista.</p>
@@ -16856,13 +16992,17 @@ function sqCardHTML(e,i){
 }
 function squadEditorHTML(){
   const list=ui.custom.squad||[],n=list.length;
+  const dbmode=!!(ui.dbedit&&ui.dbedit.club);
   const orig=(ui.custom.club&&ui.custom.club.squadMode==='original');
+  const club=dbmode?CLUBBY[ui.dbedit.club]:null;
   const rows=list.map((p,i)=>sqCardHTML(p,i)).join('');
-  return`<h3>${orig?'Plantilla original':'Plantilla personalizada'}</h3><p>${orig?'Esta es la plantilla actual del club: edítala, añade o quita jugadores.':'Añade los jugadores que quieras, con al menos un portero.'} Llevas <b>${n}</b>.</p>
+  const title=dbmode?('Editar plantilla: '+(club?club.name:'club')):(orig?'Plantilla original':'Plantilla personalizada');
+  const intro=dbmode?'Edita, añade o quita jugadores de la base.':(orig?'Esta es la plantilla actual del club: edítala, añade o quita jugadores.':'Añade los jugadores que quieras, con al menos un portero.');
+  return`<h3>${esc(title)}</h3><p>${intro} Llevas <b>${n}</b>.</p>
   <div class="row-btns"><button class="btn ghost"${n?'':' disabled'} data-act="squad-export">Exportar a archivo</button><button class="btn ghost" data-act="squad-import">Importar de archivo</button></div>
   <div class="res-scroll"><div class="sq-list">${rows||'<p class="muted-s">Todavía no has añadido jugadores.</p>'}</div></div>
-  <div class="row-btns"><button class="btn ghost" data-act="custom-back-club">Atrás</button><button class="btn primary" data-act="squad-add">Añadir jugador</button></div>
-  <div class="row-btns one"><button class="btn primary" data-act="squad-finish">Crear plantilla y empezar (${n})</button></div>`;
+  <div class="row-btns"><button class="btn ghost" data-act="${dbmode?'dbedit-back':'custom-back-club'}">Atrás</button>${dbmode?'<button class="btn ghost" data-act="clubedit-open">Editar club</button>':''}<button class="btn primary" data-act="squad-add">Añadir jugador</button></div>
+  <div class="row-btns one"><button class="btn primary" data-act="squad-finish">${dbmode?'Guardar cambios en la base':`Crear plantilla y empezar (${n})`}</button></div>`;
 }
 const PFORM_POS=[['POR','Portero'],['LI','Lateral izquierdo'],['DFC','Defensa central'],['LD','Lateral derecho'],['MCD','Mediocentro defensivo'],['MC','Mediocentro'],['MCO','Mediapunta'],['MI','Medio izquierdo'],['MD','Medio derecho'],['EI','Extremo izquierdo'],['ED','Extremo derecho'],['DC','Delantero centro']];
 const PFORM_NATS=Object.keys(NATNAME).sort((a,b)=>NATNAME[a].localeCompare(NATNAME[b],'es'));
@@ -18941,6 +19081,46 @@ const H={
   'db-back-newgame'(){askDataMode()},
   /* botón del menú principal: gestionar las bases de datos sin empezar una partida nueva */
   'db-manager'(){openDbManager('standalone')},
+  /* editor de base de datos (formato ampliado v2) */
+  'dbedit-open'(){openDbEdit()},
+  'dbedit-export'(){exportDBFile()},
+  'dbedit-back'(){if(ui.dbedit)ui.dbedit.club=null;openSheet(dbEditClubsHTML(),true)},
+  'dbedit-club'(t){ui.dbedit=ui.dbedit||{};ui.dbedit.club=t.dataset.club;ui.custom=ui.custom||{};ui.custom.club=ui.custom.club||{};ui.custom.squad=dbClubEntries(ui.dbedit.club);openSheet(squadEditorHTML(),true)},
+  'clubnew-open'(){ui.clubform={id:'',name:'',short:'',city:'',co:'ES',div:1,c1:'#1c3f94',c2:'#f4f4f4',rep:50,stadium:'',logo:'',edit:false};openSheet(clubFormHTML(),true)},
+  'clubedit-open'(){const id=ui.dbedit&&ui.dbedit.club,c=id&&CLUBBY[id];if(!c)return;
+    ui.clubform={id,name:c.name,short:c.short||'',city:c.city||'',co:c.co,div:c.div||1,c1:c.c1||'#1c3f94',c2:c.c2||'#f4f4f4',rep:c.rep||50,stadium:((typeof stadiumOf==='function'?stadiumOf(id):'')||''),logo:c.logo||'',edit:true};openSheet(clubFormHTML(),true)},
+  'clubform-cancel'(){if(ui.clubform&&ui.clubform.edit&&ui.dbedit&&ui.dbedit.club)openSheet(squadEditorHTML(),true);else openSheet(dbEditClubsHTML(),true)},
+  'clubform-save'(){
+    const f=ui.clubform||{};const id=(f.id||'').trim().toUpperCase(),name=(f.name||'').trim();
+    if(!/^[A-Z0-9]{2,6}$/.test(id)){toast('El ID debe tener 2-6 letras o números');return}
+    if(!name){toast('Ponle un nombre al club');return}
+    if(!f.edit&&CLUBBY[id]){toast('Ya existe un club con ese ID');return}
+    const def={name,short:(f.short||id).toUpperCase().slice(0,4),city:(f.city||'').trim(),co:f.co,div:+f.div||1,c1:f.c1||'#666666',c2:f.c2||'#ffffff',rep:+f.rep||50,stadium:(f.stadium||'').trim(),logo:((f.logo||'').trim()||null)};
+    registerClubs({[id]:def});
+    ui.dbclubs=ui.dbclubs||{};ui.dbclubs[id]=def;
+    if(!REAL_DB[id])REAL_DB[id]=[];
+    invalidateSquads([id]);
+    toast(f.edit?'Club actualizado':'Club creado: '+name);
+    ui.dbedit=ui.dbedit||{};ui.dbedit.club=id;ui.custom=ui.custom||{};ui.custom.club=ui.custom.club||{};ui.custom.squad=dbClubEntries(id);
+    openSheet(squadEditorHTML(),true);
+  },
+  'leaguenew-open'(){ui.leagueform={co:'',name:'',divs:''};openSheet(leagueFormHTML(),true)},
+  'leagueform-cancel'(){openSheet(dbEditClubsHTML(),true)},
+  'leagueform-save'(){
+    const f=ui.leagueform||{};const co=(f.co||'').trim().toUpperCase();
+    if(!/^[A-Z]{2}$/.test(co)){toast('El código debe ser 2 letras');return}
+    const name=(f.name||'').trim();if(!name){toast('Ponle nombre al país');return}
+    if(COUNTRIES[co]){toast('Ya existe un país con ese código');return}
+    let divs=(f.divs||'').split(',').map(s=>s.trim()).filter(Boolean);if(!divs.length)divs=['Primera División'];
+    const countries={[co]:{name,league:divs[0],divs}};
+    const groups={[co]:[co+'1',co+'C']};
+    registerCountries(countries,groups);
+    ui.dbcountries=ui.dbcountries||{};ui.dbcountries[co]=countries[co];
+    ui.dbgroups=ui.dbgroups||{};ui.dbgroups[co]=groups[co];
+    invalidateSquads();
+    toast('Liga creada: '+name);
+    openSheet(dbEditClubsHTML(),true);
+  },
   /* "Usar": marca esa base como activa GLOBALMENTE (DBMGR.active/activeId), así que a partir de ahora
      el Museo y la selección de liga/club (sin partida en curso) muestran nombres/jugadores reales.
      Si se abrió desde el flujo de "Nueva partida" (ctx 'newgame'), además fija el modo de ESTA
@@ -19137,6 +19317,10 @@ const H={
   'squad-finish'(){
     const sq=ui.custom.squad||[];
     if(sq.length<SQ_MIN){toast(`Necesitas al menos ${SQ_MIN} jugador`);return}
+    if(ui.dbedit&&ui.dbedit.club){
+      dbSaveClub(ui.dbedit.club,sq);invalidateSquads([ui.dbedit.club]);
+      toast('Plantilla guardada en la base');openSheet(dbEditClubsHTML(),true);return;
+    }
     if(!sq.some(p=>p.pos==='POR')){toast('Tu plantilla necesita al menos un portero');return}
     finalizeCustomGame();
   },
@@ -19626,6 +19810,13 @@ function bindEvents(){
       return;
     }
     if(t&&t.dataset&&t.dataset.mktq&&ui.mkt&&typeof ui.mkt==='object'){ui.mkt.q=t.value;ui.mkt.page=0;clearTimeout(ui.mktT);ui.mktT=setTimeout(()=>{const r=document.getElementById('mkt-res');if(r)r.innerHTML=mktResHTML();refreshMktSheet()},120);return}
+    if(t&&t.dataset&&t.dataset.dbeditq!==undefined&&ui.dbedit){ui.dbedit.q=t.value;clearTimeout(ui.dbedit.t);ui.dbedit.t=setTimeout(()=>{const r=document.getElementById('dbedit-list');if(r)r.innerHTML=dbEditRowsHTML()},140);return}
+    if(t&&t.dataset&&t.dataset.cf&&ui.clubform){const k=t.dataset.cf,f=ui.clubform;
+      f[k]=(k==='rep'||k==='div')?+t.value:(k==='id'||k==='short')?t.value.toUpperCase():t.value;
+      if(k==='rep'){const b=document.getElementById('cf-rep-val');if(b)b.innerHTML=starsFracHTML(f.rep)+' '+f.rep}
+      if(k==='co'){f.div=1;const b=$('#sheet-body');if(b)b.innerHTML=clubFormHTML()}
+      return}
+    if(t&&t.dataset&&t.dataset.lf&&ui.leagueform){const k=t.dataset.lf,f=ui.leagueform;f[k]=k==='co'?t.value.toUpperCase().slice(0,2):t.value;return}
     if(t&&t.dataset&&t.dataset.affq!==undefined){ui.affQ=t.value;clearTimeout(ui.affT);ui.affT=setTimeout(()=>{const r=document.getElementById('affil-res');if(r)r.innerHTML=affilResHTML()},180);return}
     if(t&&t.dataset&&t.dataset.ccoq!==undefined){ui.ccoQ=t.value;const r=document.getElementById('cco-list');if(r)r.innerHTML=ccoRowsHTML();return}
     if(t&&t.dataset&&t.dataset.lsl&&ui.pm){const id=t.dataset.lsl,v=+t.value,f=pmFind();(ui.pm.ls=ui.pm.ls||{})[id]=v;const l=document.getElementById('lo-l-'+id),h=document.getElementById('lo-t-'+id);if(l&&f)l.textContent=lsText(f.p,v);if(h)h.textContent=(100-v)+'%';return}
