@@ -1530,8 +1530,9 @@ function exportDBFile(){
 }
 /* filas de la lista de clubes (según búsqueda y filtros país/división de ui.dbedit) */
 function dbEditRowsHTML(){
+  ensureFilialesAll();
   const f=ui.dbedit||{},q=normTxt(f.q||'');
-  let ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]);
+  let ids=Object.keys(CLUBBY);
   if(f.co&&f.co!=='ALL')ids=ids.filter(id=>CLUBBY[id].co===f.co);
   if(f.co&&f.co!=='ALL'&&f.div&&f.div!=='ALL'){
     if(f.div==='FIL')ids=ids.filter(id=>inFiliales(id,f.co));
@@ -1544,7 +1545,7 @@ function dbEditRowsHTML(){
 /* pantalla: lista de clubes para editar la base */
 function dbEditClubsHTML(){
   const f=ui.dbedit||{};
-  const ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]);
+  const ids=Object.keys(CLUBBY);
   const cos=[...new Set(ids.map(id=>CLUBBY[id].co))].filter(co=>COUNTRIES[co]).sort((a,b)=>COUNTRIES[a].name.localeCompare(COUNTRIES[b].name,'es'));
   const noCo=!f.co||f.co==='ALL';
   const divGroups=noCo?[]:coDivOptions(f.co);
@@ -1561,7 +1562,7 @@ function dbEditClubsHTML(){
   <div class="res-scroll" id="dbedit-list" style="margin-top:10px">${dbEditRowsHTML()}</div>
   <div class="row-btns"><button class="btn ghost" data-act="sheet-close">Cerrar</button><button class="btn ghost" data-act="clubnew-open">Nuevo club</button><button class="btn primary" data-act="dbedit-export">Descargar players-db.json</button></div>`;
 }
-function openDbEdit(){ui.dbedit={club:null,q:'',co:'ALL',div:'ALL',info:false};openSheet(dbEditClubsHTML(),true);}
+function openDbEdit(){ensureFilialesAll();ui.dbedit={club:null,q:'',co:'ALL',div:'ALL',info:false};openSheet(dbEditClubsHTML(),true);}
 /* formulario de club (crear/editar) del editor de base */
 function clubFormHTML(){
   const f=ui.clubform||{},edit=!!f.edit;
@@ -1610,23 +1611,23 @@ function isPlayableDiv(co,d){
   return false;
 }
 function isFilialId(id){try{return !!isB(id)}catch(e){return !!(CLUBBY[id]&&CLUBBY[id].bTeam)}}
-/* "Filiales" = clubes sin liga jugable, o filiales autogenerados (B / U21 / U23 / II / Jong ...) */
-function inFiliales(id,co){const c=CLUBBY[id];if(!c)return false;return !isPlayableDiv(co,c.div||1)||(isFilialId(id)&&!!c.autoFilial)}
+/* "Filiales" = filiales (marca de equipo B o autogenerado) que no están en liga jugable */
+function inFiliales(id,co){const c=CLUBBY[id];if(!c)return false;return isFilialId(id)&&(!isPlayableDiv(co,c.div||1)||!!c.autoFilial)}
 const _createdFil={};
-/* crea (una vez por país) los filiales por defecto que faltan: <Nombre> B/U21/U23/II o "Jong <Nombre>" */
-function ensureFilialesFor(co){
-  if(!ui.dbedit||!ui.dbedit.club||_createdFil[co])return;
-  _createdFil[co]=1;
+/* crea (una vez) los filiales por defecto que faltan: <Nombre> B/U21/U23/II o "Jong <Nombre>" */
+let _filAllDone=false;
+function ensureFilialesAll(){
+  if(_filAllDone)return;_filAllDone=true;
   Object.keys(REAL_DB).forEach(id=>{
-    const c=CLUBBY[id];if(!c||c.co!==co||isFilialId(id)||CLUBBY[id+'B']||FAMILY[id])return;
+    const c=CLUBBY[id];if(!c||isFilialId(id)||CLUBBY[id+'B']||FAMILY[id])return;
     const bid=makeBTeam(id);if(bid&&CLUBBY[bid])CLUBBY[bid].autoFilial=1;
   });
 }
 /* divisiones presentes en un país agrupadas por liga; los filiales y los que no tienen liga van a "Filiales" */
 const EDIT_LEAGUES={ES:[{disp:'1ª',label:'LaLiga EA Sports',divs:[1]},{disp:'2ª',label:'LaLiga Hypermotion',divs:[2]},{disp:'3ª',label:'Primera Federación',divs:[5,6]},{disp:'4ª',label:'Segunda Federación',divs:[7,8,9,10,11]}]};
 function coDivOptions(co){
-  ensureFilialesFor(co);
-  const clubIds=Object.keys(REAL_DB).filter(id=>CLUBBY[id]&&CLUBBY[id].co===co);
+  ensureFilialesAll();
+  const clubIds=Object.keys(CLUBBY).filter(id=>CLUBBY[id].co===co);
   const play=[...new Set(clubIds.filter(id=>isPlayableDiv(co,CLUBBY[id].div||1)).map(id=>CLUBBY[id].div||1))].sort((a,b)=>a-b);
   const filIds=clubIds.filter(id=>inFiliales(id,co));
   const out=[],covered=new Set();
@@ -17133,7 +17134,7 @@ const pos2RowDot=c=>{const col=posCol(c);return`<span class="pos2-dot" style="ba
 /* hoja para mover un jugador a otro club (mismo diseño que el editor de base: buscador + filtros país/división) */
 function moveFilteredIds(){
   const q=normTxt(ui.moveQ||''),co=ui.moveCo||'ALL',dv=ui.moveDiv||'ALL',src=ui.dbedit&&ui.dbedit.club;
-  let ids=Object.keys(REAL_DB).filter(id=>CLUBBY[id]&&id!==src);
+  let ids=Object.keys(CLUBBY).filter(id=>id!==src);
   if(co!=='ALL')ids=ids.filter(id=>CLUBBY[id].co===co);
   if(co!=='ALL'&&dv!=='ALL'){
     if(dv==='FIL')ids=ids.filter(id=>inFiliales(id,co));
@@ -17147,7 +17148,7 @@ function moveRowsHTML(){
 function moveClubSheetHTML(){
   const nm=(ui.custom&&ui.custom.pform&&ui.custom.pform.name)||'el jugador';
   const src=ui.dbedit&&ui.dbedit.club,f={co:ui.moveCo||'ALL',div:ui.moveDiv||'ALL'};
-  const clubIds=Object.keys(REAL_DB).filter(id=>CLUBBY[id]&&id!==src);
+  const clubIds=Object.keys(CLUBBY).filter(id=>id!==src);
   const cos=[...new Set(clubIds.map(id=>CLUBBY[id].co))].filter(co=>COUNTRIES[co]).sort((a,b)=>COUNTRIES[a].name.localeCompare(COUNTRIES[b].name,'es'));
   const noCo=!f.co||f.co==='ALL',divGroups=noCo?[]:coDivOptions(f.co);
   const coOpt=[['ALL','Todos los países'],...cos.map(co=>[co,(FLAG[co]||'')+' '+COUNTRIES[co].name])];
