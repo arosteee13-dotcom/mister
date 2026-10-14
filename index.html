@@ -3502,6 +3502,8 @@ const REAL_LOANS=[
  ['Lee Jun-Gyu','KRDAE','GIMH',1,null,['Lee Jun-Gyu','MD',2003,'KR',44,null,0.262,null,'MC']],
  ['H. Kim','KRDAE','GYEN',1,null,['H. Kim','FW',2007,'KR',37,null,0.396,null,'DC']],
  ['Kim Han-Seo','KRDAE','YONG',1,null,['Kim Han-Seo','MD',2003,'KR',43,null,0.129,null,'MC']],
+ /* Daegu FC: cedido de la 26/27 */
+ ['Jae-Hyun Park','DAEG','GIMH',1,null,['Jae-Hyun Park','DF',2003,'KR',48,null,0.202,null,'LD']],
  /* FC Anyang: cedido al club (Breno, del CRB) y cedidos fuera de la 26/27 */
  ['Herculano','CRB','KRANY',1,null,['Herculano','FW',1999,'BR',60,61,0.3,null,'DC']],
  ['Bruno Mota','KRANY','KRJEN',1,null,['Bruno Mota','FW',1996,'BR',67,null,2.31,null,'DC']],
@@ -3539,6 +3541,28 @@ const REAL_LOANS=[
  ['Park Jin-Young','SELD','CHBC',1,null,['Park Jin-Young','DF',2002,'KR',55,null,0.363,null,'DFC']],
  ['Seung-Hwan Lee','KRPOH','CHBC',1,null,['Seung-Hwan Lee','GK',2003,'KR',39,null,0.092,null,'POR']],
  ['J. Lim','CHBC','KRGIM',1,null,['J. Lim','DF',2006,'KR',39,null,0.098,null,'DFC']],
+ /* Ansan Greeners (K League 2): cedidos al club (E. Yeon, Jung-Hyun Kim) */
+ ['E. Yeon','GIMP','ANSG',1,null,['E. Yeon','MD',2003,'KR',27,null,0.017,null,'MC']],
+ ['Jung-Hyun Kim','CHAS','ANSG',1,null,['Jung-Hyun Kim','MD',2004,'KR',45,null,0.188,null,'MCO']],
+ /* Busan IPark (K League 2): cedidos al club (Jin-Hyuk Kim, Dong-Jae Cho) */
+ ['Jin-Hyuk Kim','DAEG','KRBIP',1,null,['Jin-Hyuk Kim','DF',1993,'KR',67,null,0.567,null,'DFC']],
+ ['Dong-Jae Cho','HWAS','KRBIP',1,null,['Dong-Jae Cho','DF',2003,'KR',45,null,0.347,null,'LI']],
+ /* Hwaseong FC (K League 2): cedidos al club (Seung-Beom Son, Ye-Hoon Choi; Sun-Woo Ham ya figuraba) */
+ ['Seung-Beom Son','KRPOH','HWAS',1,null,['Seung-Beom Son','FW',2004,'KR',35,null,0.15,null,'EI']],
+ ['Ye-Hoon Choi','KRBIP','HWAS',1,null,['Ye-Hoon Choi','DF',2003,'KR',45,null,0.423,null,'LI']],
+ /* Jeonnam Dragons (K League 2): cedido al club (Beom-Soo Kim) */
+ ['Beom-Soo Kim','KRPOH','JEOD',1,null,['Beom-Soo Kim','FW',2000,'KR',53,null,0.518,null,'ED']],
+ /* Seongnam FC (K League 2): cedido al club (P. Villero) */
+ ['P. Villero','PONT','KRSNM',1,null,['P. Villero','FW',1998,'CO',57,null,0.712,null,'ED']],
+ /* Suwon Samsung Bluewings (K League 2): cedido al club (Ho-Yeon Jeong, de Minnesota United) */
+ ['Ho-Yeon Jeong','MNU','KRSWB',1,null,['Ho-Yeon Jeong','MD',2000,'KR',64,null,2.35,null,'MC']],
+ /* Yongin FC (K League 2): cedido al club (Chi-Ung Choi, de Suwon FC) */
+ ['Chi-Ung Choi','SUWF','YONG',1,null,['Chi-Ung Choi','FW',2001,'KR',38,null,0.057,null,'DC']],
+ /* Cheonan City (K League 2): cedidos al club (Kyu-Min Lee, Willyan, Chang-Min Ahn, Dong-Hyeop Lee) */
+ ['Kyu-Min Lee','KRPOH','CHEC',1,null,['Kyu-Min Lee','FW',2005,'KR',26,null,0.064,null,'EI']],
+ ['Willyan','SUWF','CHEC',1,null,['Willyan','FW',1994,'BR',61,null,0.701,null,'EI']],
+ ['Chang-Min Ahn','GIMP','CHEC',1,null,['Chang-Min Ahn','DF',2001,'KR',47,null,0.205,null,'DFC']],
+ ['Dong-Hyeop Lee','KRPOH','CHEC',1,null,['Dong-Hyeop Lee','DF',2003,'KR',31,null,0.072,null,'LI']],
  /* Gimcheon Sangmu FC (club militar): cedidos de la 26/27 (origen = club al que pertenecen) */
  ['Baek Jong Beom','KRSEO','KRGIM',1,null,["Baek Jong Beom","GK",2001,"KR",64,69,0.675,null,"POR"]],
  ['Ahn Joon Soo','SUWF','KRGIM',1,null,["Ahn Joon Soo","GK",1998,"KR",66,68,0.725,null,"POR"]],
@@ -18521,7 +18545,7 @@ function trophyName(club,k,real){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527'},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527'},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
@@ -18564,7 +18588,7 @@ function museumKeysOf(co){
   if(co==='SA')return['league','cup','sc'];
   /* Corea del Sur: la K League 2 todavía no es una división jugable (solo alberga a los campeones
      históricos para el palmarés), así que su trofeo no se incluye en el Museo. */
-  if(co==='KR')return['league','cup','sc'];
+  if(co==='KR')return['league','d2','cup','sc'];
   const g=GROUPS.find(x=>x.id===co);
   if(!g)return[];
   return g.comps.filter(c=>!c.endsWith('Q')).map(c=>{
@@ -21447,6 +21471,9 @@ Object.assign(TROPHY_IMG_CO,{GR:{league:'https://cdn.resfu.com/img_data/competic
     ['V. Krystin','EPIT','AHVO',1,'Rotación',['V. Krystin','DF',2004,'UA',48,null,0.28,null,'LD/LI']]
   );
 })();
+/* ===== Ponte Preta (PONT): club creado solo para registrar cesiones (P. Villero → Seongnam) ===== */
+Object.assign(CLUBBY,{PONT:K2('PONT','Associação Atlética Ponte Preta','Ponte Preta','Campinas','BR','#1a1a1a','#f4f4f4',50)});
+if(CLUBBY.PONT)CLUBBY.PONT.logo='https://cdn.resfu.com/img_data/equipos/2176.png?size=120x&lossy=1';
 /* ===== Karpaty Lviv (KARP): plantilla real + avatares + cesiones ===== */
 (function(){
     Object.entries({'Yurii-Volodymyr Hereta':887220,'Denys Marchenko':3434211,'Anton Zhylkin':3177681,'Roman Mysak':130906,'Vladislav Baboglo':634085,'Vitalii Kholod':3225742,'Roman Vantukh':302232,'Rostyslav Liakh':798532,'Yan Kostenko':954692,'Denys Miroshnichenko':209980,'Iván Calero Ruiz':139844,'Jean Henrique Carneiro Pedroso':3227093,'Tymur Stetskov':476640,'Yurii Kokodyniak':3612508,'Mykola Kyrychok':3327635,'Andrii Buleza':879414,'Ambrosii Chachua':209976,'Fellipe Vieira Cardoso':3372197,'Mohamed Aiman Moukhliss Agmir':342272,'Marko Sapuha':3153841,'Eriki Daniel Rodrigues Bento':3479454,'Bruno Iglesias Lois':885940,'Vladyslav Reznik':3437204,'Ivan Chaban':3333371,'Joaquín Carlos Cifuentes Xalmet':424462,'Xeber Alkain Mitxelena':424989,'Nazariy Rusyn':307419,'Yaroslav Karabin':953338,'Joseph Thibaut Sery':873971,'Oleksandr Diedov':3788105}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
