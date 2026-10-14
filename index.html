@@ -34,7 +34,6 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .ambient{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 45% at 12% -5%,rgba(159,230,189,.09),transparent 65%),radial-gradient(50% 40% at 105% 105%,rgba(143,180,255,.06),transparent 65%)}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateY(10px) scale(.994);transition:opacity .5s var(--ease),transform .5s var(--ease),visibility 0s .5s}
 .screen.active{opacity:1;visibility:visible;transform:none;transition-delay:0s}
-
 /* botones */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:14px;font-weight:600;font-size:15px;transition:transform .2s var(--ease),background .25s,border-color .25s,box-shadow .25s}
 .btn:active{transform:scale(.97)}
@@ -55,7 +54,6 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .icon-btn{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(220,240,228,.05);border:1px solid var(--line);transition:background .2s}
 .icon-btn:hover{background:rgba(220,240,228,.1)}
 .icon-btn svg{width:20px;height:20px}
-
 /* portada */
 #s-title{align-items:center;justify-content:center;text-align:center;padding:24px}
 .title-map{position:absolute;inset:0;display:grid;place-items:center;-webkit-mask-image:radial-gradient(ellipse 72% 62% at 50% 50%,#000 28%,transparent 80%);mask-image:radial-gradient(ellipse 72% 62% at 50% 50%,#000 28%,transparent 80%)}
@@ -66,14 +64,12 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .title-actions{display:flex;flex-direction:column;gap:12px;align-items:stretch;width:100%;max-width:230px;margin:0 auto}
 .title-actions .btn{width:100%;min-width:0;box-sizing:border-box}
 .fine{margin-top:18px;font-size:12.5px;color:var(--dim)}
-
 /* barra superior de pantallas */
 .topbar{flex:none;display:flex;align-items:center;gap:14px;padding:calc(14px + env(safe-area-inset-top)) 18px 12px;position:relative;z-index:3}
 .topbar .grow{flex:1;min-width:0}
 .h-title{font:600 16px/1.15 var(--display);letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .muted-s{font-size:13px;color:var(--muted)}
 .pill{padding:7px 13px;border-radius:999px;background:rgba(220,240,228,.05);border:1px solid var(--line);font-size:12.5px;color:var(--muted);white-space:nowrap}
-
 /* slots */
 .slots{display:grid;gap:14px;width:min(640px,100%);margin:6px auto 0;padding:8px 18px 30px;overflow:auto}
 .slot{display:flex;align-items:center;gap:16px;padding:18px;border-radius:24px;background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--line);flex-wrap:wrap}
@@ -83,7 +79,6 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .slot-h{font:600 17px/1.2 var(--display)}
 .slot-l{font-size:13px;color:var(--muted);margin-top:3px}
 .slot-act{display:flex;gap:8px;flex-wrap:wrap}
-
 /* escudos */
 .crest{width:var(--cs,32px);height:var(--cs,32px);flex:none;border-radius:50%;display:inline-grid;place-items:center;background:var(--c1);color:var(--tx);font:700 calc(var(--cs,32px)*.31)/1 var(--display);letter-spacing:-.02em;box-shadow:inset 0 0 0 calc(var(--cs,32px)*.085) var(--c2),0 6px 16px rgba(0,0,0,.45);text-transform:uppercase}
 .crest-wrap{position:relative;display:inline-flex;flex:none;width:var(--cs,32px);height:var(--cs,32px)}
@@ -91,7 +86,6 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .crest-flag img.flag-i{width:100%;height:100%;object-fit:cover}
 .crest.logo{background:transparent;box-shadow:none;overflow:visible}
 .crest.logo img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 5px 12px rgba(0,0,0,.5))}
-
 /* museo de trofeos */
 .museum-filters{flex:none;display:flex;gap:8px;padding:2px 18px 12px;flex-wrap:wrap}
 .mfdrop{position:relative;flex:1;min-width:140px}
@@ -127,7 +121,6 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .mtrophy-n{flex:0 0 38%;display:flex;align-items:center;justify-content:center;width:100%}
 .mtrophy-n span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font:600 8.5px/1.18 var(--display)}
 .mtrophy.locked .mtrophy-n{color:var(--muted)}
-
 /* mapa */
 #s-map .mapstage{position:relative;flex:1;min-height:0;container-type:size;overflow:hidden}
 .layer{position:absolute;inset:0;display:flex;padding:6px 16px;transition:transform .85s var(--ease),opacity .6s var(--ease),padding-bottom .55s var(--ease),padding-right .55s var(--ease)}
@@ -263,7 +256,6 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .pin.sel{outline-color:var(--accent);z-index:6}
 @keyframes pinin{from{opacity:0;transform:translate(-50%,-50%) scale(.55)}}
 .layer.cardopen{padding-bottom:var(--cardh,430px)}
-
 /* tarjeta flotante de club */
 .clubcard{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));width:min(440px,calc(100% - 24px));transform:translate(-50%,130%);opacity:0;pointer-events:none;transition:transform .55s var(--ease),opacity .35s;background:rgba(19,29,25,.93);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line2);border-radius:28px;padding:18px;z-index:20;box-shadow:0 30px 80px -20px rgba(0,0,0,.85)}
 .clubcard.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
@@ -487,9 +479,6 @@ button.posc:hover{transform:translateY(-1px)}
 .sy-desc{font-size:13.5px;line-height:1.5;margin:6px 0 0}
 .sy-sec{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font:700 11px var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .sy-sec-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-
-
-
 .pc-nat{display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:12.5px;color:var(--muted)}
 .rolepick{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}
 button.role{border:0;cursor:pointer;opacity:.7;transition:opacity .2s,transform .15s,box-shadow .2s;font-family:var(--ui)}
@@ -746,7 +735,6 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .attr .dl{font-size:11px;margin-left:3px;vertical-align:baseline}
 .hist tr.now td{background:rgba(159,230,189,.07)}
 .hist td .nw{display:block;font-style:normal;font-size:10px;color:var(--accent);font-weight:600;line-height:1.1}
-
 /* hojas y avisos */
 .sheet{position:fixed;inset:0;z-index:125;pointer-events:none}
 .sheet.open{pointer-events:auto}
@@ -790,7 +778,6 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .toast{padding:12px 16px;border-radius:14px;background:rgba(26,39,34,.97);border:1px solid var(--line2);font-size:14px;text-align:center;animation:tin .4s var(--ease),tout .4s 2.6s forwards}
 @keyframes tin{from{opacity:0;transform:translateY(-10px)}}
 @keyframes tout{to{opacity:0;transform:translateY(-8px)}}
-
 /* panel del manager */
 .gshell{flex:1;min-height:0;display:grid;grid-template-columns:1fr;grid-template-rows:1fr auto;position:relative}
 .gmain{overflow:auto;min-height:0;-webkit-overflow-scrolling:touch}
@@ -1029,10 +1016,6 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .seg .fgrp .fdrop+.fdrop .fbtn{font-size:12px}
 .seg .fgrp .fcar{flex:none}
 .fgrp .smenu{left:auto;right:0}
-
-
-
-
 .selbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:14px;background:var(--accent-soft);border:1px solid var(--accent-line);font-size:13.5px}
 .selbar div{display:flex;gap:8px}
 .selbar span small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
@@ -1156,7 +1139,6 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
 </div>
 <div id="app">
   <div class="ambient"></div>
-
   <!-- Portada -->
   <section id="s-title" class="screen active">
     <div class="title-map" id="title-map"></div>
@@ -1173,7 +1155,6 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
       <p class="fine">Tus partidas se guardan en este navegador.</p>
     </div>
   </section>
-
   <!-- Slots -->
   <section id="s-slots" class="screen">
     <div class="topbar">
@@ -1182,7 +1163,6 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
     </div>
     <div class="slots" id="slots"></div>
   </section>
-
   <!-- Museo -->
   <section id="s-museum" class="screen">
     <div class="topbar">
@@ -1192,7 +1172,6 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
     <div class="museum-filters" id="museum-filters"></div>
     <div class="museum-grid" id="museum-grid"></div>
   </section>
-
   <!-- Mapa -->
   <section id="s-map" class="screen" data-level="0">
     <div class="topbar">
@@ -1219,8 +1198,6 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
     </div>
     <div class="clubcard" id="clubcard"></div>
   </section>
-
-
   <!-- Panel del manager -->
   <section id="s-game" class="screen">
     <div class="gshell">
@@ -1243,7 +1220,6 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
       </nav>
     </div>
   </section>
-
   <div id="sheet" class="sheet"><div class="sheet-bg" data-act="sheet-close"></div><div class="sheet-panel" id="sheet-body"></div></div>
   <div id="sheet2" class="sheet sheet2"><div class="sheet-bg" data-act="sheet2-close"></div><div class="sheet-panel" id="sheet2-body"></div></div>
   <div id="cv" class="cv"><div class="cv-bg" data-act="cv-close"></div><div class="cv-panel" id="cv-body" role="dialog" aria-label="Información del club"></div></div>
@@ -1300,7 +1276,6 @@ const IDB={db:null,ok:false,q:Promise.resolve(),ready:null,pend:{},flushing:fals
   get(k){if(!IDB.ok)return IDB.whenReady().then(()=>IDB.ok?IDB._get(k):null);return IDB.q.then(()=>IDB._get(k))},
   del(k){if(!IDB.ok)return;IDB.q=IDB.q.then(()=>new Promise(res=>{try{const tx=IDB.db.transaction('kv','readwrite');tx.objectStore('kv').delete(k);tx.oncomplete=res;tx.onerror=res}catch(e){res()}}))}
 };
-
 /* ===================== gestor de bases de datos de jugadores reales (REAL_DB) =====================
    El juego trae de fábrica una base de datos de jugadores reales (REAL_DB, cargada desde players-db.json
    o embebida), pero el usuario puede importar sus propias bases de datos (mismo formato: objeto plano
@@ -1473,7 +1448,6 @@ const DBMGR={
     return this.ready;
   }
 };
-
 /* lee un archivo de disco (File/FileSystemFile) y devuelve los datos JSON ya validados, o null */
 async function dbReadFile(file){
   try{
@@ -1760,7 +1734,6 @@ const NORWAY=P(`5.0,58.0 5.3,59.0 5.0,60.3 5.9,61.0 6.8,62.1 7.0,62.8 8.0,63.0 9
 const SWEDEN=P(`13.35,55.33 12.95,55.57 12.69,56.04 12.85,56.68 12.25,57.1 11.95,57.7 11.82,58.08 11.17,58.93 12.1,59.37 12.98,60.13 13.2,61.17 13.5,62.52 12.1,63.32 13.6,64.75 15.5,66.3 17.5,67.6 18.8,68.35 20.58,69.06 22.48,68.44 23.37,67.2 23.65,66.38 24.15,65.83 22.15,65.58 21.5,65.32 21.0,64.75 20.26,63.83 18.7,63.3 17.3,62.39 17.1,61.73 17.15,60.67 18.7,59.78 18.07,59.33 17.95,58.9 17.1,58.67 16.36,56.66 15.59,56.16 14.35,55.55`);
 const GOTLAND=P(`18.15,57.84 18.8,57.7 18.9,57.3 18.7,57.05 18.3,56.9 18.15,57.1 18.0,57.4`);
 const SANMARINO=P(`12.3833,43.9667 12.4278,43.9792 12.4844,43.9750 12.5090,43.9400 12.4950,43.9000 12.4400,43.8850 12.4000,43.9100 12.3750,43.9400`);
-
 const RUSSIA_EU=P(`28,60 20,54.5 27.5,51.5 35,50.3 38.2,47.3 39,45 41,43.5 47.5,42 50,44.5 53,47 56,51 59,54 56,58 50,58 42,59 36,59.5 30,60.5`);
 const TURKEY=P(`27.0,42.0 28.0,41.7 29.0,41.3 31.4,41.3 35.2,42.0 38.4,41.0 41.5,41.5 43.6,41.1 44.8,39.8 44.3,37.2 42.3,37.3 40.0,37.2 36.7,36.7 34.6,36.2 32.6,36.2 30.5,36.2 29.0,36.1 27.3,36.9 26.0,38.4 26.3,40.0`);
 const BULGARIA=P(`22.4,43.4 22.9,44.0 23.0,44.2 24.0,43.7 25.3,43.7 26.0,43.75 27.2,44.0 28.0,43.75 28.6,43.75 27.9,42.6 27.5,42.0 26.6,41.3 26.0,41.25 25.3,41.3 24.5,41.4 23.7,41.3 23.0,41.35 22.6,41.9 22.4,42.5`);
@@ -1999,7 +1972,6 @@ function leagueClubs(co,d){d=d||1;if(!isLeagueEnabled(co,d))return [];const k=co
   if(state&&state.club){const u=CLUBBY[state.club];if(u&&u.co===co&&u.div===d&&!r.some(c=>c.id===u.id))r=r.concat([u]);}
   return r}
 const LOCKED=[];
-
 /* ===================== clubes (reales), jugadores ficticios ===================== */
 const K=(id,name,short,city,co,c1,c2,rep,div)=>({id,name,short,city,co,c1,c2,rep,div:div||1});
 const K2=(id,name,short,city,co,c1,c2,rep)=>K(id,name,short,city,co,c1,c2,rep,2);
@@ -3141,7 +3113,6 @@ Object.assign(CITY,{'Chernivtsi':{ll:[25.9358,48.2921]},'Odesa':{ll:[30.7233,46.
 Object.assign(CITY,{'Ciudad de México':{ll:[-99.1332,19.4326]},'San Luis Potosí':{ll:[-100.9855,22.1565]},'Cancún':{ll:[-86.8515,21.1619]},'Guadalajara (México)':{ll:[-103.3496,20.6597]},'Ciudad Juárez':{ll:[-106.4245,31.6904]},'León (México)':{ll:[-101.6866,21.1221]},'Monterrey':{ll:[-100.3161,25.6866]},'Aguascalientes':{ll:[-102.2916,21.8853]},'Pachuca':{ll:[-98.7591,20.1011]},'Puebla':{ll:[-98.2063,19.0414]},'Querétaro':{ll:[-100.3899,20.5888]},'Torreón':{ll:[-103.4068,25.5428]},'San Nicolás de los Garza':{ll:[-100.2833,25.75]},'Tijuana':{ll:[-117.0382,32.5149]},'Toluca':{ll:[-99.6557,19.2826]}});
 Object.assign(CITY,{'Opole':{ll:[17.92,50.67]},'Skierniewice':{ll:[20.15,51.96]},'Siedlce':{ll:[22.28,52.18]},'Bielsko-Biała':{ll:[19.05,49.82]},'Gdynia':{ll:[18.53,54.52],o:[0,-26]},'Gdańsk':{ll:[18.65,54.35],o:[30,10]},'Nieciecza':{ll:[20.95,50.06]},'Głogów':{ll:[16.08,51.67]},'Mielec':{ll:[21.42,50.29]},'Legnica':{ll:[16.16,51.21],o:[-30,20]},'Niepołomice':{ll:[20.22,50.04]},'Chorzów':{ll:[18.95,50.30],o:[30,20]},'Rzeszów':{ll:[22.00,50.04]},'Bytom':{ll:[18.92,50.35],o:[-30,20]},'Grodzisk Mazowiecki':{ll:[20.63,52.10]}});
 Object.assign(CITY,{'Virton':{ll:[5.5325,49.5667]},'Denderleeuw':{ll:[4.0772,50.8864]},'Boussu':{ll:[3.8014,50.4336]},'Eupen':{ll:[6.0339,50.6296]},'Lier':{ll:[4.5702,51.1306]},'Maasmechelen':{ll:[5.6950,50.9650]},'Seraing':{ll:[5.4989,50.5989]},'Hasselt':{ll:[5.3378,50.9307]},'Lokeren':{ll:[3.9942,51.1058]}});
-
 Object.assign(CITY,{'Pitești':{ll:[24.87,44.86]},'Botoșani':{ll:[26.67,47.75]},'Cluj-Napoca':{ll:[23.6,46.77]},'Hunedoara':{ll:[22.9,45.75]},'Miercurea Ciuc':{ll:[25.8,46.36]},'Bucarest':{ll:[26.1,44.43]},'Constanța':{ll:[28.65,44.18]},'Galați':{ll:[28.03,45.44]},'Ploiești':{ll:[26.02,44.94]},'Sfântu Gheorghe':{ll:[25.79,45.86]},'Arad':{ll:[21.32,46.18]}});
 Object.assign(CITY,{'Oradea':{ll:[21.92,47.06]},'Târgoviște':{ll:[25.46,44.93]},'Chiajna':{ll:[25.95,44.47]},'Brașov':{ll:[25.61,45.66]},'Bacău':{ll:[26.91,46.57]},'Bistrița':{ll:[24.5,47.13]},'Lupeni':{ll:[23.14,45.36]},'Timișoara':{ll:[21.23,45.75]},'Lieşti':{ll:[27.42,45.63]}});
 Object.assign(CITY,{
@@ -3423,7 +3394,6 @@ function fitOf(p,lab){
 /* la estamina apenas influye por encima del 75 % y baja poco a poco por debajo */
 const enFactor=e=>e>=75?1:e>=50?1-(75-e)*.0016:.96-(50-e)*.003;
 const slotEff=(p,lab)=>p.ovr*fitOf(p,lab)*enFactor(p.en);
-
 const fmtV=v=>v<1?'€ '+Math.round(v*1000)+'k':'€ '+v.toFixed(1)+'M',fmtW=w=>'€ '+w+'k';
 const ROLE_BIAS={'Jugador clave':4,'Titular':2,'Rotación':0,'Joven promesa':0,'Suplente':-2,'Reserva':-4,'No necesario':-8};
 /* ===================== BASE DE DATOS DE JUGADORES REALES =====================
@@ -3513,7 +3483,7 @@ const REAL_LOANS=[
  ['A. Dinoci','ARGP','UBAS',1,null,['A. Dinoci','MD',2004,'RO',55,60,0.1,null,'MC/MCD']],
  ['Eric Nistor','ARGP','RVAL',1,null,['Eric Nistor','FW',2004,'RO',55,60,0.1,null,'DC']],
  /* FC Botoșani: cedidos de la 26/27 */
- ['G. Cimpanu','BOT','CQTL',1,null,['G. Cimpanu','FW',2004,'RO',55,60,0.1,null,'ED/MD']],
+['Alexandru Cîmpanu','BOT','CQTL',1,null,['Alexandru Cîmpanu','MD',2000,'RO',68,70,1.5,null,'MD/ED']],
  ['Gabriel David','BOT','CTSV',1,null,['Gabriel David','MD',2004,'RO',55,60,0.1,null,'MC/MCO']],
  /* CFR Cluj: cedidos de la 26/27. Nota: Ervin Omic<-Wisla Kraków ya estaba registrado (con otra grafía,
     sin tilde en la ć, y con foto real), no se duplica aquí. */
@@ -3534,80 +3504,64 @@ const REAL_LOANS=[
  ['David Abrangao','Greuther Fürth','WUE3',1,null,['David Abrangao','DF',2005,'DE',62,70,0.85,null,'LI/MI']],
  ['Kristijan Taseski','WUE3','FC 08 Homburg',1,null,['Kristijan Taseski','DF',2006,'DE',50,60,0.1,null,'DFC']],
  ['N. El Ouarti','WUE3','Kaiserslautern II',1,null,['N. El Ouarti','DF',2006,'DE',50,60,0.1,null,'DFC']],
-
  /* SV Wehen Wiesbaden */
  ['Roberto Massimo','Górnik Zabrze','WEH3',1,null,['Roberto Massimo','MD',2001,'DE',66,69,1.1,null,'MD/MI/MCO/ED/EI/DC']],
  ['Marcus Müller','Holstein Kiel','WEH3',1,null,['Marcus Müller','FW',2003,'DE',63,68,0.725,null,'DC']],
  ['Ayoub Chaikhoun','Nürnberg','WEH3',1,null,['Ayoub Chaikhoun','MD',2006,'MA',61,73,0.775,null,'MC/MCD']],
  ['Jan Becker','WEH3','Kickers Offenbach',1,null,['Jan Becker','FW',2006,'DE',50,60,0.1,null,'DC']],
-
  /* Waldhof Mannheim */
  ['Owono-Darnell Keumo','VfL Bochum','WAL3',1,null,['Owono-Darnell Keumo','DF',2008,'DE',62,76,0.875,null,'LI/MI']],
  ['Oluwaseun Ogbemudia','Union Berlin','WAL3',1,null,['Oluwaseun Ogbemudia','DF',2007,'DE',63,78,1.1,null,'DFC']],
-
  /* Viktoria Köln */
  ['Noah Maboulou','Nürnberg','VIK3',1,null,['Noah Maboulou','FW',2005,'CG',62,72,0.9,null,'DC']],
  ['Niklas Swider','B. Mönchengladbach','VIK3',1,null,['Niklas Swider','MD',2007,'DE',62,82,1.1,null,'MCD/MC']],
-
  /* SC Verl */
  ['André Leipold','Pardubice','VRL3',1,null,['André Leipold','FW',2002,'DE',64,72,1.3,null,'ED/DC/EI/MD/MI']],
  ['Noah König','Greuther Fürth','VRL3',1,null,['Noah König','DF',2003,'DE',62,70,0.825,null,'DFC']],
  ['Janne Berner','Hertha BSC','VRL3',1,null,['Janne Berner','DF',2005,'DE',60,72,0.575,null,'LD']],
  ['Timo Schlieck','RB Leipzig','VRL3',1,null,['Timo Schlieck','GK',2006,'DE',62,74,0.85,null,'POR']],
-
  /* SV Meppen */
  ['Richard Meier','Bayern München II','MEP3',1,null,['Richard Meier','FW',2004,'DE',63,71,1.1,null,'DC']],
  ['Luca Prasse','Holstein Kiel','MEP3',1,null,['Luca Prasse','MD',2004,'DE',62,69,0.8,null,'MI/MD/MCO/EI']],
  ['Jona Borsum','Eintracht Braunschweig','MEP3',1,null,['Jona Borsum','MD',2005,'DE',61,74,0.775,null,'MCD/DFC/MC']],
-
  /* VfB Stuttgart II */
  ['Jonathan Akaegbobi','VfL Bochum II','VFB3',1,null,['Jonathan Akaegbobi','FW',2006,'DE',58,76,0.55,null,'DC']],
  ['Joyeux Masanka Bungi','RB Leipzig','VFB3',1,null,['Joyeux Masanka Bungi','MD',2007,'BE',60,78,0.625,null,'MI/LI/EI']],
  ['Matheos Tsigkas','VFB3','VVV Venlo',1,null,['Matheos Tsigkas','FW',2006,'DE',50,60,0.1,null,'DC']],
-
  /* SG Sonnenhof Großaspach */
  ['Marlon Faß','Dynamo Dresden','SGS3',1,null,['Marlon Faß','FW',2006,'DE',60,75,0.6,null,'DC']],
  ['Franz Xaver Bleicher','FC Augsburg II','SGS3',1,null,['Franz Xaver Bleicher','MD',2007,'DE',61,77,0.85,null,'MC/MCD']],
-
  /* Rot-Weiss Essen */
  ['Semir Telalović','Nürnberg','RWE3',1,null,['Semir Telalović','FW',2000,'DE',66,69,1.1,null,'DC/MCO']],
  ['Aiman Dardari','FC Augsburg','RWE3',1,null,['Aiman Dardari','MD',2005,'LU',63,75,1.2,null,'MI/MCO/EI']],
  ['Tony Menzel','Dynamo Dresden','RWE3',1,null,['Tony Menzel','MD',2005,'DE',65,74,1.6,null,'MCO/MI/MC/EI/MCD']],
  ['Gianluca','RWE3','FC Bocholt',1,null,['Gianluca','MD',2006,'DE',50,60,0.1,null,'MC']],
-
  /* Preußen Münster */
  ['Wesley Adeh','Werder Bremen','PRE3',1,null,['Wesley Adeh','MD',2007,'DE',60,77,0.625,null,'MC/MCD']],
  ['J. Schenk','PRE3','SK Beveren',1,null,['J. Schenk','GK',2006,'DE',50,60,0.1,null,'POR']],
-
  /* MSV Duisburg */
  ['Peter Remmert','Schalke 04','MSV3',1,null,['Peter Remmert','FW',2006,'DE',62,75,0.975,null,'DC/MCO']],
  ['Martin Ens','Paderborn','MSV3',1,null,['Martin Ens','DF',2002,'DE',67,73,1.5,null,'DFC']],
-
  /* Jahn Regensburg */
  ['Marco Wörner','Paderborn','JAH3',1,null,['Marco Wörner','FW',2005,'DE',63,76,1.2,null,'DC/MCO']],
  ['Hannes Hermann','Hamburger SV','JAH3',1,null,['Hannes Hermann','GK',2005,'DE',60,71,0.475,null,'POR']],
-
  /* Hoffenheim II */
  ['L. Krasniqi','HOF2','Schweinfurt',1,null,['L. Krasniqi','FW',2006,'DE',50,60,0.1,null,'DC']],
  ['E. Chukwu','HOF2','Austria Lustenau',1,null,['E. Chukwu','FW',2006,'DE',50,60,0.1,null,'DC']],
-
  /* Havelse */
  ['Alexander Guiddir','S04','HAV3',1,null,['Alexander Guiddir','MD',2007,'DE',61,70,0.7,null,'MI/MD/DC/EI']],
  ['Eryk Grzywacz','KIE','HAV3',1,null,['Eryk Grzywacz','MD',2006,'PL',60,77,0.625,null,'MCD/DFC/MC']],
  ['Yusuf Wardak','FCE','HAV3',1,null,['Yusuf Wardak','MD',2006,'DE',60,73,0.6,null,'MCO/MC']],
  ['Eric Voufack','Kolding IF','HAV3',1,null,['Eric Voufack','DF',2002,'DE',61,67,0.475,null,'LD/LI/MD/MI']],
-
  /* Hansa Rostock */
  ['Ouassim Karada','SGE','HRO3',1,null,['Ouassim Karada','DF',2006,'DE',62,73,0.825,null,'LD/LI/ED']],
  ['Jaaso Jantunen','SCF','HRO3',1,null,['Jaaso Jantunen','GK',2005,'FI',59,73,0.475,null,'POR']],
  ['Dario Gebuhr','HRO3','Eintracht Trier',1,null,['Dario Gebuhr','DF',2006,'DE',50,60,0.1,null,'DFC']],
  ['Tim Krohn','HRO3','FC Bocholt',1,null,['Tim Krohn','FW',2006,'DE',50,60,0.1,null,'DC']],
-
  /* Fortuna Köln */
  ['Romeo Aigbekaen','STP','FKO3',1,null,['Romeo Aigbekaen','FW',2004,'DE',62,71,0.9,null,'DC/EI/MCO/MI']],
  ['Bennit Bröger','SCP','FKO3',1,null,['Bennit Bröger','MD',2006,'DE',63,78,1.2,null,'MCO/MC']],
  ['Kevin Krumme','SCP','FKO3',1,null,['Kevin Krumme','DF',2004,'DE',60,68,0.525,null,'DFC']],
-
  /* 3. Liga: añadidos */
  ['Mladen Cvjetinović','KIE','FCS3',1,null,['Mladen Cvjetinović','DF',2004,'BA',64,73,1.2,null,'DFC']],
  ['Daniel Gleiber','M05','FCS3',1,null,['Daniel Gleiber','MD',2005,'DE',62,76,0.975,null,'MC/MCO/MCD']],
@@ -3621,7 +3575,6 @@ const REAL_LOANS=[
  ['Emmanuel-Chinedu','AAC3','Barockstadt',1,null,['Emmanuel-Chinedu','FW',2006,'DE',50,60,0.1,null,'DC']],
  ['Mechak Tito','FD3','Rot-Weiss Erfurt',1,null,['Mechak Tito','FW',2006,'DE',50,60,0.1,null,'DC']],
  ['Levi Menzel','FD3','TSV Steinbach Haiger',1,null,['Levi Menzel','DF',2006,'DE',50,60,0.1,null,'DFC']],
-
  /* CSKA Moskva: cedidos al inicio de la temporada (llevan su ficha en 'ext' porque no están en REAL_DB.CSKM) */
  ['Alerrandro','CSKM','INA',1,null,['Alerrandro','FW',2000,'BR',66,null,6.2,null,'DC/MC']],
  ['R. Villagra','CSKM','INA',1,null,['R. Villagra','MD',2001,'AR',67,null,6.23,null,'MCD/MC']],
@@ -4102,7 +4055,7 @@ const REAL_LOANS=[
   ['Pablo Arriaza','MAL','EST',1,'Rotación',['Pablo Arriaza','MD',2003,'ES',50,50,0.169,1,'MC/DFC']],
   ['A. Seidu','MALB','MIJ',1,'Rotación',['A. Seidu','DF',2006,'GH',38,50,0.019,0.8,'LI/MI']],
   ['Caye Cancela','CTG','LIND',1,'Rotación',['Caye Cancela','FW',2005,'ES',43,43,0.047,1,'DC']],
-  ['Yuezheng Du','MFC','CQTL',1,'Rotación',['Yuezheng Du','FW',2005,'CN',51,51,0.1,1,'DC/MD']],
+['Du Yuezheng','MFC','CQTL',1,'Rotación',['Du Yuezheng','FW',2005,'CN',56,70,0.350,null,'DC']],
   ['M. Izaguirre','JUVD','REC',1,'Rotación',['M. Izaguirre','MD',2003,'UY',47,47,0.247,1,'MC/MCD']],
   ['A. Monzon','LPAB','TAMA',1,'Rotación',['A. Monzon','DF',2007,'ES',42,42,0.008,0.5,'LI']],
   ['H. Castellano','LPAB','TAMA',1,'Rotación',['H. Castellano','DF',2007,'ES',35,42,0.001,0.4,'DFC']],
@@ -5884,7 +5837,86 @@ const REAL_LOANS=[
   /* Neom SC (NEOM): cedido al club (entrante) + cedidos a otros clubes (salida). Datos provisionales. (Haroune Camara<-Al-Nassr y los cedidos a ETIF/SHAB/RIYA/KHAL ya están registrados.) */
   ['Faisal Al Ghamdi','ITTI','NEOM',1,'Rotación',['Faisal Al Ghamdi','MD',2001,'SA',66,73,1.6,null,'MCD/MC']],
   ['L. Rodríguez','NEOM','CRU',1,'Rotación',['L. Rodríguez','FW',2005,'UY',66,78,3,null,'DC']],
-  ['Mohammed Al-Dossari','NEOM','RAED',1,'Rotación',['Mohammed Al-Dossari','DF',2001,'SA',57,64,0.300,null,'DFC/LI']],
+  ['Mohammed Waleed','NEOM','RAED',1,'Rotación',['Mohammed Waleed','DF',2001,'SA',57,64,0.300,null,'DFC/LI']],
+  /* Beijing Guoan (BEIJ): cedidos a otros clubes (salida). Datos provisionales. */
+  ['Jianzhi Zhang','BEIJ','GXHC',1,'Rotación',['Jianzhi Zhang','GK',2006,'CN',52,62,0.1,null,'POR']],
+  ['Wenhao Jiang','BEIJ','SAXU',1,'Rotación',['Wenhao Jiang','DF',2004,'CN',55,66,0.2,null,'DFC/LD']],
+  ['Moxmet Nebijan','BEIJ','HENF',1,'Rotación',['Moxmet Nebijan','DF',2001,'CN',58,63,0.275,null,'LI/MI/EI']],
+  ['Ruiyue Li','BEIJ','FSNS',1,'Rotación',['Ruiyue Li','MD',2005,'CN',54,66,0.2,null,'MC/MCD']],
+  ['Y. Hao','BEIJ','JXDN',1,'Rotación',['Y. Hao','DF',2004,'CN',55,65,0.2,null,'DFC']],
+  /* Shanghái Port (SHPO): cedidos al club (entrantes) + cedidos a otros clubes (salida). Datos provisionales. */
+  ['Prince Ampem','EYU','SHPO',1,'Rotación',['Prince Ampem','FW',1998,'GH',65,70,0.975,null,'EI/MD/MI/ED']],
+  ['Kodjo Aziangbe','YOKO','SHPO',1,'Rotación',['Kodjo Aziangbe','MD',2002,'TG',62,70,0.5,null,'MC/MCD']],
+  ['Jaume Grau','TJJM','SHPO',1,'Rotación',['Jaume Grau','MD',1997,'ES',66,70,1.1,null,'MC/MCD']],
+  ['Feng Jin','SHPO','DLYB',1,'Rotación',['Feng Jin','FW',2003,'CN',58,70,0.3,null,'DC/ED']],
+  ['Asqer Afrden','SHPO','QDWC',1,'Rotación',['Asqer Afrden','MD',2003,'CN',57,64,0.325,null,'MI/MD/DC/LI/LD']],
+  /* Chongqing Tonglianglong (CQTL): cedidos al club (entrantes) + cedidos a otros clubes (salida). Datos provisionales. */
+  ['Landry Dimata','PAF','CQTL',1,'Rotación',['Landry Dimata','FW',1997,'BE',70,75,2.2,null,'DC/MI/MD/MCO/EI/ED']],
+  ['Yue Ruijie','SDTS','CQTL',1,'Rotación',['Yue Ruijie','DF',2007,'CN',47,62,0.100,null,'DFC']],
+  ['Yujun Ma','CQTL','DLKC',1,'Rotación',['Yujun Ma','MD',2004,'CN',56,66,0.2,null,'MC/MCD']],
+  ['Yetong Cheng','CQTL','JXDN',1,'Rotación',['Yetong Cheng','MD',2004,'CN',56,66,0.2,null,'MC/MCO']],
+  ['Xuheng Huang','CQTL','QDRL',1,'Rotación',['Xuheng Huang','DF',2004,'CN',56,66,0.2,null,'DFC']],
+  ['Song Pan','CQTL','SUDW',1,'Rotación',['Song Pan','FW',2004,'CN',56,66,0.2,null,'DC']],
+  ['H. Zhang','CQTL','SXCR',1,'Rotación',['H. Zhang','GK',2004,'CN',56,64,0.15,null,'POR']],
+  ['Jie Wang','CQTL','SXCR',1,'Rotación',['Jie Wang','DF',2004,'CN',56,66,0.2,null,'DFC']],
+  /* Dalian Yingbo (DLYB): cedido al club (entrante) + cedido a otro club (salida). Datos provisionales. (Feng Jin<-SHPO ya registrado.) */
+  ['Pedro Delgado','SDTS','DLYB',1,'Rotación',['Pedro Delgado','MD',1997,'PT',68,72,1.5,null,'MCO/MC']],
+  ['Li Ang','DLYB','WHTT',1,'Rotación',['Li Ang','DF',1993,'CN',62,67,0.400,null,'DFC/LI/MC']],
+  /* Henan FC (HENF): cedido al club (entrante) + cedidos a otros clubes (salida). Datos provisionales. (Nebijan Muhmet<-BEIJ ya registrado.) */
+  ['Xulin Fan','HBIS','HENF',1,'Rotación',['Xulin Fan','FW',2005,'CN',55,66,0.3,null,'ED/MD']],
+  ['Zongyuan Liu','HENF','FSNS',1,'Rotación',['Zongyuan Liu','DF',2003,'CN',56,66,0.2,null,'DFC/LD']],
+  ['Xu Haofeng','HENF','WHTT',1,'Rotación',['Xu Haofeng','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  ['Chen Keqiang','HENF','YBLD',1,'Rotación',['Chen Keqiang','MD',2003,'CN',56,66,0.2,null,'MC/MCD']],
+  ['X. Li','HENF','NTZY',1,'Rotación',['X. Li','MD',2003,'CN',56,66,0.2,null,'MC']],
+  ['Junwei Zheng','HENF','FSNS',1,'Rotación',['Junwei Zheng','FW',2003,'CN',56,66,0.2,null,'DC']],
+  ['Mingcan Hua','HENF','WZFC',1,'Rotación',['Mingcan Hua','MD',2003,'CN',56,66,0.2,null,'MC/MCO']],
+  /* Liaoning Tieren (LNTR): cedidos al club (entrantes) + cedidos a otros clubes (salida). Datos provisionales. */
+  ['Jeffinho','BOTF','LNTR',1,'Rotación',['Jeffinho','MD',1999,'BR',72,74,2.9,null,'MI/MD/EI/ED']],
+  ['Liu Guobo','SDTS','LNTR',1,'Rotación',['Liu Guobo','MD',1999,'CN',53,61,0.200,null,'MD/MI/DC/ED']],
+  ['Tian Ziyi','LNTR','CCYT',1,'Rotación',['Tian Ziyi','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  ['Gui Zihan','LNTR','WXWG',1,'Rotación',['Gui Zihan','FW',2003,'CN',56,66,0.2,null,'DC']],
+  ['Y. Chen','LNTR','DLKW',1,'Rotación',['Y. Chen','FW',2003,'CN',56,66,0.2,null,'DC/ED']],
+  /* Qingdao Hainiu (QDHN): cedidos al club (entrantes) + cedidos a otros clubes (salida). Datos provisionales. */
+  ['Liu Guobao','SDTS','QDHN',1,'Rotación',['Liu Guobao','FW',2003,'CN',51,60,0.130,null,'DC']],
+  ['Wei Zixian','HBIS','QDHN',1,'Rotación',['Wei Zixian','DF',2005,'CN',55,63,0.275,null,'LD/MD']],
+  ['Li Sirong','TJJM','QDHN',1,'Rotación',['Li Sirong','DF',2003,'CN',53,62,0.200,null,'LD']],
+  ['Zhang Wei','QDHN','SHPO',1,'Rotación',['Zhang Wei','DF',2003,'CN',56,66,0.2,null,'DFC/LD']],
+  ['Chen Jiaqi','QDHN','QDRL',1,'Rotación',['Chen Jiaqi','FW',2003,'CN',56,66,0.2,null,'DC']],
+  ['Wu Xingyu','QDHN','NTZY',1,'Rotación',['Wu Xingyu','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  ['Yixuan Gao','QDHN','TATK',1,'Rotación',['Yixuan Gao','MD',2003,'CN',56,66,0.2,null,'MC']],
+  ['Zhao Yi','QDHN','GANR',1,'Rotación',['Zhao Yi','FW',2003,'CN',56,66,0.2,null,'DC']],
+  /* Qingdao West Coast (QDWC): cedidos al club (entrantes) + cedidos a otros clubes (salida). Datos provisionales. */
+  ['Meng Jingchao','SHPO','QDWC',1,'Rotación',['Meng Jingchao','MD',2004,'CN',54,64,0.240,null,'MC/MCD']],
+  ['Bruno Viana','ALNY','QDWC',1,'Rotación',['Bruno Viana','DF',1995,'BR',68,78,2.1,null,'DFC']],
+  ['Song Haoyu','QDWC','SJZG',1,'Rotación',['Song Haoyu','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  ['A. Osmanjan','QDWC','QDRL',1,'Rotación',['A. Osmanjan','MD',2003,'CN',56,66,0.2,null,'MC']],
+  ['Fang Haiyang','QDWC','GDMT',1,'Rotación',['Fang Haiyang','MD',2003,'CN',56,66,0.2,null,'MC/MCD']],
+  /* Shandong Taishan (SDTS): cedidos a otros clubes (salida). Datos provisionales. (Delgado->DLYB y Liu Guobao->QDHN ya registrados.) */
+  ['Liu Binbin','SDTS','WHTT',1,'Rotación',['Liu Binbin','FW',1993,'CN',64,68,0.8,null,'EI/MI']],
+  ['Wu Xinghan','SDTS','TJJM',1,'Rotación',['Wu Xinghan','DF',1993,'CN',60,66,0.3,null,'LI/MI']],
+  ['Zhao Jianfei','SDTS','SZPC',1,'Rotación',['Zhao Jianfei','DF',2002,'CN',56,66,0.2,null,'DFC']],
+  ['Wang Haobin','SDTS','GDGZ',1,'Rotación',['Wang Haobin','FW',2003,'CN',56,66,0.2,null,'DC/ED']],
+  /* Shanghai Shenhua (SHSH): cedidos a otros clubes (salida). Datos provisionales. */
+  ['Wang Yifan','SHSH','WXWG',1,'Rotación',['Wang Yifan','FW',2003,'CN',56,66,0.2,null,'DC/ED']],
+  ['Wang Hanyi','SHSH','MZHK',1,'Rotación',['Wang Hanyi','GK',2004,'CN',52,62,0.1,null,'POR']],
+  /* Shenzhen Peng City (SZPC): cedidos al club (entrantes) + cedidos a otros clubes (salida). Datos provisionales. (Zhao Jianfei<-SDTS ya registrado.) */
+  ['Zhang Yufeng','YNYK','SZPC',1,'Rotación',['Zhang Yufeng','MD',1998,'CN',56,61,0.190,null,'MC/MCD']],
+  ['Gabriel Xavier','BAHI','SZPC',1,'Rotación',['Gabriel Xavier','DF',2001,'BR',71,77,2.6,null,'DFC']],
+  ['Wei Minzhe','WHTT','SZPC',1,'Rotación',['Wei Minzhe','GK',1998,'CN',55,58,0.120,null,'POR']],
+  ['Hu Ruibao','SZPC','YNYK',1,'Rotación',['Hu Ruibao','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  ['Zhang Yujie','SZPC','JXDN',1,'Rotación',['Zhang Yujie','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  ['Jiajin Hu','SZPC','JXDN',1,'Rotación',['Jiajin Hu','MD',2003,'CN',56,66,0.2,null,'MC']],
+  ['H. Shahsat','SZPC','SAXU',1,'Rotación',['H. Shahsat','FW',2003,'CN',56,66,0.2,null,'DC']],
+  ['Ge Yifan','SZPC','FSNS',1,'Rotación',['Ge Yifan','GK',2003,'CN',54,64,0.15,null,'POR']],
+  /* Tianjin Jinmen Tiger (TJJM): cedido al club (entrante) + cedidos a otros clubes (salida). Datos provisionales. (Wu Xinghan<-SDTS, Jaume Grau->SHPO y Sirong Li->QDHN ya registrados.) */
+  ['Yuefeng Li','TJJM','XMFL',1,'Rotación',['Yuefeng Li','GK',2004,'CN',54,64,0.15,null,'POR']],
+  /* Yunnan Yukun (YNYK): cedido al club (entrante) + cedidos a otros clubes (salida). Datos provisionales. (Hu Ruibao<-SZPC y Zhang Yufeng->SZPC ya registrados.) */
+  ['Li Biao','YNYK','HBIS',1,'Rotación',['Li Biao','MD',2003,'CN',56,66,0.2,null,'MC']],
+  ['Yuhao Chen','YNYK','SZJR',1,'Rotación',['Yuhao Chen','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  ['Dezhi Duan','YNYK','YBLD',1,'Rotación',['Dezhi Duan','DF',2003,'CN',56,66,0.2,null,'DFC']],
+  /* Zhejiang FC (ZJFC): cedido al club (entrante) + cedido a otro club (salida). Datos provisionales. */
+  ['Saúl Guarirapa','SOCHI','ZJFC',1,'Rotación',['Saúl Guarirapa','FW',2002,'VE',67,73,1.6,null,'DC/MI']],
+  ['Ablikim Abdusalam','ZJFC','HZLP',1,'Rotación',['Ablikim Abdusalam','MD',2003,'CN',56,66,0.2,null,'MC']],
 ];
 /* atributos de jugadores reales conocidos (opcional).
    Porteros: EST, PAR, SAQ, REF, COL. Jugadores de campo: RIT, TIR, PAS, REG, DEF, FÍS. */
@@ -5895,49 +5927,30 @@ Object.entries({"S. Weirauch": 908239, "A. Holewinski": 3272206, "W. Bula": 3621
 /* AFC Hornchurch (HORN) */
 Object.entries({'Arthur Nasta':3588331,'Rhys John Howard Byrne':3165878,'Joseph Mohamed Kizzi':570506,'Ryan Stuart Clayton Innis':206156,'Jack Baldwin':206155,'Samuel Jack Ling':30263,'William Winston Greenidge':427907,'Thomas Albert Dallison-Lisbon':308708,'Frankie Lee Edwards':3368936,'Ángelo Jasiel Balanta':24097,'Thomas Wraight':302825,'Jack Powell':206376,'Aaron Kevin Isaac Rowe':839177,'Charlie Pegrum':3228468,'Nathan James De Calvia Ferguson':322443,'Asher Yearwood':3434374,'Miles Bracking':3306049,'Makai Jaydan William Bond Welch':3367213,'Alfie Massey':3228635,'George John Alexander':711582,'Dominic Alfred Poleon':148127,'Myles Arthur Eugene Wesley Weston':231393,'Henry Neil Sandat':3303348,'Joshua James Walker':291043}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 Object.entries({'Johann Hipper':387599,'Marko Rajkovačić':952254,'Liam Omore':3422580,'Luke Hemmerich':290304,'Ebrahim Farahnak':448152,'Leo Eberle':3190689,'Louis Breunig':3167129,'Burak Karakaya':3590420,'David Abrangao':3290490,'Daniel Hägele':232993,'Namrud Embaye':883087,'Tim Kraus':711089,'Xaver Kiefersauer':3176444,'David Kinsombi':232025,'Dominik Meisel':688737,'Batuhan Gögce':975951,'Dorian Deppner':3708555,'Eliot Muteba':769896,'Ivan Franjić':402591,'Eroll Zejnullahu':232742,'Tarsis Bonga':309527,'Franck Evina':366211,'Thomas Kastanaras':888102,'Jermain Nischalke':897293,'Tiago De Moura':3676791,'Dion Berisha':754988}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Florian Stritzel':199835,'Noah Brdar':983322,'Finn Ludwig':3363212,'Ben Nink':3425612,'Jordy Gillekens':347616,'Justin Janitzek':892265,'Michael Schultz':60735,'Florian Hübner':61568,'Tim Neubert':3587531,'Niklas May':754485,'Gino Fechner':299498,'David Suárez':870085,'Roberto Massimo':416168,'Raul Paula':892272,'Robin Kalem':826271,'Max Brandt':488373,'Tarik Gözüsirin':621663,'Ayoub Chaikhoun':3307057,'Fabian Greilinger':700316,'Lukas Schleimer':426593,'Donny Bogićević':898250,'Ibrahim Ati Allah':3590226,'Simon Stehle':621961,'Moritz Flotho':3183137,'Marcus Müller':801196,'Sinan Karweina':341116}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Thijmen Nijhuis':309634,'Jan Marco Niemann':3180414,'Lucien Hawryluk':477997,'Jid Okeke':3516778,'Yannis Hör':994294,'Claudio Kammerknecht':432502,'Oluwaseun Ogbemudia':3307838,'Moritz Malik Polte':3317851,'Tim Sechelmann':341533,'Owono-Darnell Keumo':3250224,'Joey Müller':477582,'Julian Rieckmann':393530,'Maximilian Thalhammer':335036,'Denis Kryeziu':3602897,'Vincent Thill':328755,'Lovis Bierschenk':1015266,'Kushtrim Asallari':856667,'Arlind Rexhepi':754531,'Diego Michel':311299,'Nolan Muteba N\'Tumba':3448957,'Adama Diakhaby':223078,'Jascha Brandt':825856,'Julian Ulbricht':371595,'Gonçalo Gregório':346671,'Terrence Boyd':130124,'Masca':881449,'Kian Ramadani':3430103}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Arne Schulz':755407,'David Wyciok':3250628,'Oskar Hill':3219160,'Pascal Fallmann':836132,'Felix Albers':3437997,'Meiko Sponsel':755459,'Verthomy Schilo Boboy':897735,'Christoph Greger':388692,'Tim Kloss':3304242,'Tobias Eisenhuth':621751,'Niklas Swider':3273210,'Niklas Jahn':922673,'Jason Amann':3176355,'Yannick Tonye':979662,'Marco Pledl':3166353,'Taylan Duman':295074,'Lucas Wolf':621714,'Kilian Jakob':332531,'Alexander Prokopenko':969547,'Eric Gueye':477716,'David Otto':337250,'Diego Perri':3438006,'Niklas Castelle':3233195,'Noah Maboulou':3209993,'Jakob Sachse':3308162}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Timo Schlieck':1014034,'Fabian Pekruhl':634276,'Julian Fuest':3190804,'Janne Berner':3176525,'Felix Vogler':3426345,'Paul Lehmann':975914,'Nick Seidel':3180678,'Noah König':897505,'Raphael Araoye':3294802,'Tim Hoffmann':3176153,'Dennis Waidner':627268,'Joshua Eze':879630,'Mika Clausen':3292304,'Moritz Kaube':3166317,'Emmanuel Bamba':3250682,'Almin Mešanović':976150,'Yari Otto':320361,'Fabian Wessig':888048,'Kasim Rabihic':216545,'Amin Farouk':897487,'Bilal Yalçınkaya':3219459,'Antonio Foti':894041,'André Leipold':3166315,'Tim Heike':432461,'Alem Japaur':925334,'Tanay Cosar':3250482}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Julius Pünt':3213469,'Noah Oberbeck':754787,'Dominique Domröse':621983,'Luis Sprekelmeyer':824426,'Stefan Rankić':439072,'Nikell Touglo':622429,'Jonas Fedl':426434,'Jonas Goldenstein':3307775,'Tobias Mißner':428284,'Florian Bähr':886037,'Jona Borsum':1022632,'Erik Zenga':156518,'Henrik Wittrock':3307787,'Thorben Deters':310185,'Ersin Zehir':342769,'Niclas Wessels':3304297,'Luca Prasse':3304298,'Oliver Issa Schmitt':477511,'Jannic Ehlers':825944,'Niclas Nadj':411275,'Kasra Ghawilu':711141,'Mika Herrmann':3307987,'Cyrill Akono':460402,'Richard Meier':1022173,'Simon Engelmann':201614}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Jerik von der Felsen':976212,'Julian Bock':3180609,'Dominik Draband':456399,'Antonijo Janjić':3430073,'Alexander Groiß':338193,'Maximilian Herwerth':3253923,'Dominik Nothnagel':204499,'Peter Reinhardt':3180675,'Tim Köhler':752233,'Michael Glück':3166370,'Tom Santos':3437880,'Collin Schramm':3592914,'Julian Lüers':3307019,'Veit Stange':976002,'David Preu':922678,'Joyeux Masanka Bungi':3199735,'Lauri Penna':3307023,'Nicolás Sessa':303342,'Neno Zezelj':3504583,'Jordan Majchrzak':3142615,'Oliver Rölke':3176156,'Enis Redzepi':3592912,'Tim van der Leij':3344678,'Kian Speidel':3598363,'Eliot Bujupi':3176533,'Jonathan Akaegbobi':3176214}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Maximilian Reule':204466,'Tim Schulz':3307026,'Robin Dittrich':3437884,'Elias Rahn':755090,'Leon Maier':692285,'Antonis Aidonis':627402,'Arbnor Nuraj':898351,'Marius Uhl':3427560,'Brooklyn Schwarz':3332338,'Luca Molinari':3427488,'Mark Gashi':3306977,'Benedikt Landwehr':627404,'Volkan Celiktas':456388,'Christian Mistl':621998,'Niklas Pollex':691796,'Lorenzo Ender':427511,'Marius Kunde':691829,'Franz Xaver Bleicher':3272519,'Noah Santiago Lorch':3834207,'Tim Rossmann':897554,'Loris Maier':692005,'Fabian Eisele':230394,'Marlon Faß':3307994,'Leon Schürer':3491198,'Nikos Zografakis':338160,'Lukas Stoppel':3436873,'Deli Hajdini':3589326}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Jakob Golz':448102,'Felix Wienand':622692,'Eric Verstappen':249456,'Romero Gerres':3242325,'Jannik Hofmann':754940,'Michael Kostka':855560,'Ben Hüning':1009521,'José-Enrique Ríos Alonso':369272,'James Gnagnon':3593489,'Max Geschwill':627407,'Franci Bouebari':3213337,'Ekin Celebi':477537,'Janne Sietan':754632,'Luca Bazzoli':754913,'Marvin Obuz':622236,'Lucas Brumme':630062,'Aiman Dardari':3176356,'Nick Bätzner':477421,'Tony Menzel':989309,'Noah Pesch':897764,'Semir Telalović':3166345,'Marek Janssen':804162,'Dickson Abiama':840106,'Jaka Čuber Potočnik':3161573}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Morten Behrens':448100,'Matthis Harsman':666789,'Paul Ervens':3250918,'Louis Philip Kolbe':892264,'Torge Paetow':290152,'Lucas Zeller':477464,'Antonio Tikvić':3206326,'Niko Koulis':700759,'Simon Scherder':204540,'Niklas Varelmann':3255892,'Tim-Justin Dietrich':621877,'Luca Bolay':754927,'Rico Preißinger':294345,'Philipp Maier':340980,'Jakob Korte':897896,'Wesley Adeh':3248140,'Samuel Althaus':3307840,'Marvin Schulz':232021,'Ryan Johansson':346832,'Charalambos Makridis':340375,'Romario Rösch':336760,'Mikail Demirhan':3587491,'Mika Stuhlmacher':975596,'Leon Tasov':976410,'Felix Higl':304932,'Montell Ndikom':3176271,'Oscar Vilhelmsson':886535,'Malik Batmaz':358573}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Maximilian Braune':856508,'Toni Stahl':427504,'Laurenz Jennissen':3437960,'Joshua Bitter':335084,'Niklas Jessen':886047,'Tobias Fleckstein':369122,'Martin Ens':754994,'Ben Schlicke':3176366,'Can Coşkun':454883,'Rasim Bulić':867584,'Conor Noß':622487,'Jan-Simon Symalla':1013729,'Ramien Safi':841543,'Aljaž Casar':867639,'Dominik Kother':477684,'Patrick Sussek':373381,'Frederik Christensen':709611,'Christian Viet':376757,'Jakob Bookjans':857909,'Lex-Tyger Lobinger':700577,'Peter Remmert':1022559,'Florian Krüger':336851,'Dennis Borkowski':427507,'Jannik Zahmel':976834}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Hannes Hermann':3178583,'Max Schmitt':3209355,'Alexander Weidinger':368086,'Nicolas-Bernd Oliveira':928126,'Leopold Wurm':3308023,'Felix Strauss':430820,'Malte Karbstein':314426,'Erik Majetschak':368987,'Leo Mätzler':826087,'Ben Kieffer':3444725,'Lukas Mühl':326171,'Oscar Schönfelder':627342,'Adrian Fein':332574,'Sascha Hingerl':690001,'Sebastian Stolze':200421,'Davis Asante':825849,'Benedikt Saller':179386,'Benedikt Bauer':897618,'Nassim Boujellab':340997,'David Philipp':431088,'Jakob Seibold':3308028,'Arian Dizdarevic':3593065,'Zétény Jánó':973459,'Lucas Hermes':423316,'John Posselt':989516,'Florian Dietz':314837,'Marco Wörner':989336}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'David Klein':3400340,'Markus Ponath':754630,'Rafael Eßlinger':3253940,'Yannick Deichmann':200477,'Noel Lakatos':3248714,'Georgios Antzoulas':587371,'Jonas Scholz':477931,'Tomislav Bagarić':3707031,'Simon Lorenz':719327,'Jasper Maljojoki':668893,'Keanan Bennetts':341518,'Linus Rosenlöcher':477546,'Lukas Fröde':199806,'Vinko Šapina':290189,'Elias Decker':3219430,'Joseph Ganda':877189,'Max Plath':3190481,'Nishan Velupillay':908043,'Benjamin Kanuric':873143,'Emre Gül':3176599,'Fredrik Carlsen':710076,'Davide-Danilo Sekulović':3180606,'Jong-min Seo':755125,'Dennis Kaygin':976151,'Sejdo Durakov':3408633,'Lars Lokotsch':391036,'Obed Ugondu':3311363,'Ognjen Drakulić':3176603,'Mason Toye':644335}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Nico Biedermann':3430143,'Tim Philipp':3178567,'Tobias Trautner':244608,'Nils Schlosser':3461149,'Timo Hildmann':976096,'Lars Strobl':3176336,'Valentin Lässig':886045,'Santino Pistrol':3630325,'Maximilian Theuer':3591752,'Tim Müller':1022168,'Matthew Moore':3381413,'Klaus Gjasula':210756,'Diren Dağdeviren':3176337,'Kryštof Čížek':3269290,'Oskar Hencke':3589021,'Florian Micheler':973587,'Yasin Zor':3176458,'Tiago Poller':3272521,'Blessing Makanda':3178568,'Lion Wagenbach':3437861,'Nader Jindaoui':390730,'Jakov Dedić':3539444,'Jykese Fields':3374473,'Konstantin Aleksa':3180022,'Alex Honajzer':3162836,'Zain Biazid':3503603}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Matteo Bignetti':886622,'Benjamin Lade':3214212,'Philip Fahrner':897542,'Siemen Voet':776321,'Mladen Cvjetinović':976810,'Nikola Aracic':868753,'Niko Bretschneider':690285,'Patrick Sontheimer':305358,'Zac Shuaib':3438917,'Nils Krämer':3248373,'Maurice Multhaup':194427,'Daniel Gleiber':3176358,'Abdoulaye Kamara':879238,'Sebastian Vasiliadis':308013,'Gökdeniz Gürpüz':3186670,'Kelsey Owusu':925328,'Florian Pick':194413,'Abdenego Nankishi':693510,'Lee Seung Joon':3405593,'Anton Bäuerle':3176482,'Kaan Caliskaner':630623,'Alexander Staff':3307061,'Kai Brünker':296066,'Dominic Baumann':227510,'Patrick Schmidt':93553}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 Object.entries({'Stefan Bajic':468513,'Manuel Riemann':25284,'Tom Hendriks':916709,'Kacper Kościerski':3325766,'Nathan Bitumazala':776381,'Joel da Silva Kiala':976003,'Gideon Jung':232035,'Petros Bagalianis':796000,'Mika Hanraths':320353,'Dylan Leonard':3401994,'Marius Wegmann':391695,'Matti Wagner':1013796,'Danilo Wiebe':201679,'Meiko Wäschenbach':897774,'Mika Pobrić':3590210,'Lukas Scepanik':201675,'Jonas Oehmichen':856622,'Mehdi Loune':886046,'Georg Ermolaev':3190680,'Mika Schroers':622489,'Louis Köster':825918,'Daniel Starodid':3180518,'Fabio Torsiello':3176346,'Ken Izekor':3190831,'Valmir Sulejmani':202323}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 Object.entries({'Louis Lord':666111,'Lasse Rieß':477696,'Milán Czakó':3193618,'Matthias Zimmermann':21412,'Steven van der Sloot':796423,'Kaden Amaniampong':897777,'Tim Oberdorf':469491,'Elias Egouli':3291259,'Dominique Heintz':136374,'Felix Meiser':3351659,'Lukas Bornschein':3176308,'Noah Egouli':3589428,'Sascha Risch':432508,'Andreas Müller':700552,'Jorrit Hendrix':189309,'Marcel Benger':290095,'Lukas Eixler':3372588,'Filimon Gerezgiher':700321,'Jomaine Consbruch':622220,'Elias Arden':3593559,'Miguel Gonçalves':3212944,'Yassine Bouchama':485944,'Kilian Sauck':3308428,'Hamza Anhari':1009600,'Anas Slimani':3250623,'Fabian Schleusener':295959,'Eric Hottmann':374580,'Jordi Paulina':3304273}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 Object.entries({'Lennart Winkler':879621,'Ben Zich':897783,'Lennart Stollenwerk':3263478,'Kevin Brechmann':3239894,'David Savic':976237,'Neo Telle':1013790,'David Haider Al-Azzawe':290266,'Maximilian Fischer':755423,'Seymour Fünger':622215,'Kevin Krumme':976382,'Robin Afamefuna':291859,'Georg Strauch':622234,'Tom Geerkens':754943,'Luca Majetic':3320348,'Jasper Löffelsend':424599,'Vleron Statovci':897797,'Suheyel Najar':691873,'Adrian Stanilewicz':424733,'Jonas Michelbrink':621664,'Bennit Bröger':3217973,'Nico Thier':339422,'Cedric Harenbrock':309530,'Enzo Wirtz':290269,'Romeo Aigbekaen':976255,'Hamadi Al Ghaddioui':199959,'Jannik Mause':303818,'Timo Bornemann':477946}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 Object.entries({'Luca Unbehaun':433675,'Jaaso Jantunen':904122,'Yannic Stein':897354,'Philipp Klewin':200398,'Erik Maurer':3176274,'Florian Carstens':341933,'Niklas Kölle':358739,'Franz Pfanne':244152,'Ahmet Gürleyen':363404,'Lukas Wallner':836192,'Ouassim Karada':3176357,'Miłosz Brzozowski':908399,'Leon Reichardt':911952,'Marco Schuster':232030,'David Kopacz':320901,'Kenan Fatkic':391833,'Jonas Dirkner':754554,'Benno Dietze':990058,'Paul Stock':1023740,'Robin Falk':3250708,'Felikks Sprogis':3592113,'Emil Holten':334758,'Andreas Voglsammer':143408,'Maximilian Krauß':327989,'Leon Dajaku':531462,'Peter Kiedl':976432,'Yannick Michaelis':3217968,'David Hummel':696791,'Bernie Lennemann':3428615,'Fiete Bock':3411748}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 Object.entries({'Tom Opitz':3287401,'Norman Quindt':454867,'Omer Hanin':377138,'Fynn Wolter':3687423,'Leon Sommer-Deiss':477990,'Semi Belkahia':446401,'Eric Voufack':755015,'Max Lamby':897761,'Dennis Duah':897228,'Yannick Mausehund':3202674,'Donald Nduka':989802,'Timo Friedrich':393545,'Irichad Behrens':975854,'Johann Berger':389920,'Jesse Tugbenyo':754990,'Niklas Tauer':477961,'Robin Velasco':754530,'Eryk Grzywacz':3217974,'Leonardo García Posadas':975895,'Yusuf Wardak':3573200,'Jannik Oltrogge':337701,'Marc Richter':755932,'Temilola Awoyale':3586911,'Anton Hanke':3429573,'Joel Darko Ampem':3793561,'Kwasi Okyere Wriedt':334745,'Kevin Schumacher':337708,'Finn Kiszka':3136208,'Lorenzo Paldino':740978,'Robin Müller':869248,'Alexander Guiddir':3589357,'Leon Svitek':3250312,'Torben Engelking':337706}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 /* CP Cacereño: avatares de su plantilla real */
 Object.entries({'D. Nieves':246309,'G. García':999302,'Iván Martínez':1018096,'José Alonso':245262,'Manolo Molina':862680,'A. Expósito':426997,'Víctor':1018690,'Sergi López':1023377,'M. Sevila':1001504,'Pablo Barea':3197139,'Deco':199148,'Álvaro Gete':988349,'Toño Calvo':338153,'Nico Conesa':948602,'Luis Sánchez':950482,'Juan Artola':561042,'U. Rodríguez':3312340,'A. Marchena':950556,'I. Tellechea':376217,'Iván Fernández':857362,'Álex Monerris':890185,'Runy':931499,'Osama':875195,'Sergio Navarro':948581,'José González':3328786}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Diogo José de Nazaré e Jesus Ferreira':3222157,'José Pedro Formoso Neto':3339111,'João Carvalho da Fonseca':940634,'Duarte Maria Loureiro Leal Soares':3223356,'Kevin Philip dos Anjos Pinto':3261467,'João Maria Ornelas Vasconcelos Capucho':3222144,'Gabriel Dos Santos Queiroz':3553162,'Gonçalo Carvalho Moreira':940712,'Miguel Lebre Monteiro Figueiredo':3339099,'Rafael José Mestre Quintas':3339102,'Nuno Miguel Madeira Fernandes Félix':937614,'Tiago Dias Freitas':940656,'Francisco Carvalho Souza E Silva':3222142,'Olívio Leonardo Veloso Das Neves Tomé':940660,'Francisco Bernardes Freitas Neto':3261454}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Daniel Rebollo Franco':630251,'Raul Jonas Steffens':328175,'Estevão Gusmão Rocha Marques':3226488,'Mateus Cardoso Francisco':626859,'Leonardo Daniel Rivas Conge':868725,'Carlos Israel Latina da Silva':312561,'Diogo Alexandre Brazido Teles Furtado Silva':3175735,'André Martins De Sousa':361324,'Bernardo Conde':3363974,'Davi Duarte Schuindt':982710,'Roni Medeiros De Moura':833441,'Fernando Miguel Pereira Almeida':887204,'Andrey Felisberto Dos Santos':3141948,'Hiago Souza Lima Santos':3155911,'Pedro Afonso Macedo Pimentel':3602311,'Deandre Christopher Kerr':892627,'Guilherme Neiva Silva':3317920,'Rodrigo Cunha Pereira De Pinho':248988,'Abdoulaye Keita Keita':923450,'Régis N\'do':878509,'Talles Wander Santos Ribeiro':982686,'Ruan Lucas de Assis':3227099,'Rafael Genuino Lobato':3301944,'Jorge Monteiro Meireles':901521,'Luis Gustavo Sobral Alves Pereira':3403591,'Mateus Francisco Becalli Da Cruz':3200110}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Diogo Guilhermino Babo Figueiredo':924646,'Diogo Dias Fernandes':892712,'Rafael Diogo Teixeira Flores':1029301,'Rúben Ferreira Pinto':3532082,'Guilherme António de Souza':198745,'João Filipe da Costa Teixeira':864075,'João Ricardo Meireles Machado':981675,'Feliciano Mendes':3518829,'Gonçalo Ferreira Da Cunha':3174022,'Ian Custódio Dos Anjos':906815,'Diogo Miguel Pereira Costa':3438808,'Rodrigo Beirão Da Veiga':937819,'Rúben Filipe Ramos Silva':460246,'Oluwatimilehin Lawrence Adeniyi':893253,'José António Dória dos Santos Campelo':628823,'Rúben Manuel Pereira Alves':245693,'Abdoul Gaimal Faissal Zangré':753468,'Fernando de Lacerda Gomes':3348795,'Rodrigo Barata Gorgueira Alves Guedes':980578,'Luís Miguel Vieira Babo Machado':242231,'Leandro Nogueira Ferreira':924644,'Edgar Melvin Andrade Costa':3175976,'Rudi Daniel Silva Almeida':891610,'Simão Silva':3203566,'Kenneth Tig-Ishor Ikugar':3144455,'Arome Emmanuel Idache':3306617,'Francisco Cardoso Oliveira':3195146}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.entries({'Nuno Alberto Macedo Pereira':726540,'Hélder Filipe Oliveira Lopes':148823,'Pontus Andy Texel':885772,'Edson Rodrigues Farias':149477,'Ricardo Jorge Martins Teixeira':922333,'Xavier Grande Sánchez':1000518,'Carlos Eduardo Ferreira Batista':148717,'Gabriel Miranda Rodrigues':1030423,'Kauan Conceição Ferreira Da Silva':917030,'Guilherme Willian da Silva':1008169,'Leandro Miguel Pereira da Silva':185522,'Marcos Paulo Gelmini Gomes':143203,'João Ribeiro Oliveira':193723,'Léverton Pierre':357205,'Jean Carlos Sinisterra Angulo':837050,'Hugo Miguel Zagal Nunes':1009868,'Tiago Filipe Carvalho Soares':3618016,'Kévin Lucien Zohi':393811,'Daniel João Santos Candeias':22294,'Ilies Hassaine Daouadji':950316,'Afonso de Oliveira Rodrigues':1003517,'Alioune Badara Mané':3401455,'António Manuel Pereira Xavier':148351,'Rui Pedro Ribeiro Fernandes Duarte Gomes':343969,'Nuno Miguel Silva Barbosa':890146,'Amadou':3227522,'Martim Miguel Carneiro Tavares':937814}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 /* At. Sanluqueño: avatares de su plantilla real */
 Object.entries({'Rubén Gálvez':82285,'F. Valencia':3206729,'Iván Serrano':948608,'Raúl Sola':825408,'M. Otero':881386,'P. Morillo':869840,'S. Montes':340633,'Juan Durán':834694,'Tomás Bourdal':759481,'Marco Álvarez':1024903,'G. Reyes':3506810,'Pepe Mena':301780,'F. Guedes':901535,'Dani Clavijo':985019,'Ismael Salguero':950318,'M. Aceituno':3155541,'A. Rodriguez':3263234,'Cheli':3457338,'Asier Benito':199422,'Ritoré':931869,'Isma':878774,'Adrià Mercadal':875242,'P. Gilabert':3570107,'Luismi':3520482}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
@@ -6539,7 +6552,6 @@ const REAL_ATTR={
  'Tiago Gouveia':{RIT:82,TIR:65,PAS:64,REG:74,DEF:41,FÍS:58},
  'João Veloso':{RIT:62,TIR:61,PAS:62,REG:66,DEF:56,FÍS:67}
 };
-
 Object.assign(REAL_ATTR,{"T. Wójtowicz": {"RIT": 70, "TIR": 56, "PAS": 63, "REG": 66, "DEF": 59, "FÍS": 63}, "K. Lopata": {"RIT": 56, "TIR": 31, "PAS": 42, "REG": 43, "DEF": 50, "FÍS": 60}, "R. Kapić": {"RIT": 64, "TIR": 61, "PAS": 69, "REG": 68, "DEF": 59, "FÍS": 67}, "T. Neugebauer": {"RIT": 66, "TIR": 60, "PAS": 64, "REG": 65, "DEF": 63, "FÍS": 67}, "B. Szczepankiewicz": {"RIT": 64, "TIR": 40, "PAS": 46, "REG": 57, "DEF": 52, "FÍS": 56}, "Vladislav Blănuță": {"RIT": 70, "TIR": 52, "PAS": 46, "REG": 66, "DEF": 33, "FÍS": 73}, "M. Głogowski": {"RIT": 66, "TIR": 48, "PAS": 50, "REG": 61, "DEF": 32, "FÍS": 62}});/* Real Madrid (plantilla real con todos sus atributos) */
 Object.assign(REAL_ATTR,{'Eduardo Camavinga':{RIT:80,TIR:67,PAS:76,REG:81,DEF:77,FÍS:81},
  'Jude Bellingham':{RIT:80,TIR:84,PAS:80,REG:88,DEF:80,FÍS:86},
@@ -6706,7 +6718,6 @@ function dfnScore(p){if(p.pos==='GK')return gkScore(p);const a=attrsOf(p);return
 /* quién remata: manda el Tiro; quién asiste: manda el Pase */
 function shotScore(p){if(p.pos==='GK')return p.ovr;const a=attrsOf(p);return atv(a,'TIR',p)*.5+atv(a,'REG',p)*.15+atv(a,'RIT',p)*.15+p.ovr*.2}
 function passScore(p){if(p.pos==='GK')return p.ovr;const a=attrsOf(p);return atv(a,'PAS',p)*.5+atv(a,'REG',p)*.2+atv(a,'RIT',p)*.1+p.ovr*.2}
-
 Object.assign(NATNAME,{NL:'Países Bajos',BE:'Bélgica',HR:'Croacia',UY:'Uruguay',CO:'Colombia',EC:'Ecuador',MA:'Marruecos',NG:'Nigeria',SN:'Senegal',CI:'Costa de Marfil',GH:'Ghana',CM:'Camerún',DZ:'Argelia',EG:'Egipto',EE:'Estonia',BG:'Bulgaria',JP:'Japón',KR:'Corea del Sur',US:'Estados Unidos',CA:'Canadá',DK:'Dinamarca',NO:'Noruega',SE:'Suecia',FI:'Finlandia',PL:'Polonia',CZ:'Chequia',SK:'Eslovaquia',AT:'Austria',CH:'Suiza',RS:'Serbia',GE:'Georgia',UA:'Ucrania',TR:'Turquía',SC:'Escocia',WA:'Gales',NIR:'Irlanda del Norte',HU:'Hungría',RO:'Rumanía',BA:'Bosnia y Herzegovina',XK:'Kosovo',SI:'Eslovenia',ML:'Malí',GN:'Guinea',BF:'Burkina Faso',CV:'Cabo Verde',IR:'Irán',AM:'Armenia',AL:'Albania',ME:'Montenegro',VE:'Venezuela',MX:'México',UZ:'Uzbekistán',RU:'Rusia',IS:'Islandia',AE:'Emiratos Árabes Unidos',KE:'Kenia',DO:'República Dominicana',CL:'Chile',IL:'Israel',CD:'RD Congo',TG:'Togo',BO:'Bolivia',AU:'Australia',IE:'República de Irlanda',AO:'Angola',ID:'Indonesia',GA:'Gabón',GR:'Grecia',MK:'Macedonia del Norte',MQ:'Martinica',CW:'Curazao',KM:'Comoras',AD:'Andorra',GQ:'Guinea Ecuatorial',PH:'Filipinas',SA:'Arabia Saudí',GM:'Gambia',TN:'Túnez',ZM:'Zambia',QA:'Catar',TH:'Tailandia',JM:'Jamaica',CF:'Rep. Centroafricana',CR:'Costa Rica',GW:'Guinea-Bissau',MZ:'Mozambique',PR:'Puerto Rico',HN:'Honduras',MR:'Mauritania',LB:'Líbano'});
 const isoFlag=c=>String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);
 Object.assign(FLAG,{SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',WA:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',NIR:'\u{1F1EC}\u{1F1E7}'});
@@ -6746,7 +6757,6 @@ const modeChip=id=>curMode()==='real'?`<span class="cc-div src">${REAL_DB[id]?'P
 let state=null;
 const ui={gmode:'fict',modeChosen:false,screen:'title',mode:'new',slot:1,level:0,club:null,seed:1,preview:{},zoom:1,tab:'home',sel:null,mkt:null,rv:null,origins:['50% 50%','50% 50%'],cf:null,mapBuilt:false,country:null,cvId:null,cvTab:'squad',cvSub:'first',clubTab:'info',vmode:'map',trophyPending:null,trophyCb:null,ssTab:'general',mgrTab:'general',museum:{co:'ALL',cont:'ALL'},sqSort:null};
 const me=()=>state.teams[state.club];
-
 /* ===================== jugadores ===================== */
 const POSLBL={GK:'POR',DF:'DEF',MD:'MED',FW:'DEL'};
 const POSORD={GK:0,DF:1,MD:2,FW:3};
@@ -7005,7 +7015,6 @@ function objective(id){
   if(c.div>=7&&c.div<=11)return rank<=1?'Ascender a Primera Federación':rank<=5?'Clasificar al playoff de ascenso':'Permanencia';
   return rank<=2?'Ganar la Liga':rank<=Math.ceil(n*.35)?'Clasificar para competición europea':rank<=Math.ceil(n*.7)?'Permanencia':'Evitar el descenso';
 }
-
 /* ===================== táctica ===================== */
 const FORMS={
  '4-4-2':[['GK',50,90,'POR'],['DF',15,71,'LI'],['DF',38,75,'DFC'],['DF',62,75,'DFC'],['DF',85,71,'LD'],['MD',15,48,'MI'],['MD',38,52,'MC'],['MD',62,52,'MC'],['MD',85,48,'MD'],['FW',36,22,'DC'],['FW',64,22,'DC']],
@@ -7137,77 +7146,42 @@ Object.assign(REAL_FOOT,{"Giannis Anestis":"D","Ionuț Gurău":"D","David Dinca"
 Object.assign(REAL_FOOT,{"Cătălin Căbuz":"D","Igor Nikic":"D","Cătălin Straton":"D","Florin Borța":"D","Dorinel Oancea":"D","Costinel Tofan":"D","Mario Tudose":"D","Guilherme Garutti":"D","Leard Sadriu":"D","Tiago Gonçalves":"I","Oluwatobiloba Alagbe":"D","Yanis Pîrvu":"I","Vadim Rață":"D","Ionuț Rădescu":"D","Xian Emmers":"D","Rober Sierra":"D","Patrick Dulcea":"D","Silviu Balaure":"I","Gabriel Gheorghe":"D","Michael Idowu":"D","Daniel Sandu":"D","Ricardo Matos":"D","Taylor Luvambo":"D","Robert Moldoveanu":"D","Gabriel Charpentier":"D","Claudiu Micovschi":"I"});
 Object.assign(REAL_FOOT,{"Ștefan Târnovanu":'D',"Matei Popa":'D',"Mihai Udrea":'D',"Ronny Labonne":'D',"Valentin Crețu":'D',"Luca Stancu":'D',"Joyskim Dawa":'D',"André Duarte":'D',"Dylan Batubinsika":'D',"Mihai Popescu":'D',"Andrei Dăncuș":'D',"Ricardo Pădurariu":'I',"Risto Radunović":'I',"Ofri Arad":'D',"Eddy Gnahoré":'D',"Karlo Muhar":'D',"João Paulo":'D',"Juri Cisotti":'D',"Aymen Boutoutaou":'I',"David Miculescu":'I',"David Popa":'I',"Paul Arnold Garita":'D',"Alexandru Stoian":'D',"Denis Drăguș":'D',"Meriton Korenica":'I',"Dennis Politic":'D'});
 Object.assign(REAL_FOOT,{'Johann Hipper':'D','Marko Rajkovačić':'D','Philipp Ziegler':'D','Liam Omore':'D','Luke Hemmerich':'D','Nathan De Medina':'D','Ebrahim Farahnak':'D','Leo Eberle':'D','Louis Breunig':'I','Burak Karakaya':'I','David Abrangao':'I','Philipp Ochs':'I','Daniel Hägele':'D','Namrud Embaye':'D','Tim Kraus':'D','Xaver Kiefersauer':'D','David Kinsombi':'D','Dominik Meisel':'D','Batuhan Gögce':'D','Dorian Deppner':'D','Noah Mikrut':'D','Eliot Muteba':'D','Dion Berisha':'I','Ivan Franjić':'D','Eroll Zejnullahu':'D','Tarsis Bonga':'D','Franck Evina':'D','Thomas Kastanaras':'D','Jermain Nischalke':'D','Tiago De Moura':'D','Kristijan Taseski':'D','N. El Ouarti':'D'});
-
 Object.assign(REAL_FOOT,{'Florian Stritzel':'D','Noah Brdar':'D','Finn Ludwig':'D','Ben Nink':'D','Jordy Gillekens':'D','Justin Janitzek':'I','Michael Schultz':'D','Florian Hübner':'D','Tim Neubert':'D','Niklas May':'I','Gino Fechner':'D','David Suárez':'D','Roberto Massimo':'D','Raul Paula':'D','Robin Kalem':'I','Philipp Hercher':'D','Max Brandt':'D','Tarik Gözüsirin':'D','Ayoub Chaikhoun':'I','Fabian Greilinger':'I','Lukas Schleimer':'D','Donny Bogićević':'D','Ibrahim Ati Allah':'D','Simon Stehle':'D','Moritz Flotho':'D','Marcus Müller':'D','Sinan Karweina':'D','Jan Becker':'D'});
-
 Object.assign(REAL_FOOT,{'Thijmen Nijhuis':'D','Jan Marco Niemann':'D','Lucien Hawryluk':'D','Jid Okeke':'D','Yannis Hör':'D','Lukas Klünter':'D','Claudio Kammerknecht':'D','Oluwaseun Ogbemudia':'I','Moritz Malik Polte':'D','Tim Sechelmann':'I','Owono-Darnell Keumo':'I','Joey Müller':'I','Julian Rieckmann':'D','Maximilian Thalhammer':'D','Denis Kryeziu':'D','Vincent Thill':'I','Lovis Bierschenk':'D','Kushtrim Asallari':'I','Arlind Rexhepi':'I','Diego Michel':'D','Djayson Mendes':'I','Leroy-Jacques Mickels':'D','Nolan Muteba N\'Tumba':'D','Adama Diakhaby':'I','Jascha Brandt':'D','Noah Joel Sarenren Bazee':'D','Julian Ulbricht':'D','Gonçalo Gregório':'D','Terrence Boyd':'D','Masca':'D','Kian Ramadani':'D'});
-
 Object.assign(REAL_FOOT,{'Arne Schulz':'D','David Wyciok':'D','Oskar Hill':'D','Pascal Fallmann':'D','Felix Albers':'D','Meiko Sponsel':'D','Verthomy Schilo Boboy':'D','Christoph Greger':'I','Tim Kloss':'D','Tobias Eisenhuth':'D','Niklas Swider':'D','Niklas Jahn':'D','Jason Amann':'D','Yannick Tonye':'D','Marco Pledl':'D','Taylan Duman':'D','Lucas Wolf':'D','Kilian Jakob':'I','Alexander Prokopenko':'D','Eric Gueye':'I','David Otto':'D','Diego Perri':'I','Niklas Castelle':'D','Noah Maboulou':'D','Jakob Sachse':'D'});
-
 Object.assign(REAL_FOOT,{'Timo Schlieck':'D','Fabian Pekruhl':'D','Julian Fuest':'D','Janne Berner':'D','Felix Vogler':'D','Paul Lehmann':'D','Nick Seidel':'D','Noah König':'D','Raphael Araoye':'I','Tim Hoffmann':'D','Niko Kijewski':'I','Dennis Waidner':'D','Joshua Eze':'D','Mika Clausen':'D','Moritz Kaube':'D','Emmanuel Bamba':'D','Almin Mešanović':'D','Yari Otto':'D','Fabian Wessig':'D','Kasim Rabihic':'D','Amin Farouk':'I','Bilal Yalçınkaya':'D','Antonio Foti':'D','André Leipold':'I','Tim Heike':'D','Alem Japaur':'I','Tanay Cosar':'D','Dominik Martinovic':'D'});
-
 Object.assign(REAL_FOOT,{'Julius Pünt':'D','Noah Oberbeck':'D','Timo Schmitz':'D','Dominique Domröse':'D','Luis Sprekelmeyer':'D','Stefan Rankić':'D','Nikell Touglo':'D','Jonas Fedl':'D','Jonas Goldenstein':'D','Tobias Mißner':'I','Florian Bähr':'I','Jona Borsum':'D','Erik Zenga':'D','Henrik Wittrock':'D','Thorben Deters':'D','Ersin Zehir':'D','Niclas Wessels':'D','Luca Prasse':'D','Oliver Issa Schmitt':'I','Jannic Ehlers':'D','Niclas Nadj':'I','Kasra Ghawilu':'D','Mika Herrmann':'D','Cyrill Akono':'I','Richard Meier':'D','Simon Engelmann':'D'});
-
 Object.assign(REAL_FOOT,{'Jerik von der Felsen':'D','Julian Bock':'D','Dominik Draband':'D','Antonijo Janjić':'D','Alexander Groiß':'D','Maximilian Herwerth':'I','Dominik Nothnagel':'I','Peter Reinhardt':'D','Tim Köhler':'D','Michael Glück':'D','Tom Santos':'D','Collin Schramm':'I','Julian Lüers':'D','Veit Stange':'D','David Preu':'D','Joyeux Masanka Bungi':'I','Lauri Penna':'D','Nicolás Sessa':'I','Neno Zezelj':'I','Jordan Majchrzak':'D','Oliver Rölke':'D','Enis Redzepi':'D','Tim van der Leij':'D','Kian Speidel':'D','Eliot Bujupi':'D','Jonathan Akaegbobi':'D','Matheos Tsigkas':'D'});
-
 Object.assign(REAL_FOOT,{'Maximilian Reule':'D','Tim Schulz':'D','Robin Dittrich':'D','Elias Rahn':'D','Leon Maier':'D','Antonis Aidonis':'D','Arbnor Nuraj':'D','Marius Uhl':'D','Brooklyn Schwarz':'D','Luca Molinari':'I','Mark Gashi':'I','Benedikt Landwehr':'D','Volkan Celiktas':'D','Christian Mistl':'D','Niklas Pollex':'D','Lorenzo Ender':'D','Marius Kunde':'D','Franz Xaver Bleicher':'D','Noah Santiago Lorch':'D','Tim Rossmann':'I','Loris Maier':'D','Fabian Eisele':'D','Marlon Faß':'D','Leon Schürer':'D','Nikos Zografakis':'D','Lukas Stoppel':'D','Deli Hajdini':'D'});
-
 Object.assign(REAL_FOOT,{'Jakob Golz':'D','Felix Wienand':'D','Eric Verstappen':'D','Romero Gerres':'D','Jannik Hofmann':'D','Michael Kostka':'D','Ben Hüning':'D','José-Enrique Ríos Alonso':'D','James Gnagnon':'D','Max Geschwill':'I','Franci Bouebari':'I','Ekin Celebi':'I','Janne Sietan':'D','Ruben Reisig':'D','Luca Bazzoli':'D','Marvin Obuz':'D','Lucas Brumme':'I','Aiman Dardari':'D','Nick Bätzner':'D','Tony Menzel':'D','Noah Pesch':'I','Semir Telalović':'D','Marek Janssen':'D','Dickson Abiama':'D','Jaka Čuber Potočnik':'D','Gianluca':'D'});
-
 Object.assign(REAL_FOOT,{'Morten Behrens':'D','Matthis Harsman':'D','Paul Ervens':'D','Louis Philip Kolbe':'D','Torge Paetow':'D','Lucas Zeller':'D','Antonio Tikvić':'I','Niko Koulis':'D','Simon Scherder':'D','Niklas Varelmann':'I','Tim-Justin Dietrich':'I','Luca Bolay':'I','Rico Preißinger':'I','Philipp Maier':'D','Jakob Korte':'D','Wesley Adeh':'D','Samuel Althaus':'D','Marvin Schulz':'D','Ryan Johansson':'D','Charalambos Makridis':'D','Romario Rösch':'D','Joshua Mees':'D','Mikail Demirhan':'D','Mika Stuhlmacher':'D','Leon Tasov':'D','Felix Higl':'D','Montell Ndikom':'D','Marvin Schulz':'D','Oscar Vilhelmsson':'I','Malik Batmaz':'D','J. Schenk':'D'});
-
 Object.assign(REAL_FOOT,{'Maximilian Braune':'D','Toni Stahl':'D','Laurenz Jennissen':'D','Joshua Bitter':'D','Niklas Jessen':'D','Tobias Fleckstein':'D','Martin Ens':'D','Ben Schlicke':'D','Can Coşkun':'I','Rasim Bulić':'D','Conor Noß':'D','Jan-Simon Symalla':'D','Ramien Safi':'D','Aljaž Casar':'D','Max Besuschkow':'D','Dominik Kother':'D','Patrick Sussek':'D','Frederik Christensen':'I','Christian Viet':'D','Jakob Bookjans':'I','Lex-Tyger Lobinger':'D','Peter Remmert':'D','Florian Krüger':'D','Dennis Borkowski':'D','Jannik Zahmel':'D'});
-
 Object.assign(REAL_FOOT,{'Hannes Hermann':'D','Max Schmitt':'D','Alexander Weidinger':'D','Nicolas-Bernd Oliveira':'D','Leopold Wurm':'D','Felix Strauss':'D','Malte Karbstein':'D','Erik Majetschak':'D','Leo Mätzler':'D','Robin Ziegele':'D','Ben Kieffer':'D','Lukas Mühl':'D','Oscar Schönfelder':'I','Adrian Fein':'D','Sascha Hingerl':'D','Sebastian Stolze':'D','Davis Asante':'D','Benedikt Saller':'D','Benedikt Bauer':'D','Nassim Boujellab':'D','David Philipp':'D','Jakob Seibold':'D','Arian Dizdarevic':'D','Zétény Jánó':'I','Lucas Hermes':'D','Patrick Hobsch':'D','John Posselt':'D','Florian Dietz':'D','Marco Wörner':'D'});
-
 Object.assign(REAL_FOOT,{'David Klein':'D','Markus Ponath':'D','Rafael Eßlinger':'D','Yannick Deichmann':'D','Noel Lakatos':'D','Georgios Antzoulas':'D','Jonas Scholz':'I','Tomislav Bagarić':'D','Simon Lorenz':'D','Jasper Maljojoki':'D','Keanan Bennetts':'I','Linus Rosenlöcher':'I','Lukas Fröde':'D','Vinko Šapina':'D','Elias Decker':'D','Joseph Ganda':'D','Max Plath':'D','Nishan Velupillay':'D','Benjamin Kanuric':'D','Emre Gül':'D','Fredrik Carlsen':'D','Davide-Danilo Sekulović':'D','Jong-min Seo':'D','Dennis Kaygin':'D','Sejdo Durakov':'D','Lars Lokotsch':'D','Obed Ugondu':'D','Ognjen Drakulić':'D','Mason Toye':'D'});
-
 Object.assign(REAL_FOOT,{'Nico Biedermann':'D','Tim Philipp':'D','Tobias Trautner':'D','Nils Schlosser':'D','Timo Hildmann':'D','Lars Strobl':'D','Maxime Ndong Penda':'D','Valentin Lässig':'D','Santino Pistrol':'I','Maximilian Theuer':'I','Tim Müller':'I','Finn Sherlock':'I','Matthew Moore':'D','Klaus Gjasula':'D','Diren Dağdeviren':'D','Kryštof Čížek':'D','Oskar Hencke':'D','Florian Micheler':'I','Yasin Zor':'D','Tiago Poller':'D','Blessing Makanda':'D','Lion Wagenbach':'D','Nader Jindaoui':'I','Jakov Dedić':'D','Jykese Fields':'D','Ben Opoku Labes':'D','Konstantin Aleksa':'D','Alex Honajzer':'D','Zain Biazid':'I','L. Krasniqi':'D','E. Chukwu':'D'});
-
 Object.assign(REAL_FOOT,{'Omer Hanin':'D','Tom Opitz':'D','Fynn Wolter':'D','Norman Quindt':'D','Jannis Krug':'D','Eric Voufack':'D','Leon Sommer-Deiss':'D','Timo Friedrich':'D','Dennis Duah':'D','Semi Belkahia':'D','Yannick Mausehund':'D','Donald Nduka':'I','Irichad Behrens':'D','Leonardo García Posadas':'I','Max Lamby':'I','Johann Berger':'D','Eryk Grzywacz':'D','Niklas Tauer':'D','Jannik Oltrogge':'D','Robin Velasco':'D','Jesse Tugbenyo':'D','Temilola Awoyale':'D','Anton Hanke':'D','Joel Darko Ampem':'D','Kevin Schumacher':'I','Alexander Guiddir':'D','Marc Richter':'D','Yusuf Wardak':'D','Kwasi Okyere Wriedt':'I','Lorenzo Paldino':'D','Finn Kiszka':'D','Robin Müller':'D','Leon Svitek':'D','Torben Engelking':'I'});
-
 Object.assign(REAL_FOOT,{'Luca Unbehaun':'D','Jaaso Jantunen':'D','Yannic Stein':'D','Philipp Klewin':'D','Erik Maurer':'D','Florian Bohnert':'D','Ouassim Karada':'D','Florian Carstens':'D','Lukas Wallner':'I','Ahmet Gürleyen':'D','Franz Pfanne':'D','Leon Reichardt':'I','Marco Schuster':'D','Robin Falk':'D','Maximilian Krauß':'D','Leon Dajaku':'D','Kenan Fatkic':'D','Jonas Dirkner':'D','Benno Dietze':'D','Niklas Kölle':'I','Miłosz Brzozowski':'D','David Kopacz':'D','Paul Stock':'D','Felikks Sprogis':'D','Yannick Michaelis':'D','Fiete Bock':'D','Andreas Voglsammer':'D','Peter Kiedl':'D','David Hummel':'D','Emil Holten':'D','Bernie Lennemann':'D','Dario Gebuhr':'D','Tim Krohn':'A'});
-
 Object.assign(REAL_FOOT,{'Lennart Winkler':'D','Ben Zich':'D','Lennart Stollenwerk':'D','Kevin Brechmann':'D','David Savic':'D','Neo Telle':'D','David Haider Al-Azzawe':'D','Maximilian Fischer':'D','Seymour Fünger':'D','Kevin Krumme':'D','Robin Afamefuna':'I','Georg Strauch':'D','Tom Geerkens':'D','Luca Majetic':'D','Jasper Löffelsend':'D','Vleron Statovci':'D','Florian Heister':'D','Suheyel Najar':'I','Adrian Stanilewicz':'I','Jonas Michelbrink':'D','Rafael García':'D','Bennit Bröger':'D','Nico Thier':'D','Cedric Harenbrock':'D','Enzo Wirtz':'D','Romeo Aigbekaen':'D','Hamadi Al Ghaddioui':'D','Jannik Mause':'D','Timo Bornemann':'D'});
-
 Object.assign(REAL_FOOT,{'Louis Lord':'D','Lasse Rieß':'D','Milán Czakó':'D','Matthias Zimmermann':'D','Steven van der Sloot':'D','Kaden Amaniampong':'D','Tim Oberdorf':'D','Elias Egouli':'D','Dominique Heintz':'I','Felix Meiser':'D','Lukas Bornschein':'D','Noah Egouli':'D','Erik Wekesser':'I','Sascha Risch':'I','Andreas Müller':'D','Jorrit Hendrix':'I','Marcel Benger':'D','Lukas Eixler':'D','Filimon Gerezgiher':'D','Jomaine Consbruch':'D','Elias Arden':'D','Miguel Gonçalves':'D','Yassine Bouchama':'D','Philipp Förster':'I','Kilian Sauck':'I','Hamza Anhari':'D','Anas Slimani':'I','Fabian Schleusener':'D','Eric Hottmann':'D','Jordi Paulina':'D'});
-
 Object.assign(REAL_FOOT,{'Stefan Bajic':'D','Manuel Riemann':'D','Tom Hendriks':'D','Kacper Kościerski':'D','Nathan Bitumazala':'D','Justin von der Hitz':'D','Joel da Silva Kiala':'D','Gideon Jung':'D','Petros Bagalianis':'D','Mika Hanraths':'D','Dylan Leonard':'D','Marius Wegmann':'D','Matti Wagner':'I','Danilo Wiebe':'D','Meiko Wäschenbach':'D','Mika Pobrić':'D','Lukas Scepanik':'I','Jonas Oehmichen':'D','Mehdi Loune':'D','Georg Ermolaev':'D','Mika Schroers':'I','Louis Köster':'D','Daniel Starodid':'D','Fabio Torsiello':'D','Ken Izekor':'D','Valmir Sulejmani':'D'});
-
 Object.assign(REAL_FOOT,{'Matteo Bignetti':'D','Kevin Broll':'D','Benjamin Lade':'D','Calogero Rizzuto':'D','Philip Fahrner':'D','Siemen Voet':'I','Mladen Cvjetinović':'D','Nikola Aracic':'D','Niko Bretschneider':'I','Patrick Sontheimer':'D','Zac Shuaib':'D','Nils Krämer':'D','Maurice Multhaup':'D','Daniel Gleiber':'D','Abdoulaye Kamara':'D','Sebastian Vasiliadis':'D','Gökdeniz Gürpüz':'D','Kelsey Owusu':'D','Florian Pick':'D','Abdenego Nankishi':'D','Lee Seung Joon':'D','Anton Bäuerle':'D','Christian Kühlwetter':'D','Kaan Caliskaner':'D','Alexander Staff':'D','Kai Brünker':'D','Dominic Baumann':'D','Patrick Schmidt':'D'});
-
 REAL_PHOTO['Paulo Victor']={ALNY:REAL_PHOTO['Paulo Victor'],QRO:'https://cdn.resfu.com/img_data/players/medium/911536.jpg?size=120x&lossy=1'};
-
 Object.assign(REAL_FOOT,{'Paulo Victor':'I'});
-
 Object.assign(REAL_FOOT,{'Marko Gudžulić':'D','João Nuno Figueiredo Valido':'D','Rodrigo Moura do Nascimento':'D','Bruno Miguel Ferreira Rodrigues':'D','Tiago Alexandre Almeida Simões':'I','Ricardo Miguel Martins Alves':'I','Aarón Romero Catalán':'I','Leandro Santos do Nascimento':'D','Francisco José Vilas Boas Pereira':'I','Ivo Saúl Vázquez Serrano':'I','Antony Eymar Herbert Forcheney':'D','João Sabino Mendes Neto Saraiva':'D','Gilberto García Roa':'D','João Rafael de Brito Teixeira':'D','Pedro Henrique Rocha Pelágio':'D','Mohamed Cherif Al-Hassan Fofana':'D','Rodrigo Fernandes Melro':'D','Diogo Veloso Cardoso':'A','Keyns Sully Amido Abdala':'D','Brice Arnaud Eboudjé':'D','Roberto Porfírio Maximiano Rodrigo':'D','Tomás Morais Costa':'D','André Filipe Lopes Teixeira Rodrigues':'A','Wilson Tavares':'I','Marcos André De Menezes Diniz':'D','Divin Mwamba Wa Muteba':'D'});
 /* Chaves (CHAV): avatares de la plantilla (Wilson Tavares y Divin Mwamba sin foto) */
 Object.entries({'Marko Gudžulić':3134134,'João Nuno Figueiredo Valido':834721,'Rodrigo Moura do Nascimento':462747,'Bruno Miguel Ferreira Rodrigues':878699,'Tiago Alexandre Almeida Simões':989408,'Ricardo Miguel Martins Alves':110861,'Aarón Romero Catalán':736087,'Néstor Alejandro Araújo Razo':82543,'Leandro Santos do Nascimento':3133489,'Francisco José Vilas Boas Pereira':776616,'Ivo Saúl Vázquez Serrano':828817,'Mamadou Tounkara':975174,'João Sabino Mendes Neto Saraiva':387631,'Gilberto García Roa':828848,'Aílson Júnior Mendes Tavares':460292,'Dru Anthony Yearwood':392874,'João Rafael de Brito Teixeira':195027,'Pedro Henrique Rocha Pelágio':753533,'Mohamed Cherif Al-Hassan Fofana':3461459,'Rodrigo Fernandes Melro':3181035,'Diogo Veloso Cardoso':3175864,'Keyns Sully Amido Abdala':1013198,'Brice Arnaud Eboudjé':3384022,'Roberto Porfírio Maximiano Rodrigo':147519,'Tomás Morais Costa':924642,'André Filipe Lopes Teixeira Rodrigues':461680,'Robyn Esajas':860320,'Lucas Valente Lima':3345258,'Junior Armando Mendes':854275,'Marcos André De Menezes Diniz':3274838,'Antony Eymar Herbert Forcheney':3401963}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
-
 Object.assign(REAL_FOOT,{'Diogo José de Nazaré e Jesus Ferreira':'I','José Pedro Formoso Neto':'I','João Carvalho da Fonseca':'D','João Maria Ornelas Vasconcelos Capucho':'I','Gabriel Dos Santos Queiroz':'I','Gonçalo Carvalho Moreira':'D','Miguel Lebre Monteiro Figueiredo':'D','Rafael José Mestre Quintas':'D','Nuno Miguel Madeira Fernandes Félix':'D','Tiago Dias Freitas':'D','Olívio Leonardo Veloso Das Neves Tomé':'I','Francisco Bernardes Freitas Neto':'D'});
-
 Object.assign(REAL_FOOT,{'Daniel Rebollo Franco':'D','Raul Jonas Steffens':'D','Mateus Cardoso Francisco':'D','Leonardo Daniel Rivas Conge':'I','Lazar Rosić':'D','Diogo Alexandre Brazido Teles Furtado Silva':'D','André Martins De Sousa':'I','Bernardo Conde':'D','Davi Duarte Schuindt':'D','Roni Medeiros De Moura':'D','Fernando Miguel Pereira Almeida':'D','Andrey Felisberto Dos Santos':'I','Hiago Souza Lima Santos':'D','Pedro Afonso Macedo Pimentel':'D','Guilherme Neiva Silva':'D','Abdoulaye Keita Keita':'D','Talles Wander Santos Ribeiro':'D','Ruan Lucas de Assis':'D','Rafael Genuino Lobato':'I','Jorge Monteiro Meireles':'D','Luis Gustavo Sobral Alves Pereira':'A'});
-
 Object.assign(REAL_FOOT,{'Diogo Guilhermino Babo Figueiredo':'I','Diogo Dias Fernandes':'D','Rafael Diogo Teixeira Flores':'D','Rúben Ferreira Pinto':'D','Guilherme António de Souza':'D','João Filipe da Costa Teixeira':'D','João Ricardo Meireles Machado':'I','Feliciano Mendes':'D','Gonçalo Ferreira Da Cunha':'I','Ian Custódio Dos Anjos':'I','Diogo Miguel Pereira Costa':'D','Rodrigo Beirão Da Veiga':'I','Rúben Filipe Ramos Silva':'D','Oluwatimilehin Lawrence Adeniyi':'D','José António Dória dos Santos Campelo':'D','Rúben Manuel Pereira Alves':'D','Abdoul Gaimal Faissal Zangré':'D','Fernando de Lacerda Gomes':'D','Rodrigo Barata Gorgueira Alves Guedes':'D','Luís Miguel Vieira Babo Machado':'D','Leandro Nogueira Ferreira':'D','Edgar Melvin Andrade Costa':'I','Rudi Daniel Silva Almeida':'D','Simão Silva':'D','Kenneth Tig-Ishor Ikugar':'D','Arome Emmanuel Idache':'D','Francisco Cardoso Oliveira':'D'});
-
 Object.assign(REAL_FOOT,{'Carlos Reinaldo Moreira Alves':'D','Nuno Alberto Macedo Pereira':'D','Hélder Filipe Oliveira Lopes':'I','Pontus Andy Texel':'D','Edson Rodrigues Farias':'D','Xavier Grande Sánchez':'D','Carlos Eduardo Ferreira Batista':'I','Gabriel Miranda Rodrigues':'I','Kauan Conceição Ferreira Da Silva':'D','Guilherme Willian da Silva':'I','Leandro Miguel Pereira da Silva':'D','João Ribeiro Oliveira':'I','Jean Carlos Sinisterra Angulo':'D','Hugo Miguel Zagal Nunes':'D','Daniel João Santos Candeias':'D','Afonso de Oliveira Rodrigues':'I','Alioune Badara Mané':'I','António Manuel Pereira Xavier':'I','Rui Pedro Ribeiro Fernandes Duarte Gomes':'I','Nuno Miguel Silva Barbosa':'I','Amadou':'D','Martim Miguel Carneiro Tavares':'D'});
-
 Object.assign(REAL_FOOT,{'Alfie Shane McNally':'D','George William Sykes-Kenworthy':'D','Mark Stephen Kitching':'I','Harry Boyes':'I','Joseph Rabole Felix':'D','Zechariah Joshua Henry Medley':'I','Zak Robert Johnson':'D','Ashley John Palmer':'D','Jeff Francis King':'D','Charlie Walter McArthur':'I','Jack Paul Hunt':'D','Ryan Jack Glenn Fallowfield':'D','Craig Hewitt':'D','Arthur James Read':'I','Oliver Ian Banks':'D','Francis William Maguire':'D','Olliver Robert Pearce':'D','Alexander Lewis Newby':'D','Josh David Stones':'D','Joseph Grey':'D','Jovan Anthony Malcolm':'D','Ben Farrar':'D'});
-
 Object.assign(REAL_FOOT,{'James Alfred Connolly':'D','Rico Franklin Browne':'D','Courtney Alphonso Clarke':'D','Albert Danquah Adomah':'D'});
-
 Object.assign(REAL_FOOT,{'Harrison Darren Male':'D','Luke Paul McGee':'D','Nathan James Smith':'D','Jordan Robert Turnbull':'I','Joel Senior':'D','Patrick John Brough':'I','Lee Patrick O\'Connor':'D','Bobby Faulkner':'D','James John Plant':'D','Oliver Scott':'I','Charlie Jay Whitaker':'D','Samuel Joseph Finley':'I','Ryan James Watson':'D','Tom George Sawyer Conlon':'I','Lewis Wesley Warrington':'D','Jordan Andrew Davies':'I','Charlie Veevers':'D','Joe Samuel Ironside':'D','Connor Jennings':'D','Courtney Romello Baker-Richardson':'D','Dylan Jones':'D'});
-
 Object.assign(REAL_FOOT,{'Connor James Ripley':'D','Lewis Moore Ward':'D','Daniel Butler':'I','Joseph Leonard Snowdon':'D','Joel David McGregor':'D','Gavin Kilkenny':'D','Oliver Anthony Clarke':'I','Matthew Joseph Virtue-Thick':'D','Thomas Andrew Nichols':'D','Jack Thomson':'D','James Cameron Ball':'D','Ben Middlemas':'D','Jaylan Pearman':'D','Oliver James Palmer':'D','Aaron John Drinan':'I','Fletcher Holman':'D','Harry Roy Smith':'D'});
-
 Object.assign(REAL_FOOT,{'Cameron Akash James Gregory':'D','William Sam Douglas Harry Boyle':'I','Luca Anthony Hoole':'D','Kevin Nana Yaw Berkoe':'I','Isaac Lee':'D','Michael Heinz Golding':'D'});
-
 Object.assign(REAL_FOOT,{'William James Norris':'I','Lee Stephen Burge':'I','William Stewart Aimson':'D','Taylor Ellis Allen':'I','Luke Samuel Garbutt':'I','Oliver Anthony Turton':'D','Daniel George Scarr':'D','Brandon James Cooper':'D','Michael Alexander Rose':'D','Joe James Powell':'I','Matthew David Butcher':'I','Jorge Edward Grant':'D','Luke Molyneux':'I','Ryan Graydon':'D','Abraham Ifoghale Odoh':'D'});
-
 Object.assign(REAL_FOOT,{'Joseph Gerard Rafferty':'D','Kieran Ngwenya':'I','Lenny Agbaire':'D','Marvin Marvellous Kaleta':'D','Brandon Ashley Cover':'D','Thomas William Bradshaw':'D'});
-
 Object.assign(REAL_FOOT,{'Kane Ellis Taylor':'I','Charlie Tasker':'D','Sam William John Waller':'D','Aden Flint':'D','Sam Sherring':'D','Luke James Hannant':'D','Samuel Wayne Beckwith':'I','Laurence Henry Maguire':'I','Daniel Thomas Moss':'D','Kaiden Carlton Anthony Wilson':'D','Bryant Akono Bilongo':'I','Ryan Henry East':'I','Harvey James Gilmour':'D','Casey Anthony Pettit':'D','Edward Albert Francis':'I','Glenn Bell Dollar Middleton':'I','Devante Darrius Rodney':'D','Cian Jude Hayes':'D'});
-
 Object.assign(REAL_FOOT,{'Thimothée Jacques Orcel Lo-Tutala':'D','Thomas Andrew Salvatore Smith':'I','Ellis Carlos Iandolo':'I','Jack Robert Tucker':'D','Robert Donald Hunt':'D','Sean Aidan Raggett':'D','Kane Benjamin Vincent-Young':'D','Frankie Terry':'I','Jake David Leake':'I','Samuel Osei Junior Kuffour':'D','Jack Payne':'I','Edward James Bishop':'D','Jay Williams':'D','Paul Andrew Digby':'D','Benjamin Marshall Perry':'D','Harry John Anderson':'D','Oscar Peter Thorn':'D','Beryly Logos Lubala':'D','Kylian Prince-Emmanuel Tresor Kouassi':'D','Jonathan Moses Momoh Sesay':'I','Bradley Osezele Akhigbe Philip Ihionvien':'I','Jaden Williams':'D','Adrian Moyosoreoluwa Ameer Akande':'D','Leon Chiwome':'D'});
 Object.assign(REAL_FOOT,{'Nicholas Jake Michalski':'D','Vito Mannone':'D','Jackson Izquierdo':'D','Charlie Mel Barker':'D','Priestley Tyler Heginbottom Farquharson':'D','Kellan Sheene Gordon':'D','Jonathan Russell':'I','Stephen Winston Duke-McKenna':'D','Lewis Paul Jimmy Richards':'I','Akinwale Joseph Odimayo':'D','Pele Arganese-McDermott':'D','Omari Mrisho':'D','Jude Robert Arthurs':'D','Kai Jennings':'D','Louie Shaun Watson':'D','Dylan Morgan':'D','Justin Ferizaj':'A','Nathan Tinsdale':'D','Klaudio Krasniqi':'D','Gianmarco Di Biase':'D','Danilo Harley Orsi-Dadomo':'D','Adetokunbo Bamidele Adeyemo':'D','Dion Enrico Pereira Greives':'I','Oluwalopemiwa Adedunmola Aderoju':'D','Osman Hassan Kamara':'D','Malcolm Perewari Ebiowei':'I','Fate Kotey':'D'});
 Object.assign(REAL_FOOT,{'Ian John Lawlor':'D','Thomas Luke Booth':'D','Michael David Demetriou':'I','Reece Christopher Hutchinson':'I','Luke William Offord':'D','Lewis Carl Billington':'D','Joshua Stephenson':'I','Stanley Robert Dancey':'D','Jordan Lewis Gibson':'D','Matúš Holíček':'D','Conor Thomas':'D','Jack Richard Lankester':'D','Joel William Tabiner':'I','Owen Alan Lunt':'D','Kyle Ure':'I','Joe Peter White':'I','Luca Jack Moore':'D','Oliver Armstrong':'D','Joshua Thomas March':'D','Calum Stewart Agius':'D','Charlie Martin McNeill':'D','Adrien Tinashe Thibaut':'D','Patrick Mlynarski':'A','Fin Roberts':'A'});
@@ -10557,7 +10531,6 @@ function styleFit(t,id){
   });
   return{fit:ws?Math.round(tot/ws*100):50,rows};
 }
-
 /* ---------- modal de sistemas de juego ---------- */
 const STYLE_ARROWS={
   tiki:[[34,58,48,47],[52,47,66,58],[64,61,36,61],[50,45,50,31]],
@@ -10673,7 +10646,6 @@ function strength(t){
   const mix=(o,a)=>o*.4+a*.6;
   return{att:mix(attO,attA)*sy.f.att,mid:mix(midO,midA)*sy.f.mid,def:mix(defO,defA)*sy.f.def,ovr:avg(all),style:sy.id,fit:sy.fit,fin:avg(fin,attA),gk:avg(gk,avg(g.GK))};
 }
-
 /* ===================== liga ===================== */
 /* tipo (H/A) del partido del equipo id en la jornada idx, o null si ese equipo descansa esa jornada */
 function typeAt(allRounds,id,idx){
@@ -11823,7 +11795,6 @@ function poDecide(t,it,R){
    su vez provoca el bug de la jornada que "descansa"). Si por cualquier motivo (playoff sin ganador, equipos
    elegibles insuficientes...) se desequilibran, se recorta la lista más larga por el extremo menos decisivo
    (el ascenso añadido en último lugar, o el equipo menos hundido de la zona de descenso) para igualar ambas. */
-
 function balanceUpDown(up,down){
   if(up.length>down.length)up.length=down.length;
   else if(down.length>up.length)down.splice(0,down.length-up.length);
@@ -12734,9 +12705,7 @@ function aiRelease(p,r){
   if(a>=29&&ap<=5)return r()<.25;
   return r()<.02;
 }
-
 const fmtM=v=>{const s=v<0?'-':'',a=Math.abs(v);return s+'€'+(a<1?Math.round(a*1000)+'K':(a>=100?Math.round(a):a.toFixed(1))+'M')};
-
 /* ===================== filiales, ofertas y cesiones ===================== */
 const FAMILY={RSO:'RSB',RSB:'RSO',CEL:'CFO',CFO:'CEL',VLL:'VLP',VLP:'VLL',ATM:'AMM',AMM:'ATM',ATH:'BIL',BIL:'ATH',ALA:'DAB',DAB:'ALA',ELC:'ILI',ILI:'ELC',ESP:'ESB',ESB:'ESP',GET:'GTB',GTB:'GET',BET:'BETD',BETD:'BET',GIR:'GIRB',GIRB:'GIR',GRA:'GRAB',GRAB:'GRA',LEG:'LEGB',LEGB:'LEG',MLL:'MLLB',MLLB:'MLL',VIL:'VILB',VILB:'VIL',OVI:'OVIB',OVIB:'OVI',TEN:'TENB',TENB:'TEN',SEV:'SEVB',SEVB:'SEV',RMA:'RMC',RMC:'RMA',RMC3:'RMC',FCB:'FCBB',FCBB:'FCB',H96:'H96B',H96B:'H96',SLB:'BNB',BNB:'SLB',PSG:'PSB',PSB:'PSG',SCL:'SCLB',SCLB:'SCL',FAM:'FAMB',FAMB:'FAM',GIL:'GILB',GILB:'GIL',MAR:'MARB',MARB:'MAR',MOR:'MORB',MORB:'MOR',RAVE:'RAVEB',RAVEB:'RAVE',VIT:'VITB',VITB:'VIT',JUV:'JNG',JNG:'JUV',AJA:'JAJ',JAJ:'AJA',AZA:'AZB',AZB:'AZA',FEY:'FEYB',FEYB:'FEY',FCP:'FCPB',FCPB:'FCP',UTR:'UTRB',UTRB:'UTR',MUN:'MUNB',MUNB:'MUN',AVL:'AVL21',AVL21:'AVL',CHE:'CHE23',CHE23:'CHE',MER:'MERB',MERB:'MER',BARA:'BARAB',BARAB:'BARA',ZAR:'ZARB',ZARB:'ZAR',LPA:'LPAB',LPAB:'LPA',VAL:'VALB',VALB:'VAL',NAS:'NASB',NASB:'NAS',DEP:'FAB',FAB:'DEP',AVIL:'AVILB',AVILB:'AVIL',FER:'SOM',SOM:'FER',PONV:'PONVB',PONVB:'PONV',PON:'PONB',PONB:'PON',MIR:'MIRB',MIRB:'MIR',CUL:'JUP',JUP:'CUL',OSA:'OSAP',OSAP:'OSA',LOG:'LOGB',LOGB:'LOG',UNI:'UNIB',UNIB:'UNI',RMU:'MURI',MURI:'RMU',LEV:'LEVB',LEVB:'LEV',CAD:'CADM',CADM:'CAD',MOL:'MOLB',MOLB:'MOL',SDLO:'CENI',CENI:'SDLO',POB:'POBB',POBB:'POB',SANL:'SANLB',SANLB:'SANL',ATBA:'ATBAB',ATBAB:'ATBA',NUC:'NUCB',NUCB:'NUC',MAL:'MALB',MALB:'MAL',ALC:'ALCB',ALCB:'ALC',FCSB:'FCSBB',FCSBB:'FCSB',CFR:'CFRB',CFRB:'CFR',RAP:'RAPB',RAPB:'RAP',DIN:'DINB',DINB:'DIN',BRU:'NXT',NXT:'BRU',GNT:'GNT2',GNT2:'GNT',GNK:'JGK',JGK:'GNK',RSC:'RSCF',RSCF:'RSC'};
 Object.assign(FAMILY,{TSG:'HOF2',HOF2:'TSG',VFB:'VFB3',VFB3:'VFB',BAY:'BY2',BY2:'BAY'});
@@ -13711,7 +13680,6 @@ function sendDownYouth(parentId,mine){
   famQueue.push({p,clubId:state.club,kind:'down'});
   saveGame();
 }
-
 /* lista de traspasos y ofertas */
 function toggleList(pid){
   const L=locate(pid);if(!L||L.where!=='mine'||L.p.loanIn)return'No se puede poner en venta a este jugador.';
@@ -13939,7 +13907,6 @@ function loanOfferHTML(p,o){
   <div class="offer-b"><button class="btn primary sm" data-act="lo-acc" data-p="${p.id}" data-o="${o.id}">Aceptar</button><button class="btn danger sm" data-act="lo-rej" data-p="${p.id}" data-o="${o.id}">Rechazar</button></div></div>`;
 }
 const lsText=(p,mine)=>`Tú ${mine}% (${fmtW(Math.round(p.wage*mine)/100)}) · Ellos ${100-mine}% (${fmtW(Math.round(p.wage*(100-mine))/100)})`;
-
 /* ¿jugaría? compara su GRL con los jugadores de su posición en ese club */
 /* elige un club al azar: casi siempre uno donde sería importante, a veces uno donde rotaría */
 function loanCandidates(pid){
@@ -14092,9 +14059,6 @@ function updateNegLabels(){
     set('neg-imp',`Impacto en tus cuentas: la masa salarial pasa de ${fmtK(cur)} a ${fmtK(cur+p.wage*sh)} por semana.`);
   }
 }
-
-
-
 /* ============ GUARDADO Y CARGA ============ */
 function saveGame(){
   if(!state)return true;
@@ -14170,7 +14134,6 @@ function storeImport(n,s,meta){
   IDB.put('slot.'+n,json);IDB.put('meta.'+n,meta);
   ui.importing=null;closeSheet();renderSlots();toast('Partida importada en el slot '+n);
 }
-
 /* ===================== mundo: otras ligas y torneos ===================== */
 const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Kupa Rossii',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup'};
 /* China: los 80 equipos de la Chinese FA Cup (16 de la Super League + League One/Two + amateurs clasificados) */
@@ -15184,7 +15147,6 @@ function roFinishGroups(cup){
   cup.rounds[0].ties=ties;
   news(`Termina la fase de grupos de la ${cup.name}: comienzan los cuartos de final.`);
 }
-
 /* ============ COPA DE RUSIA (doble ruta: RPL + Regiones) ============
    Fase de grupos: 16 equipos de la RPL en 4 grupos de 4 a doble vuelta (6 jornadas). El 1.º y el 2.º de
    cada grupo pasan a la Ruta RPL (eliminatorias a doble partido); el 3.º cae a la Ruta de las Regiones; el
@@ -16336,7 +16298,6 @@ function cupNews(x){
   const prizeTxt=g.decided&&won?(()=>{const pr=roundPrizeAmount(x.cup,x.ri);return pr?` Ingresáis ${fmtM(pr)} en premios por avanzar de ronda.`:''})():'';
   return `${x.cup.name}, ${R.n.toLowerCase()}${two?', vuelta':''}: ${res}. ${g.decided?(won?(fin?'¡Sois campeones!':'Pasáis de ronda.'):'Quedáis eliminados.'):'Se decide en la vuelta.'}${prizeTxt}`;
 }
-
 /* ===================== vistas de competiciones ===================== */
 const tile=(l,v,s,w)=>`<div class="st${w?' wide':''}"><small>${l}</small><b>${v}</b>${s?`<span>${s}</span>`:''}</div>`;
 function scorerList(list){
@@ -17187,7 +17148,6 @@ function uclLeagueStatsHTML(key){
   ${tile('Mayor goleada',line(big.m),'',1)}${tile('Partido con más goles',line(hi.m),hi.t+' goles',1)}</div></div>
   ${playerStatCards(Object.values(cup.sc),key)}`;
 }
-
 /* ===================== UI base ===================== */
 function go(name){ui.screen=name;$$('.screen').forEach(s=>s.classList.toggle('active',s.id==='s-'+name))}
 function toast(msg){
@@ -17221,7 +17181,6 @@ const fmtDate=ts=>new Date(ts).toLocaleString('es-ES',{day:'numeric',month:'shor
 /* equipo con escudo y abreviatura para filas de resultados/eliminatorias */
 const teamCell=(id,cls,right)=>{const c=CLUBBY[id];return`<button class="tmside${right?' r':''}${cls?' '+cls:''}" data-act="club-view" data-club="${id}">${crestHTML(c,22)}<span class="tmtxt"><b>${esc(c.name)}</b><em>${esc(c.short)}</em></span></button>`};
 const teamLink=id=>`<button class="lnk-team" data-act="club-view" data-club="${id}">${esc(cname(id))}</button>`;
-
 /* ===================== geometría de mapas ===================== */
 function makeView(minLon,maxLon,minLat,maxLat,W,cxo){
   const cx=cxo||Math.cos((minLat+maxLat)/2*Math.PI/180),wU=(maxLon-minLon)*cx,hU=maxLat-minLat,k=W/wU;
@@ -17310,7 +17269,6 @@ function worldSVG(){
   const W=getWorld(),sw=(W.step*.58).toFixed(1);
   return`<svg viewBox="0 0 ${W.v.W} ${W.v.H.toFixed(1)}" aria-hidden="true"><path class="d-land" stroke-width="${sw}" d="${W.dots.land}"/>${gamePlayable().map(id=>dotsPaths(W.dots[id],sw,'soft')).join('')}</svg>`;
 }
-
 /* ===================== pantalla de slots ===================== */
 function renderSlots(){
   const nw=ui.mode==='new';
@@ -17343,7 +17301,6 @@ async function reconcileSlots(){
   }
   if(changed)renderSlots();
 }
-
 /* ===================== mapa: mundo, Europa, país ===================== */
 /* qué región del mundo le corresponde a cada país jugable; por ahora Europa es la región "general" y
    Sudamérica agrupa a los países de ese continente (Argentina). Añadir un país nuevo a un continente ya
@@ -18494,7 +18451,6 @@ const PALMARES={
   BRWD:{nlc:1},LEE21:{nlc:1},
  /* 3. Liga (añadidos) */
  FCS3:{d2:1,d4:5,d5:2},AAC3:{d4:4},FD3:{cup:2,d2:2,d4:1},FKO3:{d4:2},HAV3:{d4:2,d5:1},HRO3:{d2:1},HOF2:{d4:2,d5:1},FCI3:{d2:1,d5:1},MSV3:{d3:1,d4:1},RWE3:{cup:1,d4:3,d5:5},PRE3:{d4:2,d5:1},JAH3:{d4:1,d5:2},SGS3:{d4:2,d5:1},VFB3:{d4:1,d5:2},MEP3:{d4:2,d5:1},VRL3:{d5:1},WEH3:{d4:1,d5:1},WUE3:{d4:2},VIK3:{d4:2,d5:1},WAL3:{d2:1,d4:3,d5:2},
-
  /* Segunda Division y filiales */
  MLL:{cup:1,sc:1,d2:2,d3:2,d4:6},
  VLL:{d2:2},
@@ -18771,7 +18727,6 @@ USG:{league:12,cup:2,sc:2,d2:1,d3:1},
   HAR:{d3:3},
   TIR:{d2:1,d3:2},
   AUL:{d2:3},
-
   /* Primera RFEF (Grupo 1) */
   BARA:{d3:3,d5:1,d4:8},
   BIL:{d3:2,d4:3},
@@ -19397,7 +19352,6 @@ function cupBracket(key){
   const status=R.done?'Ronda jugada':R.ties?(typeof R.w2==='number'&&R.w2>R.w?'Se juega en las semanas '+(R.w+1)+' y '+(R.w2+1):'Se juega en la semana '+(R.w+1)):'Sorteo pendiente';
   return`${champ}${btns}<div class="card"><div class="card-h"><h3>${esc(R.n)}</h3><span>${status}</span></div>${extra}${R.ties?R.ties.map(tieRow).join(''):'<p class="muted-s">El sorteo se hace al terminar la ronda anterior.</p>'}</div>`;
 }
-
 function openClub(id){
   ui.club=id;
   $$('#L2 .crest').forEach(b=>b.classList.toggle('sel',b.dataset.club===id));markSel();
@@ -19423,7 +19377,6 @@ function takeControl(){
   ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';
   renderGame();go('game');toast(`Ya eres el míster de ${CLUBBY[id].name}`);
 }
-
 /* ===================== panel del manager ===================== */
 /* partidas guardadas antes de que la Champions tuviera fase de liga: si el objeto de la copa es del formato antiguo
    (sin cup.league), se reconstruye con el nuevo formato manteniendo los mismos equipos clasificados */
@@ -19636,7 +19589,6 @@ tactics(){
   const res=reservesOf(t).map(id=>t.players.find(p=>p.id===id)).filter(Boolean).sort(byPosOrder);
   const tk=(p,extra)=>token(p,ppOf(p)[0],`data-act="ptok" data-id="${p.id}"`,`static ${ui.sel===p.id?'sel':''} ${unav(p)?'inj':''}`,'');
   const empties=Math.max(0,benchN()-subs.length);
-
   return`<div class="sec-h"><h2>Táctica</h2><span>GRL del once: ${Math.round(s.ovr)}</span></div>
   <div class="seg fseg"><div class="fgrp"><div class="fdrop"><button class="fbtn" data-act="formation-menu" aria-haspopup="dialog">Formación <em>${t.formation}</em><i class="fcar"></i></button></div>${styleDrop}</div><button data-act="auto-xi">Once automático</button></div>
   <div class="pitch">${lines}${xi.map((p,i)=>p?token(p,lbl[i],`data-act="ptok" data-id="${p.id}"`,`${ui.sel===p.id?'sel':''} ${ppOf(p).includes(sl[i][3])?'':'off'}`,`left:${sl[i][1]}%;top:${sl[i][2]}%`):'').join('')}</div>
@@ -19676,7 +19628,6 @@ market(){
   <div class="mkt-q"><input type="search" data-mktq="1" value="${esc(f.q||'')}" placeholder="Buscar jugador por nombre" aria-label="Buscar jugador por nombre" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" onkeydown="if(event.key==='Enter')this.blur()"></div>
   <div id="mkt-res">${mktResHTML()}</div>`;
 }};
-
 /* ===================== hojas: resultado y fin de temporada ===================== */
 /* qué viene después de un partido de copa: puede haber OTRO partido de copa la misma semana (p. ej. Supercopa + Champions) */
 function nextGameTxt(){
@@ -19895,7 +19846,6 @@ function seasonSheet(){
   <div class="res-scroll">${body}</div>
   <div class="row-btns"><button class="btn ghost" data-act="sheet-close">${pend?'Cerrar':'Más tarde'}</button>${pend?'':`<button class="btn primary" data-act="newseason">Empezar temporada ${state.season+1}</button>`}</div>`,true);
 }
-
 /* ===================== eventos ===================== */
 const H={
   new(){ui.mode='new';renderSlots();go('slots')},
@@ -23712,6 +23662,76 @@ Object.entries({'Marcin Bułka':392573,'Luís Maximiano':319465,'Abdulrahman Dag
    Göteborgs IF (GOT): no existe en BeSoccer ni en Wikipedia, así que se usa el de Transfermarkt. */
 Object.assign(CLUB_LOGO,{GOT:'https://img.a.transfermarkt.technology/wappen/head/51704.png?lm=1789462416'});
 Object.assign(CLUB_LOGO,{"KASA":"https://cdn.resfu.com/img_data/equipos/1445.png?size=120x&lossy=1","KASW":"https://cdn.resfu.com/img_data/equipos/1446.png?size=120x&lossy=1","VISS":"https://cdn.resfu.com/img_data/equipos/2727.png?size=120x&lossy=1","MACH":"https://cdn.resfu.com/img_data/equipos/6526.png?size=120x&lossy=1","DAEJ":"https://cdn.resfu.com/img_data/equipos/881.png?size=120x&lossy=1","JEON":"https://cdn.resfu.com/img_data/equipos/1412.png?size=120x&lossy=1","FCSE":"https://cdn.resfu.com/img_data/equipos/1101.png?size=120x&lossy=1","GANG":"https://cdn.resfu.com/img_data/equipos/3991.png?size=120x&lossy=1","BEIJ":"https://cdn.resfu.com/img_data/equipos/455.png?size=120x&lossy=1","SHPO":"https://cdn.resfu.com/img_data/equipos/11629.png?size=120x&lossy=1","SHSH":"https://cdn.resfu.com/img_data/equipos/2320.png?size=120x&lossy=1","BURI":"https://cdn.resfu.com/img_data/equipos/7961.png?size=120x&lossy=1","PORF":"https://cdn.resfu.com/img_data/equipos/17347.png?size=120x&lossy=1","RATC":"https://cdn.resfu.com/img_data/equipos/17345.png?size=120x&lossy=1","PATH":"https://cdn.resfu.com/img_data/escudos/medium/13575.jpg?size=120x&lossy=1","CAHN":"https://cdn.resfu.com/img_data/escudos/medium/60365.jpg?size=120x&lossy=1","VTTL":"https://cdn.resfu.com/img_data/equipos/85224.png?size=120x&lossy=1","NEWJ":"https://cdn.resfu.com/img_data/equipos/1795.png?size=120x&lossy=1","MELV":"https://cdn.resfu.com/img_data/equipos/1671.png?size=120x&lossy=1","ADEL":"https://cdn.resfu.com/img_data/equipos/70.png?size=120x&lossy=1","JOHO":"https://cdn.resfu.com/img_data/escudos/medium/11492.jpg?size=120x&lossy=1","KUCH":"https://cdn.resfu.com/img_data/escudos/medium/110062.jpg?size=120x&lossy=1","BORN":"https://cdn.resfu.com/img_data/escudos/medium/59789.jpg?size=120x&lossy=1","PRSB":"https://cdn.resfu.com/img_data/escudos/medium/17676.jpg?size=120x&lossy=1","TAGU":"https://cdn.resfu.com/img_data/escudos/medium/163368.jpg?size=120x&lossy=1","MDIG":"https://cdn.resfu.com/img_data/escudos/medium/159294.jpg?size=120x&lossy=1","TSTE":"https://cdn.resfu.com/img_data/escudos/medium/15599.jpg?size=120x&lossy=1","HYFC":"https://cdn.resfu.com/img_data/escudos/medium/15594.jpg?size=120x&lossy=1","TAIP":"https://cdn.resfu.com/img_data/escudos/medium/2759.jpg?size=120x&lossy=1","KITC":"https://cdn.resfu.com/img_data/escudos/medium/1460.jpg?size=120x&lossy=1","LCSA":"https://cdn.resfu.com/img_data/escudos/medium/5393.jpg?size=120x&lossy=1","TAMP":"https://cdn.resfu.com/img_data/equipos/5395.png?size=120x&lossy=1","SVAY":"https://cdn.resfu.com/img_data/escudos/medium/60709.jpg?size=120x&lossy=1","PHNM":"https://cdn.resfu.com/img_data/equipos/60704.png?size=120x&lossy=1","YANU":"https://cdn.resfu.com/img_data/escudos/medium/17652.jpg?size=120x&lossy=1","KASU":"https://cdn.resfu.com/img_data/escudos/medium/84725.jpg?size=120x&lossy=1","SHUN":"https://cdn.resfu.com/img_data/escudos/medium/85765.jpg?size=120x&lossy=1","FORT":"https://cdn.resfu.com/img_data/escudos/medium/155947.jpg?size=120x&lossy=1","FGOA":"https://cdn.resfu.com/img_data/escudos/medium/25004.jpg?size=120x&lossy=1","EBNG":"https://cdn.resfu.com/img_data/escudos/medium/949.jpg?size=120x&lossy=1","KHLD":"https://cdn.resfu.com/img_data/escudos/medium/139950.jpg?size=120x&lossy=1","ESTH":"https://cdn.resfu.com/img_data/equipos/1005.png?size=120x&lossy=1","TRAC":"https://cdn.resfu.com/img_data/equipos/4519.png?size=120x&lossy=1","GOLG":"https://cdn.resfu.com/img_data/equipos/61229.png?size=120x&lossy=1","PAKH":"https://cdn.resfu.com/img_data/equipos/4367.png?size=120x&lossy=1","NASQ":"https://cdn.resfu.com/img_data/equipos/4362.png?size=120x&lossy=1","ARAB":"https://cdn.resfu.com/img_data/equipos/127.png?size=120x&lossy=1","QADK":"https://cdn.resfu.com/img_data/equipos/5318.png?size=120x&lossy=1","KUWS":"https://cdn.resfu.com/img_data/equipos/5273.png?size=120x&lossy=1","GHAR":"https://cdn.resfu.com/img_data/equipos/7959.png?size=120x&lossy=1","SHML":"https://cdn.resfu.com/img_data/equipos/19201.png?size=120x&lossy=1","RAYY":"https://cdn.resfu.com/img_data/equipos/5774.png?size=120x&lossy=1","SADD":"https://cdn.resfu.com/img_data/equipos/4648.png?size=120x&lossy=1","WASL":"https://cdn.resfu.com/img_data/equipos/5464.png?size=120x&lossy=1","WAHD":"https://cdn.resfu.com/img_data/equipos/15584.png?size=120x&lossy=1","AQJW":"https://cdn.resfu.com/img_data/equipos/15483.png?size=120x&lossy=1","SHOR":"https://cdn.resfu.com/img_data/equipos/15488.png?size=120x&lossy=1","AHAL":"https://cdn.resfu.com/img_data/equipos/57352.png?size=120x&lossy=1","ARKD":"https://cdn.resfu.com/img_data/equipos/157009.png?size=120x&lossy=1","ISTD":"https://cdn.resfu.com/img_data/equipos/61910.png?size=120x&lossy=1","RTAZ":"https://cdn.resfu.com/img_data/equipos/57365.png?size=120x&lossy=1","ANSR":"https://cdn.resfu.com/img_data/equipos/17353.png?size=120x&lossy=1","NEJM":"https://cdn.resfu.com/img_data/equipos/17355.png?size=120x&lossy=1","ITAL":"https://cdn.resfu.com/img_data/equipos/15575.png?size=120x&lossy=1","FIDA":"https://cdn.resfu.com/img_data/equipos/15566.png?size=120x&lossy=1","WAHS":"https://cdn.resfu.com/img_data/equipos/17612.png?size=120x&lossy=1","MUHR":"https://cdn.resfu.com/img_data/equipos/15456.png?size=120x&lossy=1","FAISJ":"https://cdn.resfu.com/img_data/equipos/15502.png?size=120x&lossy=1","HUSS":"https://cdn.resfu.com/img_data/equipos/15504.png?size=120x&lossy=1","NAHD":"https://cdn.resfu.com/img_data/equipos/15511.png?size=120x&lossy=1","SEEB":"https://cdn.resfu.com/img_data/equipos/15509.png?size=120x&lossy=1","AHTR":"https://cdn.resfu.com/img_data/equipos/30689.png?size=120x&lossy=1","BLZD":"https://cdn.resfu.com/img_data/equipos/11502.png?size=120x&lossy=1","SFAX":"https://cdn.resfu.com/img_data/equipos/864.png?size=120x&lossy=1","ESPT":"https://cdn.resfu.com/img_data/equipos/1002.png?size=120x&lossy=1","USMO":"https://cdn.resfu.com/img_data/equipos/2630.png?size=120x&lossy=1","RAJA":"https://cdn.resfu.com/img_data/equipos/5634.png?size=120x&lossy=1","WYDC":"https://cdn.resfu.com/img_data/equipos/6429.png?size=120x&lossy=1","ZAMA":"https://cdn.resfu.com/img_data/equipos/150110.png?size=120x&lossy=1","PARO":"https://cdn.resfu.com/img_data/equipos/122004.png?size=120x&lossy=1"});
+Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+/* ===== Beijing Guoan (BEIJ): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Bai Yang':'I','Wu Shaocong':'I','Li Lei':'I','Jeremy Dudziak':'I','Aboubacar Konté':'A','Béni Nkololo':'I'});
+/* ===== Beijing Guoan (BEIJ): avatares (Resfu) ===== */
+Object.entries({'Hou Sen':275313,'Han Jiaqi':817818,'Liu Shaoziyang':3222725,'Abbas Nureli':3397548,'Bai Yang':3147754,'Guilherme Ramos':336483,'Wang Gang':279206,'Yue Tze-Nam':667389,'Uroš Spajić':186635,'Li Lei':275166,'Abduhamit Abdugheni':373481,'Wu Shaocong':843740,'He Yupeng':846269,'Jiefu Deng':3792813,'Fan Shuangjie':3604010,'Dawhan':143181,'Aboubacar Konté':844171,'Zhang Xizhe':206764,'Jeremy Dudziak':198469,'Chi Zhongguo':295098,'Jia Feifan':3202855,'Fábio Abreu':198746,'Zhang Yuning':300489,'Lin Liangming':297260,'Béni Nkololo':321333,'Chadrac Akolo':215177,'Cao Yongjing':295105,'Yang Liyu':366361}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Shanghái Port (SHPO): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Li Shuai':'I','Yue Xin':'I','Bao Shimeng':'A','Liu Ruofan':'A','Jaume Grau':'I','Melendo':'I','Matt Orr':'I'});
+/* ===== Shanghái Port (SHPO): avatares (Resfu) ===== */
+Object.entries({'Yan Junling':276013,'Li Zhiliang':3564067,'Chen Wei':295097,'Wei Zhen':404451,'Jiang Guangtai':214892,'Li Shuai':588784,'Yang Xi':3188376,'Miguel Campos':753561,'Umidjan Yusup':3371768,'Wang Shenchao':213125,'Yue Xin':316138,'Zhang Linpeng':218075,'Wang Zhen\'ao':604133,'Bao Shimeng':3538341,'Fu Huan':215974,'Mateus Vital':312406,'Melendo':333261,'Jaume Grau':238690,'Zhang Yuan':393601,'Lu Yongtao':3173369,'Kuai Jiwen':3418541,'Yang Shiyuan':282048,'Wu Lei':230702,'Leonardo':474261,'Gabrielzinho':259074,'Prince Ampem':384217,'Liu Zhurun':919861,'Li Xinxiang':3546205,'Liu Ruofan':374620,'Matt Orr':916043,'Kodjo Aziangbe':3230831}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Chengdu Rongcheng (CDRC): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Hu Hetao':'I','Egor Sorokin':'I','Matheus Jussa':'I','Rômulo':'I','Muzepper Mirahmetjan':'I','Wei Shihao':'A','Felipe Silva':'I'});
+/* ===== Chengdu Rongcheng (CDRC): avatares (Resfu) ===== */
+Object.entries({'Liu Dianzuo':221649,'Jian Tao':955018,'Peng Haochen':3672891,'Egor Sorokin':236555,'Hu Hetao':3278789,'He Yiran':3275081,'Han Pengfei':284686,'Li Yang':3275105,'Wang Dongsheng':452655,'Dong Yanfeng':342764,'Alex Jojo':903572,'Wang Ziteng':3672893,'Rômulo':243332,'Matheus Jussa':238057,'Yang Mingyang':205093,'Liao Lisheng':206918,'Gan Chao':294168,'Feng Zhuoyi':276216,'Li Moyu':3663148,'Mutellip Iminqari':3278790,'Muzepper Mirahmetjan':215973,'Felipe Silva':250749,'Wei Shihao':232125,'Wellington Silva':89906,'Wang Ziming':635090,'Behram Abduweli':3267306,'Qeyser Ezimet':3419960,'Tang Chuang':974167,'Liao Rongxiang':3407836}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Chongqing Tonglianglong (CQTL): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Yeerjieti Yeerzati':'I','Zhang Yingkai':'I','Alexandru Cîmpanu':'I'});
+/* ===== Chongqing Tonglianglong (CQTL): avatares (Resfu) ===== */
+Object.entries({'Yao Haoyang':3418547,'Wu Zitong':3537886,'Yeerjieti Yeerzati':386930,'Michael Ngadeu':230723,'Lucão':197755,'He Xiaoqiang':1010538,'Zhang Yingkai':3266723,'Ruan Qilong':3149104,'Liu Mingshi':3412555,'Wei Suowei':3275100,'Jin Pengxiang':219814,'Ibrahim Amadou':200993,'Xiang Yuwang':3413077,'Li Zhenquan':3409352,'Zhang Zhixiong':3537890,'Liang Weipeng':3202857,'Wu Yongqiang':3425851,'Alexandru Cîmpanu':869575,'Landry Dimata':331106,'Chen Chunxin':919860,'Du Yuezheng':3275098,'Ng Yu Hei':3470595,'Bai Yutao':3537893}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Dalian Yingbo (DLYB): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Song Yue':'I','Cao Haiqing':'I','Wen Jiabao':'I','Isnik Alimi':'I','Huang Shan':'I','Frank Acheampong':'I'});
+/* ===== Dalian Yingbo (DLYB): avatares (Resfu) ===== */
+Object.entries({'Liu Weiguo':294164,'Huang Zihao':970422,'Lü Zhuoyi':3278807,'Mamadou Traoré':312108,'Song Yue':675737,'Cao Haiqing':277246,'Feng Boxuan':355269,'Sun Kangbo':3480290,'Wen Jiabao':371603,'Nicolae Stanciu':144140,'Isnik Alimi':246530,'Liao Jintao':901130,'Mao Weijie':3410499,'Lü Peng':331337,'Zhang Huachen':362790,'Cephas Malele':182877,'Frank Acheampong':182690,'Luo Jing':214910,'Yang Mingrui':3418543,'Zhu Pengyu':3537917,'Bi Jinhao':275486,'Feng Jin':276560,'Pedro Delgado':320292}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Henan FC (HENF): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Lucas Maia':'I','Moxmet Nebijan':'I','Bruno Nazário':'I'});
+/* ===== Henan FC (HENF): avatares (Resfu) ===== */
+Object.entries({'Wang Guoming':275581,'Shi Chenglong':970424,'Wang Jinshuai':3149087,'Xu Jiamin':286618,'Lucas Maia':963581,'Iago Maidana':243916,'Yeljan Shinar':867696,'Liu Yixin':3275084,'Oliver Gerbig':962335,'Liu Jiahui':3152288,'Moxmet Nebijan':3218257,'Yang Kuo':277453,'Bruno Nazário':214915,'Wang Shangyuan':193253,'Huang Ruifeng':870379,'He Chao':213123,'Abudulam Abdurasul':972600,'Yang Yilin':732771,'Ablahan Haliq':3147759,'Yin Congyao':319178,'Gustavo':249593,'Maranhão':838977,'Zhong Yihao':303635,'Zheng Dalun':295087,'Xulin Fan':3410489}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Liaoning Tieren (LNTR): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Han Rongze':'I','Xu Dong':'I','Ange Kouamé':'I','Chen Binbin':'I','Li Haoran':'I','Takahiro Kunimoto':'I'});
+/* ===== Liaoning Tieren (LNTR): avatares (Resfu) ===== */
+Object.entries({'Han Rongze':260798,'Zhang Yan':404452,'Yuan Mincheng':374173,'Dilmurat Mawlanyaz':653332,'Li Haoran':316165,'Pan Ximing':283009,'Xu Dong':303066,'Gao Jiarun':373317,'Tian De\'ao':3537906,'Pang Shenghan':3579007,'Takahiro Kunimoto':301090,'Felipe':314289,'Li Tixiang':319462,'Yan Dinghao':335215,'Tian Yinong':316322,'Guy Mbenza':394087,'Jeffinho':953451,'Ange Kouamé':936943,'Chen Binbin':386760,'Zang Yifeng':276557,'Tian Yuda':861785,'Liu Guobo':598995}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Qingdao Hainiu (QDHN): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Li Suda':'I','Song Long':'I','Yaw Yeboah':'I','Che Shiwei':'I','Carlos Strandberg':'I'});
+/* ===== Qingdao Hainiu (QDHN): avatares (Resfu) ===== */
+Object.entries({'Mu Pengfei':474370,'Liu Jun':545559,'Nemanja Anđelković':471793,'Jin Yangyang':275353,'Li Suda':3386904,'Liu Junshuai':367164,'Song Long':326108,'Li Hailong':333121,'Wang Qiao':326370,'Liu Jiashen':472553,'Che Shiwei':316164,'Sun Zheng\'ao':326134,'Li Sirong':893061,'Malcom Edjouma':226380,'Lin Chuangyi':276015,'Lazar Tufegdzic':332191,'Luo Senwen':211549,'Wei Zixian':3410490,'Ngan Cheuk Pan':314152,'Gong Ruicong':3581101,'Carlos Strandberg':198354,'Jin Yonghao':3222364,'Yaw Yeboah':276806,'Song Wenjie':302942,'Liu Xinyu':372655,'Liu Guobao':3267291}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Qingdao West Coast (QDWC): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Dong Yu':'I','Zhao Honglue':'I','Ding Haifeng':'I','Nélson da Luz':'I','Peng Xinli':'I'});
+/* ===== Qingdao West Coast (QDWC): avatares (Resfu) ===== */
+Object.entries({'Li Hao':3202849,'Liu Shibo':615573,'Dong Hang':229128,'Samir Memišević':297575,'Zhang Chengdong':219526,'Wang Peng':276204,'Dong Yu':286511,'Bruno Viana':318670,'He Longhai':3136951,'Zhao Honglue':213121,'Sun Jie':219527,'Ding Haifeng':275437,'Elnizar Lohman':3676937,'Peng Xinli':211219,'Zhang Xiuwei':240740,'Nan Song':366358,'Barak Braunshtain':626653,'Meng Jingchao':3275111,'Jin Shiming':3671495,'Davidson':251504,'Abdul-Aziz Yakubu':496849,'Nélson da Luz':395030,'Asqer Afrden':3150257}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Shandong Taishan (SDTS): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Zheng Zheng':'I','Liu Yang':'I','Li Yuanyi':'I','Chen Pu':'I','Cryzan':'A'});
+/* ===== Shandong Taishan (SDTS): avatares (Resfu) ===== */
+Object.entries({'Wang Dalei':212637,'Yu Jinyong':3149091,'Liu Qiwei':3558995,'Liu Yang':375666,'Pedro Álvaro':341337,'Gao Zhunyi':215885,'Zheng Zheng':212636,'Peng Xiao':3386907,'Wang Tong':260808,'Qi Qiancheng':3558996,'Yang Ruiqi':3266716,'Shi Songchen':3397549,'Shemshidin Yusupjan':3544421,'Guilherme Madruga':848757,'Huang Zhengyu':325724,'Li Yuanyi':243012,'Mijit Mewlan':3366216,'Chen Zeshi':3204419,'Yin Jiaxi':3266728,'Imran Memet':3397550,'Cryzan':249242,'Vako':193797,'Zeca':643332,'Xie Wenneng':3149093,'Chen Pu':761110,'Raphael Merkies':3311231,'Mei Shuaijun':3418539,'Lu Junwei':3546231,'Peng Yixiang':3556726}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Shanghai Shenhua (SHSH): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Chan Shinichi':'I','Xie Pengfei':'I','Han Jiawen':'A','Luís Asué':'I'});
+/* ===== Shanghai Shenhua (SHSH): avatares (Resfu) ===== */
+Object.entries({'Xue Qinghao':617126,'Ma Zhen':848812,'Zhu Chenjie':729072,'Jiang Shenglong':731456,'Chan Shinichi':845156,'Wilson Manafá':199088,'Xu Haoyang':775951,'Yang Shuai':379862,'Li Songyi':260802,'Yang Zexiang':294158,'Jin Shunkai':3202850,'Wang Shilong':844351,'Zhu Yue':972601,'Rafael Ratão':193193,'Wu Xi':208225,'João Teixeira':205815,'Gao Tianyi':337370,'Wang Haijian':866275,'Li Ke':206022,'Yang Haoyu':3556023,'Huang Ming':3579950,'Wu Qipeng':3418534,'Luís Asué':876778,'Makhtar Gueye':665648,'Xie Pengfei':277248,'Liu Chengyu':940547,'Han Jiawen':3559797}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Shenzhen Peng City (SZPC): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Jiang Zhipeng':'I','Xuan Zhijian':'I','Yao Junsheng':'I'});
+/* ===== Shenzhen Peng City (SZPC): avatares (Resfu) ===== */
+Object.entries({'Peng Peng':846259,'Ji Jiabao':3275096,'Wei Minzhe':849954,'Zhang Haonan':3677531,'Gabriel Xavier':852954,'Filip Benković':280552,'Jiang Zhipeng':275579,'Tang Miao':275354,'Yu Rui':214033,'Shen Huanming':3663356,'Tian Yifan':3410505,'Zhao Jianfei':817243,'Wang Yuheng':3796940,'Chow Tim':246440,'Eden Karzev':307331,'Dai Weijun':388902,'Yao Junsheng':384766,'Zhang Yufeng':374480,'Li Long':376940,'Yu Menghui':3584046,'Li Ning':731613,'Wesley':279727,'Albion Ademi':296753,'Deabeas Owusu-Sekyere':710834,'Xia Dalong':901213,'Yao Junyi':3794627}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Tianjin Jinmen Tiger (TJJM): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Wang Xianjun':'I','Sun Minghim':'I','Bruno Xadas':'I','Quiles':'I'});
+/* ===== Tianjin Jinmen Tiger (TJJM): avatares (Resfu) ===== */
+Object.entries({'Yan Bingliang':846266,'Qi Yuxi':647184,'Aitor Córdoba':232532,'Sun Minghim':789803,'Yang Fan':644619,'Wang Xianjun':647242,'Wu Xinghan':260810,'Ji Shengpan':815679,'Wang Zhenghao':837787,'Bruno Xadas':320302,'Wang Qiuming':276019,'Huang Jiahui':848809,'Cris Salvador':144309,'Guo Hao':230360,'Chen Zhexuan':3266718,'Li Yongjia':3280561,'Quiles':176556,'Ba Dun':371536,'Guilherme Schettine':249239,'Xie Weijun':647241,'Liu Junxian':899883,'Shi Yan':3170085}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Wuhan Three Towns (WHTT): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'He Guan':'A','Li Ang':'I','Chen Zhechao':'I','Gustavo Sauer':'I'});
+/* ===== Wuhan Three Towns (WHTT): avatares (Resfu) ===== */
+Object.entries({'Fang Jingqi':294141,'Guo Jiayu':3148454,'He Guan':276200,'Ming Tian':331338,'Li Ang':246759,'Xu Haofeng':846268,'Liao Chengjian':275475,'Li Shenyuan':844632,'Liu Yiming':366024,'Wang Yi':357473,'Adriano Firmino':833878,'Zhang Xiaobin':276304,'Chen Zhechao':316237,'Zheng Kaimu':282027,'Long Wei':332458,'Zhong Jinbao':282045,'Min Zixi':3371767,'Jhonder Cádiz':232370,'Gustavo Sauer':320525,'Kilian Bevis':880933,'Antoine Leautey':341944,'Wang Jinxian':302943,'Zheng Haoqian':853071,'Liu Binbin':208228}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Yunnan Yukun (YNYK): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Hu Ruibao':'I','Yang Zihao':'I','Zhang Xiangshuo':'I','Huang Zichang':'A','Alexandru Ioniță':'I','Sun Xuelong':'A','Duan Liuyu':'I'});
+/* ===== Yunnan Yukun (YNYK): avatares (Resfu) ===== */
+Object.entries({'Wang Zhifeng':812911,'Bao Yaxiong':723944,'Andrei Burcă':298786,'Deng Hanwen':358105,'Yang Zihao':3147756,'Yi Teng':278988,'Wang Kit Tsui':308448,'Shi Ke':215976,'Hu Ruibao':325526,'Zhang Xiangshuo':3147764,'Cui Qi':479879,'Alexandru Ioniță':167953,'Caio':602859,'Hou Yongyong':325479,'Ye Chugui':275356,'Xu Xin':159797,'Duan Liuyu':844630,'Zhao Yuhao':220503,'Sun Xuelong':3221957,'Oscar Taty Maritu':729182,'Cléber':630637,'Huang Zichang':635497,'Bunyamin Abdusalam':3676931,'Han Zilong':300469,'Fei Ernanduo':3370952}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Zhejiang FC (ZJFC): pies dominantes de la plantilla ===== */
+Object.assign(REAL_FOOT,{'Dong Chunyu':'I','Wang Shiqin':'I','Qian Jiegei':'A'});
+/* ===== Zhejiang FC (ZJFC): avatares (Resfu) ===== */
+Object.entries({'Zhao Bo':743045,'Dong Chunyu':295092,'Huo Shenping':3275103,'Lucas Possignolo':299967,'Sun Guowen':452347,'Liu Haofan':3278797,'Tong Lei':318125,'Xu Junchi':3412972,'Zhang Aihui':3706206,'Wang Shiqin':3413079,'Wang Yang':3167982,'Park Jin Seob':375175,'Marko Tolić':330929,'Cheng Jin':316142,'Zhang Jiaqi':240055,'Qian Jiegei':75455,'Wu Wei':326361,'Bao Shengxin':3278793,'Alexandru Mitriță':168463,'Felippe Cardoso':603183,'Wang Yudong':3418542,'Saúl Guarirapa':895242,'Tao Qianglong':846264,'Gao Di':216588,'Fang Hao':867046,'Ning Fangze':3399521,'Ma Haoqi':3441543}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+/* ===== Jugadores cedidos (salida) con ficha ext: avatares (Resfu) ===== */
+Object.entries({'Kaio César':3143951,'Yasser Yaqoub':3565917,'Saleh Al-Rahmani':3384765,'M. Nkota':3582991,'Rayan Fallatah':3340708,'Ahmad Al Badah':3608731,'Fawaz Rabie':3728578,'Fawaz Al-Hamad':3770818,'Hussain Al Sultan':3649858,'Rashid Al-Mutairi':3612395,'C. Puertas':550869,'S. El Karouani':697147,'Iker Almena':3150722,'G. Carvalho':3374298,'Mohammed Al-Saeed':371930,'Nawaf Al-Hawsawi':3439227,'Saud Zidan':988325,'N. Al-Bishi':3266107,'S. Al-Manhali':3278983,'M. Al-Rajeh':3367314,'Majed Abdullah':3540587,'Abdulmalik Al-Marwani':3625745,'L. Rodríguez':1026208,'Mohammed Al-Dossari':3439434,'Jianzhi Zhang':919850,'Wenhao Jiang':1010540,'Nebijan Muhmet':3218257,'Ruiyue Li':3415870,'Y. Hao':3649530}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
+Object.assign(REAL_PHOTO,{'Ahmed Al-Muhaimeed':'https://cdn.resfu.com/img_data/players/medium/862701.jpg?size=120x&lossy=1'});
+/* ===== Escudos de los clubes de Asia añadidos (China, Mongolia, etc.) ===== */
+Object.assign(CLUB_LOGO,{"ABMU":"https://cdn.resfu.com/img_data/escudos/medium/163978.jpg","BDPL":"https://cdn.resfu.com/img_data/escudos/medium/126946.jpg","TUVB":"https://cdn.resfu.com/img_data/escudos/medium/146574.jpg","DORD":"https://cdn.resfu.com/img_data/escudos/medium/61523.jpg","EZRA":"https://cdn.resfu.com/img_data/escudos/medium/62676.jpg","ULAN":"https://cdn.resfu.com/img_data/escudos/medium/63509.jpg","KARD":"https://cdn.resfu.com/img_data/escudos/medium/159865.jpg","MAZI":"https://cdn.resfu.com/img_data/escudos/medium/17639.jpg","MURA":"https://cdn.resfu.com/img_data/escudos/medium/156926.jpg","CCYT":"https://cdn.resfu.com/img_data/escudos/medium/743.jpg","MZHK":"https://cdn.resfu.com/img_data/escudos/medium/62818.jpg","NJCT":"https://cdn.resfu.com/img_data/escudos/medium/142419.jpg","NTZY":"https://cdn.resfu.com/img_data/escudos/medium/62789.jpg","SJZG":"https://cdn.resfu.com/img_data/escudos/medium/143345.jpg","BJPR":"https://cdn.resfu.com/img_data/equipos/170475.png?size=120x&lossy=1","BJSS":"https://cdn.resfu.com/img_data/equipos/168473.png?size=120x&lossy=1","BJTC":"https://cdn.resfu.com/img_data/equipos/7493.png?size=120x&lossy=1","CCXD":"https://cdn.resfu.com/img_data/equipos/163009.png?size=120x&lossy=1","CLJG":"https://cdn.resfu.com/img_data/equipos/157138.png?size=120x&lossy=1","CQHA":"https://cdn.resfu.com/img_data/equipos/166666.png?size=120x&lossy=1","DLKC":"https://cdn.resfu.com/img_data/equipos/119951.png?size=120x&lossy=1","DLKW":"https://cdn.resfu.com/img_data/equipos/166748.png?size=120x&lossy=1","DXGY":"https://cdn.resfu.com/img_data/equipos/170467.png?size=120x&lossy=1","FSNS":"https://cdn.resfu.com/img_data/equipos/143351.png?size=120x&lossy=1","GANR":"https://cdn.resfu.com/img_data/equipos/151468.png?size=120x&lossy=1","GDGZ":"https://cdn.resfu.com/img_data/equipos/163345.png?size=120x&lossy=1","GDMT":"https://cdn.resfu.com/img_data/equipos/166611.png?size=120x&lossy=1","GDSH":"https://cdn.resfu.com/img_data/escudos/medium/163013.jpg","GDWC":"https://cdn.resfu.com/img_data/escudos/medium/170119.jpg","GXHC":"https://cdn.resfu.com/img_data/escudos/medium/163244.jpg","GZDL":"https://cdn.resfu.com/img_data/escudos/medium/166662.jpg","GZRG":"https://cdn.resfu.com/img_data/escudos/medium/170484.jpg","GZFY":"https://cdn.resfu.com/img_data/escudos/medium/170466.jpg","GZXF":"https://cdn.resfu.com/img_data/escudos/medium/170468.jpg","GZZJ":"https://cdn.resfu.com/img_data/escudos/medium/162457.jpg","HMCD":"https://cdn.resfu.com/img_data/escudos/medium/151469.jpg","HNSY":"https://cdn.resfu.com/img_data/escudos/medium/165871.jpg","HZLP":"https://cdn.resfu.com/img_data/equipos/160131.png?size=120x&lossy=1","HBIS":"https://cdn.resfu.com/img_data/equipos/100613.png?size=120x&lossy=1","HZCX":"https://cdn.resfu.com/img_data/escudos/medium/170469.jpg","JXDN":"https://cdn.resfu.com/img_data/escudos/medium/62791.jpg","JXLS":"https://cdn.resfu.com/img_data/escudos/medium/62949.jpg","LZLY":"https://cdn.resfu.com/img_data/escudos/medium/117114.jpg","LCLG":"https://cdn.resfu.com/img_data/escudos/medium/170471.jpg","NTHX":"https://cdn.resfu.com/img_data/escudos/medium/170113.jpg","NBPR":"https://cdn.resfu.com/img_data/escudos/medium/62810.jpg","NXPL":"https://cdn.resfu.com/img_data/escudos/medium/163016.jpg","QDFL":"https://cdn.resfu.com/img_data/escudos/medium/170005.jpg","QDRL":"https://cdn.resfu.com/img_data/escudos/medium/119943.jpg","QZQG":"https://cdn.resfu.com/img_data/escudos/medium/163021.jpg","SAXU":"https://cdn.resfu.com/img_data/escudos/medium/163344.jpg","SDSC":"https://cdn.resfu.com/img_data/escudos/medium/170473.jpg","SHSG":"https://cdn.resfu.com/img_data/escudos/medium/163022.jpg","SHZT":"https://cdn.resfu.com/img_data/equipos/166663.png?size=120x&lossy=1","SXCR":"https://cdn.resfu.com/img_data/equipos/155571.png?size=120x&lossy=1","SXTC":"https://cdn.resfu.com/img_data/escudos/medium/170477.jpg","SXXY":"https://cdn.resfu.com/img_data/escudos/medium/163025.jpg","SZKS":"https://cdn.resfu.com/img_data/escudos/medium/170478.jpg","SZ28":"https://cdn.resfu.com/img_data/equipos/164068.png?size=120x&lossy=1","SZXJ":"https://cdn.resfu.com/img_data/escudos/medium/166684.jpg","SUDW":"https://cdn.resfu.com/img_data/equipos/84678.png?size=120x&lossy=1","TATK":"https://cdn.resfu.com/img_data/equipos/151470.png?size=120x&lossy=1","TJDH":"https://cdn.resfu.com/img_data/escudos/medium/170483.jpg","WZFC":"https://cdn.resfu.com/img_data/equipos/157060.png?size=120x&lossy=1","WHLZ":"https://cdn.resfu.com/img_data/escudos/medium/166658.jpg","WHHJ":"https://cdn.resfu.com/img_data/escudos/medium/166649.jpg","WXWG":"https://cdn.resfu.com/img_data/equipos/143348.png?size=120x&lossy=1","XMCY":"https://cdn.resfu.com/img_data/escudos/medium/166664.jpg","XMFL":"https://cdn.resfu.com/img_data/escudos/medium/170515.jpg","YBLD":"https://cdn.resfu.com/img_data/escudos/medium/7502.jpg","YLMN":"https://cdn.resfu.com/img_data/escudos/medium/166835.jpg","YNCH":"https://cdn.resfu.com/img_data/escudos/medium/166653.jpg"});
 Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
