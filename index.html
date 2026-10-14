@@ -1568,7 +1568,9 @@ function dbEditRowsHTML(){
   if(f.co&&f.co!=='ALL')ids=ids.filter(id=>CLUBBY[id].co===f.co);
   if(f.co&&f.co!=='ALL'&&f.div&&f.div!=='ALL'){
     if(f.div==='FIL')ids=ids.filter(id=>inFiliales(id,f.co));
-    else{const set=String(f.div).split(',').map(Number);ids=ids.filter(id=>set.includes(CLUBBY[id].div||1));}
+    /* los filiales (p. ej. "Gangwon FC B", autogenerados) tienen la división del primer equipo +1, pero no
+       compiten en esa liga: se excluyen de la lista por división y quedan solo en el grupo "Filiales" */
+    else{const set=String(f.div).split(',').map(Number);ids=ids.filter(id=>set.includes(CLUBBY[id].div||1)&&!inFiliales(id,f.co));}
   }
   const list=ids.filter(id=>{const c=CLUBBY[id];return !q||normTxt(c.name).includes(q)||normTxt(id).includes(q);}).sort((a,b)=>CLUBBY[a].name.localeCompare(CLUBBY[b].name,'es'));
   return list.slice(0,400).map(id=>{const c=CLUBBY[id],n=(REAL_DB[id]||[]).length;
@@ -1934,7 +1936,7 @@ const COUNTRIES={
   IT:{name:'Italia',league:'Serie A',divs:['Serie A','Serie B'],pin:[12.4,42.5],polys:[ITALY,SICILY,SARDINIA]},
   DE:{name:'Alemania',league:'Bundesliga',divs:['Bundesliga','2. Bundesliga','3. Liga'],pin:[10.3,51.1],polys:[GERMANY]},
   NL:{name:'Países Bajos',league:'Eredivisie',divs:['Eredivisie','Eerste Divisie'],pin:[5.3,52.1],polys:[NETHERLANDS]},
-   TR:{name:'Turquía',league:'Süper Lig',divs:['Süper Lig'],pin:[32.9,39.9],polys:[TURKEY]},
+   TR:{name:'Turquía',league:'Süper Lig',divs:['Süper Lig','1. Lig'],pin:[32.9,39.9],polys:[TURKEY]},
    PT:{name:'Portugal',league:'Liga Portugal',divs:['Liga Portugal','Liga Portugal 2','Liga 3 Placard'],pin:[-8,39.6],polys:[PORTUGAL],inset:MADEIRA_AZORES},
    FR:{name:'Francia',league:'Ligue 1',divs:['Ligue 1','Ligue 2'],pin:[2.4,46.8],polys:[FRANCE]},
    RU:{name:'Rusia',league:'Premier Liga',divs:['Premier Liga'],pin:[40,54],polys:[RUSSIA_EU]},
@@ -3133,6 +3135,8 @@ Object.assign(CITY,{'Ciudad de México':{ll:[-99.1332,19.4326]},'San Luis Potos�
 Object.assign(CITY,{'Opole':{ll:[17.92,50.67]},'Skierniewice':{ll:[20.15,51.96]},'Siedlce':{ll:[22.28,52.18]},'Bielsko-Biała':{ll:[19.05,49.82]},'Gdynia':{ll:[18.53,54.52],o:[0,-26]},'Gdańsk':{ll:[18.65,54.35],o:[30,10]},'Nieciecza':{ll:[20.95,50.06]},'Głogów':{ll:[16.08,51.67]},'Mielec':{ll:[21.42,50.29]},'Legnica':{ll:[16.16,51.21],o:[-30,20]},'Niepołomice':{ll:[20.22,50.04]},'Chorzów':{ll:[18.95,50.30],o:[30,20]},'Rzeszów':{ll:[22.00,50.04]},'Bytom':{ll:[18.92,50.35],o:[-30,20]},'Grodzisk Mazowiecki':{ll:[20.63,52.10]}});
 Object.assign(CITY,{'Virton':{ll:[5.5325,49.5667]},'Denderleeuw':{ll:[4.0772,50.8864]},'Boussu':{ll:[3.8014,50.4336]},'Eupen':{ll:[6.0339,50.6296]},'Lier':{ll:[4.5702,51.1306]},'Maasmechelen':{ll:[5.6950,50.9650]},'Seraing':{ll:[5.4989,50.5989]},'Hasselt':{ll:[5.3378,50.9307]},'Lokeren':{ll:[3.9942,51.1058]}});
 Object.assign(CITY,{'Pitești':{ll:[24.87,44.86]},'Botoșani':{ll:[26.67,47.75]},'Cluj-Napoca':{ll:[23.6,46.77]},'Hunedoara':{ll:[22.9,45.75]},'Miercurea Ciuc':{ll:[25.8,46.36]},'Bucarest':{ll:[26.1,44.43]},'Constanța':{ll:[28.65,44.18]},'Galați':{ll:[28.03,45.44]},'Ploiești':{ll:[26.02,44.94]},'Sfântu Gheorghe':{ll:[25.79,45.86]},'Arad':{ll:[21.32,46.18]}});
+/* Turquía: ciudades de los clubes de la 1. Lig (y del resto de Turquía) que faltaban en el mapa */
+Object.assign(CITY,{'Antalya':{ll:[30.71,36.90]},'Bodrum':{ll:[27.43,37.03]},'Bolu':{ll:[31.61,40.73]},'Iğdır':{ll:[44.04,39.92]},'Manisa':{ll:[27.43,38.61]},'Bandırma':{ll:[27.98,40.35]},'Batman':{ll:[41.13,37.88]},'Mardin':{ll:[40.74,37.31]},'Muğla':{ll:[28.37,37.22]},'Van':{ll:[43.38,38.49]}});
 Object.assign(CITY,{'Oradea':{ll:[21.92,47.06]},'Târgoviște':{ll:[25.46,44.93]},'Chiajna':{ll:[25.95,44.47]},'Brașov':{ll:[25.61,45.66]},'Bacău':{ll:[26.91,46.57]},'Bistrița':{ll:[24.5,47.13]},'Lupeni':{ll:[23.14,45.36]},'Timișoara':{ll:[21.23,45.75]},'Lieşti':{ll:[27.42,45.63]}});
 Object.assign(CITY,{
  'Ceuta':{ll:[-5.32,35.89]},'Sabadell':{ll:[2.11,41.54]},'Elda':{ll:[-0.79,38.48]},'Andorra la Vella':{ll:[1.52,42.51]},'Logroño':{ll:[-2.45,42.46]},'Split':{ll:[16.44,43.51]},'León':{ll:[-5.57,42.60]},'Manresa':{ll:[1.83,41.73]},'Yeda':{ll:[39.20,21.49]},'Breda':{ll:[4.78,51.59]},'Salamanca':{ll:[-5.66,40.96]},'Irún':{ll:[-1.79,43.34]},
@@ -3554,6 +3558,10 @@ const REAL_LOANS=[
  ['Beom-Soo Kim','KRPOH','JEOD',1,null,['Beom-Soo Kim','FW',2000,'KR',53,null,0.518,null,'ED']],
  /* Seongnam FC (K League 2): cedido al club (P. Villero) */
  ['P. Villero','PONT','KRSNM',1,null,['P. Villero','FW',1998,'CO',57,null,0.712,null,'ED']],
+ /* Bandırmaspor (1. Lig): cedidos al club */
+ ['Yalın Dilek','GALA','BAND',1,null,['Yalın Dilek','FW',2006,'TR',45,null,0.438,null,'DC']],
+ ['Muhammet Genç','EROK','BAND',1,null,['Muhammet Genç','FW',2004,'TR',42,null,0.138,null,'ED']],
+ ['Ali Ülgen','ERZU','BAND',1,null,['Ali Ülgen','DF',2000,'TR',58,null,0.845,null,'LD']],
  /* Suwon Samsung Bluewings (K League 2): cedido al club (Ho-Yeon Jeong, de Minnesota United) */
  ['Ho-Yeon Jeong','MNU','KRSWB',1,null,['Ho-Yeon Jeong','MD',2000,'KR',64,null,2.35,null,'MC']],
  /* Yongin FC (K League 2): cedido al club (Chi-Ung Choi, de Suwon FC) */
@@ -7157,7 +7165,7 @@ const FORMS={
 };
 const FORM_LBL=Object.fromEntries(Object.keys(FORMS).map(k=>[k,FORMS[k].map(x=>x[3])]));
 /* ============ FORMACIONES ============ */
-const FORM_MAIN={VIRT:'4-2-3-1',CAIL:'4-4-2',COSM:'4-3-3',DOM:'4-5-1',FAE:'4-4-2',FIOR:'4-2-3-1',FOLG:'4-3-3',JUVG:'4-1-4-1',LAFI:'4-2-3-1',LIBS:'4-4-2',MUR:'4-3-3',PENN:'5-3-2',SGIO:'4-4-2',SMAC:'4-3-3',TRF:'4-2-3-1',TPEN:'4-2-3-1',AIK:'4-2-3-1',BRP:'4-3-3',DEG:'3-4-3',DIF:'4-2-3-1',GAIS:'4-3-3',BKH:'4-3-3',HAL:'4-4-2',HAM:'4-2-3-1',IFE:'3-4-3',IFK:'4-2-3-1',SIR:'4-2-3-1',KALM:'4-3-3',MALM:'4-2-3-1',MJA:'3-5-2',ORG:'4-2-3-1',VSK:'3-4-3',ACCR:'4-2-3-1',BART:'4-2-3-1',CHTO:'4-4-2',CHES:'4-2-3-1',COLC:'4-2-3-1',CREW:'4-3-3',FLEE:'4-3-3',GILL:'4-2-3-1',GRIM:'4-3-3',NEWP:'4-2-3-1',NTHT:'4-2-3-1',ROCH:'4-3-3',ROTH:'4-4-2',SALF:'4-2-3-1',SWIN:'4-3-3',TRAN:'4-4-2',WALS:'4-2-3-1',BRRO:'3-4-2-1',CRWT:'3-4-2-1',EXET:'3-4-1-2',OLDH:'3-5-2',PORV:'3-4-3',SHRT:'3-5-2',YORK:'3-4-3',CSKM:'4-1-4-1',AKHM:'4-4-1-1',AKRO:'4-1-4-1',BALT:'5-4-1',DINM:'4-3-3',DYNM:'4-4-1-1',FAKL:'3-4-3',ORBG:'4-4-1-1',KRAS:'4-4-1-1',ROST:'4-3-3',KRIL:'4-4-1-1',LOKM:'4-4-1-1',RODM:'4-4-2',RUBK:'5-4-1',SPTM:'4-1-4-1',ZEN:'4-2-3-1',AFCW:'5-3-2',BNSL:'4-2-3-1',BKPL:'4-1-3-2',BRDC:'3-4-2-1',LEIC:'4-1-4-1',BROM:'4-1-4-1',BURA:'3-4-2-1',CAMU:'3-4-2-1',DONC:'4-1-4-1',HUDD:'3-4-2-1',LEYO:'3-4-2-1',LUTN:'4-1-4-1',MNF:'3-1-4-2',MKDN:'3-1-4-2',NTCO:'3-4-2-1',OXUT:'4-2-3-1',PBR:'4-2-3-1',PLY:'4-4-2',READ:'4-2-3-1',SHWD:'4-2-3-1',STVG:'4-4-1-1',SKP:'3-4-3',WGNA:'3-4-2-1',WYCW:'4-2-3-1',BOHN:'4-2-3-1',DERC:'4-2-3-1',DROG:'5-3-2',DUND:'4-2-3-1',GALW:'5-3-2',SHMR:'3-1-4-2',SHEL:'4-2-3-1',SLIG:'4-2-3-1',STPA:'3-4-1-2',WATF:'3-5-2',CELC:'4-2-3-1',RNGR:'4-2-3-1',ABDN:'4-2-3-1',DNDE:'4-2-3-1',DNUT:'4-3-3',FALK:'4-2-3-1',HEMO:'4-2-3-1',HIBE:'4-2-3-1',KILM:'4-4-1-1',MWEL:'4-2-3-1',SJOH:'4-2-3-1',SMIR:'4-2-3-1',BASL:'4-2-3-1',LUGA:'5-3-2',VADU:'4-1-2-1-2',GRAS:'4-3-3',LSNE:'4-2-3-1',LUZN:'4-4-2',SRVT:'4-2-3-1',SION:'4-4-2',STGL:'5-3-2',THUN:'4-4-2',YBOY:'4-4-1-1',FCZH:'4-1-4-1',BOCA:'4-3-3',RIVP:'4-2-3-1',ALDO:'4-2-3-1',ARGN:'4-1-2-1-2',ATUC:'4-1-4-1',BANF:'4-4-2',BARC:'5-3-2',BELG:'4-2-3-1',HURA:'4-2-3-1',CCOR:'4-4-2',DYJ:'4-2-3-1',RIES:'5-4-1',ESLP:'4-2-3-1',ERCU:'3-1-4-2',GLP:'4-2-3-1',GMEN:'4-3-3',INRI:'4-1-2-1-2',INDE:'4-3-3',INST:'3-4-3',LANU:'4-2-3-1',NEWO:'4-2-3-1',PLATN:'4-2-3-1',RACI:'4-1-3-2',ROS:'4-2-3-1',SNLO:'4-4-2',SARM:'4-4-2',TALL:'4-2-3-1',TIGR:'4-4-2',USFE:'4-4-2',VELZ:'4-2-3-1',LUDO:'4-1-4-1',ARDA:'4-4-1-1',BOTP:'4-4-1-1',BOTV:'4-4-1-1',CHMV:'4-4-1-1',CSK48:'4-4-2',CSOF:'4-1-2-1-2',DUNR:'4-1-4-1',LEVS:'4-4-1-1',LOKP:'4-4-1-1',LOKS:'4-4-1-1',SEPT:'4-4-1-1',SLAS:'4-4-1-1',SPVA:'4-4-1-1',ANNY:'4-3-3',CLRM:'4-1-4-1',DIJO:'4-1-2-1-2',GREN:'4-1-4-1',GUIN:'4-4-2',METZ:'4-2-3-1',MTPL:'4-2-3-1',NANC:'4-4-2',NANT:'3-1-4-2',PAU:'5-3-2',REDS:'4-2-3-1',RODZ:'5-3-2',STE:'4-2-3-1',SOCH:'4-2-3-1',SREI:'4-2-3-1',LAVA:'4-3-1-2',BOUL:'5-3-2',DNKQ:'4-2-3-1',GALA:'4-2-3-1',FENR:'4-2-3-1',ALNY:'3-4-3',AMED:'4-2-3-1',BSK:'4-1-4-1',CORU:'4-1-4-1',ERZU:'5-4-1',EYU:'4-1-4-1',GAZI:'4-1-4-1',GENB:'4-1-4-1',GOZT:'3-4-1-2',IBAS:'4-2-3-1',KASM:'4-2-3-1',KOCE:'4-3-3',KONY:'4-2-3-1',RIZE:'4-1-4-1',SAMS:'4-2-3-1',TRBZ:'4-2-3-1',FCB:'4-2-1-3',ATH:'4-2-3-1',ATM:'3-4-1-2',RMA:'4-2-1-3',CEL:'3-4-2-1',CFO:'3-4-2-1',ALA:'3-1-4-2',ELC:'3-4-2-1',GET:'5-2-1-2',LEV:'4-1-4-1',MAL:'4-1-4-1',OSA:'4-2-3-1',RAC:'4-2-3-1',RAY:'4-2-3-1',DEP:'4-2-3-1',BET:'4-2-1-3',RSO:'4-2-3-1',SEV:'4-2-3-1',ALM:'4-2-3-1',BUR:'4-2-3-1',CAD:'4-3-3',CAS:'3-4-3',VAL:'4-3-3',VIL:'4-4-2',RSB:'4-2-3-1',CEU:'4-3-3',ALB:'5-3-2',COR:'4-3-3',EIB:'4-2-3-1',ELD:'4-2-3-1',AND:'4-3-3',GIR:'4-1-4-1',GRA:'4-3-3',MLL:'4-4-1-1',LEG:'5-3-2',OVI:'4-2-3-1',VLL:'4-2-3-1',SPO:'3-4-1-2',LPA:'4-2-3-1',BOU:'4-2-3-1',ARS:'4-2-3-1',AVL:'4-2-3-1',BRE:'4-2-3-1',BHA:'4-2-3-1',CHE:'3-4-2-1',COV:'4-2-3-1',CRY:'3-4-2-1',EVE:'4-2-3-1',FUL:'4-2-3-1',HUL:'5-4-1',IPS:'4-2-3-1',LEE:'3-4-2-1',LIV:'4-2-3-1',MCI:'4-2-3-1',MUN:'4-2-3-1',NEW:'4-2-3-1',NFO:'3-4-2-1',SUN:'4-2-3-1',TOT:'4-2-3-1',BIR:'4-2-3-1',BLB:'4-2-3-1',BWT:'4-2-3-1',BRC:'4-2-3-1',BUN:'4-2-3-1',CAR:'4-2-3-1',CHA:'4-2-3-1',DER:'4-2-3-1',LIN:'3-4-2-1',MID:'4-2-3-1',MLW:'4-3-3',NOR:'4-2-3-1',PMH:'4-2-3-1',PRE:'5-3-2',QPR:'4-4-2',SHU:'4-4-2',SOU:'4-2-3-1',STK:'4-2-3-1',SWA:'4-3-3',WAT:'4-2-3-1',WBA:'4-4-2',WHU:'4-4-1-1',WOL:'4-2-3-1',WRE:'3-4-2-1',BVB:'3-4-2-1',B04:'4-2-3-1',BMG:'4-2-3-1',BAY:'4-2-3-1',SGE:'3-4-2-1',FCA:'3-4-2-1',HSV:'3-4-2-1',TSG:'4-4-2',KOE:'4-2-3-1',M05:'5-3-2',SCP:'5-3-2',RBL:'4-3-3',SCF:'4-2-3-1',S04:'3-4-2-1',VFB:'4-2-3-1',ELV:'4-2-3-1',FCU:'4-2-2-2',SVW:'4-2-3-1',DSC:'4-1-4-1',D98:'4-2-3-1',EBS:'4-2-3-1',SGD:'4-2-3-1',SGS:'4-4-2',FCE:'4-2-3-1',ETR:'4-2-3-1',HAV:'4-3-3',MEP:'4-4-2',FWK:'4-2-3-1',STP:'3-4-1-2',LEP:'4-2-3-1',SKB:'4-2-3-1',SGF:'4-4-2',H96:'3-4-3',FCH:'4-4-2',BSC:'4-2-3-1',KIE:'4-1-4-1',FCK:'3-4-2-1',KSC:'4-1-2-1-2',FCM:'4-1-4-1',FCN:'4-2-1-3',BOC:'4-2-3-1',OSN:'3-4-2-1',WOB:'4-2-3-1',MON:'3-4-2-1',ATA:'4-3-3',BOL:'4-2-3-1',CAG:'4-3-2-1',COM:'4-2-3-1',FIO:'4-3-2-1',FRO:'4-2-3-1',GEN:'3-4-2-1',INT:'5-3-2',JUV:'4-2-3-1',LAZ:'4-3-3',LEC:'4-3-3',MIL:'3-4-2-1',NAP:'4-3-3',PAR:'5-3-2',ROM:'3-4-2-1',SAS:'4-3-3',TOR:'3-4-2-1',UDI:'3-4-2-1',VEN:'5-3-2',ASC:'4-2-3-1',AVE:'5-3-2',BEN:'4-3-3',CRR:'5-3-2',CAT:'3-4-2-1',CES:'4-3-3',CRE:'4-2-3-1',EMP:'5-3-2',SUD:'4-4-1-1',VER:'4-2-3-1',JST:'4-3-3',MAN:'3-4-2-1',MOD:'4-3-2-1',PAD:'5-3-2',PAL:'4-2-3-1',PIS:'4-3-2-1',SAM:'4-3-3',ARE:'4-3-3',VIC:'5-3-2',ENT:'5-3-2',PSG:'4-3-3',ANG:'4-2-3-1',AUX:'4-3-3',HAC:'3-4-2-1',LEM:'5-3-2',LEN:'3-4-3',LIL:'4-2-3-1',LOR:'3-4-2-1',ASM:'4-2-3-1',NCE:'3-4-2-1',OL:'4-3-3',OM:'4-2-3-1',PFC:'4-2-3-1',SBR:'4-2-3-1',REN:'4-1-4-1',STR:'4-2-3-1',TOU:'4-2-3-1',TRO:'4-1-4-1',AEKA:'4-4-2',BRU:'4-2-3-1',FEN:'4-2-3-1',FEY:'4-3-3',BDG:'4-4-2',GAL:'4-2-3-1',LAS:'3-4-1-2',FCP:'4-3-3',PSV:'4-3-3',SBAH:'4-2-3-1',SHK:'4-3-3',SLA:'3-4-2-1',AVS:'4-3-3',ARO:'4-2-3-1',SLB:'4-2-3-1',CPA:'4-3-3',SCL:'4-2-3-1',SPB:'3-4-2-1',SPTL:'4-2-3-1',ESTP:'4-2-3-1',ETD:'4-3-3',FAR:'4-2-3-1',FEI:'4-3-3',FEL:'4-2-3-1',LEIX:'4-3-3',LUFC:'4-3-3',PEN:'4-2-3-1',PTM:'4-3-3',FCPB:'4-3-3',SPTLB:'4-3-3',TON:'4-3-3',TRZ:'4-3-3',UDL:'4-3-3',VIZ:'4-3-3',AMFC:'4-2-3-1',SLU:'3-5-2',ATLT:'3-4-3',ATLS:'4-3-3',CHIV:'4-2-3-1',CAZU:'3-4-3',FCJZ:'4-2-3-1',LEON:'4-2-3-1',CFMT:'4-2-3-1',NECA:'4-4-2',PCHU:'4-2-3-1',PUEB:'5-4-1',UNAM:'4-2-3-1',QRO:'4-4-2',SLAG:'4-4-2',UANL:'4-3-3',TIJ:'4-2-3-1',TOLU:'4-2-3-1',FAM:'4-2-3-1',ALV:'3-4-3',GIL:'4-2-3-1',MAR:'4-2-3-1',MOR:'4-2-3-1',CDN:'3-4-2-1',RAVE:'4-2-3-1',VIT:'4-2-3-1',AJA:'4-3-3',ADO:'4-2-3-1',AZA:'4-2-1-3',CMB:'4-3-3',EXC:'4-3-3',FSI:'5-2-3',GAE:'4-2-3-1',GRN:'4-2-3-1',HFE:'4-2-1-3',NEC:'3-4-2-1',PEC:'4-2-3-1',TEL:'5-4-1',SPR:'4-2-3-1',TWE:'4-3-3',UTR:'3-4-2-1',WIL:'4-2-3-1',RSC:'4-4-2',ANT:'4-4-2',CBR:'3-4-2-1',CHL:'4-2-3-1',GNK:'4-2-3-1',GNT:'3-4-2-1',KVK:'3-4-2-1',MEC:'3-4-1-2',WES:'4-2-3-1',LOM:'4-2-3-1',OHL:'3-4-3',RLL:'3-4-1-2',STV:'4-2-3-1',SKB:'4-2-3-1',SLG:'4-3-3',USG:'3-4-1-2',ZUL:'4-2-3-1',AUL:'4-2-3-1',AWI:'3-4-2-1',GAK:'3-4-1-2',RWI:'4-2-3-1',RBS:'4-2-3-1',ALT:'3-4-2-1',STU:'4-2-3-1',RIE:'4-2-3-1',HAR:'5-3-2',WAC:'3-4-2-1',TIR:'4-2-3-1',GETX:'4-4-1-1',MRE:'4-4-1-1',MER:'4-4-1-1',BARA:'4-4-1-1',CRI:'4-4-1-1',EXT:'4-4-1-1',LUG:'4-4-1-1',CUL:'4-4-1-1',CACE:'4-4-1-1',MIR:'4-4-2',NAX:'4-4-2',PSP:'4-4-1-1',REU:'4-4-2',SDLO:'4-4-1-1',TERR:'4-4-1-1',TUD:'4-4-1-1',OLO:'4-4-2',UTE:'4-4-1-1',ORI:'4-4-2',PDE:'3-1-4-2',POB:'4-4-2',UCAM:'4-4-2',CTE:'5-4-1',YEC:'4-4-2',ANTO:'4-4-1-1',BAD:'4-4-1-1',DBE:'4-4-2',EST:'3-1-4-2',LUC:'4-4-2',CAC:'4-4-2',MIJ:'4-1-4-1',LIND:'4-1-4-1',MFC:'4-3-3',REC:'4-4-1-1',SPG:'4-4-1-1',TAMA:'4-4-2',XER:'4-4-1-1',ATAL:'4-4-2',ATOR:'4-4-2',PASO:'4-1-4-1',GUA:'4-4-2',NAV:'4-1-4-1',TALV:'4-4-2',PUER:'4-4-1-1',GSE:'4-4-2',NUM:'4-4-2',RAVI:'4-4-1-1',ALCH:'4-4-1-1',SALU:'4-4-2',CONQ:'4-4-1-1',SANS:'3-4-3',PON:'4-4-2',PONV:'4-4-1-1',FER:'4-4-1-1',AVIL:'4-4-1-1',RUS:'4-4-1-1',LOG:'4-4-1-1',OUR:'4-1-4-1',UNI:'4-3-3',STA:'5-4-1',EUR:'4-4-1-1',ZAR:'4-4-1-1',ZAM:'4-4-1-1',AGU:'4-4-2',ALC:'4-4-2',ALG:'4-4-1-1',ANQ:'4-4-1-1',TRL:'4-4-1-1',SANL:'3-4-1-2',ACOY:'4-4-2',ATBA:'3-4-1-2',CIE:'4-4-2',INTC:'4-4-1-1',NUC:'4-4-2',DMI:'4-4-1-1',LORD:'4-4-2',CTG:'4-4-2',VILB:'4-4-2',HER:'4-4-1-1',TRM:'4-4-2',RMJ:'4-4-1-1',JAE:'5-4-1',RMU:'4-3-3',IBI:'4-4-1-1',HUE:'4-4-1-1',NAS:'4-4-2',KOB:'4-2-3-1',HOR:'4-2-3-1',AAR:'3-4-3',BRO:'4-2-3-1',LYN:'4-4-2',MDJ:'3-1-4-2',NSJ:'3-4-3',ODE:'4-2-3-1',RND:'4-2-3-1',SIL:'3-4-2-1',SJE:'4-2-3-1',VIB:'4-3-3',MOL:'4-2-3-1',AAL:'5-3-2',FRE:'3-4-2-1',HKM:'5-3-2',IKST:'5-3-2',KFU:'3-4-3',KRS:'4-2-3-1',LIS:'4-1-4-1',RBK:'4-4-2',SDJ:'4-1-4-1',SAR:'4-4-2',BRN:'4-3-3',TIL:'5-3-2',VIF:'4-4-2',VIK:'4-1-4-1',LECP:'4-1-4-1',KAT:'3-4-2-1',GOR:'4-3-3',JAG:'4-2-3-1',KOR:'4-2-3-1',CRA:'4-3-3',LGW:'5-3-2',MOTL:'4-1-4-1',PIG:'4-4-1-1',POG:'4-2-3-1',RADO:'4-4-1-1',RAK:'3-4-2-1',SLW:'3-5-2',WID:'4-3-3',WIE:'4-3-3',WIS:'4-2-3-1',WPL:'3-4-2-1',ZAGL:'3-4-2-1',HORN:'4-2-3-1',ALDE:'4-2-3-1',ALTR:'4-2-3-1',BARR:'4-2-3-1',BRWD:'3-4-2-1',BOSU:'4-4-2',CARL:'3-5-2',EASL:'4-4-2',HALI:'4-2-3-1',FGR:'4-2-3-1',FYLD:'4-2-3-1',GATE:'3-4-2-1',HARG:'4-4-2',HARP:'4-3-3',KIDD:'4-2-3-1',SCUN:'4-2-3-1',SOLH:'4-2-3-1',SOUT:'3-4-2-1',SUTU:'4-4-2',TAMW:'4-4-2',WEAL:'3-4-2-1',WOKI:'4-2-3-1',WORT:'3-4-2-1',YEOV:'4-2-3-1',BVA:'3-4-2-1',VIR:'4-3-3',DND:'5-3-2',FRB:'4-2-3-1',EUP:'4-2-3-1',LIEK:'4-3-3',PATE:'3-4-3',RFCL:'4-2-3-1',SER:'4-4-2',SPH:'4-2-3-1',SPLK:'4-2-3-1'};
+const FORM_MAIN={VIRT:'4-2-3-1',CAIL:'4-4-2',COSM:'4-3-3',DOM:'4-5-1',FAE:'4-4-2',FIOR:'4-2-3-1',FOLG:'4-3-3',JUVG:'4-1-4-1',LAFI:'4-2-3-1',LIBS:'4-4-2',MUR:'4-3-3',PENN:'5-3-2',SGIO:'4-4-2',SMAC:'4-3-3',TRF:'4-2-3-1',TPEN:'4-2-3-1',AIK:'4-2-3-1',BRP:'4-3-3',DEG:'3-4-3',DIF:'4-2-3-1',GAIS:'4-3-3',BKH:'4-3-3',HAL:'4-4-2',HAM:'4-2-3-1',IFE:'3-4-3',IFK:'4-2-3-1',SIR:'4-2-3-1',KALM:'4-3-3',MALM:'4-2-3-1',MJA:'3-5-2',ORG:'4-2-3-1',VSK:'3-4-3',ACCR:'4-2-3-1',BART:'4-2-3-1',CHTO:'4-4-2',CHES:'4-2-3-1',COLC:'4-2-3-1',CREW:'4-3-3',FLEE:'4-3-3',GILL:'4-2-3-1',GRIM:'4-3-3',NEWP:'4-2-3-1',NTHT:'4-2-3-1',ROCH:'4-3-3',ROTH:'4-4-2',SALF:'4-2-3-1',SWIN:'4-3-3',TRAN:'4-4-2',WALS:'4-2-3-1',BRRO:'3-4-2-1',CRWT:'3-4-2-1',EXET:'3-4-1-2',OLDH:'3-5-2',PORV:'3-4-3',SHRT:'3-5-2',YORK:'3-4-3',CSKM:'4-1-4-1',AKHM:'4-4-1-1',AKRO:'4-1-4-1',BALT:'5-4-1',DINM:'4-3-3',DYNM:'4-4-1-1',FAKL:'3-4-3',ORBG:'4-4-1-1',KRAS:'4-4-1-1',ROST:'4-3-3',KRIL:'4-4-1-1',LOKM:'4-4-1-1',RODM:'4-4-2',RUBK:'5-4-1',SPTM:'4-1-4-1',ZEN:'4-2-3-1',AFCW:'5-3-2',BNSL:'4-2-3-1',BKPL:'4-1-3-2',BRDC:'3-4-2-1',LEIC:'4-1-4-1',BROM:'4-1-4-1',BURA:'3-4-2-1',CAMU:'3-4-2-1',DONC:'4-1-4-1',HUDD:'3-4-2-1',LEYO:'3-4-2-1',LUTN:'4-1-4-1',MNF:'3-1-4-2',MKDN:'3-1-4-2',NTCO:'3-4-2-1',OXUT:'4-2-3-1',PBR:'4-2-3-1',PLY:'4-4-2',READ:'4-2-3-1',SHWD:'4-2-3-1',STVG:'4-4-1-1',SKP:'3-4-3',WGNA:'3-4-2-1',WYCW:'4-2-3-1',BOHN:'4-2-3-1',DERC:'4-2-3-1',DROG:'5-3-2',DUND:'4-2-3-1',GALW:'5-3-2',SHMR:'3-1-4-2',SHEL:'4-2-3-1',SLIG:'4-2-3-1',STPA:'3-4-1-2',WATF:'3-5-2',CELC:'4-2-3-1',RNGR:'4-2-3-1',ABDN:'4-2-3-1',DNDE:'4-2-3-1',DNUT:'4-3-3',FALK:'4-2-3-1',HEMO:'4-2-3-1',HIBE:'4-2-3-1',KILM:'4-4-1-1',MWEL:'4-2-3-1',SJOH:'4-2-3-1',SMIR:'4-2-3-1',BASL:'4-2-3-1',LUGA:'5-3-2',VADU:'4-1-2-1-2',GRAS:'4-3-3',LSNE:'4-2-3-1',LUZN:'4-4-2',SRVT:'4-2-3-1',SION:'4-4-2',STGL:'5-3-2',THUN:'4-4-2',YBOY:'4-4-1-1',FCZH:'4-1-4-1',BOCA:'4-3-3',RIVP:'4-2-3-1',ALDO:'4-2-3-1',ARGN:'4-1-2-1-2',ATUC:'4-1-4-1',BANF:'4-4-2',BARC:'5-3-2',BELG:'4-2-3-1',HURA:'4-2-3-1',CCOR:'4-4-2',DYJ:'4-2-3-1',RIES:'5-4-1',ESLP:'4-2-3-1',ERCU:'3-1-4-2',GLP:'4-2-3-1',GMEN:'4-3-3',INRI:'4-1-2-1-2',INDE:'4-3-3',INST:'3-4-3',LANU:'4-2-3-1',NEWO:'4-2-3-1',PLATN:'4-2-3-1',RACI:'4-1-3-2',ROS:'4-2-3-1',SNLO:'4-4-2',SARM:'4-4-2',TALL:'4-2-3-1',TIGR:'4-4-2',USFE:'4-4-2',VELZ:'4-2-3-1',LUDO:'4-1-4-1',ARDA:'4-4-1-1',BOTP:'4-4-1-1',BOTV:'4-4-1-1',CHMV:'4-4-1-1',CSK48:'4-4-2',CSOF:'4-1-2-1-2',DUNR:'4-1-4-1',LEVS:'4-4-1-1',LOKP:'4-4-1-1',LOKS:'4-4-1-1',SEPT:'4-4-1-1',SLAS:'4-4-1-1',SPVA:'4-4-1-1',ANNY:'4-3-3',CLRM:'4-1-4-1',DIJO:'4-1-2-1-2',GREN:'4-1-4-1',GUIN:'4-4-2',METZ:'4-2-3-1',MTPL:'4-2-3-1',NANC:'4-4-2',NANT:'3-1-4-2',PAU:'5-3-2',REDS:'4-2-3-1',RODZ:'5-3-2',STE:'4-2-3-1',SOCH:'4-2-3-1',SREI:'4-2-3-1',LAVA:'4-3-1-2',BOUL:'5-3-2',DNKQ:'4-2-3-1',GALA:'4-2-3-1',FENR:'4-2-3-1',ALNY:'3-4-3',AMED:'4-2-3-1',BSK:'4-1-4-1',CORU:'4-1-4-1',ERZU:'5-4-1',EYU:'4-1-4-1',GAZI:'4-1-4-1',GENB:'4-1-4-1',GOZT:'3-4-1-2',IBAS:'4-2-3-1',KASM:'4-2-3-1',KOCE:'4-3-3',KONY:'4-2-3-1',RIZE:'4-1-4-1',SAMS:'4-2-3-1',TRBZ:'4-2-3-1',FCB:'4-2-1-3',ATH:'4-2-3-1',ATM:'3-4-1-2',RMA:'4-2-1-3',CEL:'3-4-2-1',CFO:'3-4-2-1',ALA:'3-1-4-2',ELC:'3-4-2-1',GET:'5-2-1-2',LEV:'4-1-4-1',MAL:'4-1-4-1',OSA:'4-2-3-1',RAC:'4-2-3-1',RAY:'4-2-3-1',DEP:'4-2-3-1',BET:'4-2-1-3',RSO:'4-2-3-1',SEV:'4-2-3-1',ALM:'4-2-3-1',BUR:'4-2-3-1',CAD:'4-3-3',CAS:'3-4-3',VAL:'4-3-3',VIL:'4-4-2',RSB:'4-2-3-1',CEU:'4-3-3',ALB:'5-3-2',COR:'4-3-3',EIB:'4-2-3-1',ELD:'4-2-3-1',AND:'4-3-3',GIR:'4-1-4-1',GRA:'4-3-3',MLL:'4-4-1-1',LEG:'5-3-2',OVI:'4-2-3-1',VLL:'4-2-3-1',SPO:'3-4-1-2',LPA:'4-2-3-1',BOU:'4-2-3-1',ARS:'4-2-3-1',AVL:'4-2-3-1',BRE:'4-2-3-1',BHA:'4-2-3-1',CHE:'3-4-2-1',COV:'4-2-3-1',CRY:'3-4-2-1',EVE:'4-2-3-1',FUL:'4-2-3-1',HUL:'5-4-1',IPS:'4-2-3-1',LEE:'3-4-2-1',LIV:'4-2-3-1',MCI:'4-2-3-1',MUN:'4-2-3-1',NEW:'4-2-3-1',NFO:'3-4-2-1',SUN:'4-2-3-1',TOT:'4-2-3-1',BIR:'4-2-3-1',BLB:'4-2-3-1',BWT:'4-2-3-1',BRC:'4-2-3-1',BUN:'4-2-3-1',CAR:'4-2-3-1',CHA:'4-2-3-1',DER:'4-2-3-1',LIN:'3-4-2-1',MID:'4-2-3-1',MLW:'4-3-3',NOR:'4-2-3-1',PMH:'4-2-3-1',PRE:'5-3-2',QPR:'4-4-2',SHU:'4-4-2',SOU:'4-2-3-1',STK:'4-2-3-1',SWA:'4-3-3',WAT:'4-2-3-1',WBA:'4-4-2',WHU:'4-4-1-1',WOL:'4-2-3-1',WRE:'3-4-2-1',BVB:'3-4-2-1',B04:'4-2-3-1',BMG:'4-2-3-1',BAY:'4-2-3-1',SGE:'3-4-2-1',FCA:'3-4-2-1',HSV:'3-4-2-1',TSG:'4-4-2',KOE:'4-2-3-1',M05:'5-3-2',SCP:'5-3-2',RBL:'4-3-3',SCF:'4-2-3-1',S04:'3-4-2-1',VFB:'4-2-3-1',ELV:'4-2-3-1',FCU:'4-2-2-2',SVW:'4-2-3-1',DSC:'4-1-4-1',D98:'4-2-3-1',EBS:'4-2-3-1',SGD:'4-2-3-1',SGS:'4-4-2',FCE:'4-2-3-1',ETR:'4-2-3-1',HAV:'4-3-3',MEP:'4-4-2',FWK:'4-2-3-1',STP:'3-4-1-2',LEP:'4-2-3-1',SKB:'4-2-3-1',SGF:'4-4-2',H96:'3-4-3',FCH:'4-4-2',BSC:'4-2-3-1',KIE:'4-1-4-1',FCK:'3-4-2-1',KSC:'4-1-2-1-2',FCM:'4-1-4-1',FCN:'4-2-1-3',BOC:'4-2-3-1',OSN:'3-4-2-1',WOB:'4-2-3-1',MON:'3-4-2-1',ATA:'4-3-3',BOL:'4-2-3-1',CAG:'4-3-2-1',COM:'4-2-3-1',FIO:'4-3-2-1',FRO:'4-2-3-1',GEN:'3-4-2-1',INT:'5-3-2',JUV:'4-2-3-1',LAZ:'4-3-3',LEC:'4-3-3',MIL:'3-4-2-1',NAP:'4-3-3',PAR:'5-3-2',ROM:'3-4-2-1',SAS:'4-3-3',TOR:'3-4-2-1',UDI:'3-4-2-1',VEN:'5-3-2',ASC:'4-2-3-1',AVE:'5-3-2',BEN:'4-3-3',CRR:'5-3-2',CAT:'3-4-2-1',CES:'4-3-3',CRE:'4-2-3-1',EMP:'5-3-2',SUD:'4-4-1-1',VER:'4-2-3-1',JST:'4-3-3',MAN:'3-4-2-1',MOD:'4-3-2-1',PAD:'5-3-2',PAL:'4-2-3-1',PIS:'4-3-2-1',SAM:'4-3-3',ARE:'4-3-3',VIC:'5-3-2',ENT:'5-3-2',PSG:'4-3-3',ANG:'4-2-3-1',AUX:'4-3-3',HAC:'3-4-2-1',LEM:'5-3-2',LEN:'3-4-3',LIL:'4-2-3-1',LOR:'3-4-2-1',ASM:'4-2-3-1',NCE:'3-4-2-1',OL:'4-3-3',OM:'4-2-3-1',PFC:'4-2-3-1',SBR:'4-2-3-1',REN:'4-1-4-1',STR:'4-2-3-1',TOU:'4-2-3-1',TRO:'4-1-4-1',AEKA:'4-4-2',BRU:'4-2-3-1',FEN:'4-2-3-1',FEY:'4-3-3',BDG:'4-4-2',GAL:'4-2-3-1',LAS:'3-4-1-2',FCP:'4-3-3',PSV:'4-3-3',SBAH:'4-2-3-1',SHK:'4-3-3',SLA:'3-4-2-1',AVS:'4-3-3',ARO:'4-2-3-1',SLB:'4-2-3-1',CPA:'4-3-3',SCL:'4-2-3-1',SPB:'3-4-2-1',SPTL:'4-2-3-1',ESTP:'4-2-3-1',ETD:'4-3-3',FAR:'4-2-3-1',FEI:'4-3-3',FEL:'4-2-3-1',LEIX:'4-3-3',LUFC:'4-3-3',PEN:'4-2-3-1',PTM:'4-3-3',FCPB:'4-3-3',SPTLB:'4-3-3',TON:'4-3-3',TRZ:'4-3-3',UDL:'4-3-3',VIZ:'4-3-3',AMFC:'4-2-3-1',SLU:'3-5-2',ATLT:'3-4-3',ATLS:'4-3-3',CHIV:'4-2-3-1',CAZU:'3-4-3',FCJZ:'4-2-3-1',LEON:'4-2-3-1',CFMT:'4-2-3-1',NECA:'4-4-2',PCHU:'4-2-3-1',PUEB:'5-4-1',UNAM:'4-2-3-1',QRO:'4-4-2',SLAG:'4-4-2',UANL:'4-3-3',TIJ:'4-2-3-1',TOLU:'4-2-3-1',FAM:'4-2-3-1',ALV:'3-4-3',GIL:'4-2-3-1',MAR:'4-2-3-1',MOR:'4-2-3-1',CDN:'3-4-2-1',RAVE:'4-2-3-1',VIT:'4-2-3-1',AJA:'4-3-3',ADO:'4-2-3-1',AZA:'4-2-1-3',CMB:'4-3-3',EXC:'4-3-3',FSI:'5-2-3',GAE:'4-2-3-1',GRN:'4-2-3-1',HFE:'4-2-1-3',NEC:'3-4-2-1',PEC:'4-2-3-1',TEL:'5-4-1',SPR:'4-2-3-1',TWE:'4-3-3',UTR:'3-4-2-1',WIL:'4-2-3-1',RSC:'4-4-2',ANT:'4-4-2',CBR:'3-4-2-1',CHL:'4-2-3-1',GNK:'4-2-3-1',GNT:'3-4-2-1',KVK:'3-4-2-1',MEC:'3-4-1-2',WES:'4-2-3-1',LOM:'4-2-3-1',OHL:'3-4-3',RLL:'3-4-1-2',STV:'4-2-3-1',SKB:'4-2-3-1',SLG:'4-3-3',USG:'3-4-1-2',ZUL:'4-2-3-1',AUL:'4-2-3-1',AWI:'3-4-2-1',GAK:'3-4-1-2',RWI:'4-2-3-1',RBS:'4-2-3-1',ALT:'3-4-2-1',STU:'4-2-3-1',RIE:'4-2-3-1',HAR:'5-3-2',WAC:'3-4-2-1',TIR:'4-2-3-1',GETX:'4-4-1-1',MRE:'4-4-1-1',MER:'4-4-1-1',BARA:'4-4-1-1',CRI:'4-4-1-1',EXT:'4-4-1-1',LUG:'4-4-1-1',CUL:'4-4-1-1',CACE:'4-4-1-1',MIR:'4-4-2',NAX:'4-4-2',PSP:'4-4-1-1',REU:'4-4-2',SDLO:'4-4-1-1',TERR:'4-4-1-1',TUD:'4-4-1-1',OLO:'4-4-2',UTE:'4-4-1-1',ORI:'4-4-2',PDE:'3-1-4-2',POB:'4-4-2',UCAM:'4-4-2',CTE:'5-4-1',YEC:'4-4-2',ANTO:'4-4-1-1',BAD:'4-4-1-1',DBE:'4-4-2',EST:'3-1-4-2',LUC:'4-4-2',CAC:'4-4-2',MIJ:'4-1-4-1',LIND:'4-1-4-1',MFC:'4-3-3',REC:'4-4-1-1',SPG:'4-4-1-1',TAMA:'4-4-2',XER:'4-4-1-1',ATAL:'4-4-2',ATOR:'4-4-2',PASO:'4-1-4-1',GUA:'4-4-2',NAV:'4-1-4-1',TALV:'4-4-2',PUER:'4-4-1-1',GSE:'4-4-2',NUM:'4-4-2',RAVI:'4-4-1-1',ALCH:'4-4-1-1',SALU:'4-4-2',CONQ:'4-4-1-1',SANS:'3-4-3',PON:'4-4-2',PONV:'4-4-1-1',FER:'4-4-1-1',AVIL:'4-4-1-1',RUS:'4-4-1-1',LOG:'4-4-1-1',OUR:'4-1-4-1',UNI:'4-3-3',STA:'5-4-1',EUR:'4-4-1-1',ZAR:'4-4-1-1',ZAM:'4-4-1-1',AGU:'4-4-2',ALC:'4-4-2',ALG:'4-4-1-1',ANQ:'4-4-1-1',TRL:'4-4-1-1',SANL:'3-4-1-2',ACOY:'4-4-2',ATBA:'3-4-1-2',CIE:'4-4-2',INTC:'4-4-1-1',NUC:'4-4-2',DMI:'4-4-1-1',LORD:'4-4-2',CTG:'4-4-2',VILB:'4-4-2',HER:'4-4-1-1',TRM:'4-4-2',RMJ:'4-4-1-1',JAE:'5-4-1',RMU:'4-3-3',IBI:'4-4-1-1',HUE:'4-4-1-1',NAS:'4-4-2',KOB:'4-2-3-1',HOR:'4-2-3-1',AAR:'3-4-3',BRO:'4-2-3-1',LYN:'4-4-2',MDJ:'3-1-4-2',NSJ:'3-4-3',ODE:'4-2-3-1',RND:'4-2-3-1',SIL:'3-4-2-1',SJE:'4-2-3-1',VIB:'4-3-3',MOL:'4-2-3-1',AAL:'5-3-2',FRE:'3-4-2-1',HKM:'5-3-2',IKST:'5-3-2',KFU:'3-4-3',KRS:'4-2-3-1',LIS:'4-1-4-1',RBK:'4-4-2',SDJ:'4-1-4-1',SAR:'4-4-2',BRN:'4-3-3',TIL:'5-3-2',VIF:'4-4-2',VIK:'4-1-4-1',LECP:'4-1-4-1',KAT:'3-4-2-1',GOR:'4-3-3',JAG:'4-2-3-1',KOR:'4-2-3-1',CRA:'4-3-3',LGW:'5-3-2',MOTL:'4-1-4-1',PIG:'4-4-1-1',POG:'4-2-3-1',RADO:'4-4-1-1',RAK:'3-4-2-1',SLW:'3-5-2',WID:'4-3-3',WIE:'4-3-3',WIS:'4-2-3-1',WPL:'3-4-2-1',ZAGL:'3-4-2-1',HORN:'4-2-3-1',ALDE:'4-2-3-1',ALTR:'4-2-3-1',BARR:'4-2-3-1',BRWD:'3-4-2-1',BOSU:'4-4-2',CARL:'3-5-2',EASL:'4-4-2',HALI:'4-2-3-1',FGR:'4-2-3-1',FYLD:'4-2-3-1',GATE:'3-4-2-1',HARG:'4-4-2',HARP:'4-3-3',KIDD:'4-2-3-1',SCUN:'4-2-3-1',SOLH:'4-2-3-1',SOUT:'3-4-2-1',SUTU:'4-4-2',TAMW:'4-4-2',WEAL:'3-4-2-1',WOKI:'4-2-3-1',WORT:'3-4-2-1',YEOV:'4-2-3-1',BVA:'3-4-2-1',VIR:'4-3-3',DND:'5-3-2',FRB:'4-2-3-1',EUP:'4-2-3-1',LIEK:'4-3-3',PATE:'3-4-3',RFCL:'4-2-3-1',SER:'4-4-2',SPH:'4-2-3-1',SPLK:'4-2-3-1',ANTA:'4-2-3-1',BAND:'4-2-3-1'};
 /* Betclic 1. Liga (18 equipos): formaciones habituales */
 Object.assign(FORM_MAIN,{ARK:'4-2-3-1',CHR:'4-2-3-1',PGR:'4-2-3-1',LGD:'4-3-3',LKS:'3-5-2',MIE:'4-2-3-1',ODR:'4-2-3-1',POD:'4-2-3-1',POS:'4-4-2',POL:'4-2-3-1',PNI:'4-4-2',RCH:'4-2-3-1',SMIE:'3-4-2-1',SRZ:'4-3-3',TNC:'3-4-2-1',POBY:'4-2-3-1',UNS:'4-4-2',WAR:'4-2-3-1'});
 /* Betclic 2 Liga (Polonia, división 3): formaciones habituales */
@@ -10528,7 +10536,7 @@ let BENCH_N=9;
    Inferiores: EN Championship 9 / L1,L2,National 7; ES Hypermotion y 1ª Federación 12, 2ª Federación 7;
        DE 2. Bundesliga y 3. Liga 9; IT Serie B 12; FR Ligue 2 9; PT Liga Portugal 2 12. */
 const BENCH_CD={IT1:15,ES1:12,PT1:12,NL1:12,BE1:12,TR1:12,RU1:12,DK1:12,AT1:12,RO1:12,UA1:12,AR1:12,EN1:9,DE1:9,FR1:9,PL1:9,BG1:9,NO1:9,SC1:9,CH1:9,IE1:9,SE1:9,MX1:10,SA1:9,
-   EN2:9,EN3:7,EN4:7,EN5:7,ES2:12,ES3:12,DE2:9,DE3:9,IT2:12,FR2:9,PT2:12,KR1:9,KR2:9};
+   EN2:9,EN3:7,EN4:7,EN5:7,ES2:12,ES3:12,DE2:9,DE3:9,IT2:12,FR2:9,PT2:12,KR1:9,KR2:9,TR2:10};
 const benchLimit=id=>{const c=CLUBBY[id];if(!c)return 9;const v=BENCH_CD[c.co+(c.div||1)];if(v!=null)return v;if(c.co==='ES'&&(c.div||1)>=4)return 7;return 9};
 /* orden del banquillo: porteros primero (2 con 12 suplentes, 1 con 9) y después por posición (DF, MD, FW) */
 function benchOrder(p){return p.pos==='GK'?0:p.pos==='DF'?1:p.pos==='MD'?2:p.pos==='FW'?3:4}
@@ -11105,7 +11113,7 @@ const BUL_PO_W=BUL_REG+6;
 /* Participantes de la Kupa na Balgariya (50 clubes): Parva Liga + Segunda/Tercera/aficionados. Excluye filiales
    y equipos duplicados (CSKS/LUD/BPV/LSK) y Litex (ya solo existe para el palmarés). */
 const BGC_TEAMS=['ARDA','BOTP','BOTV','CHMV','CSK48','CSOF','DUNR','LEVS','LOKP','LOKS','LUDO','SEPT','SLAS','SPVA','BERO','ETAR','AKAD','BALB','BDIN','BELA','BENK','BOIH','BONP','CHTR','CH19','CHBA','DOBR','MINP','FRAT','HEBA','LEVK','LKGO','LKMZ','MARE','MONT','NATS','NEFT','NESE','OBOR','PIRI','RILS','RODO','SPPV','SPPD','SPTS','VIHR','VOLO','YAMB','YANT','ZAGO'];
-const TRC_TEAMS=['EYU', 'ALNY', 'AMED', 'BSK', 'CORU', 'ERZU', 'FENR', 'GALA', 'GAZI', 'GENB', 'GOZT', 'IBAS', 'KASM', 'KOCE', 'KONY', 'RIZE', 'SAMS', 'TRBZ', 'ALTA', 'ESKI', 'SAKA', 'TK01', 'TK02', 'TK03', 'TK04', 'TK05', 'TK06', 'TK07', 'TK08', 'TK09', 'TK10', 'TK11', 'TK12', 'TK13', 'TK14', 'TK15', 'TK16', 'TK17', 'TK18', 'TK19', 'TK20', 'TK21', 'TK22', 'TK23', 'TK24', 'TK25', 'TK26', 'TK27', 'TK28', 'TK29', 'TK30', 'TK31', 'TK32', 'TK33', 'TK34', 'TK35', 'TK36', 'TK37', 'TK38', 'TK39', 'TK40', 'TK41', 'TK42', 'TK43', 'TK44', 'TK45', 'TK46', 'TK47', 'TK48', 'TK49', 'TK50', 'TK51', 'TK52', 'TK53', 'TK54', 'TK55', 'TK56', 'TK57', 'TK58', 'TK59', 'TK60', 'TK61', 'TK62', 'TK63', 'TK64', 'TK65', 'TK66', 'TK67', 'TK68', 'TK69', 'TK70', 'TK71', 'TK72', 'TK73', 'TK74', 'TK75', 'TK76', 'TK77', 'TK78', 'TK79'];
+const TRC_TEAMS=['EYU', 'ALNY', 'AMED', 'BSK', 'CORU', 'ERZU', 'FENR', 'GALA', 'GAZI', 'GENB', 'GOZT', 'IBAS', 'KASM', 'KOCE', 'KONY', 'RIZE', 'SAMS', 'TRBZ', 'ANTA', 'BODR', 'BOLU', 'EROK', 'FKAR', 'IGDR', 'ISTA', 'KECI', 'MANI', 'PEND', 'SARY', 'BAND', 'UMR', 'BATM', 'BURS', 'KAYS', 'MARD', 'MUG', 'SIVA', 'VAN', 'ALTA', 'ESKI', 'SAKA', 'TK01', 'TK02', 'TK03', 'TK04', 'TK05', 'TK06', 'TK07', 'TK08', 'TK09', 'TK10', 'TK11', 'TK12', 'TK13', 'TK14', 'TK15', 'TK16', 'TK17', 'TK18', 'TK19', 'TK20', 'TK21', 'TK22', 'TK23', 'TK24', 'TK25', 'TK26', 'TK27', 'TK28', 'TK29', 'TK30', 'TK31', 'TK32', 'TK33', 'TK34', 'TK35', 'TK36', 'TK37', 'TK38', 'TK39', 'TK40', 'TK41', 'TK42', 'TK43', 'TK44', 'TK45', 'TK46', 'TK47', 'TK48', 'TK49', 'TK50', 'TK51', 'TK52', 'TK53', 'TK54', 'TK55', 'TK56', 'TK57', 'TK58', 'TK59', 'TK60', 'TK61', 'TK62', 'TK63', 'TK64', 'TK65', 'TK66', 'TK67', 'TK68', 'TK69', 'TK70', 'TK71', 'TK72', 'TK73', 'TK74', 'TK75', 'TK76', 'TK77', 'TK78', 'TK79'];
 /* reparte la clasificación en los tres grupos y añade sus jornadas al calendario: Campeonato y Conference a
    doble vuelta (6 jornadas) y Descenso a vuelta sencilla (5), arrastrando puntos y goles de la fase regular. */
 function bulSplitIfDue(fx,tb,r){
@@ -11717,7 +11725,7 @@ function planPlayoffs(){
        más abajo, así que se excluye aquí del genérico (2 ascensos directos + playoff 3º-6º): solo asciende
        directo el campeón, y el resto pasa por un playoff encadenado con una última eliminatoria contra la
        Primera División que este bloque genérico no sabe representar. */
-    if(co==='BE'||co==='SE'||co==='KR')return;
+    if(co==='BE'||co==='SE'||co==='KR'||co==='TR')return;
     const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id)),n1=s1.length,n2=s2.length;
     let down=[],up=[],item=null;
     if(co==='PL'){
@@ -11888,13 +11896,51 @@ function planPlayoffs(){
       po.dir.KR={up:[champ],down:[d12]};
     }else po.dir.KR={up:[],down:[]};
   }
+  /* Turquía: Süper Lig (div1, 18) ↔ 1. Lig (div2, 20). Ascienden los 2 primeros de la 1. Lig y el ganador
+     del playoff de ascenso: el 3º espera directamente en la final; el 4º-7º juega los cuartos a partido único
+     (4º-7º y 5º-6º), los ganadores una semifinal a doble partido y el vencedor la final a partido único (campo
+     neutral) contra el 3º. Bajan los 3 últimos de la Süper Lig; la 1. Lig no desciende (no hay 2. Lig simulada),
+     así que conserva su tamaño. El bracket es propio (rondas con distinto número de partidos), marcado custom. */
+  {
+    const tr1=poOrder('TR',1),tr2=poOrder('TR',2).filter(id=>!isB(id));
+    if(tr1.length>=3&&tr2.length>=7){
+      const s=tr2.slice(2,7);   /* 3º,4º,5º,6º,7º */
+      po.items.push({co:'TR',kind:'trpo',custom:true,trLeg:0,single:true,seeds:s,alive:s.slice(),winner:null,
+        rounds:[{n:'Primera ronda',single:true,ties:[{a:s[1],b:s[4],l:[null,null]},{a:s[2],b:s[3],l:[null,null]}]}]});
+      po.dir.TR={up:tr2.slice(0,2),down:tr1.slice(-3)};
+    }else po.dir.TR={up:[],down:[]};
+  }
   return po;
+}
+/* playoff de ascenso de la 1. Lig turca (it.custom): cuartos a partido único, semifinal a doble partido,
+   final a partido único en campo neutral contra el 3º. it.single refleja siempre la ronda en curso para que
+   la UI (ficha de resultado, texto) funcione igual que con los playoffs estándar. */
+function trPen(t){const wa=Math.random()<.5+(virt(t.a).ovr-virt(t.b).ovr)*.004,k=3+Math.floor(Math.random()*3);t.pen=wa?[k+1,k]:[k,k+1];return wa?t.a:t.b}
+function trPoAdvance(it,mine){
+  if(it.winner)return;
+  const me=state.club,R=it.rounds[it.rounds.length-1];
+  if(!R||R.done)return;
+  it.single=R.single;
+  if(R.single){
+    R.ties.forEach(t=>{poSimLeg(t,0);if(t.a===me||t.b===me)mine.push({it,R,t,leg:0})});
+    R.ties.forEach(t=>{const L=t.l[0];t.w=L.hg>L.ag?t.b:(L.ag>L.hg?t.a:trPen(t))});
+    R.done=true;
+  }else{
+    R.ties.forEach(t=>{poSimLeg(t,it.trLeg);if(t.a===me||t.b===me)mine.push({it,R,t,leg:it.trLeg})});
+    if(it.trLeg===1){R.ties.forEach(t=>poDecide(t,it,R));R.done=true;it.trLeg=0}
+    else{it.trLeg=1;return}
+  }
+  const n=it.rounds.length;
+  if(n===1){const w=R.ties.map(t=>t.w);it.rounds.push({n:'Semifinales',single:false,ties:[{a:w[0],b:w[1],l:[null,null]}]});it.single=false}
+  else if(n===2){it.rounds.push({n:'Final',single:true,ties:[{a:it.seeds[0],b:R.ties[0].w,l:[null,null]}]});it.single=true}
+  else it.winner=R.ties[0].w;
 }
 function poRoundName(n,it,byes){return it.kind==='rel'?'Eliminatoria':byes?'Primera ronda':n===1?'Final':n===2?'Semifinales':'Cuartos de final'}
 function poPrepare(){
   const po=state.po;if(!po||po.done)return;
   po.items.forEach(it=>{
     if(it.winner)return;
+    if(it.custom)return;   /* Turquía: bracket propio, sus rondas las arma trPoAdvance() */
     /* eliminatoria encadenada (p.ej. la final de promoción de Bélgica contra el 14º de Primera): no tiene
        asientos todavía porque depende del ganador de otro playoff que aún se está jugando. */
     if(it.pending)return;
@@ -11940,7 +11986,7 @@ function poFinish(){
   gamePlayable().forEach(co=>{
     const d=po.dir[co],it=po.items.find(x=>x.co===co),up=d.up.slice(),down=d.down.slice();
     if(it){
-      if(it.kind==='promo'||it.kind==='plpo'){if(it.winner)up.push(it.winner)}
+      if(it.kind==='promo'||it.kind==='plpo'||it.kind==='trpo'){if(it.winner)up.push(it.winner)}
       else if(it.winner!==it.seeds[0]){up.push(it.winner);down.push(it.seeds[0])}
     }
     balanceUpDown(up,down);
@@ -12005,7 +12051,7 @@ function poAdvance(){
   poPrepare();
   const leg=po.leg,mine=[],me=state.club;
   po.items.forEach(it=>{
-    if(it.winner)return;if(it.pending)return;const R=it.rounds[it.rounds.length-1];
+    if(it.winner)return;if(it.pending)return;if(it.custom)return;const R=it.rounds[it.rounds.length-1];
     if(it.single){
       if(R.done)return;
       R.ties.forEach(t=>{poSimLeg(t,0,it.homeBetter);if(t.a===me||t.b===me)mine.push({it,R,t,leg:0})});
@@ -12017,9 +12063,11 @@ function poAdvance(){
     }
     R.ties.forEach(t=>{poSimLeg(t,leg);if(t.a===me||t.b===me)mine.push({it,R,t,leg})});
   });
+  /* Turquía: el playoff de la 1. Lig avanza con su propio contador (rondas de partido único y a doble partido) */
+  po.items.forEach(it=>{if(it.custom&&!it.winner)trPoAdvance(it,mine)});
   if(leg===1){
     po.items.forEach(it=>{
-      if(it.winner||it.single||it.pending)return;const R=it.rounds[it.rounds.length-1];R.ties.forEach(t=>poDecide(t,it,R));R.done=true;
+      if(it.winner||it.single||it.pending||it.custom)return;const R=it.rounds[it.rounds.length-1];R.ties.forEach(t=>poDecide(t,it,R));R.done=true;
       const ws=new Set(R.ties.map(t=>t.w).concat(R.byes));it.alive=it.seeds.filter(id=>ws.has(id));
       if(it.alive.length===1)it.winner=it.alive[0];
     });
@@ -12047,7 +12095,7 @@ function userPoTie(){
   poPrepare();
   for(const it of po.items){
     if(it.winner)continue;const rs=it.rounds||[],R=rs[rs.length-1],t=R&&R.ties.find(x=>x.a===state.club||x.b===state.club);
-    if(t)return{it,R,t,leg:it.single?0:po.leg};
+    if(t)return{it,R,t,leg:it.custom?(it.single?0:it.trLeg):(it.single?0:po.leg)};
   }
   return null;
 }
@@ -12077,6 +12125,7 @@ function poResultTxt(mine){
     if(it.kind==='nlpo'||it.kind==='dkpo')return it.winner===me?'¡Ganáis el playoff y os clasificáis para la fase previa de la Conference League!':'Quedáis eliminados del playoff europeo.';
     if(it.kind==='promo')return it.winner===me?`¡Ascendéis a ${divName(it.co,1)}!`:'Quedáis eliminados y no ascendéis esta temporada.';
     if(it.kind==='plpo')return it.winner===me?`¡Ascendéis a ${divName(it.co,1)}!`:'Quedáis eliminados y no ascendéis esta temporada.';
+    if(it.kind==='trpo')return (it.winner===me?`¡Ascendéis a ${divName('TR',1)}!`:'Quedáis eliminados y no ascendéis esta temporada.')+(t.pen?` (penaltis ${t.pen[0]}-${t.pen[1]})`:'');
     if(it.kind==='rfpo')return (it.winner===me?`¡Ascendéis a ${divName('ES',2)}!`:'Quedáis eliminados y no ascendéis esta temporada.')+(t.pen?` (penaltis ${t.pen[0]}-${t.pen[1]})`:'');
     if(it.kind==='esfpo')return (it.winner===me?`¡Ascendéis a ${divName('ES',5)}!`:'Quedáis eliminados y no ascendéis esta temporada.')+(t.pen?` (penaltis ${t.pen[0]}-${t.pen[1]})`:'');
     if(it.kind==='enpo')return (it.winner===me?`¡Ascendéis a ${divName('EN',2)}!`:'Quedáis eliminados y no ascendéis esta temporada.')+(t.pen?` (penaltis ${t.pen[0]}-${t.pen[1]})`:'');
@@ -12090,7 +12139,7 @@ function poSheet(res){
   const {it,R,t,leg}=res.mine,home=leg===0?t.b:t.a,away=leg===0?t.a:t.b,L=t.l[leg],hc=CLUBBY[home],ac=CLUBBY[away];
   const sc=side=>(L.sc||[]).filter(z=>z.s===side).map(z=>`${esc(z.n)} ${z.min}'`).join('<br>')||'&nbsp;';
   const others=R.ties.filter(o=>o!==t).map(o=>{const h=leg===0?o.b:o.a,a=leg===0?o.a:o.b,l=o.l[leg];return`<div class="res">${teamCell(h,'',false)}<b>${l.hg} - ${l.ag}</b>${teamCell(a,'',true)}</div>${leg===1&&o.pen?`<div class="pen">Global ${o.agg[0]}-${o.agg[1]}, penaltis ${o.pen[0]}-${o.pen[1]}</div>`:leg===1?`<div class="pen">Global ${o.agg[0]}-${o.agg[1]}</div>`:''}`}).join('');
-  openSheet(`<div class="res-top"><p class="muted-s" style="text-align:center">${(it.kind==='nlpo'||it.kind==='dkpo')?'Playoff por la Conference League':(it.kind==='promo'||it.kind==='plpo'?'Playoff de ascenso a '+esc(divName(it.co,1)):it.kind==='rfpo'?'Playoff de ascenso a '+esc(divName('ES',2)):it.kind==='esfpo'?'Playoff de ascenso a '+esc(divName('ES',5)):it.kind==='enpo'?'Playoff de ascenso a '+esc(divName('EN',2)):it.kind==='en5po'?'Playoff de ascenso a '+esc(divName('EN',4)):'Playoff de permanencia')}, ${esc(R.n.toLowerCase())}${it.single?'':', '+(leg===0?'ida':'vuelta')}</p>
+  openSheet(`<div class="res-top"><p class="muted-s" style="text-align:center">${(it.kind==='nlpo'||it.kind==='dkpo')?'Playoff por la Conference League':(it.kind==='promo'||it.kind==='plpo'||it.kind==='trpo'?'Playoff de ascenso a '+esc(divName(it.co,1)):it.kind==='rfpo'?'Playoff de ascenso a '+esc(divName('ES',2)):it.kind==='esfpo'?'Playoff de ascenso a '+esc(divName('ES',5)):it.kind==='enpo'?'Playoff de ascenso a '+esc(divName('EN',2)):it.kind==='en5po'?'Playoff de ascenso a '+esc(divName('EN',4)):'Playoff de permanencia')}, ${esc(R.n.toLowerCase())}${it.single?'':', '+(leg===0?'ida':'vuelta')}</p>
   <div class="score"><div class="tm">${crestHTML(hc,52)}<span>${esc(hc.name)}</span></div><div class="sc">${L.hg} - ${L.ag}</div><div class="tm">${crestHTML(ac,52)}<span>${esc(ac.name)}</span></div></div>
   <div class="scorers"><div>${sc('h')}</div><div class="r">${sc('a')}</div></div>
   ${leg===1?`<p style="text-align:center;margin-top:6px"><b>Global ${t.agg[0]} - ${t.agg[1]}</b>${t.pen?`, penaltis ${t.pen[0]}-${t.pen[1]}`:''}</p>`:''}
@@ -14314,7 +14363,7 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'Corea del Sur',comps:['KR1','KR2','KRC','KRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'Corea del Sur',comps:['KR1','KR2','KRC','KRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4,TR:4,SA:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1};
@@ -16389,7 +16438,7 @@ function reconcileOthers(){
   });
   /* EFL League One / League Two (Inglaterra): partidas guardadas antes de que existiera esa división
      todavía no tienen su liga ajena creada; se añade sobre la marcha si ya hay roster. */
-  ['EN3','EN4','EN5','DE3'].forEach(key=>{
+  ['EN3','EN4','EN5','DE3','TR2'].forEach(key=>{
     if(key===lk||state.others[key])return;
     const ids=leagueClubs(key.slice(0,2),+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
@@ -18545,7 +18594,7 @@ function trophyName(club,k,real){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527'},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1'},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
@@ -22480,6 +22529,30 @@ const SE_CUP_TEAMS=['AIK','BRP','DEG','DIF','GAIS','HAL','HAM','BKH','IFE','IFK'
   Object.assign(CLUB_LOGO,Object.fromEntries(SEL.map(([id,,,,n])=>[id,'https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'])));
   Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
 })();
+/* ===== Turquía: 1. Lig (2ª división simulada, 20 equipos) =====
+   Los 9 clubes que ya existían en LEGACY (destinos de cesión) se promueven a CLUBS con div 2;
+   el resto se crean aquí. leagueClubs() deriva la liga de CLUBS, así que la 1. Lig aparece sola. */
+(function(){
+  const TR2=[
+    K('ANTA','Antalyaspor','Antalyaspor','Antalya','TR','#d4192b','#f4f4f4',62,2),
+    K('BODR','Bodrum FK','Bodrum FK','Bodrum','TR','#0a8a3d','#f4f4f4',48,2),
+    K('BOLU','Boluspor','Boluspor','Bolu','TR','#d4192b','#f4f4f4',50,2),
+    K('EROK','Erokspor','Erokspor','Estambul','TR','#1c3f94','#f4f4f4',44,2),
+    K('FKAR','Fatih Karagümrük','Karagümrük','Estambul','TR','#d4192b','#1a1a1a',54,2),
+    K('IGDR','Iğdır','Iğdır','Iğdır','TR','#1c3f94','#f4f4f4',44,2),
+    K('ISTA','Istanbulspor AS','Istanbulspor','Estambul','TR','#f2d31b','#1a1a1a',52,2),
+    K('KECI','Keciorengucu','Keçiörengücü','Ankara','TR','#1c3f94','#f4f4f4',46,2),
+    K('MANI','Manisa FK','Manisa FK','Manisa','TR','#1c3f94','#f4f4f4',50,2),
+    K('PEND','Pendikspor','Pendikspor','Estambul','TR','#d4192b','#f4f4f4',50,2),
+    K('SARY','Sariyer','Sarıyer','Estambul','TR','#1c3f94','#f4f4f4',44,2),
+    ...['BAND','UMR','BATM','BURS','KAYS','MARD','MUG','SIVA','VAN'].map(id=>CLUBBY[id]).filter(Boolean)
+  ];
+  CLUBS.push(...TR2);
+  TR2.forEach(c=>{BASE_DIV[c.id]=2;});   /* BASE_DIV se captura antes de este bloque */
+  Object.assign(CLUBBY,Object.fromEntries(TR2.map(c=>[c.id,c])));
+  Object.assign(CLUB_LOGO,{ANTA:'https://cdn.resfu.com/img_data/equipos/226.png?size=120x&lossy=1',BODR:'https://cdn.resfu.com/img_data/equipos/65752.png?size=120x&lossy=1',BOLU:'https://cdn.resfu.com/img_data/equipos/12569.png?size=120x&lossy=1',EROK:'https://cdn.resfu.com/img_data/equipos/101994.png?size=120x&lossy=1',FKAR:'https://cdn.resfu.com/img_data/equipos/12946.png?size=120x&lossy=1',IGDR:'https://cdn.resfu.com/img_data/equipos/143280.png?size=120x&lossy=1',ISTA:'https://cdn.resfu.com/img_data/equipos/1395.png?size=120x&lossy=1',KECI:'https://cdn.resfu.com/img_data/equipos/12981.png?size=120x&lossy=1',MANI:'https://cdn.resfu.com/img_data/equipos/65753.png?size=120x&lossy=1',PEND:'https://cdn.resfu.com/img_data/equipos/12922.png?size=120x&lossy=1',SARY:'https://cdn.resfu.com/img_data/equipos/12924.png?size=120x&lossy=1',BAND:'https://cdn.resfu.com/img_data/equipos/12893.png?size=120x&lossy=1',BATM:'https://cdn.resfu.com/img_data/equipos/12962.png?size=120x&lossy=1',BURS:'https://cdn.resfu.com/img_data/equipos/571.png?size=120x&lossy=1',KAYS:'https://cdn.resfu.com/img_data/equipos/1452.png?size=120x&lossy=1',MARD:'https://cdn.resfu.com/img_data/equipos/112378.png?size=120x&lossy=1',MUG:'https://cdn.resfu.com/img_data/equipos/87928.png?size=120x&lossy=1',SIVA:'https://cdn.resfu.com/img_data/equipos/2343.png?size=120x&lossy=1',UMR:'https://cdn.resfu.com/img_data/equipos/12942.png?size=120x&lossy=1',VAN:'https://cdn.resfu.com/img_data/equipos/65670.png?size=120x&lossy=1'});
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+})();
 /* ===== Suecia: palmarés completo de la Superettan (d2) y la Svenska Cupen (cup) =====
    Campeones históricos por club. Se crean los que faltaban (Syrianska FC, Trelleborgs FF, Råå IF), solo para el palmarés. */
 (function(){
@@ -22495,6 +22568,40 @@ const SE_CUP_TEAMS=['AIK','BRP','DEG','DIF','GAIS','HAL','HAM','BKH','IFE','IFK'
   });
   Object.assign(CLUB_LOGO,{SYRF:'https://cdn.resfu.com/img_data/equipos/5640.png?size=120x&lossy=1',TREL:'https://cdn.resfu.com/img_data/equipos/2531.png?size=120x&lossy=1',RAA:'https://cdn.resfu.com/img_data/escudos/medium/85675.jpg'});
   Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+})();
+/* ===== Turquía: palmarés histórico de la 1. Lig (d2), 63 títulos =====
+   Los clubes históricos que ya no existen se crean solo para el palmarés (no entran en CLUBS, así que no
+   compiten en ninguna liga). Los que siguen activos (Süper Lig o 1. Lig) solo reciben la cuenta de títulos. */
+(function(){
+  Object.assign(CLUBBY,{
+    KERCI:K2('KERCI','Kayseri Erciyesspor','Erciyesspor','Kayseri','TR','#f2d31b','#1a1a1a',40),
+    DIYA:K2('DIYA','Diyarbakırspor','Diyarbakırspor','Diyarbakır','TR','#0a8a3d','#f4f4f4',40),
+    DENI:K2('DENI','Denizlispor','Denizlispor','Denizli','TR','#0a8a3d','#f4f4f4',40),
+    MANIS:K2('MANIS','Manisaspor','Manisaspor','Manisa','TR','#d4192b','#f4f4f4',40),
+    HACE:K2('HACE','Hacettepe SK','Hacettepe','Ankara','TR','#1c3f94','#f4f4f4',38),
+    YOZK:K2('YOZK','Yozgatspor','Yozgatspor','Yozgat','TR','#0a8a3d','#f4f4f4',36),
+    GAZS:K2('GAZS','Gaziantepspor','Gaziantepspor','Gaziantep','TR','#d4192b','#1a1a1a',44),
+    MALAS:K2('MALAS','Malatyaspor','Malatyaspor','Malatya','TR','#f2d31b','#1a1a1a',40),
+    AYDI:K2('AYDI','Aydınspor','Aydınspor','Aydın','TR','#0a8a3d','#f4f4f4',36),
+    TTELE:K2('TTELE','Türk Telekom','Türk Telekom','Ankara','TR','#1c3f94','#f4f4f4',36),
+    ALTOR:K2('ALTOR','Altınordu','Altınordu','Esmirna','TR','#d4192b','#1c3f94',40),
+    VEFA:K2('VEFA','Vefa SK','Vefa','Estambul','TR','#0a8a3d','#f4f4f4',36),
+    TURA:K2('TURA','Turanspor','Turanspor','Ankara','TR','#1c3f94','#f4f4f4',36)
+  });
+  Object.assign(CLUB_LOGO,{KERCI:'https://cdn.resfu.com/img_data/escudos/medium/1451.jpg?size=120x&lossy=1',HACE:'https://cdn.resfu.com/img_data/equipos/12951.png?size=120x&lossy=1',DIYA:'https://cdn.resfu.com/img_data/escudos/medium/929.jpg?size=120x&lossy=1',DENI:'https://cdn.resfu.com/img_data/escudos/medium/896.jpg?size=120x&lossy=1',MANIS:'https://cdn.resfu.com/img_data/escudos/medium/1637.jpg?size=120x&lossy=1',YOZK:'https://cdn.resfu.com/img_data/escudos/medium/2776.jpg?size=120x&lossy=1',GAZS:'https://cdn.resfu.com/img_data/escudos/medium/1207.jpg?size=120x&lossy=1',MALAS:'https://cdn.resfu.com/img_data/escudos/medium/1620.jpg?size=120x&lossy=1',AYDI:'https://cdn.resfu.com/img_data/escudos/medium/12913.jpg?size=120x&lossy=1',TTELE:'https://cdn.resfu.com/img_data/escudos/medium/62201.jpg?size=120x&lossy=1',ALTOR:'https://cdn.resfu.com/img_data/escudos/medium/12911.jpg?size=120x&lossy=1',VEFA:'https://cdn.resfu.com/img_data/escudos/medium/62200.jpg?size=120x&lossy=1',TURA:'https://cdn.resfu.com/img_data/escudos/medium/84816.jpg?size=120x&lossy=1'});
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  Object.entries({TK03:6,RIZE:4,TK04:4,KOCE:3,KERCI:3,DIYA:3,ANTA:3,SAMS:2,DENI:2,SIVA:2,KONY:2,BURS:2,GOZT:2,
+    ERZU:1,EYU:1,ANKG:1,TK38:1,KAYS:1,IBAS:1,AKHI:1,TK57:1,MANIS:1,HACE:1,SAKA:1,ALTA:1,YOZK:1,GAZS:1,GENB:1,MALAS:1,AYDI:1,TK60:1,TRBZ:1,TTELE:1,TK47:1,ISTA:1,ALTOR:1,VEFA:1,TURA:1})
+    .forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.d2=n});
+})();
+/* ===== Turquía: palmarés (cuadro de títulos) de los 20 clubes de la 1. Lig =====
+   Sustituye cualquier cuenta previa de esos clubes. Bursaspor: Süper Lig 1, Copa 1, 1. Lig 1.
+   Kayserispor: Copa 1. Sivasspor: Copa 1. El resto, 0 títulos. */
+(function(){
+  ['ANTA','BAND','BATM','BODR','BOLU','BURS','EROK','FKAR','IGDR','ISTA','KAYS','KECI','MANI','MARD','MUG','PEND','SIVA','SARY','UMR','VAN'].forEach(id=>{PALMARES[id]={}});
+  Object.assign(PALMARES.BURS,{league:1,cup:1,d2:1});
+  Object.assign(PALMARES.KAYS,{cup:1});
+  Object.assign(PALMARES.SIVA,{cup:1});
 })();
 /* ===== Malmö FF (MALM, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
 (function(){
@@ -24054,6 +24161,10 @@ Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]}
    (p. ej. GAN/POHG/DAEJ/JEON/FCSE/GANG frente a KRGAN/KRPOH/…). No juegan en ninguna liga coreana, así
    que se sacan de la división de liga para que "Editar base de datos" no los liste bajo K League 1/2. */
 ['GAN','POHG','DAEJ','JEON','FCSE','GANG'].forEach(id=>{const c=CLUBBY[id];if(c)c.div=99;});
+/* Turquía: solo los 20 clubes de la 1. Lig compiten en div 2. El resto de fichas turcas (duplicados
+   continentales tipo GAL/FEN/BJK, clubes amateur TK usados por la copa y clubes históricos de cesiones)
+   salen de la división para que "Editar base de datos" no los liste bajo 1. Lig. */
+Object.keys(CLUBBY).forEach(id=>{const c=CLUBBY[id];if(c&&c.co==='TR'&&(c.div||1)===2&&!c.bTeam&&!c.autoFilial&&!['ANTA','BODR','BOLU','EROK','FKAR','IGDR','ISTA','KECI','MANI','PEND','SARY','BAND','UMR','BATM','BURS','KAYS','MARD','MUG','SIVA','VAN'].includes(id))c.div=99;});
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
