@@ -7240,6 +7240,8 @@ const budgetFor=c=>{
 function objective(id){
   const c=CLUBBY[id],list=CLUBS.filter(x=>gameClub(x)&&x.co===c.co&&x.div===c.div).sort((a,b)=>repOf(b.id)-repOf(a.id)),n=list.length||1,rank=list.findIndex(x=>x.id===id)+1||n;
   if(c.co==='PL'&&c.div===2)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=15?'Permanencia':'Evitar el descenso';
+  if(c.co==='PL'&&c.div===3)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=12?'Permanencia':'Evitar el descenso';
+  if(c.co==='PL'&&c.div>=4&&c.div<=7)return rank<=1?'Ascender a la Betclic 2 Liga':rank<=2?'Clasificar al playoff de ascenso':'Permanencia';
   if(c.div===2)return rank<=2?'Ascenso directo':rank<=Math.ceil(n*.4)?'Clasificar a Playoffs de Ascenso':'Terminar en la zona media de la tabla';
   if(c.co==='EN'&&c.div===3)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=20?'Permanencia':'Evitar el descenso';
   if(c.co==='EN'&&c.div===4)return rank<=3?'Ascenso directo':rank<=7?'Clasificar al playoff de ascenso':rank<=22?'Permanencia':'Evitar el descenso';
@@ -11978,6 +11980,38 @@ function planPlayoffs(){
       if(pool.length>=2)po.items.push({co:'ESCO'+d,kind:'esfpo',seeds:pool.slice(),alive:pool.slice(),rounds:[],winner:null,grp:d,to});
     });
   }
+  /* Polonia: Betclic 2 Liga (div 3) ↔ Betclic 1 Liga (div 2). Suben directos los 2 primeros de la Betclic 2 Liga
+     (sin filiales) y el ganador del playoff 3º-6º (partido único en casa del mejor clasificado); bajan los 3
+     últimos de la Betclic 1 Liga. */
+  {
+    const pl2=poOrder('PL',2),pl3o=poOrder('PL',3),pl3el=pl3o.filter(id=>!isB(id));
+    if(pl2.length>=18&&pl3el.length>=6){
+      const seeds=pl3el.slice(2,6);
+      po.items.push({co:'PL3PO',kind:'plpo',seeds,alive:seeds.slice(),rounds:[],winner:null,single:true,homeBetter:true});
+      po.pl2={up:pl3el.slice(0,2),down:pl2.slice(-3)};
+    }
+  }
+  /* Polonia: Betclic 3 Liga (4 grupos = div 4-7) ↔ Betclic 2 Liga (div 3). Asciende directo el campeón de cada
+     grupo (4 ascensos) y los 4 subcampeones juegan un playoff de 6 con el 13º y el 14º de la Betclic 2 Liga en
+     dos escaleras paralelas a partido único (subcampeón del G1 vs G2 y del G3 vs G4; los ganadores, contra el 13º
+     y el 14º de la Betclic 2 Liga). Cada escalera ganada por un subcampeón da un ascenso y un descenso (baja el
+     club de la Betclic 2 Liga que pierde su cruce), así que el reparto queda siempre equilibrado; además bajan
+     directos el 15º-18º de la Betclic 2 Liga (no hay 5ª categoría simulada). */
+  {
+    const pl4=[4,5,6,7].map(d=>({d,o:poOrder('PL',d)}));
+    const pl3b=poOrder('PL',3);
+    if(pl4.every(x=>x.o.length>=18)&&pl3b.length>=18){
+      const ru=pl4.map(x=>x.o.filter(id=>!isB(id)));
+      if(ru.every(x=>x.length>=2)){
+        const d13=pl3b[12],d14=pl3b[13];
+        po.items.push({co:'PL4POA',kind:'rel',seeds:[ru[0][1],ru[1][1]],alive:[ru[0][1],ru[1][1]],rounds:[],winner:null,single:true,homeBetter:true});
+        po.items.push({co:'PL4POB',kind:'rel',seeds:[ru[2][1],ru[3][1]],alive:[ru[2][1],ru[3][1]],rounds:[],winner:null,single:true,homeBetter:true});
+        po.items.push({co:'PL4FA',kind:'rel',seeds:[],alive:[],rounds:[],winner:null,pending:true,single:true,homeBetter:true});
+        po.items.push({co:'PL4FB',kind:'rel',seeds:[],alive:[],rounds:[],winner:null,pending:true,single:true,homeBetter:true});
+        po.pl3={up:ru.map(x=>x[0]),ru:[{id:ru[0][1],grp:4},{id:ru[1][1],grp:5},{id:ru[2][1],grp:6},{id:ru[3][1],grp:7}],d13,d14,downDirect:pl3b.slice(14)};
+      }
+    }
+  }
   /* Suecia: Allsvenskan (div1) ↔ Superettan (div2). Suben directos el 1º y el 2º de la Superettan; el 14º de la
      Allsvenskan juega una eliminatoria a ida y vuelta contra el 3º de la Superettan (el ganador juega la próxima
      temporada en la Allsvenskan); bajan directos los 2 últimos (15º y 16º). La Superettan no desciende (no hay
@@ -12159,6 +12193,34 @@ function poFinish(){
   const en45=po.en45;if(en45){const it=po.items.find(x=>x.kind==='en5po');if(it&&it.winner)en45.up.push(it.winner);balanceUpDown(en45.up,en45.down)}
   const en34=po.en34;if(en34){const it=po.items.find(x=>x.kind==='en34po');if(it&&it.winner)en34.up.push(it.winner);balanceUpDown(en34.up,en34.down)}
   const de3=po.de3;if(de3){const it=po.items.find(x=>x.co==='DE3PO');if(it&&it.winner&&it.winner!==it.seeds[0]){de3.up.push(it.winner);de3.down.push(it.seeds[0])}balanceUpDown(de3.up,de3.down)}
+  /* Polonia: Betclic 1 Liga ↔ Betclic 2 Liga */
+  const pl2=po.pl2;
+  if(pl2){
+    const it=po.items.find(x=>x.co==='PL3PO');
+    if(it&&it.winner)pl2.up.push(it.winner);
+    balanceUpDown(pl2.up,pl2.down);
+    po.res.PL2={up:pl2.up.slice(),down:pl2.down.slice()};
+  }
+  /* Polonia: Betclic 2 Liga ↔ Betclic 3 Liga (grupos div 4-7). Suben los 4 campeones de grupo y los subcampeones
+     que ganen su cruce de playoff; bajan los 4 últimos de la Betclic 2 Liga más los clubes de la Betclic 2 Liga
+     que pierdan su cruce. Cada grupo receptor recibe exactamente tantos equipos como pierde. */
+  const pl3=po.pl3;
+  if(pl3){
+    const up=pl3.up.slice(),down=[];
+    [['PL4POA','PL4FA',pl3.d13],['PL4POB','PL4FB',pl3.d14]].forEach(([sk,fk,d3])=>{
+      const f=po.items.find(x=>x.co===fk);
+      if(f&&f.winner&&f.winner!==f.seeds[0]){const r=pl3.ru.find(x=>x.id===f.winner);if(r){up.push(r.id);down.push({id:d3,to:r.grp})}}
+    });
+    /* los 4 descendidos directos (15º-18º) se reparten de uno en uno entre los 4 grupos, priorizando los que
+       menos han recibido: cada grupo pierde a su campeón (y a su subcampeón si subió), así que cada uno necesita
+       exactamente una plaza más (la que aporta el descenso del playoff cuando su subcampeón subió). */
+    const used={4:0,5:0,6:0,7:0};down.forEach(x=>used[x.to]++);
+    const order=[4,5,6,7].sort((a,b)=>used[a]-used[b]);
+    pl3.downDirect.forEach((id,i)=>{down.push({id,to:order[i%4]})});
+    balanceUpDown(up,down);
+    pl3.up=up;pl3.down=down;
+    po.res.PL3={up:up.slice(),down:down.slice()};
+  }
   /* Corea del Sur: el campeón de la K League 2 sube directo y el 12º de la K League 1 baja directo; el 11º de
      la K League 1 juega la promoción contra el ganador del playoff de la K League 2 (si gana el de K2, sube y
      baja el de K1; si gana el de K1, se quedan como están). */
@@ -12229,6 +12291,14 @@ function poAdvance(){
       if(bepoIt&&bepoIt.winner&&finalIt&&finalIt.pending){
         finalIt.pending=false;finalIt.seeds=[po.be2.d14,bepoIt.winner];finalIt.alive=finalIt.seeds.slice();
       }
+    }
+    /* Polonia: en cuanto cada escalera de subcampeones tiene ganador, se monta su cruce contra el 13º/14º de la
+       Betclic 2 Liga (asientos vacíos hasta ahora, marcados pending). */
+    if(po.pl3){
+      [['PL4POA','PL4FA',po.pl3.d13],['PL4POB','PL4FB',po.pl3.d14]].forEach(([sk,fk,d3])=>{
+        const s=po.items.find(x=>x.co===sk),f=po.items.find(x=>x.co===fk);
+        if(s&&s.winner&&f&&f.pending){f.pending=false;f.seeds=[d3,s.winner];f.alive=f.seeds.slice()}
+      });
     }
     po.leg=0;po.round++;
   }else po.leg=1;
@@ -12427,6 +12497,20 @@ function applyMoves(){
     esf.up.forEach(x=>{state.divs[x.id]=x.to;delete state.relegated[x.id]});
     esf.down.forEach(x=>{state.divs[x.id]=x.to;state.relegated[x.id]=1});
     news(`${FLAG.ES} Segunda Federación: ascienden a ${divName('ES',5)} ${esf.up.map(x=>cname(x.id)).join(', ')}. Bajan a Segunda Federación ${esf.down.map(x=>cname(x.id)).join(', ')}.`);
+  }
+  /* Polonia: Betclic 1 Liga ↔ Betclic 2 Liga */
+  const plm2=state.po&&state.po.pl2;
+  if(plm2){
+    plm2.up.forEach(id=>{state.divs[id]=2;delete state.relegated[id]});
+    plm2.down.forEach(id=>{state.divs[id]=3;state.relegated[id]=1});
+    news(`${FLAG.PL} Ascienden a ${divName('PL',2)}: ${plm2.up.map(cname).join(', ')}. Descienden a ${divName('PL',3)}: ${plm2.down.map(cname).join(', ')}.`);
+  }
+  /* Polonia: Betclic 2 Liga ↔ Betclic 3 Liga */
+  const plm3=state.po&&state.po.pl3;
+  if(plm3){
+    plm3.up.forEach(id=>{state.divs[id]=3;delete state.relegated[id]});
+    plm3.down.forEach(x=>{state.divs[x.id]=x.to;state.relegated[x.id]=1});
+    news(`${FLAG.PL} Ascienden a ${divName('PL',3)}: ${plm3.up.map(cname).join(', ')}. Descienden a la Betclic 3 Liga: ${plm3.down.map(x=>cname(x.id)).join(', ')}.`);
   }
   fixBTeams();
   Object.keys(state.divs).forEach(id=>{if(state.divs[id]===BASE_DIV[id])delete state.divs[id]});
@@ -16250,6 +16334,13 @@ function initWorld(){
     const ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
   });
+  /* Polonia: la Betclic 2 Liga (div 3) y los 4 grupos de la Betclic 3 Liga (div 4-7) se simulan para poder
+     resolver sus ascensos, playoffs y descensos. */
+  ['PL3','PL4','PL5','PL6','PL7'].forEach(key=>{
+    if(key===state.lk)return;
+    const ids=leagueClubs('PL',+key.slice(2)).map(c=>c.id);
+    if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
+  });
   gamePlayable().forEach(co=>{
     /* Rusia: la Copa de Rusia tiene formato de doble ruta (Ruta RPL de grupos + Ruta de las Regiones). */
     if(co==='RU'){
@@ -16617,7 +16708,7 @@ function reconcileOthers(){
   });
   /* EFL League One / League Two (Inglaterra): partidas guardadas antes de que existiera esa división
      todavía no tienen su liga ajena creada; se añade sobre la marcha si ya hay roster. */
-  ['EN3','EN4','EN5','DE3','TR2','NL2'].forEach(key=>{
+  ['EN3','EN4','EN5','DE3','TR2','NL2','PL3','PL4','PL5','PL6','PL7'].forEach(key=>{
     if(key===lk||state.others[key])return;
     const ids=leagueClubs(key.slice(0,2),+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
@@ -17203,6 +17294,18 @@ function zoneColor(key,pos,total){
     if(pos<=6)return'#26a69a';
     return pos<=total-3?'#9e9e9e':'#e53935';
   }
+  if(co==='PL'&&d==='3'){   /* Betclic 2 Liga: 2 ascensos directos, playoff 3º-6º, playoff de permanencia 13º-14º y descenso 15º-18º */
+    if(pos<=2)return'#66bb6a';
+    if(pos<=6)return'#26a69a';
+    if(pos<=12)return'#9e9e9e';
+    if(pos<=14)return'#ef9a9a';
+    return'#e53935';
+  }
+  if(co==='PL'&&['4','5','6','7'].includes(d)){   /* Betclic 3 Liga: asciende el campeón y el subcampeón juega el playoff; no hay descenso */
+    if(pos===1)return'#49CB2B';
+    if(pos<=2)return'#38D996';
+    return'#BCBCBC';
+  }
   if(co==='ES'&&(d==='5'||d==='6')){   /* Primera Federación: Grupo 1 (5) y Grupo 2 (6) */
     if(pos===1)return'#49CB2B';
     if(pos<=5)return'#38D996';
@@ -17263,6 +17366,8 @@ const ZONES_NL2=[['#558b2f','Ascenso directo'],['#79B9DE','Playoff de ascenso (N
 const ZONES_FR2=[['#66bb6a','Ascenso'],['#26a69a','Playoff Ascenso'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_TR1=[['#2e7d32','Champions League'],['#66bb6a','Previa de Champions'],['#26a69a','Previa de Europa League'],['#5694d8','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#e53935','Descenso']];
 const ZONES_SA=[['#7cb342','Campeón (AFC Champions League Elite + Supercopa)'],['#4caf50','AFC Champions League Elite + Supercopa'],['#26a69a','Previa AFC Champions League Elite'],['#79B9DE','AFC Champions League Two (según el campeón de Copa)'],['#9e9e9e','Permanencia'],['#e53935','Descenso']];
+const ZONES_PL3=[['#66bb6a','Ascenso directo a la Betclic 1 Liga'],['#26a69a','Playoff de ascenso'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff de permanencia'],['#e53935','Descenso a la Betclic 3 Liga']];
+const ZONES_PL4=[['#49CB2B','Ascenso directo a la Betclic 2 Liga'],['#38D996','Playoff de ascenso'],['#BCBCBC','Permanencia']];
 const ZONES_PL1=[['#7cb342','Campeón / Previa de Champions'],['#26a69a','Previa de Conference League'],['#9e9e9e','Permanencia'],['#e53935','Descenso']];
  const ZONES_PL2=[['#66bb6a','Ascenso directo'],['#26a69a','Playoff de ascenso'],['#9e9e9e','Permanencia'],['#e53935','Descenso']];
 const ZONES_SE1=[['#7cb342','Campeón (previa de Champions)'],['#38D996','Previa de Conference League'],['#79B9DE','Previa de Conference (si el campeón de Copa acaba en el top-3)'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff de descenso'],['#e53935','Descenso']];
@@ -17485,7 +17590,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=String(key).slice(0,2)==='ES'?+String(key).slice(2):null;
-  const allZones=String(key).slice(0,2)==='SE'&&d==='1'?ZONES_SE1:String(key).slice(0,2)==='SE'&&d==='2'?ZONES_SE2:String(key).slice(0,2)==='SM'&&d==='1'?ZONES_SM:String(key).slice(0,2)==='PT'&&d==='1'?ZONES_PT1:String(key).slice(0,2)==='NL'&&d==='1'?ZONES_NL1:String(key).slice(0,2)==='NL'&&d==='2'?ZONES_NL2:String(key).slice(0,2)==='BE'&&d==='1'?ZONES_BE1:String(key).slice(0,2)==='NO'&&d==='1'?ZONES_NO1:String(key).slice(0,2)==='IE'&&d==='1'?ZONES_IE1:String(key).slice(0,2)==='DE'&&d==='3'?ZONES_DE3:String(key).slice(0,2)==='EN'&&d==='3'?ZONES_EN3:String(key).slice(0,2)==='EN'&&d==='4'?ZONES_EN4:String(key).slice(0,2)==='EN'&&d==='5'?ZONES_EN5:String(key).slice(0,2)==='BE'&&d==='2'?ZONES_BE2:String(key).slice(0,2)==='FR'&&d==='2'?ZONES_FR2:String(key).slice(0,2)==='TR'&&d==='1'?ZONES_TR1:String(key).slice(0,2)==='RU'&&d==='1'?ZONES_RU1:String(key).slice(0,2)==='SA'&&d==='1'?ZONES_SA:String(key).slice(0,2)==='CN'&&d==='1'?ZONES_CN:String(key).slice(0,2)==='PL'&&d==='1'?ZONES_PL1:String(key).slice(0,2)==='PL'&&d==='2'?ZONES_PL2:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
+  const allZones=String(key).slice(0,2)==='SE'&&d==='1'?ZONES_SE1:String(key).slice(0,2)==='SE'&&d==='2'?ZONES_SE2:String(key).slice(0,2)==='SM'&&d==='1'?ZONES_SM:String(key).slice(0,2)==='PT'&&d==='1'?ZONES_PT1:String(key).slice(0,2)==='NL'&&d==='1'?ZONES_NL1:String(key).slice(0,2)==='NL'&&d==='2'?ZONES_NL2:String(key).slice(0,2)==='BE'&&d==='1'?ZONES_BE1:String(key).slice(0,2)==='NO'&&d==='1'?ZONES_NO1:String(key).slice(0,2)==='IE'&&d==='1'?ZONES_IE1:String(key).slice(0,2)==='DE'&&d==='3'?ZONES_DE3:String(key).slice(0,2)==='EN'&&d==='3'?ZONES_EN3:String(key).slice(0,2)==='EN'&&d==='4'?ZONES_EN4:String(key).slice(0,2)==='EN'&&d==='5'?ZONES_EN5:String(key).slice(0,2)==='BE'&&d==='2'?ZONES_BE2:String(key).slice(0,2)==='FR'&&d==='2'?ZONES_FR2:String(key).slice(0,2)==='TR'&&d==='1'?ZONES_TR1:String(key).slice(0,2)==='RU'&&d==='1'?ZONES_RU1:String(key).slice(0,2)==='SA'&&d==='1'?ZONES_SA:String(key).slice(0,2)==='CN'&&d==='1'?ZONES_CN:String(key).slice(0,2)==='PL'&&d==='1'?ZONES_PL1:String(key).slice(0,2)==='PL'&&d==='3'?ZONES_PL3:String(key).slice(0,2)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:String(key).slice(0,2)==='PL'&&d==='2'?ZONES_PL2:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -24431,6 +24536,113 @@ if(!CLUBBY.ALAS)CLUBBY.ALAS=Object.assign(K2('ALAS','Alashkert','Alashkert','Ere
    continentales tipo GAL/FEN/BJK, clubes amateur TK usados por la copa y clubes históricos de cesiones)
    salen de la división para que "Editar base de datos" no los liste bajo 1. Lig. */
 Object.keys(CLUBBY).forEach(id=>{const c=CLUBBY[id];if(c&&c.co==='TR'&&(c.div||1)===2&&!c.bTeam&&!c.autoFilial&&!['ANTA','BODR','BOLU','EROK','FKAR','IGDR','ISTA','KECI','MANI','PEND','SARY','BAND','UMR','BATM','BURS','KAYS','MARD','MUG','SIVA','VAN'].includes(id))c.div=99;});
+/* ===== Polonia: Betclic 3 Liga (4ª división, 4 grupos de 18 = 72 equipos) =====
+   Grupo 1 = div 4, Grupo 2 = div 5, Grupo 3 = div 6, Grupo 4 = div 7 (DIV_GROUPS.PL).
+   El campeón de cada grupo sube a la Betclic 2 Liga; los subcampeones juegan el playoff de ascenso
+   contra el 13º y 14º de la Betclic 2 Liga. No desciende nadie a una 5ª categoría (no se simula). */
+(function(){
+  const PL3G=[
+   /* Grupo 1 (div 4) */
+   [['JAG2','Jagiellonia II','Jagiellonia II','Białystok','#f2d31b','#d4192b',40,'JAG'],
+['KTSW','KTS Weszło','KTS Weszło','Varsovia','#f4f4f4','#1a1a1a',40,null],
+['LIDZ','Lidzbark Warminski','Lidzbark','Lidzbark Warmiński','#1c3f94','#f4f4f4',38,null],
+['LKS2','LKS Lodz II','LKS II','Łódź','#d4192b','#f4f4f4',42,'LKS'],
+['LOMZ','LKS Łomża','Łomża','Łomża','#d4192b','#f4f4f4',41,null],
+['MAZV','MKS Mazovia','Mazovia','Mińsk Mazowiecki','#1c3f94','#f4f4f4',40,null],
+['MLAW','Mławianka Mława','Mława','Mława','#d4192b','#f4f4f4',42,null],
+['OLEL','Olimpia Elblag','O. Elbląg','Elbląg','#f4f4f4','#1c3f94',46,null],
+['OZAM','Olimpia Zambrow','O. Zambrów','Zambrów','#1c3f94','#f4f4f4',40,null],
+['PELI','Pelikan Lowicz','Pelikan','Łowicz','#f4f4f4','#d4192b',42,null],
+['LTOM','Lechia Tomaszów','Lechia T.','Tomaszów Mazowiecki','#0a8a3d','#f4f4f4',40,null],
+['SWIT','Swit Nowy Dwor','Świt','Nowy Dwór Mazowiecki','#d4192b','#1a1a1a',43,null],
+['TRSZ','Troszyn','Troszyn','Troszyn','#1a1a1a','#f4f4f4',36,null],
+['WSIE','Warta Sieradz','W. Sieradz','Sieradz','#0a8a3d','#f4f4f4',41,null],
+['WID2','Widzew Łódź II','Widzew II','Łódź','#d4192b','#f4f4f4',40,'WID'],
+['WIGR','Wigry Suwalki','Wigry','Suwałki','#f4f4f4','#1c3f94',44,null],
+['WPL2','Wisła Płock II','Wisła P. II','Płock','#1c3f94','#f4f4f4',40,'WPL'],
+['ZABK','Ząbkovia Ząbki','Ząbki','Ząbki','#d4192b','#f4f4f4',40,null]],
+   /* Grupo 2 (div 5) */
+   [['BALTK','Bałtyk Koszalin','Bałtyk K.','Koszalin','#1c3f94','#f4f4f4',42,null],
+['BLEK','Błękitni Stargard','Błękitni','Stargard','#1c3f94','#f4f4f4',42,null],
+['CHBD','Chemik Bydgoszcz','Chemik','Bydgoszcz','#f4f4f4','#1a1a1a',38,null],
+['GEDA','Gedania Gdansk','Gedania','Gdańsk','#f4f4f4','#1c3f94',40,null],
+['GROMS','Grom Nowy Staw','Grom','Nowy Staw','#d4192b','#f4f4f4',38,null],
+['KKSK','KKS 1925 Kalisz','Kalisz','Kalisz','#1c3f94','#f4f4f4',46,null],
+['KLUC','Kluczevia Stargard','Kluczevia','Stargard','#0a8a3d','#f4f4f4',38,null],
+['KOTW','Kotwica Kornik','Kotwica','Kórnik','#1c3f94','#f4f4f4',42,null],
+['LUZI','KTSK Luzino','KTSK','Luzino','#d4192b','#1a1a1a',38,null],
+['LP2','Lech Poznań II','Lech II','Poznań','#1c3f94','#f4f4f4',42,'LECP'],
+['LIPS','Lipno Steszew','Lipno','Stęszew','#1a1a1a','#f4f4f4',38,null],
+['NOTC','Notec Czarnków','Noteć','Czarnków','#1c3f94','#f4f4f4',38,null],
+['PSRD','Polonia Środa','P. Środa','Środa Wielkopolska','#f4f4f4','#d4192b',40,null],
+['SWSC','Swinoujscie','Świnoujście','Świnoujście','#1c3f94','#f4f4f4',42,null],
+['ELAN','Elana Torun','Elana','Toruń','#1a1a1a','#f4f4f4',45,null],
+['USZW','Unia Swarzędz','Unia S.','Swarzędz','#d4192b','#f4f4f4',42,null],
+['VICW','Victoria Września','Victoria','Września','#d4192b','#f4f4f4',38,null],
+['WDAS','Wda Świecie','Wda','Świecie','#1c3f94','#f4f4f4',42,null]],
+   /* Grupo 3 (div 6) */
+   [['BARY','Barycz Sulow','Barycz','Sułów','#0a8a3d','#f4f4f4',36,null],
+['SPTK','BKS Sparta Katowice','Sparta K.','Katowice','#0a8a3d','#f4f4f4',36,null],
+['BYTO','Bytom Odrzanski','Bytom O.','Bytom Odrzański','#1c3f94','#f4f4f4',36,null],
+['CARI','Carina Gubin','Carina','Gubin','#d4192b','#f2d31b',38,null],
+['GOCZ','Goczałkowice Zdrój','Goczałkowice','Goczałkowice-Zdrój','#1c3f94','#f4f4f4',40,null],
+['GPOL','Gornik Polkowice','Polkowice','Polkowice','#0a8a3d','#f4f4f4',46,null],
+['KRKN','Karkonosze Jelenia Góra','Karkonosze','Jelenia Góra','#1c3f94','#f4f4f4',42,null],
+['MIE2','Miedz Legnica II','Miedź II','Legnica','#0a8a3d','#f4f4f4',40,'MIE'],
+['MKLU','MKS Kluczbork','Kluczbork','Kluczbork','#1c3f94','#f4f4f4',42,null],
+['PNYS','Polonia Nysa','P. Nysa','Nysa','#0a8a3d','#f4f4f4',40,null],
+['RAK2','Rakow Czestochowa II','Raków II','Częstochowa','#d4192b','#1c3f94',42,'RAK'],
+['ROWR','ROW Rybnik','ROW','Rybnik','#1a1a1a','#f4f4f4',48,null],
+['SLEZ','Ślęza Wrocław','Ślęza','Wrocław','#d4192b','#f4f4f4',42,null],
+['SBRZ','Stal Brzeg','Stal Brzeg','Brzeg','#0a8a3d','#f4f4f4',40,null],
+['STIL','Stilon Gorzów','Stilon','Gorzów Wielkopolski','#1c3f94','#f4f4f4',44,null],
+['WGOR','Warta Gorzów','W. Gorzów','Gorzów Wielkopolski','#0a8a3d','#f4f4f4',42,null],
+['ZAG2','Zagłębie Lubin II','Zagłębie II','Lubin','#d4192b','#0a8a3d',42,'ZAGL'],
+['ZSOS','Zagłębie Sosnowiec','Z. Sosnowiec','Sosnowiec','#f2d31b','#0a3a8a',50,null]],
+   /* Grupo 4 (div 7) */
+   [['CHLM','Chełmianka Chełm','Chełmianka','Chełm','#0a8a3d','#f4f4f4',42,null],
+['CZAR','Czarni Połaniec','Czarni','Połaniec','#1a1a1a','#d4192b',38,null],
+['HETM','Hetman Zamosc','Hetman','Zamość','#1c3f94','#f4f4f4',42,null],
+['JARS','Jarosław','Jarosław','Jarosław','#1c3f94','#f4f4f4',40,null],
+['KOLB','Kolbuszowa Dolna','Kolbuszowa','Kolbuszowa','#d4192b','#f4f4f4',36,null],
+['KOR2','Korona Kielce II','Korona II','Kielce','#f2d31b','#d4192b',42,'KOR'],
+['KSZO','KSZO Ostrowiec','KSZO','Ostrowiec Świętokrzyski','#d4192b','#1c3f94',44,null],
+['MORA','Moravia Morawica','Moravia','Morawica','#1c3f94','#f4f4f4',38,null],
+['NAPR','Naprzód Jędrzejów','Naprzód','Jędrzejów','#1c3f94','#f4f4f4',36,null],
+['PODL','Podlasie Biała Podlaska','Podlasie','Biała Podlaska','#d4192b','#f4f4f4',42,null],
+['PSOK','Pogoń-Sokół Lubaczów','P. Lubaczów','Lubaczów','#d4192b','#1c3f94',38,null],
+['SIAR','Siarka Tarnobrzeg','Siarka','Tarnobrzeg','#f2d31b','#0a3a8a',46,null],
+['STAR','Star Starachowice','Star','Starachowice','#d4192b','#f4f4f4',40,null],
+['WIE2','Wieczysta Krakow II','Wieczysta II','Cracovia','#1c3f94','#f4f4f4',42,'WIE'],
+['WJA','Wiślanie Jaśkowice','Wiślanie','Jaśkowice','#1c3f94','#f4f4f4',38,null],
+['WIS2','Wisła Kraków II','Wisła II','Cracovia','#d4192b','#1c3f94',42,'WIS'],
+['WISD','Wisłoka Dębica','Wisłoka','Dębica','#1c3f94','#f4f4f4',42,null],
+['ZDR','Zdroj Busko','Zdroj','Busko-Zdrój','#f4f4f4','#d4192b',36,null]],
+  ];
+  PL3G.forEach((grp,gi)=>{
+    const div=4+gi;
+    grp.forEach(([id,name,short,city,c1,c2,rep,parent])=>{
+      let c=CLUBBY[id];
+      if(!c){c=K(id,name,short,city,'PL',c1,c2,rep,div);CLUBBY[id]=c;}
+      c.div=div;BASE_DIV[id]=div;
+      if(!CLUBS.includes(c))CLUBS.push(c);
+      if(parent){c.bTeam=1;FAMILY[id]=parent;if(!FAMILY[parent])FAMILY[parent]=id;}
+    });
+  });
+  /* los 4 grupos de la 3. Liga son divs 4-7 de la misma competición */
+  if(!DIV_GROUPS.PL)DIV_GROUPS.PL=[{label:'Betclic 3 Liga',subs:[[4,'Grupo 1'],[5,'Grupo 2'],[6,'Grupo 3'],[7,'Grupo 4']]}];
+  {const g=GROUPS.find(x=>x.id==='PL');if(g&&!g.comps.includes('PL4'))g.comps.push('PL4');}
+  /* estadios, formaciones y presupuestos reales de la Betclic 3 Liga */
+  Object.assign(STADIUM,{JAG2:'Ośrodek Treningowy Jagiellonii',KTSW:'Stadion Hutnika Warszawa',LIDZ:'Stadion Miejski w Lidzbarku Warmińskim',LKS2:'Stadion im. Władysława Króla',LOMZ:'Stadion Miejski w Łomży',MAZV:'Stadion Miejski w Mińsku Mazowieckim',MLAW:'Stadion Miejski im. Ireny Szewińskiej',OLEL:'Stadion Miejski w Elblągu',OZAM:'Stadion Miejski w Zambrowie',PELI:'Stadion im. Braci Gadajów',LTOM:'Stadion Miejski im. Ludwika Kukieru',SWIT:'Stadion Świtu Nowy Dwór Mazowiecki',TRSZ:'Stadion CK Troszyn',WSIE:'Stadion MOSiR Sieradz',WID2:'Łodzianka',WIGR:'Stadion Miejski w Suwałkach',WPL2:'Orlen Arena',ZABK:'Stadion Miejski w Ząbkach',BALTK:'Stadion ZOS Bałtyk',BLEK:'Stadion Miejski w Stargardzie',CHBD:'Stadion im. Czesława Kobusa',GEDA:'Stadion Gedanii Gdańsk',GROMS:'Stadion Miejski w Nowym Stawie',KKSK:'Stadion Miejski w Kaliszu',KLUC:'Stadion Kluczevii Stargard',KOTW:'Stadion Miejski w Kórniku',LUZI:'GOSRiT Luzino',LP2:'Stadion Amiki Wronki',LIPS:'Stadion Miejski w Stęszewie',NOTC:'Stadion Miejski im. Janusza Kusocińskiego',PSRD:'Stadion Średzki',SWSC:'Stadion Miejski im. Leszka Zakrzewskiego',ELAN:'Stadion Miejski im. Grzegorza Duneckiego',USZW:'Stadion Miejski w Swarzędzu',VICW:'Stadion Miejski we Wrześni',WDAS:'Stadion Miejski w Świeciu',BARY:'Stadion Baryczy Sułów',SPTK:'Stadion Podlesianki Katowice',BYTO:'Stadion Miejski w Bytomiu Odrzańskim',CARI:'Stadion Miejski w Gubinie',GOCZ:'GOSiR Goczałkowice-Zdrój',GPOL:'Stadion Miejski w Polkowicach',KRKN:'Stadion Miejski w Jeleniej Górze',MIE2:'Stadion Miejski im. Orła Białego',MKLU:'Stadion Miejski w Kluczborku',PNYS:'Stadion Miejski w Nysie',RAK2:'Miejski Stadion Piłkarski Raków',ROWR:'Stadion Miejski w Rybniku',SLEZ:'Kłokoczyckie Centrum Sportowe',SBRZ:'Stadion Miejski w Brzegu',STIL:'Stadion im. Edwarda Jancarza',WGOR:'Stadion OSiR w Gorzowie Wielkopolskim',ZAG2:'KGHM Zagłębie Arena',ZSOS:'ArcelorMittal Park',CHLM:'Stadion Miejski w Chełmie',CZAR:'Stadion Miejski w Połańcu',HETM:'Stadion OSiR w Zamościu',JARS:'Stadion Miejski w Jarosławiu',KOLB:'Stadion KKS Kolbuszowa Dolna',KOR2:'Stadion Szczepaniaka',KSZO:'Miejski Stadion Sportowy "KSZO"',MORA:'Stadion w Bilczy',NAPR:'Stadion Miejski w Jędrzejowie',PODL:'Stadion Miejski w Białej Podlaskiej',PSOK:'Stadion Miejski w Lubaczowie',SIAR:'Stadion Miejski w Tarnobrzegu',STAR:'Stadion Miejski w Starachowicach',WIE2:'Stadion Wieczystej',WJA:'Stadion w Skawinie',WIS2:'Obiekt Sportowy bazy treningowej w Myślenicach',WISD:'Stadion im. Emila Wzorka',ZDR:'Stadion Miejski w Busku-Zdroju'});
+  Object.assign(FORM_MAIN,{JAG2:'4-2-3-1',KTSW:'4-2-3-1',LIDZ:'4-2-3-1',LKS2:'4-3-3',LOMZ:'4-2-3-1',MAZV:'4-4-2',MLAW:'4-2-3-1',OLEL:'3-4-2-1',OZAM:'4-2-3-1',PELI:'4-2-3-1',LTOM:'4-2-3-1',SWIT:'4-2-3-1',TRSZ:'4-4-2',WSIE:'4-2-3-1',WID2:'4-3-3',WIGR:'4-2-3-1',WPL2:'4-2-3-1',ZABK:'4-2-3-1',BALTK:'4-4-2',BLEK:'4-2-3-1',CHBD:'4-2-3-1',GEDA:'4-3-3',GROMS:'4-2-3-1',KKSK:'3-4-2-1',KLUC:'4-4-2',KOTW:'4-2-3-1',LUZI:'4-2-3-1',LP2:'4-3-3',LIPS:'4-4-2',NOTC:'4-2-3-1',PSRD:'4-2-3-1',SWSC:'4-2-3-1',ELAN:'4-2-3-1',USZW:'4-2-3-1',VICW:'4-4-2',WDAS:'4-2-3-1',BARY:'4-2-3-1',SPTK:'4-2-3-1',BYTO:'4-4-2',CARI:'4-2-3-1',GOCZ:'3-4-2-1',GPOL:'4-2-3-1',KRKN:'4-2-3-1',MIE2:'4-2-3-1',MKLU:'4-2-3-1',PNYS:'4-2-3-1',RAK2:'3-4-2-1',ROWR:'4-2-3-1',SLEZ:'4-3-3',SBRZ:'4-2-3-1',STIL:'4-2-3-1',WGOR:'4-2-3-1',ZAG2:'4-3-3',ZSOS:'3-4-2-1',CHLM:'4-2-3-1',CZAR:'4-2-3-1',HETM:'4-4-2',JARS:'4-4-2',KOLB:'4-2-3-1',KOR2:'4-2-3-1',KSZO:'4-2-3-1',MORA:'4-2-3-1',NAPR:'4-4-2',PODL:'3-4-2-1',PSOK:'4-2-3-1',SIAR:'4-2-3-1',STAR:'4-2-3-1',WIE2:'4-2-3-1',WJA:'4-2-3-1',WIS2:'4-3-3',WISD:'4-2-3-1',ZDR:'4-4-2'});
+  Object.assign(BUDGET,{JAG2:0.03,KTSW:0.12,LIDZ:0.065,LKS2:0.035,LOMZ:0.075,MAZV:0.05,MLAW:0.055,OLEL:0.11,OZAM:0.045,PELI:0.06,LTOM:0.065,SWIT:0.08,TRSZ:0.04,WSIE:0.055,WID2:0.03,WIGR:0.09,WPL2:0.03,ZABK:0.045,BALTK:0.055,BLEK:0.08,CHBD:0.05,GEDA:0.06,GROMS:0.045,KKSK:0.14,KLUC:0.04,KOTW:0.045,LUZI:0.04,LP2:0.045,LIPS:0.035,NOTC:0.055,PSRD:0.075,SWSC:0.065,ELAN:0.085,USZW:0.07,VICW:0.04,WDAS:0.05,BARY:0.06,SPTK:0.05,BYTO:0.045,CARI:0.065,GOCZ:0.075,GPOL:0.11,KRKN:0.07,MIE2:0.035,MKLU:0.09,PNYS:0.05,RAK2:0.04,ROWR:0.055,SLEZ:0.08,SBRZ:0.06,STIL:0.075,WGOR:0.07,ZAG2:0.045,ZSOS:0.35,CHLM:0.08,CZAR:0.055,HETM:0.06,JARS:0.05,KOLB:0.045,KOR2:0.035,KSZO:0.095,MORA:0.04,NAPR:0.035,PODL:0.075,PSOK:0.05,SIAR:0.11,STAR:0.085,WIE2:0.055,WJA:0.06,WIS2:0.04,WISD:0.065,ZDR:0.04});
+  const LOG3={'JAG2':'https://cdn.resfu.com/img_data/equipos/60000.png?size=120x&lossy=1','KTSW':'https://cdn.resfu.com/img_data/equipos/163132.png?size=120x&lossy=1','LIDZ':'https://cdn.resfu.com/img_data/equipos/163962.png?size=120x&lossy=1','LKS2':'https://cdn.resfu.com/img_data/equipos/143335.png?size=120x&lossy=1','LOMZ':'https://cdn.resfu.com/img_data/equipos/59544.png?size=120x&lossy=1','MAZV':'https://cdn.resfu.com/img_data/equipos/159086.png?size=120x&lossy=1','MLAW':'https://cdn.resfu.com/img_data/equipos/59541.png?size=120x&lossy=1','OLEL':'https://cdn.resfu.com/img_data/equipos/13390.png?size=120x&lossy=1','OZAM':'https://cdn.resfu.com/img_data/equipos/13399.png?size=120x&lossy=1','PELI':'https://cdn.resfu.com/img_data/equipos/13397.png?size=120x&lossy=1','LTOM':'https://cdn.resfu.com/img_data/equipos/60069.png?size=120x&lossy=1','SWIT':'https://cdn.resfu.com/img_data/equipos/13391.png?size=120x&lossy=1','TRSZ':'https://cdn.resfu.com/img_data/equipos/163907.png?size=120x&lossy=1','WSIE':'https://cdn.resfu.com/img_data/equipos/60067.png?size=120x&lossy=1','WID2':'https://cdn.resfu.com/img_data/equipos/88389.png?size=120x&lossy=1','WIGR':'https://cdn.resfu.com/img_data/equipos/12997.png?size=120x&lossy=1','WPL2':'https://cdn.resfu.com/img_data/equipos/88468.png?size=120x&lossy=1','ZABK':'https://cdn.resfu.com/img_data/equipos/158957.png?size=120x&lossy=1','BALTK':'https://cdn.resfu.com/img_data/equipos/60126.png?size=120x&lossy=1','BLEK':'https://cdn.resfu.com/img_data/equipos/17741.png?size=120x&lossy=1','CHBD':'https://cdn.resfu.com/img_data/equipos/88422.png?size=120x&lossy=1','GEDA':'https://cdn.resfu.com/img_data/equipos/149890.png?size=120x&lossy=1','GROMS':'https://cdn.resfu.com/img_data/equipos/121397.png?size=120x&lossy=1','KKSK':'https://cdn.resfu.com/img_data/equipos/80647.png?size=120x&lossy=1','KLUC':'https://cdn.resfu.com/img_data/equipos/143339.png?size=120x&lossy=1','KOTW':'https://cdn.resfu.com/img_data/equipos/163977.png?size=120x&lossy=1','LUZI':'https://cdn.resfu.com/img_data/equipos/159121.png?size=120x&lossy=1','LP2':'https://cdn.resfu.com/img_data/equipos/60048.png?size=120x&lossy=1','LIPS':'https://cdn.resfu.com/img_data/equipos/166261.png?size=120x&lossy=1','NOTC':'https://cdn.resfu.com/img_data/equipos/159122.png?size=120x&lossy=1','PSRD':'https://cdn.resfu.com/img_data/equipos/60047.png?size=120x&lossy=1','SWSC':'https://cdn.resfu.com/img_data/equipos/13367.png?size=120x&lossy=1','ELAN':'https://cdn.resfu.com/img_data/equipos/5641.png?size=120x&lossy=1','USZW':'https://cdn.resfu.com/img_data/equipos/60050.png?size=120x&lossy=1','VICW':'https://cdn.resfu.com/img_data/equipos/60052.png?size=120x&lossy=1','WDAS':'https://cdn.resfu.com/img_data/equipos/60040.png?size=120x&lossy=1','BARY':'https://cdn.resfu.com/img_data/equipos/158993.png?size=120x&lossy=1','SPTK':'https://cdn.resfu.com/img_data/equipos/102145.png?size=120x&lossy=1','BYTO':'https://cdn.resfu.com/img_data/equipos/158992.png?size=120x&lossy=1','CARI':'https://cdn.resfu.com/img_data/equipos/143340.png?size=120x&lossy=1','GOCZ':'https://cdn.resfu.com/img_data/equipos/137761.png?size=120x&lossy=1','GPOL':'https://cdn.resfu.com/img_data/equipos/13284.png?size=120x&lossy=1','KRKN':'https://cdn.resfu.com/img_data/equipos/60024.png?size=120x&lossy=1','MIE2':'https://cdn.resfu.com/img_data/equipos/80642.png?size=120x&lossy=1','MKLU':'https://cdn.resfu.com/img_data/equipos/17737.png?size=120x&lossy=1','PNYS':'https://cdn.resfu.com/img_data/equipos/137840.png?size=120x&lossy=1','RAK2':'https://cdn.resfu.com/img_data/equipos/89817.png?size=120x&lossy=1','ROWR':'https://cdn.resfu.com/img_data/equipos/13069.png?size=120x&lossy=1','SLEZ':'https://cdn.resfu.com/img_data/equipos/60018.png?size=120x&lossy=1','SBRZ':'https://cdn.resfu.com/img_data/equipos/89497.png?size=120x&lossy=1','STIL':'https://cdn.resfu.com/img_data/equipos/60020.png?size=120x&lossy=1','WGOR':'https://cdn.resfu.com/img_data/equipos/59552.png?size=120x&lossy=1','ZAG2':'https://cdn.resfu.com/img_data/equipos/60019.png?size=120x&lossy=1','ZSOS':'https://cdn.resfu.com/img_data/equipos/17742.png?size=120x&lossy=1','CHLM':'https://cdn.resfu.com/img_data/equipos/60085.png?size=120x&lossy=1','CZAR':'https://cdn.resfu.com/img_data/equipos/60105.png?size=120x&lossy=1','HETM':'https://cdn.resfu.com/img_data/equipos/59529.png?size=120x&lossy=1','JARS':'https://cdn.resfu.com/img_data/equipos/60082.png?size=120x&lossy=1','KOLB':'https://cdn.resfu.com/img_data/equipos/164153.png?size=120x&lossy=1','KOR2':'https://cdn.resfu.com/img_data/equipos/60108.png?size=120x&lossy=1','KSZO':'https://cdn.resfu.com/img_data/equipos/59512.png?size=120x&lossy=1','MORA':'https://cdn.resfu.com/img_data/equipos/166260.png?size=120x&lossy=1','NAPR':'https://cdn.resfu.com/img_data/equipos/87163.png?size=120x&lossy=1','PODL':'https://cdn.resfu.com/img_data/equipos/60095.png?size=120x&lossy=1','PSOK':'https://cdn.resfu.com/img_data/equipos/163964.png?size=120x&lossy=1','SIAR':'https://cdn.resfu.com/img_data/equipos/13417.png?size=120x&lossy=1','STAR':'https://cdn.resfu.com/img_data/equipos/159123.png?size=120x&lossy=1','WIE2':'https://cdn.resfu.com/img_data/equipos/169630.png?size=120x&lossy=1','WJA':'https://cdn.resfu.com/img_data/equipos/101904.png?size=120x&lossy=1','WIS2':'https://cdn.resfu.com/img_data/equipos/60102.png?size=120x&lossy=1','WISD':'https://cdn.resfu.com/img_data/equipos/60091.png?size=120x&lossy=1','ZDR':'https://cdn.resfu.com/img_data/equipos/159335.png?size=120x&lossy=1'};
+  Object.assign(CLUB_LOGO,LOG3);
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  /* mapa: coordenadas de las ciudades de la Betclic 3 Liga (para que cada club salga en su ciudad) */
+  Object.assign(CITY,{'Białystok':{ll:[23.1592,53.1324]},'Varsovia':{ll:[21.0711,52.2334]},'Lidzbark Warmiński':{ll:[20.5806,54.1259]},'Łódź':{ll:[19.4785,51.7728]},'Łomża':{ll:[22.0728,53.1751]},'Mińsk Mazowiecki':{ll:[21.5587,52.1812]},'Mława':{ll:[20.3832,53.1116]},'Elbląg':{ll:[19.4411,54.1989]},'Zambrów':{ll:[22.2412,52.9855]},'Łowicz':{ll:[19.9448,52.1077]},'Tomaszów Mazowiecki':{ll:[20.0338,51.5195]},'Nowy Dwór Mazowiecki':{ll:[20.7155,52.4307]},'Troszyn':{ll:[21.7325,53.0310]},'Sieradz':{ll:[18.7399,51.6018]},'Suwałki':{ll:[22.9321,54.1028]},'Płock':{ll:[19.7009,52.5465]},'Ząbki':{ll:[21.1147,52.2923]},'Koszalin':{ll:[16.1771,54.1909]},'Stargard':{ll:[15.0316,53.3090]},'Bydgoszcz':{ll:[18.0294,53.1297]},'Gdańsk':{ll:[18.6540,54.3483]},'Nowy Staw':{ll:[19.0087,54.1343]},'Kalisz':{ll:[18.0895,51.7625]},'Kórnik':{ll:[17.0901,52.2493]},'Luzino':{ll:[18.1048,54.5619]},'Poznań':{ll:[16.9197,52.4007]},'Stęszew':{ll:[16.6999,52.2794]},'Czarnków':{ll:[16.5640,52.9050]},'Środa Wielkopolska':{ll:[17.2778,52.2284]},'Świnoujście':{ll:[14.2511,53.9097]},'Toruń':{ll:[18.5966,53.0145]},'Swarzędz':{ll:[17.0771,52.4104]},'Września':{ll:[17.5652,52.3251]},'Świecie':{ll:[18.4455,53.4073]},'Sułów':{ll:[17.1693,51.4994]},'Katowice':{ll:[19.0216,50.2599]},'Bytom Odrzański':{ll:[15.8269,51.7308]},'Gubin':{ll:[14.7370,51.9573]},'Goczałkowice-Zdrój':{ll:[18.9660,49.9437]},'Polkowice':{ll:[16.0713,51.5039]},'Jelenia Góra':{ll:[15.7344,50.9031]},'Legnica':{ll:[16.1603,51.2082]},'Kluczbork':{ll:[18.2140,50.9731]},'Nysa':{ll:[17.3325,50.4738]},'Częstochowa':{ll:[19.1132,50.8120]},'Rybnik':{ll:[18.5532,50.1106]},'Wrocław':{ll:[17.0327,51.1090]},'Brzeg':{ll:[17.4705,50.8615]},'Gorzów Wielkopolski':{ll:[15.2400,52.7310]},'Lubin':{ll:[16.1993,51.3997]},'Sosnowiec':{ll:[19.1343,50.2781]},'Chełm':{ll:[23.4939,51.1356]},'Połaniec':{ll:[21.2810,50.4329]},'Zamość':{ll:[23.2596,50.7212]},'Jarosław':{ll:[22.6797,50.0159]},'Kolbuszowa':{ll:[21.7755,50.2433]},'Kielce':{ll:[20.6099,50.8540]},'Ostrowiec Świętokrzyski':{ll:[21.4115,50.9502]},'Morawica':{ll:[20.6181,50.7478]},'Jędrzejów':{ll:[20.3046,50.6394]},'Biała Podlaska':{ll:[23.1194,52.0338]},'Lubaczów':{ll:[23.1179,50.1571]},'Tarnobrzeg':{ll:[21.7118,50.5838]},'Starachowice':{ll:[21.0821,51.0385]},'Cracovia':{ll:[19.9369,50.0619]},'Jaśkowice':{ll:[19.6706,49.9607]},'Dębica':{ll:[21.4128,50.0461]},'Busko-Zdrój':{ll:[20.7192,50.4676]}});
+})();
+
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
