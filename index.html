@@ -14260,18 +14260,24 @@ function loanBlock(p,promised){
   return null;
 }
 function joinSquad(p,extra){
-  const t=me();const mi=state.market.indexOf(p);if(mi>=0)state.market.splice(mi,1);
+  const t=me(),from=p.from;
+  const mi=state.market.indexOf(p);if(mi>=0)state.market.splice(mi,1);
   if(state.freeAgents){const fi=state.freeAgents.indexOf(p);if(fi>=0)state.freeAgents.splice(fi,1)}
-  if(p.from&&CLUBBY[p.from]){
-    if(state.teams[p.from]){const T=state.teams[p.from],ix=T.players.indexOf(p);if(ix>=0){T.players.splice(ix,1);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)}}
-    else{
-      if(!(extra&&extra.loanIn)){state.gone=state.gone||{};state.gone[p.id]=1}   /* un fichaje definitivo se va de su club para siempre; una cesión vuelve */
-      if(state.arrivals&&state.arrivals[p.from])state.arrivals[p.from]=state.arrivals[p.from].filter(x=>x.id!==p.id);
-      const src=squadFor(p.from),ix=src.indexOf(p);if(ix>=0)src.splice(ix,1);const base=SQC[p.from+'|'+state.seed+'|'+curMode()],jx=base?base.indexOf(p):-1;if(jx>=0)base.splice(jx,1);
-    }
-  }
   ['price','from','tries','blk','free'].forEach(k=>delete p[k]);
-  Object.assign(p,{en:100,inj:0,g:0,ge:0,sv:0,ap:0,as:0,yc:0,rc:0,sus:0,rt:0},(extra&&extra.loanIn)?null:{cy:3},extra);t.players.push(p);
+  Object.assign(p,{en:100,inj:0,g:0,ge:0,sv:0,ap:0,as:0,yc:0,rc:0,sus:0,rt:0},(extra&&extra.loanIn)?null:{cy:3},extra);
+  /* el jugador entra en tu plantilla ANTES de quitarlo del club de origen: si algo fallara al quitarlo,
+     al menos lo tienes (antes se quitaba primero y un error podía dejar el fichaje a medias) */
+  t.players.push(p);
+  if(from&&from!==state.club&&CLUBBY[from]){
+    try{
+      if(state.teams[from]){const T=state.teams[from],ix=T.players.indexOf(p);if(ix>=0){T.players.splice(ix,1);T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T)}}
+      else{
+        if(!(extra&&extra.loanIn)){state.gone=state.gone||{};state.gone[p.id]=1}   /* un fichaje definitivo se va de su club para siempre; una cesión vuelve */
+        if(state.arrivals&&state.arrivals[from])state.arrivals[from]=state.arrivals[from].filter(x=>x.id!==p.id);
+        const src=squadFor(from),ix=src.indexOf(p);if(ix>=0)src.splice(ix,1);const base=SQC[from+'|'+state.seed+'|'+curMode()],jx=base?base.indexOf(p):-1;if(jx>=0)base.splice(jx,1);
+      }
+    }catch(err){console.error('joinSquad: no se pudo quitar al jugador de su club de origen',err)}
+  }
 }
 function negotiateBuy(id,fee,sal,promised){
   const p=state.market.find(x=>x.id===id),t=me();
@@ -14300,7 +14306,11 @@ function negotiateBuy(id,fee,sal,promised){
   else if(sal>=T.wmin*.9)msgs.push(`${p.n} pide un sueldo de unos €${T.wmin}K semanales.${isLowRole(T.roleMe)?' No tiene asegurado el protagonismo en tu equipo.':''}`);
   else msgs.push(`${p.n} rechaza las condiciones económicas.${isLowRole(T.roleMe)?' No cuenta con jugar en tu equipo.':''}`);
   if(clubOk&&plOk){
-    const from=p.from;t.budget=r1(t.budget-fee);ensureFinTotal().transferOut+=fee;joinSquad(p,Object.assign({wage:Math.round(sal)},promised?{role:promised}:{}));
+    const from=p.from;
+    /* primero se incorpora al jugador y solo después se cobra: si fallara al añadirlo, no se pierde el dinero */
+    try{ joinSquad(p,Object.assign({wage:Math.round(sal)},promised?{role:promised}:{})); }
+    catch(err){ console.error('Error al incorporar al jugador',err); return{msgs:['No se pudo completar el fichaje: inténtalo de nuevo.'],done:false} }
+    t.budget=r1(t.budget-fee);ensureFinTotal().transferOut+=fee;
     (p.career=p.career||[]).push({s:state.season,ev:'in',from,to:state.club,fee});
     news(`Fichas a ${p.n} (${p.ovr}) del ${cname(from)} por ${fmtM(fee)}, con un sueldo de €${Math.round(sal)}K semanales.`);saveGame();
     return{msgs:[`Fichaje cerrado: ${p.n} ya es jugador de tu club.`],done:true};
@@ -21181,7 +21191,8 @@ function bindEvents(){
     if(ui.styleOpen&&!['style-menu','style-pick'].includes(t.dataset.act)){ui.styleOpen=false}
     if(ui.museum.open&&!['museum-drop-toggle','museum-drop-pick'].includes(t.dataset.act)){ui.museum.open=null}
     if(ui.dbedit&&ui.dbedit.openDrop&&!['dbedit-drop-toggle','dbedit-drop-pick'].includes(t.dataset.act)){ui.dbedit.openDrop=null}
-    const f=H[t.dataset.act];if(f)f(t,e);
+    const f=H[t.dataset.act];
+    if(f){try{f(t,e)}catch(err){console.error('Acción "'+t.dataset.act+'"',err);try{toast('Ha ocurrido un error en esa acción. Vuelve a intentarlo.')}catch(_){}}}
   });
   function syncCountryHover(c){
     $$('#L1 .cty,#L1 .cpin,#listview .lrow').forEach(g=>g.classList.toggle('hov',!!c&&g.dataset.c===c));
