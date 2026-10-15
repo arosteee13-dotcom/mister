@@ -1738,7 +1738,11 @@ const NORWAY=P(`5.0,58.0 5.3,59.0 5.0,60.3 5.9,61.0 6.8,62.1 7.0,62.8 8.0,63.0 9
 const SWEDEN=P(`13.35,55.33 12.95,55.57 12.69,56.04 12.85,56.68 12.25,57.1 11.95,57.7 11.82,58.08 11.17,58.93 12.1,59.37 12.98,60.13 13.2,61.17 13.5,62.52 12.1,63.32 13.6,64.75 15.5,66.3 17.5,67.6 18.8,68.35 20.58,69.06 22.48,68.44 23.37,67.2 23.65,66.38 24.15,65.83 22.15,65.58 21.5,65.32 21.0,64.75 20.26,63.83 18.7,63.3 17.3,62.39 17.1,61.73 17.15,60.67 18.7,59.78 18.07,59.33 17.95,58.9 17.1,58.67 16.36,56.66 15.59,56.16 14.35,55.55`);
 const GOTLAND=P(`18.15,57.84 18.8,57.7 18.9,57.3 18.7,57.05 18.3,56.9 18.15,57.1 18.0,57.4`);
 const SANMARINO=P(`12.3833,43.9667 12.4278,43.9792 12.4844,43.9750 12.5090,43.9400 12.4950,43.9000 12.4400,43.8850 12.4000,43.9100 12.3750,43.9400`);
-const RUSSIA_EU=P(`28,60 20,54.5 27.5,51.5 35,50.3 38.2,47.3 39,45 41,43.5 47.5,42 50,44.5 53,47 56,51 59,54 56,58 50,58 42,59 36,59.5 30,60.5`);
+/* Rusia completa (europea + asiática hasta el estrecho de Bering), para que los clubes de la
+   1. Division (Krasnoyarsk, Jabárovsk…) no queden fuera del contorno en el mapa */
+const RUSSIA_EU=P(`30,69.5 33,69.4 36,69.2 40.5,67.9 41.2,66.7 38,66.2 34.5,66.6 34.5,64.5 37,63.9 40,64.5 43,66.4 44,66.1 44,68.3 47,68 53,68.5 58,68.9 60,69.8 66,69 66.5,71 70,73.5 78,72.4 80,73.6 87,75 100,76.5 104,77.7 113,73.8 126,73.5 140,72.5 150,71.5 160,70 170,69.7 180,68.8 180,65 173,61.5 163,60 162.5,57.5 156.5,51 155.5,56 151,59.5 143,59.3 137,54 141,52 140.5,48.5 135,43.5 131.5,42.8 130.7,42.9 131.5,45 134.5,48 132,48.5 130.7,48.9 127.5,50.2 125.6,53 120.7,53.3 119.4,53.3 117.8,49.6 115.8,47.9 113.5,49.6 110,49.3 106.5,50.3 103,51.4 98.5,51.6 94.5,50.4 90.5,50 89,49.5 87.8,49.2 87.3,49.1 85.5,50 83,50.9 80.6,50.9 77,53.3 73.5,53.9 71,54.2 69,55.4 65.5,54.7 62,54 60.1,50.9 57.9,51.2 55,50.6 51.6,51.5 49.6,51.5 48,50.2 47.1,50.5 46.8,49 47.5,46 48.5,44.5 48.3,42 47,41.3 45.8,41.6 44,42.6 41.5,43 39.5,43.3 38,44 37,44.8 36.5,45.2 34.5,45.5 33.6,46.1 31,46.7 31.5,52.3 30,53.6 28,56 31,69.5`);
+/* enclave de Kaliningrado (Baltika), separado del cuerpo principal */
+const KALININGRAD=P(`19.65,54.45 20.6,54.35 22.8,54.4 22.85,55.28 21.2,55.28 19.9,54.9`);
 const TURKEY=P(`27.0,42.0 28.0,41.7 29.0,41.3 31.4,41.3 35.2,42.0 38.4,41.0 41.5,41.5 43.6,41.1 44.8,39.8 44.3,37.2 42.3,37.3 40.0,37.2 36.7,36.7 34.6,36.2 32.6,36.2 30.5,36.2 29.0,36.1 27.3,36.9 26.0,38.4 26.3,40.0`);
 const BULGARIA=P(`22.4,43.4 22.9,44.0 23.0,44.2 24.0,43.7 25.3,43.7 26.0,43.75 27.2,44.0 28.0,43.75 28.6,43.75 27.9,42.6 27.5,42.0 26.6,41.3 26.0,41.25 25.3,41.3 24.5,41.4 23.7,41.3 23.0,41.35 22.6,41.9 22.4,42.5`);
 /* contorno simplificado (caja aprox.) de Grecia continental, no pixel-perfect */
@@ -1939,7 +1943,7 @@ const COUNTRIES={
    TR:{name:'Turquía',league:'Süper Lig',divs:['Süper Lig','1. Lig'],pin:[32.9,39.9],polys:[TURKEY]},
    PT:{name:'Portugal',league:'Liga Portugal',divs:['Liga Portugal','Liga Portugal 2','Liga 3 Placard'],pin:[-8,39.6],polys:[PORTUGAL],inset:MADEIRA_AZORES},
    FR:{name:'Francia',league:'Ligue 1',divs:['Ligue 1','Ligue 2'],pin:[2.4,46.8],polys:[FRANCE]},
-   RU:{name:'Rusia',league:'Premier Liga',divs:['Premier Liga'],pin:[40,54],polys:[RUSSIA_EU]},
+   RU:{name:'Rusia',league:'Premier Liga',divs:['Premier Liga','1. Division'],pin:[40,54],polys:[RUSSIA_EU,KALININGRAD]},
    AR:{name:'Argentina',league:'Liga Profesional de Fútbol',divs:['Liga Profesional de Fútbol'],pin:[-64,-38],polys:[ARGENTINA]},
    MX:{name:'México',league:'Liga MX',divs:['Liga MX'],pin:[-102,23.6],polys:[MEXICO]},
    BG:{name:'Bulgaria',league:'efbet Liga',divs:['efbet Liga'],pin:[25.2,42.7],polys:[BULGARIA]},
@@ -3137,6 +3141,8 @@ Object.assign(CITY,{'Virton':{ll:[5.5325,49.5667]},'Denderleeuw':{ll:[4.0772,50.
 Object.assign(CITY,{'Pitești':{ll:[24.87,44.86]},'Botoșani':{ll:[26.67,47.75]},'Cluj-Napoca':{ll:[23.6,46.77]},'Hunedoara':{ll:[22.9,45.75]},'Miercurea Ciuc':{ll:[25.8,46.36]},'Bucarest':{ll:[26.1,44.43]},'Constanța':{ll:[28.65,44.18]},'Galați':{ll:[28.03,45.44]},'Ploiești':{ll:[26.02,44.94]},'Sfântu Gheorghe':{ll:[25.79,45.86]},'Arad':{ll:[21.32,46.18]}});
 /* Turquía: ciudades de los clubes de la 1. Lig (y del resto de Turquía) que faltaban en el mapa */
 Object.assign(CITY,{'Antalya':{ll:[30.71,36.90]},'Bodrum':{ll:[27.43,37.03]},'Bolu':{ll:[31.61,40.73]},'Iğdır':{ll:[44.04,39.92]},'Manisa':{ll:[27.43,38.61]},'Bandırma':{ll:[27.98,40.35]},'Batman':{ll:[41.13,37.88]},'Mardin':{ll:[40.74,37.31]},'Muğla':{ll:[28.37,37.22]},'Van':{ll:[43.38,38.49]}});
+/* Rusia: ciudades de los clubes de la 1. Division (2ª división) que faltaban en el mapa */
+Object.assign(CITY,{'Tula':{ll:[37.62,54.20]},'Cheliábinsk':{ll:[61.40,55.16]},'Náberezhnye Chelny':{ll:[52.41,55.74]},'Nizhnekamsk':{ll:[51.82,55.64]},'Nizhny Novgorod':{ll:[44.00,56.33]},'Volgogrado':{ll:[44.51,48.71]},'Yaroslavl':{ll:[39.87,57.63]},'Jabárovsk':{ll:[135.07,48.48]},'Sochi':{ll:[39.73,43.60]},'Kostromá':{ll:[40.93,57.77]},'Ivánovo':{ll:[40.97,57.00]},'Ufá':{ll:[55.97,54.74]},'Ekaterimburgo':{ll:[60.60,56.84]},'Uliánovsk':{ll:[48.40,54.32]},'Krasnoyarsk':{ll:[92.87,56.01]}});
 Object.assign(CITY,{'Oradea':{ll:[21.92,47.06]},'Târgoviște':{ll:[25.46,44.93]},'Chiajna':{ll:[25.95,44.47]},'Brașov':{ll:[25.61,45.66]},'Bacău':{ll:[26.91,46.57]},'Bistrița':{ll:[24.5,47.13]},'Lupeni':{ll:[23.14,45.36]},'Timișoara':{ll:[21.23,45.75]},'Lieşti':{ll:[27.42,45.63]}});
 Object.assign(CITY,{
  'Ceuta':{ll:[-5.32,35.89]},'Sabadell':{ll:[2.11,41.54]},'Elda':{ll:[-0.79,38.48]},'Andorra la Vella':{ll:[1.52,42.51]},'Logroño':{ll:[-2.45,42.46]},'Split':{ll:[16.44,43.51]},'León':{ll:[-5.57,42.60]},'Manresa':{ll:[1.83,41.73]},'Yeda':{ll:[39.20,21.49]},'Breda':{ll:[4.78,51.59]},'Salamanca':{ll:[-5.66,40.96]},'Irún':{ll:[-1.79,43.34]},
@@ -3603,6 +3609,20 @@ const REAL_LOANS=[
  /* Vanspor FK (1. Lig): cedidos al club (Tenton Yenne ya figuraba) */
  ['M. Ozhan','ERZU','VAN',1,null,['M. Ozhan','FW',2000,'TR',50,null,0.552,null,'EI']],
  ['İlkan Sever','ERZU','VAN',1,null,['İlkan Sever','FW',2004,'TR',40,null,0.328,null,'DC']],
+ /* Arsenal Tula (1. Division): cedidos al club */
+ ['Artem Biryukov','RDM','ARTU',1,null,['Artem Biryukov','MD',2006,'RU',36,null,0.109,null,'MCO']],
+ ['Aleksandr Alekhin','RDM','ARTU',1,null,['Aleksandr Alekhin','DF',2005,'RU',37,null,0.147,null,'DFC']],
+ ['Yaroslav Krashevsky','NIZH','ARTU',1,null,['Yaroslav Krashevsky','DF',2004,'RU',41,null,0.26,null,'LI']],
+ /* FC Chelyabinsk (1. Division): cedidos al club */
+ ['Matvey Urvantsev','NIZH','CHEL',1,null,['Matvey Urvantsev','FW',2004,'RU',53,null,1.05,null,'DC']],
+ ['Nikolay Pridava','RDM','CHEL',1,null,['Nikolay Pridava','DF',2006,'RU',38,null,0.071,null,'DFC']],
+ /* KamAZ (1. Division): cedido al club */
+ ['David Khubaev','SPKT','KAMZ',1,null,['David Khubaev','MD',1994,'RU',58,null,0.525,null,'MC']],
+ /* Leningradets (1. Division): cedidos al club (Dmitriy Nikitin ya figuraba) */
+ ['Olivier Kenfack','YENS','LENR',1,null,['Olivier Kenfack','FW',2005,'CM',45,null,0.409,null,'EI']],
+ ['Kirill Isaev','DMKB','LENR',1,null,['Kirill Isaev','DF',2005,'RU',38,null,0.031,null,'DFC']],
+ /* Nizhny Novgorod (1. Division): cedido al club */
+ ['Gleb Popolitov','CSKM','NIZH',1,null,['Gleb Popolitov','FW',2007,'RU',49,null,0.881,null,'ED']],
  /* Suwon Samsung Bluewings (K League 2): cedido al club (Ho-Yeon Jeong, de Minnesota United) */
  ['Ho-Yeon Jeong','MNU','KRSWB',1,null,['Ho-Yeon Jeong','MD',2000,'KR',64,null,2.35,null,'MC']],
  /* Yongin FC (K League 2): cedido al club (Chi-Ung Choi, de Suwon FC) */
@@ -3761,12 +3781,21 @@ const REAL_LOANS=[
  ['Anas El Mahraoui','AKHM','MAGF',1,null,['Anas El Mahraoui','FW',2001,'MA',47,null,0.677,null,'EI/DC']],
  /* Cedidos de Baltika */
  ['Tenton Yenne','BALT','VAN',1,null,['Tenton Yenne','FW',2000,'NG',65,null,4.13,null,'EI/MI']],
- ['Irakli Manelov','BALT','ROTV',1,null,['Irakli Manelov','FW',2002,'RU',57,null,2.01,null,'ED/EI']],
- ['Kirill Nikishin','BALT','NKHZ',1,null,['Kirill Nikishin','FW',2004,'RU',47,null,0.467,null,'DC/ED']],
- ['Yaroslav Arbuzov','BALT','SHIN',1,null,['Yaroslav Arbuzov','MD',2004,'RU',49,null,0.297,null,'MCO/MD']],
+ ['Irakliy Manelov','BALT','ROTV',1,null,['Irakliy Manelov','FW',2002,'RU',56,null,2.01,null,'ED']],
+ ['Kirill Nikishin','BALT','NKHZ',1,null,['Kirill Nikishin','FW',2004,'RU',48,null,0.467,null,'DC']],
+ ['Yaroslav Arbuzov','BALT','SHIN',1,null,['Yaroslav Arbuzov','MD',2004,'RU',49,null,0.3,null,'MCO']],
+ /* Shinnik (1. Division): cedido al club */
+ ['Denis Pushkarev','CHEL','SHIN',1,null,['Denis Pushkarev','MD',2005,'RU',38,null,0.15,null,'MCO']],
+ /* SKA-Khabarovsk (1. Division): cedidos al club */
+ ['Sadyg Bagiev','TORP','SKAK',1,null,['Sadyg Bagiev','MD',2004,'RU',50,null,0.462,null,'MCD']],
+ ['Egor Mosin','URAL','SKAK',1,null,['Egor Mosin','MD',2003,'RU',52,null,0.796,null,'MI']],
+ ['Makar Chirkov','SOCHI','SKAK',1,null,['Makar Chirkov','DF',2005,'RU',50,null,0.39,null,'DFC']],
  ['Alex Fernandes','BALT','NAVB',1,null,['Alex Fernandes','FW',2002,'BR',61,null,3,null,'ED/MCO']],
- ['Nikita Bozov','BALT','TORP',1,null,['Nikita Bozov','DF',2005,'RU',55,null,0.739,null,'DFC/LD']],
- ['Dmitri Nikitin','BALT','LENR',1,null,['Dmitri Nikitin','FW',2007,'RU',44,null,0.22,null,'DC/MC']],
+ ['Nikita Bozov','BALT','TORP',1,null,['Nikita Bozov','DF',2005,'RU',55,null,0.739,null,'DFC']],
+ /* Torpedo Moscow (1. Division): más cedidos al club */
+ ['Usman Ajibona','ALAS','TORP',1,null,['Usman Ajibona','FW',2007,'NG',37,null,0.358,null,'ED']],
+ ['Danil Ladokha','RODMB','TORP',1,null,['Danil Ladokha','GK',2006,'RU',37,null,0.187,null,'POR']],
+ ['Dmitriy Nikitin','BALT','LENR',1,null,['Dmitriy Nikitin','FW',2006,'RU',43,null,0.172,null,'DC']],
  ['Kirill Stepanov','BALT','NVSB',1,null,['Kirill Stepanov','FW',2006,'RU',48,null,0.33,null,'DC']],
  /* Dinamo Moskva: Casimir llega cedido del Auxerre (ya está en REAL_DB.AUX, sin 'ext') */
  ['Josué Casimir','AUX','DINM',1,'Rotación'],
@@ -3789,8 +3818,8 @@ const REAL_LOANS=[
  ['Clayton','INA','FAKL',1,null,['Clayton','DF',2000,'BR',52,null,1.43,null,'DFC/LD']],
  ['Aleksandr Koksharov','KRAS','FAKL',1,null,['Aleksandr Koksharov','FW',2005,'RU',46,null,0.682,null,'DC/ED']],
  /* Cedidos del Fakel */
- ['Nuri Abdokov','FAKL','VELS',1,null,['Nuri Abdokov','MD',2000,'RU',52,null,0.484,null,'MCO/MC']],
- ['Maks Dziov','FAKL','VGU',1,null,['Maks Dziov','DF',2001,'RU',58,null,1.51,null,'DFC/LD']],
+ ['Nuri Abdokov','FAKL','VELS',1,null,['Nuri Abdokov','MD',2000,'RU',51,null,0.581,null,'MCO']],
+ ['Maks Dziov','FAKL','VGU',1,null,['Maks Dziov','DF',2001,'RU',56,null,1.54,null,'DFC']],
  ['Ilya Vasin','FAKL','ARDZ',1,null,['Ilya Vasin','FW',2006,'RU',49,null,0.045,null,'DC']],
  /* FC Orenburg: llegan cedidos Degtev (Zenit), J. González (Santa Fe), Kasadzhikov (Zenit) y Bosch (Vélez); Nazarenko ya está arriba (DINM→ORBG) */
  ['Aleksandr Degtev','ZEN','ORBG',1,null,['Aleksandr Degtev','GK',2005,'RU',62,null,1.6,null,'POR']],
@@ -3799,26 +3828,31 @@ const REAL_LOANS=[
  ['Gianluca Bosch','VELZ','ORBG',1,null,['Gianluca Bosch','FW',2005,'AR',41,null,0.283,null,'ED/MCO']],
  /* Cedidos del FC Orenburg */
  ['Vladan Bubanja','ORBG','RAP',1,null,['Vladan Bubanja','MD',1999,'ME',72,null,3.27,null,'MCD/MC']],
- ['Atsamaz Revazov','ORBG','ROTV',1,null,['Atsamaz Revazov','FW',2005,'RU',46,null,0.672,null,'ED/EI']],
+ ['A. Revazov','ORBG','ROTV',1,null,['A. Revazov','FW',2005,'RU',48,null,0.672,null,'ED']],
  ['Timofey Martynov','ORBG','ISLC',1,null,['Timofey Martynov','FW',2005,'BY',51,null,1.23,null,'DC/MC']],
- ['Andrey Khodanovich','ORBG','VGU',1,null,['Andrey Khodanovich','GK',2004,'RU',42,null,0.2,null,'POR']],
+ ['Andrey Khodanovich','ORBG','VGU',1,null,['Andrey Khodanovich','GK',2004,'RU',38,null,0.159,null,'POR']],
+ /* Yenisey (1. Division): cedido al club */
+ ['Maksim Balakhonov','DMKB','YENS',1,null,['Maksim Balakhonov','DF',2005,'RU',34,null,0.055,null,'LD']],
  /* Cedidos del FK Krasnodar (Koksharov→Fakel y Kistenev→Akhmat ya están arriba) */
- ['Vitali Stezhko','KRAS','URAL',1,null,['Vitali Stezhko','DF',1997,'RU',53,null,0.911,null,'DFC']],
+ ['Vitaliy Stezhko','KRAS','URAL',1,null,['Vitaliy Stezhko','DF',1997,'RU',55,null,0.911,null,'DFC']],
+ /* Ural Yekaterinburg (1. Division): más cedidos al club */
+ ['Denis Bokov','DMKB','URAL',1,null,['Denis Bokov','FW',2005,'RU',50,null,0.703,null,'DC']],
+ ['Maksim Kaynov','SOCHI','URAL',1,null,['Maksim Kaynov','MD',2002,'RU',57,null,1.34,null,'MCD']],
  ['Diego Costa','KRAS','PAOK',1,null,['Diego Costa','DF',1999,'BR',79,null,13.29,null,'DFC']],
  ['Daniil Golikov','KRAS','ROST',1,null,['Daniil Golikov','GK',2004,'RU',42,null,0.115,null,'POR']],
  ['Gustavo Santos','KRAS','VLOS',1,null,['Gustavo Santos','FW',2001,'BR',56,null,2.11,null,'EI']],
  ['Evgeni Kovalevskiy','KRAS','VGRA',1,null,['Evgeni Kovalevskiy','FW',2006,'RU',27,null,0.093,null,'EI']],
  ['Moses David Cobnan','KRAS','LEVA',1,null,['Moses David Cobnan','FW',2002,'NG',53,null,2.37,null,'ED']],
- ['Mikhail Umnikov','KRAS','ROTV',1,null,['Mikhail Umnikov','MD',2006,'RU',45,null,0.279,null,'MC']],
+ ['Mikhail Umnikov','KRAS','ROTV',1,null,['Mikhail Umnikov','MD',2006,'RU',46,null,0.278,null,'MCD']],
  ['Kazbek Mukailov','KRAS','KRIL',1,null,['Kazbek Mukailov','FW',2007,'RU',54,null,0.599,null,'DC']],
  /* FK Rostov: Golikov llega cedido del Krasnodar (ya está arriba, KRAS→ROST). Cedidos del Rostov: */
- ['Aleksandr Tarasov','ROST','SPKT',1,null,['Aleksandr Tarasov','DF',2006,'RU',54,null,0.271,null,'LI/DFC']],
+ ['Aleksandr Tarasov','ROST','SPKT',1,null,['Aleksandr Tarasov','DF',2006,'RU',46,null,0.313,null,'LI']],
  ['Eyad El Askalany','ROST','PYRA',1,null,['Eyad El Askalany','DF',2005,'EG',40,null,0.429,null,'LI/DFC']],
  /* Krylia Sovetov: llegan cedidos Chesnokov (Tobol) y Saltykov (Lokomotiv); Mukailov ya está arriba (KRAS→KRIL) */
  ['Islam Chesnokov','TOBL','KRIL',1,null,['Islam Chesnokov','FW',2000,'KZ',72,null,5.57,null,'ED/EI']],
  ['Nikita Saltykov','LOKM','KRIL',1,null,['Nikita Saltykov','FW',2004,'RU',45,null,2.46,null,'EI/MI']],
  /* Cedidos del Krylia Sovetov */
- ['Dmytro Ivanisenia','KRIL','TKST',1,null,['Dmytro Ivanisenia','MD',1994,'RU',50,null,0.703,null,'MCD/MC']],
+ ['Dmytro Ivanisenya','KRIL','TKST',1,null,['Dmytro Ivanisenya','MD',1994,'UA',46,null,0.409,null,'MCD']],
  ['Chinedu Charles Geoffrey','KRIL','AELM',1,null,['Chinedu Charles Geoffrey','FW',1997,'NG',68,null,3.44,null,'DC/EI']],
  ['Nikita Pershin','KRIL','TKST',1,null,['Nikita Pershin','MD',2002,'RU',55,null,0.392,null,'MCD/MC']],
  ['Egor Karpitskiy','KRIL','DNEP',1,null,['Egor Karpitskiy','FW',2004,'BY',60,null,1.04,null,'DC/ED']],
@@ -3828,13 +3862,13 @@ const REAL_LOANS=[
  /* Cedidos del Lokomotiv Moskva */
  ['Arseni Ageev','LOKM','TORB',1,null,['Arseni Ageev','DF',2004,'BY',60,null,2.64,null,'LD']],
  ['Aleksandr Frantsuzov','LOKM','TORB',1,null,['Aleksandr Frantsuzov','FW',2004,'BY',59,null,2.11,null,'ED/DC']],
- ['Timofey Mitrov','LOKM','SOCHI',1,null,['Timofey Mitrov','GK',2005,'RU',64,null,1.08,null,'POR']],
+ ['Timofey Mitrov','LOKM','SOCHI',1,null,['Timofey Mitrov','GK',2005,'RU',58,null,1.08,null,'POR']],
  ['Dmitriy Radikovskiy','LOKM','NEMG',1,null,['Dmitriy Radikovskiy','FW',2005,'RU',56,null,2.75,null,'DC/EI']],
  ['Artem Korneev','LOKM','TKST',1,null,['Artem Korneev','FW',2006,'RU',38,null,0.327,null,'EI/ED']],
  /* Rodina Moskva: Becão (FENR) y Mansilla (AKHM) ya están cedidos arriba; llega Nade (United FC) */
  ['Mickaël Nadé','UFC','RODM',1,null,['Mickaël Nadé','DF',1999,'FR',66,null,2.99,null,'DFC']],
  /* Cedidos del Rodina Moskva */
- ['Georgi Yudintsev','RODM','ROTV',1,null,['Georgi Yudintsev','DF',2001,'RU',55,null,0.302,null,'LD']],
+ ['Georgiy Yudintsev','RODM','ROTV',1,null,['Georgiy Yudintsev','DF',2001,'RU',51,null,0.357,null,'LD']],
  ['Teodoro Arce','RODM','EMEL',1,null,['Teodoro Arce','FW',2000,'PY',66,null,2.52,null,'EI']],
  /* Rubin Kazán: llegan cedidos Urozov (Dinamo Samarqand) y Samoshnikov (Spartak); U. Babaev ya está arriba (DINM→RUBK) */
  ['Jakhongir Urozov','SAMQ','RUBK',1,null,['Jakhongir Urozov','DF',2004,'UZ',61,null,2.73,null,'DFC/LD']],
@@ -3842,11 +3876,16 @@ const REAL_LOANS=[
  /* Cedidos del Rubin Kazán (Apshatsev→Dynamo Makhachkala ya está arriba) */
  ['Marvin Çuni','RUBK','OLIM',1,null,['Marvin Çuni','FW',2001,'AL',58,null,1.12,null,'DC/EI']],
  ['Uroš Drezgić','RUBK','MACV',1,null,['Uroš Drezgić','DF',2002,'RS',37,null,0.27,null,'DFC/MC']],
- ['Nikita Vasiljev','RUBK','NKHZ',1,null,['Nikita Vasiljev','MD',2007,'RU',50,null,0.289,null,'MCD/MC']],
- ['Enri Mukba','RUBK','NKHZ',1,null,['Enri Mukba','FW',2005,'RU',45,null,0.159,null,'ED/MCO']],
+ ['Nikita Vasiljev','RUBK','NKHZ',1,null,['Nikita Vasiljev','MD',2006,'RU',45,null,0.2,null,'MCD']],
+ ['Enri Mukba','RUBK','NKHZ',1,null,['Enri Mukba','MD',2005,'RU',39,null,0.159,null,'MCO']],
  /* Cedidos del Spartak Moskva (Samoshnikov→Rubin ya está arriba) */
  ['Levi García','SPTM','PAN',1,null,['Levi García','FW',1998,'TT',69,null,11.42,null,'DC/ED']],
- ['E. Guziev','SPTM','TKST',1,null,['E. Guziev','DF',2005,'RU',53,null,0.573,null,'DFC/LI']],
+ ['Egor Guziev','SPTM','TKST',1,null,['Egor Guziev','DF',2005,'RU',51,null,0.991,null,'DFC']],
+ /* Tekstilshchik (1. Division): más cedidos al club */
+ ['Aleksandr Pomalyuk','SPTMB','TKST',1,null,['Aleksandr Pomalyuk','FW',2007,'RU',46,null,0.191,null,'DC']],
+ ['Nikolay Ishchenko','NIZH','TKST',1,null,['Nikolay Ishchenko','FW',2004,'RU',47,null,0.34,null,'EI']],
+ ['Artem Krutovskikh','NIZH','TKST',1,null,['Artem Krutovskikh','DF',2007,'RU',52,null,0.774,null,'DFC']],
+ ['Semen Fadeev','NIZH','TKST',1,null,['Semen Fadeev','GK',2004,'RU',55,null,1.08,null,'POR']],
  /* Cedido del Zenit a Vitebsk (los demás cedidos del Zenit ya estaban: Drkušić→Espanyol, Eraković→Samsunspor, Du Queiroz→Sabah, Mostovoy→Lokomotiv, Degtev/Kasadzhikov→Orenburg, Bardachev→Fakel) */
  ['Nikita Goylo','ZEN','MVIT',1,null,['Nikita Goylo','GK',1998,'RU',57,null,0.096,null,'POR']],
  ['J. Escobar','MURI','LORD',1,'Rotación'],
@@ -10577,7 +10616,7 @@ let BENCH_N=9;
    Inferiores: EN Championship 9 / L1,L2,National 7; ES Hypermotion y 1ª Federación 12, 2ª Federación 7;
        DE 2. Bundesliga y 3. Liga 9; IT Serie B 12; FR Ligue 2 9; PT Liga Portugal 2 12. */
 const BENCH_CD={IT1:15,ES1:12,PT1:12,NL1:12,BE1:12,TR1:12,RU1:12,DK1:12,AT1:12,RO1:12,UA1:12,AR1:12,EN1:9,DE1:9,FR1:9,PL1:9,BG1:9,NO1:9,SC1:9,CH1:9,IE1:9,SE1:9,MX1:10,SA1:9,
-   EN2:9,EN3:7,EN4:7,EN5:7,ES2:12,ES3:12,DE2:9,DE3:9,IT2:12,FR2:9,PT2:12,KR1:9,KR2:9,TR2:10};
+   EN2:9,EN3:7,EN4:7,EN5:7,ES2:12,ES3:12,DE2:9,DE3:9,IT2:12,FR2:9,PT2:12,KR1:9,KR2:9,TR2:10,RU2:12};
 const benchLimit=id=>{const c=CLUBBY[id];if(!c)return 9;const v=BENCH_CD[c.co+(c.div||1)];if(v!=null)return v;if(c.co==='ES'&&(c.div||1)>=4)return 7;return 9};
 /* orden del banquillo: porteros primero (2 con 12 suplentes, 1 con 9) y después por posición (DF, MD, FW) */
 function benchOrder(p){return p.pos==='GK'?0:p.pos==='DF'?1:p.pos==='MD'?2:p.pos==='FW'?3:4}
@@ -11478,6 +11517,9 @@ function playLeagueStage(){
   const cups=advanceWorld(r);
   state.week++;if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
   {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:uk==='CZ1'?CZ_REG:null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
+  /* Rusia: parón invernal. Al pasar de la jornada 28 a la 29 (año cruzado, parón de invierno) ha pasado
+     mucho más tiempo que una semana: todos los jugadores recuperan el 100% (se les quitan las molestias). */
+  if(state.country==='RU'&&state.week===29){Object.keys(state.teams||{}).forEach(id=>{((state.teams[id]||{}).players||[]).forEach(p=>{p.inj=0})});news(`${FLAG.RU} Parón invernal en Rusia: los jugadores descansan y recuperan el 100%.`)}
   if(state.week>=state.fixtures.length)afterLeague();
   else if(state.week%4===0)state.market=genMarket();
   const mine=round.find(m=>m.h===state.club||m.a===state.club);
@@ -11766,7 +11808,7 @@ function planPlayoffs(){
        más abajo, así que se excluye aquí del genérico (2 ascensos directos + playoff 3º-6º): solo asciende
        directo el campeón, y el resto pasa por un playoff encadenado con una última eliminatoria contra la
        Primera División que este bloque genérico no sabe representar. */
-    if(co==='BE'||co==='SE'||co==='KR'||co==='TR')return;
+    if(co==='BE'||co==='SE'||co==='KR'||co==='TR'||co==='RU')return;
     const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id)),n1=s1.length,n2=s2.length;
     let down=[],up=[],item=null;
     if(co==='PL'){
@@ -11951,6 +11993,19 @@ function planPlayoffs(){
       po.dir.TR={up:tr2.slice(0,2),down:tr1.slice(-3)};
     }else po.dir.TR={up:[],down:[]};
   }
+  /* Rusia: Premier Liga (16) ↔ 1. Division (18). Suben 1º y 2º directos; el 3º y el 4º juegan
+     eliminatorias de ida y vuelta cruzadas contra el 14º y el 13º de la Premier. Quien gane la
+     eliminatoria juega en la Premier la próxima temporada y quien la pierda, en la 1. Division.
+     De la 1. Division no desciende nadie (no hay 2ª Liga rusa simulada). */
+  {
+    const ru1=poOrder('RU',1),ru2=poOrder('RU',2).filter(id=>!isB(id));
+    if(ru1.length>=14&&ru2.length>=4){
+      po.items.push({co:'RU2POA',kind:'rel',seeds:[ru2[2],ru1[13]],alive:[ru2[2],ru1[13]],rounds:[],winner:null});
+      po.items.push({co:'RU2POB',kind:'rel',seeds:[ru2[3],ru1[12]],alive:[ru2[3],ru1[12]],rounds:[],winner:null});
+      po.ru={up:ru2.slice(0,2)};
+      po.dir.RU={up:[],down:[]};
+    }else po.dir.RU={up:[],down:[]};
+  }
   return po;
 }
 /* playoff de ascenso de la 1. Lig turca (it.custom): cuartos a partido único, semifinal a doble partido,
@@ -12071,6 +12126,11 @@ function poFinish(){
     const fin=po.items.find(x=>x.co==='KRPROMO');
     if(fin&&fin.winner&&fin.winner!==fin.seeds[0]){up.push(fin.winner);down.push(fin.seeds[0]);}
     balanceUpDown(up,down);po.res.KR={up,down};
+  }
+  if(po.ru){
+    const up=po.ru.up.slice(),down=[];
+    ['RU2POA','RU2POB'].forEach(kk=>{const it=po.items.find(x=>x.co===kk);if(it&&it.winner&&it.winner===it.seeds[0]){up.push(it.seeds[0]);down.push(it.seeds[1])}});
+    balanceUpDown(up,down);po.res.RU={up,down};
   }
   const be2=po.be2;if(be2){
     const up=[be2.champ],down=be2.down1?[be2.down1]:[];
@@ -12978,13 +13038,24 @@ function filialDescendants(id){const out=[],q=[id];while(q.length){const x=q.shi
 const FILIAL_SUF=co=>({EN:'U21',IE:'U21',SE:'U21',AR:'U21',IT:'U23',BE:'U23',MX:'U23',DK:'U21',CH:'U21',RU:'2',UA:'2',AT:'II',RO:'II',BG:'II',PL:'II',DE:'II',NO:'II',SC:'II',KR:'B',CN:'U21',SA:'U21'}[co]||'B');
 const FILIAL_PRE=co=>(co==='NL'?'Jong':'');
 const filialMaxAge=co=>FILIAL_SUF(co)==='U21'?21:23;
+/* En Rusia (y Ucrania) el filial se numera ANTES de la ciudad: "Rubin 2 Kazán", "Spartak 2 Moskva",
+   "CSKA 2 Moskva"; si el nombre no termina en ciudad, se añade al final ("FK Krasnodar 2"). */
+const RU_CITY_TOK={Moskva:1,Moscow:1,'Moscú':1,Grozny:1,Tolyatti:1,Makhachkala:1,Tula:1,Volgograd:1,Yaroslavl:1,Yekaterinburg:1,Ulyanovsk:1,Kostroma:1,Kazan:1,'Kazán':1};
+function filialName(c,txt){
+  const t=(txt||'').trim(),suf=FILIAL_SUF(c.co);
+  if(c.co==='RU'&&t){
+    const p=t.split(/\s+/);
+    if(p.length>1&&RU_CITY_TOK[p[p.length-1]]&&!/\.$/.test(p[p.length-2]))return p.slice(0,-1).join(' ')+' '+suf+' '+p[p.length-1];
+  }
+  return (t?t+' ':'')+suf;
+}
 function makeBTeam(pid){
   const c=CLUBBY[pid];if(!c)return null;
   const bid=pid+'B';
   if(!CLUBBY[bid]){
     const pre=FILIAL_PRE(c.co);
-    const nm=pre?pre+' '+c.name:c.name+' '+FILIAL_SUF(c.co);
-    const sh=pre?pre+' '+c.short:c.short+' '+FILIAL_SUF(c.co);
+    const nm=pre?pre+' '+c.name:filialName(c,c.name);
+    const sh=pre?pre+' '+c.short:filialName(c,c.short);
     const b=K(bid,nm,sh,c.city,c.co,c.c1,c.c2,Math.max(40,repOf(pid)-7),(c.div||1)+1);
     b.bTeam=1;if(c.logo)b.logo=c.logo;
     CLUBBY[bid]=b;FAMILY[pid]=bid;FAMILY[bid]=pid;
@@ -14389,7 +14460,7 @@ function storeImport(n,s,meta){
   ui.importing=null;closeSheet();renderSlots();toast('Partida importada en el slot '+n);
 }
 /* ===================== mundo: otras ligas y torneos ===================== */
-const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Kupa Rossii',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup'};
+const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup'};
 /* China: los 80 equipos de la Chinese FA Cup (16 de la Super League + League One/Two + amateurs clasificados) */
 const CN_CUP_TEAMS=['BEIJ','BJPR','BJSS','BJTC','CCXD','CCYT','CLJG','CDRC','CQHA','CQTL',"DLKC",'DLKW','DLYB','DXGY','FSNS','GANR','GDGZ','GDMT','GDSH','GDWC','GXHC','GZDL','GZRG','GZFY','GZXF','GZZJ','HMCD','HNSY','HZLP','HENF','HBIS','HZCX','JXDN','JXLS','LZLY','LCLG','LNTR','MZHK','NJCT','NTHX','NTZY','NBPR','NXPL','QDFL','QDHN','QDRL','QDWC','QZQG','SAXU','SDSC','SDTS','SHPO','SHSG','SHSH','SHZT','SXCR','SXTC','SXXY','SZKS','SZ28','SZJR','SZPC','SZXJ','SJZG','SUDW','TATK','TJDH','TJJM','WZFC','WHLZ','WHTT','WHHJ','WXWG','XMCY','XMFL','YBLD','YLMN','YNCH','YNYK','ZJFC'];
 /* sorteo de la siguiente ronda de la Chinese FA Cup: de la Ronda previa a los Dieciseisavos (ri 0-2) la
@@ -14404,7 +14475,7 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'Corea del Sur',comps:['KR1','KR2','KRC','KRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'Corea del Sur',comps:['KR1','KR2','KRC','KRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4,TR:4,SA:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1};
@@ -18581,7 +18652,7 @@ const ICO_SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const ICO_STAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z"/></svg>';
 const ICO_GLOBE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>';
 const TROPHY_ICO={league:ICO_TROPHY,cup:ICO_CUP,sc:ICO_SHIELD,lc:ICO_CUP,ucl:ICO_STAR,uel:ICO_CUP,ecl:ICO_CUP,cwc:ICO_SHIELD,sce:ICO_SHIELD,wc:ICO_GLOBE,ic:ICO_GLOBE,cf:ICO_CUP,d2:ICO_TROPHY,d3:ICO_TROPHY,d4:ICO_TROPHY,eflt:ICO_CUP,nlc:ICO_CUP,fat:ICO_CUP,scc:ICO_CUP,lp2:ICO_CUP,cisc:ICO_CUP};
-const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Türkiye Kupası',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',RU:'Kupa Rossii',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup'};
+const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Türkiye Kupası',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup'};
 const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'TFF Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski',IE:'Supercopa de Irlanda',BG:'Superkupa na Balgariya',RU:'Superkupa Rossii',RO:'Supercupa României',UA:'Supercopa de Ucrania',GR:'Super Cup',SM:'Supercoppa San Marino',SA:'Saudi Super Cup',CN:'Chinese Super Cup'};
 Object.assign(TROPHY_CUP,{KR:'Korea Cup'});
 Object.assign(TROPHY_SC,{KR:'Korean Super Cup'});
@@ -18611,9 +18682,9 @@ function trophyName(club,k,real){
   if(k==='cup')return TROPHY_CUP[co]||'Copa';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia'}[co]||'Copa de la Liga';
-  if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'Primera Rusia',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
-  if(k==='d3')return{ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'Segunda B Rusia',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
-  if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig'}[co]||'Cuarta categoría';
+  if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
+  if(k==='d3')return{ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
+  if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
   if(k==='d4t')return co==='ES'?'Tercera División':'Cuarta categoría';
   if(k==='d5')return{ES:'Tercera Federación',DE:'Oberliga',EN:'National League',FR:'National 3'}[co]||'Quinta categoría';
@@ -18635,7 +18706,7 @@ function trophyName(club,k,real){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
@@ -18681,6 +18752,8 @@ function museumKeysOf(co){
   if(co==='KR')return['league','d2','cup','sc'];
   /* Turquía: el Museo muestra además los títulos de 2. Lig (d3) y 3. Lig (d4) de los clubes. */
   if(co==='TR')return['league','d2','d3','d4','cup','sc'];
+  /* Rusia: el Museo muestra la liga, la 1. Division, la Copa y la Supercopa. */
+  if(co==='RU')return['league','d2','cup','sc'];
   const g=GROUPS.find(x=>x.id===co);
   if(!g)return[];
   return g.comps.filter(c=>!c.endsWith('Q')).map(c=>{
@@ -22648,6 +22721,26 @@ const SE_CUP_TEAMS=['AIK','BRP','DEG','DIF','GAIS','HAL','HAM','BKH','IFE','IFK'
   /* títulos de 2. Lig (d3) y 3. Lig (d4) que faltaban */
   Object.entries({BURS:{d3:1,d4:1},BATM:{d3:1,d4:1},SARY:{d3:1},PEND:{d3:1},UMR:{d3:1},ISTA:{d3:1},KECI:{d3:1},MANI:{d3:1},BAND:{d3:1}}).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=(e[k]||0)+o[k]})});
 })();
+/* ===== Rusia: palmarés histórico de la 1. Division (d2), 34 títulos =====
+   Clubes históricos que no existen en la base se crean solo para el palmarés (div 99). */
+(function(){
+  Object.assign(CLUBBY,{
+    LUCH:K('LUCH','Luch Vladivostok','Luch','Vladivostok','RU','#1c3f94','#f4f4f4',44,99),
+    KHIM:K('KHIM','FK Khimki','Khimki','Khimki','RU','#1c3f94','#f4f4f4',48,99),
+    CHNV:K('CHNV','Chernomorets Novorossiysk','Chernomorets','Novorossiysk','RU','#1c3f94','#f4f4f4',46,99),
+    TMBO:K('TMBO','FK Tambov','Tambov','Tambov','RU','#1c3f94','#f4f4f4',44,99),
+    MRDV:K('MRDV','Mordovia Saransk','Mordovia','Saransk','RU','#d4192b','#1c3f94',44,99),
+    KUBN:K('KUBN','FC Kuban','Kuban','Krasnodar','RU','#f2d31b','#0a8a3d',46,99),
+    URLN:K('URLN','RSShOR Uralan','Uralan','Elista','RU','#d4192b','#f4f4f4',40,99)
+  });
+  Object.entries({LUCH:3,BALT:2,KHIM:2,RUBK:2,KRIL:2,ANZH:2,SHIN:2,CHNV:2,RODM:1,TORP:1,ROTV:1,TMBO:1,DMK:1,ORENB:1,MRDV:1,URAL:1,ALNV:1,KUBN:1,ROST:1,AKHG:1,AMKP:1,SOKS:1,SATU:1,URLN:1,TYUM:1}).forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.d2=n});
+  Object.assign(CLUB_LOGO,{LUCH:'https://cdn.resfu.com/img_data/equipos/1597.png?size=120x&lossy=1',KHIM:'https://cdn.resfu.com/img_data/equipos/1147.png?size=120x&lossy=1',CHNV:'https://cdn.resfu.com/img_data/equipos/2938.png?size=120x&lossy=1',TMBO:'https://cdn.resfu.com/img_data/equipos/89251.png?size=120x&lossy=1',MRDV:'https://cdn.resfu.com/img_data/equipos/9173.png?size=120x&lossy=1',KUBN:'https://cdn.resfu.com/img_data/equipos/1473.png?size=120x&lossy=1',URLN:'https://cdn.resfu.com/img_data/equipos/2937.png?size=120x&lossy=1'});
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+})();
+/* ===== Rusia: más palmarés de 2. Division A/B y Copa de los clubes de la 1. Division ===== */
+(function(){
+  Object.entries({KAMZ:{d2:1},ROTV:{d4:1},NIZH:{d4:1},NKHZ:{d4:3},SKAK:{d4:2},SPKT:{d3:1},TKST:{d4:1},VGU:{d4:2},TORP:{cup:1,d4:1},UFA:{d3:1}}).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=(e[k]||0)+o[k]})});
+})();
 /* ===== Malmö FF (MALM, Allsvenskan): plantilla real + atributos + pies + avatares + cesiones ===== */
 (function(){
     Object.assign(REAL_ATTR,{
@@ -24202,6 +24295,27 @@ Object.assign(REAL_PHOTO,{'Ahmed Al-Muhaimeed':'https://cdn.resfu.com/img_data/p
 /* ===== Escudos de los clubes de Asia añadidos (China, Mongolia, etc.) ===== */
 Object.assign(CLUB_LOGO,{"ABMU":"https://cdn.resfu.com/img_data/escudos/medium/163978.jpg","BDPL":"https://cdn.resfu.com/img_data/escudos/medium/126946.jpg","TUVB":"https://cdn.resfu.com/img_data/escudos/medium/146574.jpg","DORD":"https://cdn.resfu.com/img_data/escudos/medium/61523.jpg","EZRA":"https://cdn.resfu.com/img_data/escudos/medium/62676.jpg","ULAN":"https://cdn.resfu.com/img_data/escudos/medium/63509.jpg","KARD":"https://cdn.resfu.com/img_data/escudos/medium/159865.jpg","MAZI":"https://cdn.resfu.com/img_data/escudos/medium/17639.jpg","MURA":"https://cdn.resfu.com/img_data/escudos/medium/156926.jpg","CCYT":"https://cdn.resfu.com/img_data/escudos/medium/743.jpg","MZHK":"https://cdn.resfu.com/img_data/escudos/medium/62818.jpg","NJCT":"https://cdn.resfu.com/img_data/escudos/medium/142419.jpg","NTZY":"https://cdn.resfu.com/img_data/escudos/medium/62789.jpg","SJZG":"https://cdn.resfu.com/img_data/escudos/medium/143345.jpg","BJPR":"https://cdn.resfu.com/img_data/equipos/170475.png?size=120x&lossy=1","BJSS":"https://cdn.resfu.com/img_data/equipos/168473.png?size=120x&lossy=1","BJTC":"https://cdn.resfu.com/img_data/equipos/7493.png?size=120x&lossy=1","CCXD":"https://cdn.resfu.com/img_data/equipos/163009.png?size=120x&lossy=1","CLJG":"https://cdn.resfu.com/img_data/equipos/157138.png?size=120x&lossy=1","CQHA":"https://cdn.resfu.com/img_data/equipos/166666.png?size=120x&lossy=1","DLKC":"https://cdn.resfu.com/img_data/equipos/119951.png?size=120x&lossy=1","DLKW":"https://cdn.resfu.com/img_data/equipos/166748.png?size=120x&lossy=1","DXGY":"https://cdn.resfu.com/img_data/equipos/170467.png?size=120x&lossy=1","FSNS":"https://cdn.resfu.com/img_data/equipos/143351.png?size=120x&lossy=1","GANR":"https://cdn.resfu.com/img_data/equipos/151468.png?size=120x&lossy=1","GDGZ":"https://cdn.resfu.com/img_data/equipos/163345.png?size=120x&lossy=1","GDMT":"https://cdn.resfu.com/img_data/equipos/166611.png?size=120x&lossy=1","GDSH":"https://cdn.resfu.com/img_data/escudos/medium/163013.jpg","GDWC":"https://cdn.resfu.com/img_data/escudos/medium/170119.jpg","GXHC":"https://cdn.resfu.com/img_data/escudos/medium/163244.jpg","GZDL":"https://cdn.resfu.com/img_data/escudos/medium/166662.jpg","GZRG":"https://cdn.resfu.com/img_data/escudos/medium/170484.jpg","GZFY":"https://cdn.resfu.com/img_data/escudos/medium/170466.jpg","GZXF":"https://cdn.resfu.com/img_data/escudos/medium/170468.jpg","GZZJ":"https://cdn.resfu.com/img_data/escudos/medium/162457.jpg","HMCD":"https://cdn.resfu.com/img_data/escudos/medium/151469.jpg","HNSY":"https://cdn.resfu.com/img_data/escudos/medium/165871.jpg","HZLP":"https://cdn.resfu.com/img_data/equipos/160131.png?size=120x&lossy=1","HBIS":"https://cdn.resfu.com/img_data/equipos/100613.png?size=120x&lossy=1","HZCX":"https://cdn.resfu.com/img_data/escudos/medium/170469.jpg","JXDN":"https://cdn.resfu.com/img_data/escudos/medium/62791.jpg","JXLS":"https://cdn.resfu.com/img_data/escudos/medium/62949.jpg","LZLY":"https://cdn.resfu.com/img_data/escudos/medium/117114.jpg","LCLG":"https://cdn.resfu.com/img_data/escudos/medium/170471.jpg","NTHX":"https://cdn.resfu.com/img_data/escudos/medium/170113.jpg","NBPR":"https://cdn.resfu.com/img_data/escudos/medium/62810.jpg","NXPL":"https://cdn.resfu.com/img_data/escudos/medium/163016.jpg","QDFL":"https://cdn.resfu.com/img_data/escudos/medium/170005.jpg","QDRL":"https://cdn.resfu.com/img_data/escudos/medium/119943.jpg","QZQG":"https://cdn.resfu.com/img_data/escudos/medium/163021.jpg","SAXU":"https://cdn.resfu.com/img_data/escudos/medium/163344.jpg","SDSC":"https://cdn.resfu.com/img_data/escudos/medium/170473.jpg","SHSG":"https://cdn.resfu.com/img_data/escudos/medium/163022.jpg","SHZT":"https://cdn.resfu.com/img_data/equipos/166663.png?size=120x&lossy=1","SXCR":"https://cdn.resfu.com/img_data/equipos/155571.png?size=120x&lossy=1","SXTC":"https://cdn.resfu.com/img_data/escudos/medium/170477.jpg","SXXY":"https://cdn.resfu.com/img_data/escudos/medium/163025.jpg","SZKS":"https://cdn.resfu.com/img_data/escudos/medium/170478.jpg","SZ28":"https://cdn.resfu.com/img_data/equipos/164068.png?size=120x&lossy=1","SZXJ":"https://cdn.resfu.com/img_data/escudos/medium/166684.jpg","SUDW":"https://cdn.resfu.com/img_data/equipos/84678.png?size=120x&lossy=1","TATK":"https://cdn.resfu.com/img_data/equipos/151470.png?size=120x&lossy=1","TJDH":"https://cdn.resfu.com/img_data/escudos/medium/170483.jpg","WZFC":"https://cdn.resfu.com/img_data/equipos/157060.png?size=120x&lossy=1","WHLZ":"https://cdn.resfu.com/img_data/escudos/medium/166658.jpg","WHHJ":"https://cdn.resfu.com/img_data/escudos/medium/166649.jpg","WXWG":"https://cdn.resfu.com/img_data/equipos/143348.png?size=120x&lossy=1","XMCY":"https://cdn.resfu.com/img_data/escudos/medium/166664.jpg","XMFL":"https://cdn.resfu.com/img_data/escudos/medium/170515.jpg","YBLD":"https://cdn.resfu.com/img_data/escudos/medium/7502.jpg","YLMN":"https://cdn.resfu.com/img_data/escudos/medium/166835.jpg","YNCH":"https://cdn.resfu.com/img_data/escudos/medium/166653.jpg"});
 Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+/* ===== Rusia: 1. Division (2ª división, 18 equipos) =====
+   Los 18 clubes ya existen en la base (pool de la Copa de Rusia); se promueven a CLUBS con div 2.
+   El resto de fichas rusas de 2ª (los demás clubes del pool) salen de la división. */
+const RU2IDS=['ARTU','KAMZ','LENR','NKHZ','NIZH','ROTV','SHIN','SKAK','SOCHI','SPKT','TKST','TORP','UFA','URAL','VELS','VGU','YENS','CHEL'];
+(function(){
+  const RU2=RU2IDS.map(id=>CLUBBY[id]).filter(Boolean);
+  CLUBS.push(...RU2);
+  RU2.forEach(c=>{BASE_DIV[c.id]=2;});
+  Object.assign(CLUBBY,Object.fromEntries(RU2.map(c=>[c.id,c])));
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  Object.keys(CLUBBY).forEach(id=>{const c=CLUBBY[id];if(c&&c.co==='RU'&&(c.div||1)===2&&!RU2IDS.includes(id)&&!c.bTeam&&!c.autoFilial)c.div=99;});
+  Object.assign(STADIUM,{ARTU:'Estadio Arsenal',CHEL:'Estadio Central de Cheliábinsk',KAMZ:'Estadio KAMAZ',LENR:'Estadio Petrovsky',NKHZ:'Estadio Neftekhimik',NIZH:'Estadio de Nizhni Nóvgorod',ROTV:'Volgogrado Arena',SHIN:'Estadio Shinnik',SKAK:'Estadio Lenin',SOCHI:'Estadio Olímpico Fisht',SPKT:'Estadio Urozhay',TKST:'Estadio Tekstilshchik',TORP:'Arena Khimki',UFA:'Estadio Neftyanik',URAL:'Ekaterimburgo Arena',VELS:'Estadio Avangard',VGU:'Estadio Trud',YENS:'Estadio Central de Krasnoyarsk'});
+  Object.assign(FORM_MAIN,{ARTU:'4-2-3-1',CHEL:'4-2-3-1',KAMZ:'4-4-2',LENR:'4-3-3',NKHZ:'4-2-3-1',NIZH:'3-4-2-1',ROTV:'4-2-3-1',SHIN:'4-2-3-1',SKAK:'4-3-3',SOCHI:'4-3-3',SPKT:'4-2-3-1',TKST:'4-4-2',TORP:'4-2-3-1',UFA:'4-2-3-1',URAL:'4-2-3-1',VELS:'4-2-3-1',VGU:'4-2-3-1',YENS:'4-3-3'});
+  Object.assign(BUDGET,{ARTU:1.2,CHEL:0.45,KAMZ:0.55,LENR:0.4,NKHZ:0.6,NIZH:4.5,ROTV:0.8,SHIN:0.65,SKAK:0.9,SOCHI:3.5,SPKT:0.35,TKST:0.25,TORP:1.8,UFA:0.5,URAL:2.8,VELS:0.3,VGU:0.28,YENS:0.95});
+})();
+/* Filiales rusos citados como origen de cesiones reales (nombre "X 2 Ciudad") */
+[['SPTM','SPTMB'],['RODM','RODMB'],['DMK','DMKB']].forEach(([pid,id])=>{const c=CLUBBY[pid];if(!c||CLUBBY[id])return;
+  const b=K(id,filialName(c,c.name),filialName(c,c.short),c.city,c.co,c.c1,c.c2,Math.max(40,repOf(pid)-7),(c.div||1)+1);
+  b.bTeam=1;b.autoFilial=1;if(c.logo)b.logo=c.logo;CLUBBY[id]=b;FAMILY[pid]=id;FAMILY[id]=pid;});
+/* Alashkert (Armenia): club de origen de una cesión real (escudo de Resfu) */
+if(!CLUBBY.ALAS)CLUBBY.ALAS=Object.assign(K2('ALAS','Alashkert','Alashkert','Ereván','AM','#f2d31b','#1a1a1a',42),{logo:'https://cdn.resfu.com/img_data/escudos/medium/13563.jpg?size=120x&lossy=1'});
 /* Clubes coreanos del grupo continental/asiático (AFC): duplican a los clubes reales de la K League
    (p. ej. GAN/POHG/DAEJ/JEON/FCSE/GANG frente a KRGAN/KRPOH/…). No juegan en ninguna liga coreana, así
    que se sacan de la división de liga para que "Editar base de datos" no los liste bajo K League 1/2. */
