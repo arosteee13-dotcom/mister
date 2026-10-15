@@ -1746,6 +1746,7 @@ const KALININGRAD=P(`19.65,54.45 20.6,54.35 22.8,54.4 22.85,55.28 21.2,55.28 19.
 const TURKEY=P(`27.0,42.0 28.0,41.7 29.0,41.3 31.4,41.3 35.2,42.0 38.4,41.0 41.5,41.5 43.6,41.1 44.8,39.8 44.3,37.2 42.3,37.3 40.0,37.2 36.7,36.7 34.6,36.2 32.6,36.2 30.5,36.2 29.0,36.1 27.3,36.9 26.0,38.4 26.3,40.0`);
 const BULGARIA=P(`22.4,43.4 22.9,44.0 23.0,44.2 24.0,43.7 25.3,43.7 26.0,43.75 27.2,44.0 28.0,43.75 28.6,43.75 27.9,42.6 27.5,42.0 26.6,41.3 26.0,41.25 25.3,41.3 24.5,41.4 23.7,41.3 23.0,41.35 22.6,41.9 22.4,42.5`);
 /* contorno simplificado (caja aprox.) de Grecia continental, no pixel-perfect */
+const SERBIA=P(`20.874,45.416 21.484,45.181 21.562,44.769 22.145,44.478 22.459,44.703 22.706,44.578 22.474,44.409 22.657,44.235 22.41,44.008 22.5,43.643 22.986,43.211 22.605,42.899 22.437,42.58 22.545,42.461 22.381,42.32 21.917,42.304 21.577,42.245 21.543,42.32 21.663,42.439 21.775,42.683 21.633,42.677 21.439,42.863 21.274,42.91 21.143,43.069 20.957,43.131 20.814,43.272 20.635,43.217 20.497,42.885 20.258,42.813 20.34,42.899 19.959,43.106 19.63,43.214 19.484,43.352 19.219,43.524 19.454,43.568 19.6,44.038 19.118,44.423 19.368,44.863 19.005,44.86 19.39,45.237 19.073,45.522 18.83,45.909 19.596,46.172 20.22,46.127 20.762,45.735 20.874,45.416`);
 const GREECE=P(`19.4,39.6 20.0,40.8 21.0,41.6 22.0,41.3 23.3,41.6 24.6,41.3 26.6,41.3 26.2,39.8 25.6,38.9 24.0,37.9 24.9,36.4 23.5,35.3 21.9,36.3 21.0,37.0 20.9,38.1 19.8,38.9`);
 const ROMANIA=P(`22.1,48.0 22.7,47.9 23.2,48.0 24.0,47.95 24.6,47.95 25.0,47.75 25.7,47.9 26.2,48.15 26.6,48.0 27.2,47.7 27.5,47.3 28.1,46.9 28.2,46.4 28.0,45.95 28.2,45.6 29.3,45.5 29.67,45.42 29.5,45.2 28.9,45.25 28.65,44.9 28.2,43.75 27.8,43.7 27.0,44.0 26.1,43.75 25.3,43.7 24.1,43.7 23.0,44.0 22.7,44.0 22.5,44.3 22.3,44.6 22.65,44.65 22.4,44.95 22.0,44.6 21.5,44.75 21.0,44.65 20.3,44.5 20.3,45.0 20.8,45.5 21.0,46.0 20.26,46.1 20.8,46.2 21.3,46.45 21.6,46.9 21.9,47.1 22.1,47.5`);
 const ARGENTINA=P(`-62,-22 -57.5,-25 -58,-27.3 -58.5,-30.5 -57.9,-33 -57.1,-34.6 -57,-36.5 -57.5,-38 -62,-40.8 -64,-42.1 -65.3,-43.5 -67,-45.3 -67.7,-47 -68.5,-49.3 -69,-51.5 -68.5,-54.5 -68.6,-54.9 -70,-52.5 -72.3,-50.3 -72.5,-46.8 -71.8,-42.3 -71.5,-38.5 -70.4,-35 -69.9,-33 -70,-29.3 -68.3,-24.5 -65,-22`);
@@ -1796,6 +1797,7 @@ const FLAG_PATTERN={
   SA:{type:'hstripe',colors:['#006C35']},
   CN:{type:'canton',bg:'#DE2910',canton:'#FFDE00',cx:.3,cy:.3},
   KR:{type:'taegeuk',bg:'#FFFFFF',c1:'#CD2E3A',c2:'#0047A0',r:.3},
+  RS:{type:'hstripe',colors:['#C6363C','#0C4076','#FFFFFF']},
 };
 function flagColorAt(co,nx,ny,asp){
   const f=FLAG_PATTERN[co];if(!f)return null;
@@ -1837,7 +1839,7 @@ function flagColorAt(co,nx,ny,asp){
 }
 const LAND=[EURASIA,NAMER,SAMER,AFRICA,AUS,...ISLANDS,SICILY,SARDINIA,MALLORCA];
 /* ============ CONFIGURACIÓN / PAÍSES / MAPA ============ */
-const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR','BG','TR','RU','MX','RO','UA','GR','CZ','SE','SM','SA','CN','KR'];
+const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR','BG','TR','RU','MX','RO','UA','GR','CZ','SE','SM','SA','CN','KR','RS'];
 /* Configuración de ligas congelada por partida: una partida solo puede ver/simular las ligas y divisiones
    que existían cuando se creó. Así añadir nuevas ligas al HTML no modifica partidas ya empezadas. */
 function captureLeagueConfig(){
@@ -1921,7 +1923,7 @@ function isLeagueEnabled(co,d){
   return false;
 }
 function gameClub(c){return !c||isLeagueEnabled(c.co,c.div||1)}
-const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}',NL:'\u{1F1F3}\u{1F1F1}',AT:'\u{1F1E6}\u{1F1F9}',UA:'\u{1F1FA}\u{1F1E6}',NO:'\u{1F1F3}\u{1F1F4}',BE:'\u{1F1E7}\u{1F1EA}',SK:'\u{1F1F8}\u{1F1F0}',GR:'\u{1F1EC}\u{1F1F7}',AM:'\u{1F1E6}\u{1F1F2}',BA:'\u{1F1E7}\u{1F1E6}',XK:'\u{1F1FD}\u{1F1F0}',EE:'\u{1F1EA}\u{1F1EA}',MK:'\u{1F1F2}\u{1F1F0}',MT:'\u{1F1F2}\u{1F1F9}',HU:'\u{1F1ED}\u{1F1FA}',AD:'\u{1F1E6}\u{1F1E9}',KZ:'\u{1F1F0}\u{1F1FF}',AL:'\u{1F1E6}\u{1F1F1}',FI:'\u{1F1EB}\u{1F1EE}',NIR:'\u{1F1EC}\u{1F1E7}',GI:'\u{1F1EC}\u{1F1EE}',BY:'\u{1F1E7}\u{1F1FE}',LV:'\u{1F1F1}\u{1F1FB}',IE:'\u{1F1EE}\u{1F1EA}',ME:'\u{1F1F2}\u{1F1EA}',WAL:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',SM:'\u{1F1F8}\u{1F1F2}',RO:'\u{1F1F7}\u{1F1F4}',IS:'\u{1F1EE}\u{1F1F8}',DK:'\u{1F1E9}\u{1F1F0}',PL:'\u{1F1F5}\u{1F1F1}',SE:'\u{1F1F8}\u{1F1EA}',SI:'\u{1F1F8}\u{1F1EE}',HR:'\u{1F1ED}\u{1F1F7}',GW:'\u{1F1EC}\u{1F1FC}',US:'\u{1F1FA}\u{1F1F8}',SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',CA:'\u{1F1E8}\u{1F1E6}',HT:'\u{1F1ED}\u{1F1F9}',CV:'\u{1F1E8}\u{1F1FB}',CM:'\u{1F1E8}\u{1F1F2}',GH:'\u{1F1EC}\u{1F1ED}',SA:'\u{1F1F8}\u{1F1E6}',KR:'\u{1F1F0}\u{1F1F7}'};
+const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}',NL:'\u{1F1F3}\u{1F1F1}',AT:'\u{1F1E6}\u{1F1F9}',UA:'\u{1F1FA}\u{1F1E6}',NO:'\u{1F1F3}\u{1F1F4}',BE:'\u{1F1E7}\u{1F1EA}',SK:'\u{1F1F8}\u{1F1F0}',GR:'\u{1F1EC}\u{1F1F7}',AM:'\u{1F1E6}\u{1F1F2}',BA:'\u{1F1E7}\u{1F1E6}',XK:'\u{1F1FD}\u{1F1F0}',EE:'\u{1F1EA}\u{1F1EA}',MK:'\u{1F1F2}\u{1F1F0}',MT:'\u{1F1F2}\u{1F1F9}',HU:'\u{1F1ED}\u{1F1FA}',AD:'\u{1F1E6}\u{1F1E9}',KZ:'\u{1F1F0}\u{1F1FF}',AL:'\u{1F1E6}\u{1F1F1}',FI:'\u{1F1EB}\u{1F1EE}',NIR:'\u{1F1EC}\u{1F1E7}',GI:'\u{1F1EC}\u{1F1EE}',BY:'\u{1F1E7}\u{1F1FE}',LV:'\u{1F1F1}\u{1F1FB}',IE:'\u{1F1EE}\u{1F1EA}',ME:'\u{1F1F2}\u{1F1EA}',WAL:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',SM:'\u{1F1F8}\u{1F1F2}',RO:'\u{1F1F7}\u{1F1F4}',IS:'\u{1F1EE}\u{1F1F8}',DK:'\u{1F1E9}\u{1F1F0}',PL:'\u{1F1F5}\u{1F1F1}',SE:'\u{1F1F8}\u{1F1EA}',SI:'\u{1F1F8}\u{1F1EE}',HR:'\u{1F1ED}\u{1F1F7}',GW:'\u{1F1EC}\u{1F1FC}',US:'\u{1F1FA}\u{1F1F8}',SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',CA:'\u{1F1E8}\u{1F1E6}',HT:'\u{1F1ED}\u{1F1F9}',CV:'\u{1F1E8}\u{1F1FB}',CM:'\u{1F1E8}\u{1F1F2}',GH:'\u{1F1EC}\u{1F1ED}',SA:'\u{1F1F8}\u{1F1E6}',KR:'\u{1F1F0}\u{1F1F7}','RS':'\u{1F1F7}\u{1F1F8}'};
 const FLAG_IMG={NIR:'https://i.redd.it/n32kgopqgwr51.png'};
 const flagHTML=nat=>FLAG_IMG[nat]?`<img class="flag-i" src="${FLAG_IMG[nat]}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:(FLAG[nat]||'');
 /* clubes que juegan en la liga de un país pero pertenecen a otro (p. ej. FC Vaduz, de Liechtenstein, en Suiza):
@@ -1965,7 +1967,8 @@ const COUNTRIES={
    CZ:{name:'República\nCheca',league:'Chance Liga',divs:['Chance Liga'],pin:[15.3,49.8],polys:[CZECH]},
    SE:{name:'Suecia',league:'Allsvenskan',divs:['Allsvenskan','Superettan'],pin:[15.5,59.5],polys:[SWEDEN,GOTLAND]},
    SM:{name:'San Marino',league:'Campionato Sammarinese',divs:['Campionato Sammarinese'],pin:[12.4578,43.9424],polys:[SANMARINO]},
-   KR:{name:'República de Corea',league:'K League 1',divs:['K League 1','K League 2'],pin:[127.8,36.3],polys:[KOREA_S,JEJU]}
+   KR:{name:'República de Corea',league:'K League 1',divs:['K League 1','K League 2'],pin:[127.8,36.3],polys:[KOREA_S,JEJU]},
+   RS:{name:'Serbia',league:'Super liga Srbije',divs:['Super liga Srbije','Prva liga Srbije'],pin:[20.8,44.1],polys:[SERBIA]}
  };
 /* países de solo referencia (clubes afiliados reales fuera de las ligas modeladas): no están en PLAYABLE,
    así que nunca son seleccionables para empezar partida ni aparecen en los buscadores de afiliación por país;
@@ -7242,6 +7245,8 @@ function objective(id){
   if(c.co==='PL'&&c.div===2)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=15?'Permanencia':'Evitar el descenso';
   if(c.co==='PL'&&c.div===3)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=12?'Permanencia':'Evitar el descenso';
   if(c.co==='PL'&&c.div>=4&&c.div<=7)return rank<=1?'Ascender a la Betclic 2 Liga':rank<=2?'Clasificar al playoff de ascenso':'Permanencia';
+  if(c.co==='RS'&&c.div===1)return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=n-4?'Permanencia':'Evitar el descenso';
+  if(c.co==='RS'&&c.div===2)return rank<=2?'Ascenso directo':rank<=8?'Clasificar al Grupo de Ascenso':rank<=12?'Permanencia':'Evitar el descenso';
   if(c.div===2)return rank<=2?'Ascenso directo':rank<=Math.ceil(n*.4)?'Clasificar a Playoffs de Ascenso':'Terminar en la zona media de la tabla';
   if(c.co==='EN'&&c.div===3)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=20?'Permanencia':'Evitar el descenso';
   if(c.co==='EN'&&c.div===4)return rank<=3?'Ascenso directo':rank<=7?'Clasificar al playoff de ascenso':rank<=22?'Permanencia':'Evitar el descenso';
@@ -10644,7 +10649,7 @@ let BENCH_N=9;
        Inglaterra, Alemania, Francia, Polonia, Bulgaria, Noruega, Escocia, Suiza e Irlanda 9.
    Inferiores: EN Championship 9 / L1,L2,National 7; ES Hypermotion y 1ª Federación 12, 2ª Federación 7;
        DE 2. Bundesliga y 3. Liga 9; IT Serie B 12; FR Ligue 2 9; PT Liga Portugal 2 12. */
-const BENCH_CD={IT1:15,ES1:12,PT1:12,NL1:12,BE1:12,TR1:12,RU1:12,DK1:12,AT1:12,RO1:12,UA1:12,AR1:12,EN1:9,DE1:9,FR1:9,PL1:9,BG1:9,NO1:9,SC1:9,CH1:9,IE1:9,SE1:9,MX1:10,SA1:9,
+const BENCH_CD={IT1:15,ES1:12,PT1:12,NL1:12,BE1:12,TR1:12,RU1:12,DK1:12,AT1:12,RO1:12,UA1:12,AR1:12,RS1:11,RS2:9,EN1:9,DE1:9,FR1:9,PL1:9,BG1:9,NO1:9,SC1:9,CH1:9,IE1:9,SE1:9,MX1:10,SA1:9,
    EN2:9,EN3:7,EN4:7,EN5:7,ES2:12,ES3:12,DE2:9,DE3:9,IT2:12,FR2:9,PT2:12,KR1:9,KR2:9,TR2:10,RU2:12,NL2:12};
 const benchLimit=id=>{const c=CLUBBY[id];if(!c)return 9;const v=BENCH_CD[c.co+(c.div||1)];if(v!=null)return v;if(c.co==='ES'&&(c.div||1)>=4)return 7;return 9};
 /* orden del banquillo: porteros primero (2 con 12 suplentes, 1 con 9) y después por posición (DF, MD, FW) */
@@ -10655,7 +10660,7 @@ function sortBench(t){
   t.bench.sort((a,b)=>{const pa=map.get(a),pb=map.get(b);return((pa?benchOrder(pa):9)-(pb?benchOrder(pb):9))||((pb?pb.ovr:0)-(pa?pa.ovr:0))});
 }
 /* banquillo de 12 en la Supercopa de Europa: solo mientras el partido pendiente del usuario sea la SCE */
-function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2')?12:BENCH_N}
+function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC')?12:BENCH_N}
 function autoBench(t){
   if(!t||!t.players)return[];
   const xi=new Set(t.lineup),pool=t.players.filter(p=>!xi.has(p.id)&&!unav(p)).sort((a,b)=>b.ovr-a.ovr),out=[],bn=benchN();
@@ -11349,11 +11354,51 @@ function buildSplitFxMixed(top,bot,seedStr){
   for(let i=0;i<n;i++)out.push([...(rt[i]||[]),...(rb[i]||[])]);
   return out;
 }
+/* ---- Super liga Srbije (Serbia): 14 equipos (12 tras la reducción), 26 jornadas de fase regular y después
+   un split ASIMÉTRICO en DOS grupos que juegan una vuelta sencilla dentro del grupo arrastrando la
+   clasificación ÍNTEGRA (puntos y goles): Grupo Campeonato (1º-6º, 5 jornadas; la liga acaba para ellos en la
+   jornada 31) y Play-out por el descenso (7º-14º, 7 jornadas; acaban en la 33). El campeón va a la Champions;
+   el 2º y el 3º a la previa de Europa/Conference. Descienden los 4 últimos del Play-out. ---- */
+const RS_REG=26;
+const RS_CHAMP=6;   /* Super liga Srbije: 6 al Grupo Campeonato (5 jornadas) */
+const RS2_CHAMP=8;  /* Prva liga Srbije: 8 al Grupo de Ascenso (7 jornadas) */
+/* jornadas de la fase regular serbia: ida y vuelta = (nº de equipos - 1) * 2 (26 con 14 equipos, 22 con 12,
+   30 con 16 equipos en la Prva liga) */
+function rsRegOf(L){return Math.max(0,(Object.keys((L&&L.tb)||{}).length-1)*2)}
+/* reparto del split: los primeros (6 en la 1ª, 8 en la 2ª) al grupo de arriba y el resto al de abajo */
+function rsSplitGroups(n,key){
+  const champ=key==='RS2'?RS2_CHAMP:RS_CHAMP;
+  const top=Math.min(champ,Math.max(2,n-2));
+  return[{n:top,key:'champ'},{n:n-top,key:'releg'}];
+}
+function rsSplitIfDue(fx,tb,key,r){
+  if(r!==rsRegOf({tb}))return null;
+  const st=sortTable(tb);if(st.length<10)return null;
+  const groups={},fxBy=[];let i=0;
+  rsSplitGroups(st.length,key).forEach(g=>{
+    const ids=st.slice(i,i+g.n).map(x=>x.id);i+=g.n;groups[g.key]=ids;
+    /* una sola vuelta dentro del grupo: buildRawFixtures da ida y vuelta, así que se recorta a n-1 jornadas */
+    const all=buildRawFixtures(ids.slice(),rng(hashStr('rs|'+state.seed+'|'+state.season+'|'+g.key)));
+    fxBy.push(all.slice(0,Math.max(0,ids.length-1)));
+  });
+  const n=Math.max(...fxBy.map(x=>x.length));
+  for(let k=0;k<n;k++){let rd=[];fxBy.forEach(x=>{if(x[k])rd=rd.concat(x[k])});fx.push(rd)}
+  return{groups};
+}
+/* orden final de los dos grupos serbios tras el split (el acumulado de puntos se conserva) */
+function rsGroups(L){
+  const order=sortTable(L.tb).map(r=>r.id);
+  if(!L.split)return{champ:order,releg:[]};
+  const g=L.split.groups||{};
+  const pick=arr=>arr?order.filter(id=>arr.includes(id)):[];
+  return{champ:pick(g.champ),releg:pick(g.releg)};
+}
 /* si en la jornada r toca abrir el split, reparte por la clasificación y añade las jornadas extra a fx */
 function splitIfDue(fx,tb,key,r){
   if(key==='BG1')return bulSplitIfDue(fx,tb,r);
   if(key==='GR1')return grSplitIfDue(fx,tb,r);
   if(key==='CZ1')return czSplitIfDue(fx,tb,r);
+  if(key==='RS1'||key==='RS2')return rsSplitIfDue(fx,tb,key,r);
   const cfg=SPLITS[key];if(!cfg||r!==cfg.reg)return null;
   const st=sortTable(tb);if(st.length!==cfg.size)return null;
   const top=st.slice(0,cfg.top).map(x=>x.id),bot=st.slice(cfg.top).map(x=>x.id);
@@ -11545,7 +11590,7 @@ function playLeagueStage(){
   famInteract();
   const cups=advanceWorld(r);
   state.week++;if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
-  {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:uk==='CZ1'?CZ_REG:null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
+  {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:uk==='CZ1'?CZ_REG:(uk==='RS1'||uk==='RS2')?rsRegOf({tb:state.table}):null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
   /* Rusia: parón invernal. Al pasar de la jornada 28 a la 29 (año cruzado, parón de invierno) ha pasado
      mucho más tiempo que una semana: todos los jugadores recuperan el 100% (se les quitan las molestias). */
   if(state.country==='RU'&&state.week===29){Object.keys(state.teams||{}).forEach(id=>{((state.teams[id]||{}).players||[]).forEach(p=>{p.inj=0})});news(`${FLAG.RU} Parón invernal en Rusia: los jugadores descansan y recuperan el 100%.`)}
@@ -11837,7 +11882,7 @@ function planPlayoffs(){
        más abajo, así que se excluye aquí del genérico (2 ascensos directos + playoff 3º-6º): solo asciende
        directo el campeón, y el resto pasa por un playoff encadenado con una última eliminatoria contra la
        Primera División que este bloque genérico no sabe representar. */
-    if(co==='BE'||co==='SE'||co==='KR'||co==='TR'||co==='RU'||co==='NL')return;
+    if(co==='BE'||co==='SE'||co==='KR'||co==='TR'||co==='RU'||co==='NL'||co==='RS')return;
     const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id)),n1=s1.length,n2=s2.length;
     let down=[],up=[],item=null;
     if(co==='PL'){
@@ -12081,6 +12126,30 @@ function planPlayoffs(){
     }
     po.dir.NL={up:[],down:[]};
   }
+  /* Serbia: Super liga Srbije (div1) ↔ Prva liga Srbije (div2). Suben los 2 mejores del Grupo de Ascenso
+     de la Prva liga (sin filiales) y bajan los últimos del Play-out de la Super liga. Esta temporada se baja
+     hasta dejar la Super liga en 12 equipos (14 → 12: bajan 4 y suben 2); a partir de ahí se mantiene en 12
+     (2 y 2). La Prva liga NO desciende (no hay 3ª división serbia simulada). */
+  {
+    const rs1=poOrder('RS',1),rs2L=leagueData('RS2');
+    const rs2g=(rs2L&&rs2L.tb&&Object.keys(rs2L.tb).length)?rsGroups(rs2L):{champ:[]};
+    const rs2elig=rs2g.champ.filter(id=>!isB(id));
+    if(rs1.length>=10){
+      const up=rs2elig.slice(0,2);
+      const downCount=Math.max(0,Math.min(4,rs1.length-12+up.length));
+      if(downCount>0||up.length)po.rs={up,downCount};
+    }
+    /* La Prva liga se queda SIEMPRE en 16: promociona a los 2 mejores del Grupo de Ascenso y recibe los
+       descensos de la Super liga; el sobrante (los que hacen que pase de 16) sale a la 3ª división
+       (Srpska Liga, no simulada). Con la Super liga en 12 el sobrante es 0 y no baja nadie. */
+    const n2=rs2L&&rs2L.tb?Object.keys(rs2L.tb).length:0;
+    if(n2>=10){
+      const down1=po.rs?po.rs.downCount:0,up1=po.rs?po.rs.up.length:0;
+      const surplus=Math.max(0,Math.min(4,(n2+down1-up1)-16));
+      if(surplus>0)po.rs2={downCount:surplus};
+    }
+    po.dir.RS={up:[],down:[]};
+  }
   return po;
 }
 /* playoff de ascenso de la 1. Lig turca (it.custom): cuartos a partido único, semifinal a doble partido,
@@ -12243,6 +12312,18 @@ function poFinish(){
     const it=po.items.find(x=>x.co==='NL2PO');
     if(it&&it.winner&&it.winner!==it.seeds[0]){up.push(it.winner);down.push(it.seeds[0])}
     balanceUpDown(up,down);po.res.NL={up,down};
+  }
+  /* Serbia: suben los 2 mejores de la Prva liga Srbije y bajan los últimos del Play-out de la Super liga
+     (14 → 12 esta temporada; 2 y 2 a partir de entonces). */
+  if(po.rs){
+    const L=leagueData('RS1'),G=rsGroups(L);
+    const down=G.releg.slice(Math.max(0,G.releg.length-(po.rs.downCount||0)));
+    po.res.RS={up:(po.rs.up||[]).slice(),down};
+  }
+  /* Serbia: el sobrante de la Prva liga sale a la Srpska Liga (no simulada) */
+  if(po.rs2){
+    const L=leagueData('RS2'),G=rsGroups(L);
+    po.rs2down=G.releg.slice(Math.max(0,G.releg.length-(po.rs2.downCount||0)));
   }
   const be2=po.be2;if(be2){
     const up=[be2.champ],down=be2.down1?[be2.down1]:[];
@@ -12511,6 +12592,12 @@ function applyMoves(){
     plm3.up.forEach(id=>{state.divs[id]=3;delete state.relegated[id]});
     plm3.down.forEach(x=>{state.divs[x.id]=x.to;state.relegated[x.id]=1});
     news(`${FLAG.PL} Ascienden a ${divName('PL',3)}: ${plm3.up.map(cname).join(', ')}. Descienden a la Betclic 3 Liga: ${plm3.down.map(x=>cname(x.id)).join(', ')}.`);
+  }
+  /* Serbia: el sobrante de la Prva liga baja a la Srpska Liga (3ª división, no simulada) */
+  const rsd2=state.po&&state.po.rs2down;
+  if(rsd2&&rsd2.length){
+    rsd2.forEach(id=>{state.divs[id]=3;state.relegated[id]=1});
+    news(`${FLAG.RS} Descienden a la Srpska Liga: ${rsd2.map(cname).join(', ')}.`);
   }
   fixBTeams();
   Object.keys(state.divs).forEach(id=>{if(state.divs[id]===BASE_DIV[id])delete state.divs[id]});
@@ -14611,7 +14698,7 @@ function storeImport(n,s,meta){
   ui.importing=null;closeSheet();renderSlots();toast('Partida importada en el slot '+n);
 }
 /* ===================== mundo: otras ligas y torneos ===================== */
-const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup'};
+const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup',RS:'Kup Srbije'};
 /* China: los 80 equipos de la Chinese FA Cup (16 de la Super League + League One/Two + amateurs clasificados) */
 const CN_CUP_TEAMS=['BEIJ','BJPR','BJSS','BJTC','CCXD','CCYT','CLJG','CDRC','CQHA','CQTL',"DLKC",'DLKW','DLYB','DXGY','FSNS','GANR','GDGZ','GDMT','GDSH','GDWC','GXHC','GZDL','GZRG','GZFY','GZXF','GZZJ','HMCD','HNSY','HZLP','HENF','HBIS','HZCX','JXDN','JXLS','LZLY','LCLG','LNTR','MZHK','NJCT','NTHX','NTZY','NBPR','NXPL','QDFL','QDHN','QDRL','QDWC','QZQG','SAXU','SDSC','SDTS','SHPO','SHSG','SHSH','SHZT','SXCR','SXTC','SXXY','SZKS','SZ28','SZJR','SZPC','SZXJ','SJZG','SUDW','TATK','TJDH','TJJM','WZFC','WHLZ','WHTT','WHHJ','WXWG','XMCY','XMFL','YBLD','YLMN','YNCH','YNYK','ZJFC'];
 /* sorteo de la siguiente ronda de la Chinese FA Cup: de la Ronda previa a los Dieciseisavos (ri 0-2) la
@@ -14626,10 +14713,10 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia'};
 const SC_TEAMS={ES:4,TR:4,SA:4};
-const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1};
+const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1};
 const SC_WEEKS={ES:[20,21],TR:[20,21],SA:[0,1]};
 const userKey=()=>state.country+(state.div||1);
 const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C');
@@ -16014,7 +16101,7 @@ function advanceWorld(r){
       t.players.forEach(p=>{if(p.inj>0)p.inj--;if(p.sus>0)p.sus--});
     }
   }
-  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){arWorldTally(r);arWorldEnsureCups(r);}
   for(const k in state.cups){
     const cup=state.cups[k];
@@ -16123,7 +16210,7 @@ function recordHonors(final){
     }
   };
   gamePlayable().forEach(co=>{
-    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&d===1&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
+    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&d===1&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(co==='RS'&&(d===1||d===2)&&L.split){const w=rsGroups(L).champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
     const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,'cup',co+'C');
     if(co==='EN'&&state.cups.ENT&&state.cups.ENT.champ)add(state.cups.ENT.champ,'eflt','ENT');
     if(co==='EN'&&state.cups.ENNC&&state.cups.ENNC.champ)add(state.cups.ENNC.champ,'nlc','ENNC');
@@ -16175,7 +16262,7 @@ function recordHonors(final){
 }
 function finishAll(){
   arEnsureCups(999);
-  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:null);if(sreg!=null&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,sreg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):null);if(sreg!=null&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,sreg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){const fx=state.others.AR1.fx;for(let r=0;r<fx.length;r++)if(fx[r]&&fx[r][0]&&fx[r][0].hg!==undefined)arWorldTally(r);arWorldEnsureCups(999);}
   bulEnsureCups(999);czEnsureCups(999);
   for(const k in state.cups){
@@ -16440,6 +16527,19 @@ function initWorld(){
     /* República de Corea: la Korea Cup usa el formato escalonado de 63 equipos (ver cupInitKorea). */
     if(co==='KR'){
       state.cups.KRC=cupInitKorea('KRC','Korea Cup',KR_CUP_K1,KR_CUP_K2,KR_CUP_LOW);
+      return;
+    }
+    /* Serbia: la Kup Srbije la juegan 36 clubes (14 Super liga + 13 Prva liga + 9 inferiores). Cuadro de 32:
+       los 8 peores juegan la ronda previa (semana 6) y los 4 ganadores se unen a los 28 exentos. Después
+       1/16 (semana 10), 1/8 (16), 1/4 (34), semifinal (42) y final (46), a partido único; sin prórroga en
+       1/16 ni 1/8 (penaltis directos) y con prórroga desde 1/4. El campeón va a la previa de la Europa League. */
+    if(co==='RS'){
+      const ids=RS_CUP_TEAMS.filter(id=>CLUBBY[id]&&!isB(id));
+      if(CLUBBY[state.club]&&CLUBBY[state.club].co==='RS'&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
+      if(ids.length>=2){
+        state.cups.RSC=cupInit('RSC','Kup Srbije',ids,[RS_CUP_W0,10,16,34,42,46]);
+        state.cups.RSC.etFromRound=3;
+      }
       return;
     }
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
@@ -16777,6 +16877,8 @@ function qualifiers(){const s=new Set(euroSlots(state.qual,'ucl',UCL_QUAL_REPLAC
   const grCh1=grGroups(leagueData('GR1')).champ;if(grCh1[0]&&CLUBBY[grCh1[0]])s.add(grCh1[0]);if(grCh1[1]&&CLUBBY[grCh1[1]])s.add(grCh1[1]);
   /* República Checa: campeón del Grupo Campeonato → fase de liga de la Champions */
   const czCh=czGroups(leagueData('CZ1')).champ;if(czCh[0]&&CLUBBY[czCh[0]])s.add(czCh[0]);
+  /* Serbia: el campeón del Grupo Campeonato va a la Champions */
+  const rsChamp=rsGroups(leagueData('RS1')).champ[0];if(rsChamp&&CLUBBY[rsChamp])s.add(rsChamp);
   return[...s]}
 function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,'uel',UEL_QUAL_REPLACE));if(state.cups&&state.cups.PTC&&state.cups.PTC.champ)s.add(state.cups.PTC.champ);if(state.cups&&state.cups.NLC&&state.cups.NLC.champ)s.add(state.cups.NLC.champ);if(state.cups&&state.cups.BEC&&state.cups.BEC.champ)s.add(state.cups.BEC.champ);if(state.cups&&state.cups.ATC&&state.cups.ATC.champ)s.add(state.cups.ATC.champ);if(state.cups&&state.cups.NOC&&state.cups.NOC.champ)s.add(state.cups.NOC.champ);if(state.cups&&state.cups.IEC&&state.cups.IEC.champ)s.add(state.cups.IEC.champ);if(state.cups&&state.cups.SCC&&state.cups.SCC.champ)s.add(state.cups.SCC.champ);if(state.cups&&state.cups.BGC&&state.cups.BGC.champ)s.add(state.cups.BGC.champ);if(state.cups&&state.cups.ROC&&state.cups.ROC.champ)s.add(state.cups.ROC.champ);if(state.cups&&state.cups.TRC&&state.cups.TRC.champ)s.add(state.cups.TRC.champ);
    /* Ucrania: el campeón de Copa va a la previa de la Europa League; si ya está en Champions por la liga, la plaza pasa al siguiente mejor clasificado */
@@ -16789,6 +16891,10 @@ function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,'uel',UEL_QUAL_RE
   if(cup&&!top3.includes(cup))s.add(cup);else if(cup&&dk[3])s.add(dk[3]);   /* si el campeón de Copa ya está arriba, la plaza viaja al 4º */
   /* Grecia: 3º del Play-off de Campeón va a la Europa League */
   const grCh2=grGroups(leagueData('GR1')).champ;if(grCh2[2]&&CLUBBY[grCh2[2]])s.add(grCh2[2]);
+  /* Serbia: el 2º del Grupo Campeonato va a la previa de la Europa League */
+  const rsE=rsGroups(leagueData('RS1'));if(rsE.champ[1]&&CLUBBY[rsE.champ[1]])s.add(rsE.champ[1]);
+  /* Serbia: el campeón de la Kup Srbije va a la previa de la Europa League */
+  if(state.cups&&state.cups.RSC&&state.cups.RSC.champ&&CLUBBY[state.cups.RSC.champ])s.add(state.cups.RSC.champ);
   return[...s]}
 function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_REPLACE));if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);if(state.smPoWinner&&CLUBBY[state.smPoWinner])s.add(state.smPoWinner);if(state.cups&&state.cups.SMC&&state.cups.SMC.champ&&CLUBBY[state.cups.SMC.champ])s.add(state.cups.SMC.champ);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);const trC=leagueData('TR1').tb?sortTable(leagueData('TR1').tb):[];if(trC[3])s.add(trC[3].id);
   const ruC2=state.cups&&state.cups.RUC&&state.cups.RUC.champ;
@@ -16803,6 +16909,8 @@ function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_RE
   if(grG.euro[0]&&CLUBBY[grG.euro[0]])s.add(grG.euro[0]);
   const grc=state.cups&&state.cups.GRC&&state.cups.GRC.champ;
   if(grc&&CLUBBY[grc]&&!grG.champ.slice(0,4).includes(grc))s.add(grc);
+  /* Serbia: el 3º del Grupo Campeonato va a la previa de la Conference League */
+  const rsC=rsGroups(leagueData('RS1'));if(rsC.champ[2]&&CLUBBY[rsC.champ[2]])s.add(rsC.champ[2]);
   return[...s]}
 /* ---- CONMEBOL: plazas argentinas desde la Tabla Anual. LIB = 1º-3º (fase de grupos 1º-2º, 3º a la
    clasificación previa); SUD = 4º-9º (fase de grupos). Coincide con las zonas mostradas en la Tabla Anual. ---- */
@@ -16834,7 +16942,7 @@ function computeCopaQual(){
   return [...new Set(out)];
 }
 function champsLine(){
-  const parts=gamePlayable().map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}return FLAG[co]+' '+(top?cname(top.id):'—')});
+  const parts=gamePlayable().map(co=>{const L=leagueData(co+'1');let top=sortTable(L.tb)[0];if(co==='DK'&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(co==='RS'&&L.split){const w=rsGroups(L).champ[0];if(w)top={id:w}}return FLAG[co]+' '+(top?cname(top.id):'—')});
   const u=state.cups.UCL.champ;
   return 'Campeones de liga: '+parts.join(', ')+(u?'. Champions League: '+cname(u)+'.':'.');
 }
@@ -17261,6 +17369,13 @@ function zoneColor(key,pos,total){
       if(pos<=3)return'#26a69a';
       return pos<=15?'#9e9e9e':'#e53935';
     }
+    if(co==='RS'){   /* Super liga Srbije: 1º campeón/Champions; 2º-3º previa de Europa/Conference; descienden
+         los últimos (4 con 14 equipos, 2 con 12) */
+      if(pos===1)return'#7cb342';
+      if(pos<=3)return'#38D996';
+      const tot=total||14,relSize=Math.max(2,tot-10);
+      return pos<=tot-relSize?'#9e9e9e':'#e53935';
+    }
     if(pos===1)return'#7cb342';
     if(co==='PT'){
       if(pos===2)return'#4caf50';
@@ -17275,6 +17390,12 @@ function zoneColor(key,pos,total){
     if(pos===6)return'#79B9DE';
     if(total===18)return pos===16?'#ef9a9a':(pos<=15?'#9e9e9e':'#e53935');
     return pos<=total-3?'#9e9e9e':'#e53935';
+  }
+  if(d==='2'&&co==='RS'){   /* Prva liga Srbije: 1º-2º ascienden; 9º-16º al Grupo de Descenso (13º-16º bajan) */
+    if(pos<=2)return'#49CB2B';
+    if(pos<=8)return'#5694D8';
+    if(pos<=12)return'#9e9e9e';
+    return'#e53935';
   }
   if(d==='2'&&co==='FR'){
     if(pos<=2)return'#66bb6a';
@@ -17496,6 +17617,39 @@ function czLeagueTable(key){
        + tbl('Grupo de Europa',pick(G.mid),midZone,[['#79B9DE','Siguiente ronda (Play-off europeo)'],['#9e9e9e','Permanencia']])
        + tbl('Grupo Descenso',pick(G.releg),relegZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Play-off de descenso'],['#e53935','Descenso']]);
 }
+/* Super liga Srbije: 26 jornadas de fase regular y, tras el corte, dos grupos (Campeonato 1.º-6.º y
+   Play-out 7.º-14.º) a vuelta sencilla, con los puntos y goles de la fase regular arrastrados. */
+function rsLeagueTable(key){
+  const L=leagueData(key),st=sortTable(L.tb),me=state.club,nAll=st.length;
+  const isD2=key==='RS2',champN=isD2?8:6;
+  /* la 1ª división baja hasta quedarse en 12 (4 con 14 equipos, 2 con 12); la 2ª se mantiene en 16 (baja 4) */
+  const relSize=isD2?Math.max(2,Math.min(4,nAll-12)):Math.max(2,Math.min(4,nAll-10));
+  const T=(title,list,zoneFn,legend)=>{
+    const rows=list.map((r,i)=>{const c=CLUBBY[r.id],dg=r.gf-r.ga,z=zoneFn(i+1,list.length);
+      return`<tr class="${r.id===me?'me':''}"><td class="pos"${z?` style="--zc:${z}"`:''}>${z?'<i></i>':''}<span>${i+1}</span></td><td class="tm"><button class="tmbtn" data-act="club-view" data-club="${r.id}">${crestHTML(c,24)}<span class="nl">${esc(c.name)}</span><span class="ns">${esc(short3(c))}</span></button></td><td class="pts">${r.pts}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${dg>0?'+':''}${dg}</td></tr>`}).join('');
+    const used=new Set(list.map((r,i)=>zoneFn(i+1,list.length)));
+    const lg=(legend||[]).filter(([c])=>used.has(c));
+    const lgHTML=lg.length?`<div class="legend2"><b>LEYENDA</b><div class="lg-grid">${lg.map(([c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div></div>`:'';
+    return`<div class="card">${title?`<h3>${esc(title)}</h3>`:''}<div class="tblwrap"><table class="tbl abbtbl"><thead><tr><th>#</th><th>Club</th><th>Pts</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th></tr></thead><tbody>${rows}</tbody></table></div>${lgHTML}</div>`;
+  };
+  if(!L.split){
+    const zoneFn=pos=>pos<=champN?'#5694D8':(pos>nAll-relSize?'#e53935':'#9e9e9e');
+    return isD2
+      ? T('',st,zoneFn,[['#5694D8','Grupo de Ascenso (1.º-8.º)'],['#9e9e9e','Grupo de Descenso (9.º-16.º)'],['#e53935','Descenso']])
+      : T('',st,zoneFn,[['#5694D8','Grupo Campeonato (1.º-6.º)'],['#9e9e9e','Play-out por el descenso'],['#e53935','Descenso']]);
+  }
+  const G=L.split.groups||{};
+  const pick=arr=>arr?st.filter(r=>arr.includes(r.id)):[];
+  const relegZone=(pos,len)=>pos<=len-relSize?'#9e9e9e':'#e53935';
+  if(isD2){
+    const promoZone=pos=>pos<=2?'#49CB2B':'#9e9e9e';
+    return T('Grupo de Ascenso',pick(G.champ),promoZone,[['#49CB2B','Ascenso directo a la Super liga Srbije'],['#9e9e9e','Permanencia']])
+         + T('Grupo de Descenso',pick(G.releg),relegZone,[['#9e9e9e','Permanencia'],['#e53935','Descenso directo a la Srpska Liga']]);
+  }
+  const champZone=pos=>pos===1?'#7cb342':pos===2?'#38D996':pos===3?'#5694D8':'#9e9e9e';
+  return T('Grupo Campeonato',pick(G.champ),champZone,[['#7cb342','Campeón · Champions League'],['#38D996','Previa de Europa League'],['#5694D8','Previa de Conference League'],['#9e9e9e','Permanencia']])
+       + T('Play-out por el descenso',pick(G.releg),relegZone,[['#9e9e9e','Permanencia'],['#e53935','Descenso directo']]);
+}
 function _zoneTable(title,t,qual,label,relLabel){
   qual=qual||2;label=label||'Clasificado';
   const st=sortTable(t);
@@ -17587,6 +17741,7 @@ function leagueTable(key){
   if(key==='RO1')return roLeagueTable(key);
   if(key==='CZ1')return czLeagueTable(key);
   if(key==='KR1')return krLeagueTable(key);
+  if(key==='RS1'||key==='RS2')return rsLeagueTable(key);
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=String(key).slice(0,2)==='ES'?+String(key).slice(2):null;
@@ -18826,7 +18981,7 @@ const ICO_SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const ICO_STAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z"/></svg>';
 const ICO_GLOBE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>';
 const TROPHY_ICO={league:ICO_TROPHY,cup:ICO_CUP,sc:ICO_SHIELD,lc:ICO_CUP,ucl:ICO_STAR,uel:ICO_CUP,ecl:ICO_CUP,cwc:ICO_SHIELD,sce:ICO_SHIELD,wc:ICO_GLOBE,ic:ICO_GLOBE,cf:ICO_CUP,d2:ICO_TROPHY,d3:ICO_TROPHY,d4:ICO_TROPHY,eflt:ICO_CUP,nlc:ICO_CUP,fat:ICO_CUP,scc:ICO_CUP,lp2:ICO_CUP,cisc:ICO_CUP};
-const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Türkiye Kupası',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup'};
+const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Türkiye Kupası',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup',RS:'Kup Srbije'};
 const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'TFF Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski',IE:'Supercopa de Irlanda',BG:'Superkupa na Balgariya',RU:'Superkupa Rossii',RO:'Supercupa României',UA:'Supercopa de Ucrania',GR:'Super Cup',SM:'Supercoppa San Marino',SA:'Saudi Super Cup',CN:'Chinese Super Cup'};
 Object.assign(TROPHY_CUP,{KR:'Korea Cup'});
 Object.assign(TROPHY_SC,{KR:'Korean Super Cup'});
@@ -18857,7 +19012,7 @@ function trophyName(club,k,real){
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia'}[co]||'Copa de la Liga';
   if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
-  if(k==='d3')return{ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',NL:'Tweede Divisie'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
+  if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',NL:'Tweede Divisie'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
   if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B',NL:'Derde Divisie'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
   if(k==='d4t')return co==='ES'?'Tercera División':'Cuarta categoría';
@@ -18880,7 +19035,7 @@ function trophyName(club,k,real){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
@@ -24654,6 +24809,135 @@ Object.keys(CLUBBY).forEach(id=>{const c=CLUBBY[id];if(c&&c.co==='TR'&&(c.div||1
   /* mapa: coordenadas de las ciudades de la Betclic 3 Liga (para que cada club salga en su ciudad) */
   Object.assign(CITY,{'Białystok':{ll:[23.1592,53.1324]},'Varsovia':{ll:[21.0711,52.2334]},'Lidzbark Warmiński':{ll:[20.5806,54.1259]},'Łódź':{ll:[19.4785,51.7728]},'Łomża':{ll:[22.0728,53.1751]},'Mińsk Mazowiecki':{ll:[21.5587,52.1812]},'Mława':{ll:[20.3832,53.1116]},'Elbląg':{ll:[19.4411,54.1989]},'Zambrów':{ll:[22.2412,52.9855]},'Łowicz':{ll:[19.9448,52.1077]},'Tomaszów Mazowiecki':{ll:[20.0338,51.5195]},'Nowy Dwór Mazowiecki':{ll:[20.7155,52.4307]},'Troszyn':{ll:[21.7325,53.0310]},'Sieradz':{ll:[18.7399,51.6018]},'Suwałki':{ll:[22.9321,54.1028]},'Płock':{ll:[19.7009,52.5465]},'Ząbki':{ll:[21.1147,52.2923]},'Koszalin':{ll:[16.1771,54.1909]},'Stargard':{ll:[15.0316,53.3090]},'Bydgoszcz':{ll:[18.0294,53.1297]},'Gdańsk':{ll:[18.6540,54.3483]},'Nowy Staw':{ll:[19.0087,54.1343]},'Kalisz':{ll:[18.0895,51.7625]},'Kórnik':{ll:[17.0901,52.2493]},'Luzino':{ll:[18.1048,54.5619]},'Poznań':{ll:[16.9197,52.4007]},'Stęszew':{ll:[16.6999,52.2794]},'Czarnków':{ll:[16.5640,52.9050]},'Środa Wielkopolska':{ll:[17.2778,52.2284]},'Świnoujście':{ll:[14.2511,53.9097]},'Toruń':{ll:[18.5966,53.0145]},'Swarzędz':{ll:[17.0771,52.4104]},'Września':{ll:[17.5652,52.3251]},'Świecie':{ll:[18.4455,53.4073]},'Sułów':{ll:[17.1693,51.4994]},'Katowice':{ll:[19.0216,50.2599]},'Bytom Odrzański':{ll:[15.8269,51.7308]},'Gubin':{ll:[14.7370,51.9573]},'Goczałkowice-Zdrój':{ll:[18.9660,49.9437]},'Polkowice':{ll:[16.0713,51.5039]},'Jelenia Góra':{ll:[15.7344,50.9031]},'Legnica':{ll:[16.1603,51.2082]},'Kluczbork':{ll:[18.2140,50.9731]},'Nysa':{ll:[17.3325,50.4738]},'Częstochowa':{ll:[19.1132,50.8120]},'Rybnik':{ll:[18.5532,50.1106]},'Wrocław':{ll:[17.0327,51.1090]},'Brzeg':{ll:[17.4705,50.8615]},'Gorzów Wielkopolski':{ll:[15.2400,52.7310]},'Lubin':{ll:[16.1993,51.3997]},'Sosnowiec':{ll:[19.1343,50.2781]},'Chełm':{ll:[23.4939,51.1356]},'Połaniec':{ll:[21.2810,50.4329]},'Zamość':{ll:[23.2596,50.7212]},'Jarosław':{ll:[22.6797,50.0159]},'Kolbuszowa':{ll:[21.7755,50.2433]},'Kielce':{ll:[20.6099,50.8540]},'Ostrowiec Świętokrzyski':{ll:[21.4115,50.9502]},'Morawica':{ll:[20.6181,50.7478]},'Jędrzejów':{ll:[20.3046,50.6394]},'Biała Podlaska':{ll:[23.1194,52.0338]},'Lubaczów':{ll:[23.1179,50.1571]},'Tarnobrzeg':{ll:[21.7118,50.5838]},'Starachowice':{ll:[21.0821,51.0385]},'Cracovia':{ll:[19.9369,50.0619]},'Jaśkowice':{ll:[19.6706,49.9607]},'Dębica':{ll:[21.4128,50.0461]},'Busko-Zdrój':{ll:[20.7192,50.4676]}});
 })();
+
+/* ===== Serbia: Super liga Srbije (1ª división, 14 equipos → 12) =====
+   Fase regular de 26 jornadas (ida y vuelta) y split asimétrico: Grupo Campeonato (1º-6º, 5 jornadas) y
+   Play-out por el descenso (7º-14º, 7 jornadas), con los puntos arrastrados. El campeón va a la Champions,
+   el 2º y el 3º a la previa de Europa/Conference. Descienden los 4 últimos del Play-out a la Prva liga
+   Srbije (que sube 2), reduciendo la Super liga a 12 equipos. Banquillo de 11 suplentes. */
+(function(){
+  const SEL=[
+    ['CRV','Crvena Zvezda','Crvena Zvezda','Belgrado','#d4192b','#f4f4f4',70,6017],
+    ['PTZ','Partizan Belgrade','Partizan','Belgrado','#1a1a1a','#f4f4f4',66,3658],
+    ['VOJ','FK Vojvodina','Vojvodina','Novi Sad','#d4192b','#f4f4f4',56,13483],
+    ['CUKR','FK Cukaricki','Cukaricki','Belgrado','#f4f4f4','#1a1a1a',46,13474],
+    ['RDK','Radnički Kragujevac','Radnički','Kragujevac','#d4192b','#1a1a1a',52,18074],
+    ['RNIS','Radnički Niš','Radnički Niš','Niš','#d4192b','#f4f4f4',50,13464],
+    ['OFK','OFK Beograd','OFK Beograd','Belgrado','#f4f4f4','#1c3f94',44,13470],
+    ['NPAZ','FK Novi Pazar','Novi Pazar','Novi Pazar','#1c3f94','#f4f4f4',46,13472],
+    ['MACV','Mačva Šabac','Mačva','Šabac','#d4192b','#f4f4f4',42,19262],
+    ['IMT','IMT Novi Beograd','IMT','Novi Beograd','#1c3f94','#f4f4f4',44,60173],
+    ['MLU','Mladost Lučani','Mladost','Lučani','#1c3f94','#f4f4f4',40,17390],
+    ['RSU','Radnik Surdulica','Radnik','Surdulica','#1c3f94','#f4f4f4',40,17392],
+    ['ZELP','Železničar Pancevo','Železničar','Pančevo','#1c3f94','#f4f4f4',46,80058],
+    ['ZEM','Zemun','Zemun','Zemun','#d4192b','#1a1a1a',38,60160],
+  ];
+  const LOG={};
+  SEL.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'RS',c1,c2,rep,1);CLUBBY[id]=c;}
+    c.div=1;BASE_DIV[id]=1;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG);
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  /* estadios y formaciones de la Super liga Srbije */
+  Object.assign(STADIUM,{CRV:'Stadion Rajko Mitić',PTZ:'Stadion FK Partizan',VOJ:'Stadion Karađorđe',CUKR:'Stadion na Banovom brdu',RDK:'Stadion Čika Dača',RNIS:'Stadion Čair',OFK:'Omladinski Stadion',NPAZ:'Gradski Stadion Novi Pazar',MACV:'Stadion FK Mačva',IMT:'Fudbalski stadion Lagator',MLU:'Stadion Mladost',RSU:'Gradski Stadion Surdulica',ZELP:'SC Mladost',ZEM:'Zemun Stadion'});
+  Object.assign(FORM_MAIN,{CRV:'4-2-3-1',PTZ:'4-2-3-1',VOJ:'4-2-3-1',CUKR:'4-2-3-1',RDK:'4-2-3-1',RNIS:'4-2-3-1',OFK:'4-2-3-1',NPAZ:'4-2-3-1',MACV:'4-2-3-1',IMT:'4-3-3',MLU:'3-4-2-1',RSU:'4-4-2',ZELP:'4-2-3-1',ZEM:'4-2-3-1'});
+  Object.assign(BUDGET,{CRV:24,PTZ:10,VOJ:4.2,CUKR:3.5,RDK:2,RNIS:1.5,OFK:2.5,NPAZ:1.8,MACV:0.55,IMT:1.2,MLU:0.95,RSU:0.65,ZELP:1.1,ZEM:0.5});
+  /* ciudades serbias para el mapa (también colocan a los clubes serbios ya existentes) */
+  /* palmarés histórico real (Super liga Srbije hasta 2025; el título de 2026 se juega en la partida) */
+  Object.assign(PALMARES,{
+    CRV:{league:11,cup:8,ucl:1},   /* 11 Super liga + 8 Kup Srbije + 1 Copa de Europa (1991) */
+    PTZ:{league:8,cup:7},
+    VOJ:{cup:2},
+    CUKR:{cup:1,d2:1},
+    ZEM:{d2:2},
+    RNIS:{d2:2},
+    MACV:{d2:1},
+    MLU:{d2:2},
+    RSU:{d2:2},
+    OFK:{},IMT:{},RDK:{},ZELP:{},NPAZ:{},   /* sin títulos oficiales en estas categorías */
+  });
+  Object.assign(CITY,{'Belgrado':{ll:[20.4457,44.8153]},'Novi Sad':{ll:[19.8452,45.2551]},'Novi Beograd':{ll:[20.4183,44.8133]},'Pančevo':{ll:[20.6400,44.8706]},'Kragujevac':{ll:[20.9196,44.0132]},'Lučani':{ll:[20.1365,43.8602]},'Surdulica':{ll:[22.1701,42.6919]},'Novi Pazar':{ll:[20.5181,43.1407]},'Šabac':{ll:[19.6954,44.7572]},'Niš':{ll:[21.8959,43.3211]},'Zemun':{ll:[20.4124,44.8444]}});
+})();
+/* ===== Serbia: Prva liga Srbije (2ª división, 16 equipos) =====
+   Fase regular de 30 jornadas y split 8/8 (Grupo de Ascenso 1º-8º y Grupo de Descenso 9º-16º, 7 jornadas),
+   arrastrando puntos; suben 2 a la Super liga y bajan 4 a la Srpska Liga. Banquillo de 9. */
+(function(){
+  const S2=[
+    ['BORC','Borac Čačak','Borac Čačak','Čačak','#d4192b','#f4f4f4',44,17385,'Čačak Stadium','4-2-3-1'],
+    ['DUBO','Dubočica','Dubočica','Leskovac','#1c3f94','#f4f4f4',42,64292,'Gradski Stadion Dubočica','4-2-3-1'],
+    ['FKBO','FK Bor','Bor','Bor','#d4192b','#f4f4f4',38,60200,'Stadion kraj Banjskog puta','4-4-2'],
+    ['P023','FK Proleter 023','Proleter 023','Zrenjanin','#d4192b','#f4f4f4',42,152585,'Karađorđev Park Stadium','4-4-2'],
+    ['SSUB','FK Spartak Subotica','Spartak Sub.','Subotica','#1c3f94','#f4f4f4',50,18035,'Subotica City Stadium','4-2-3-1'],
+    ['TSC','FK TSC','TSC','Bačka Topola','#f4f4f4','#1c3f94',52,80053,'TSC Arena','3-4-3'],
+    ['VOZ','FK Vozdovac','Voždovac','Belgrado','#f4f4f4','#d4192b',46,13455,'Event Place Stadium','4-2-3-1'],
+    ['GRAF','Grafičar','Grafičar','Belgrado','#d4192b','#1a1a1a',42,64284,'Topčiderska zvezda','4-2-3-1'],
+    ['JAV','Javor Ivanjica','Javor','Ivanjica','#d4192b','#f4f4f4',44,13487,'Ivanjica Stadium','4-2-3-1'],
+    ['JUB','Jedinstvo Ub','Jedinstvo Ub','Ub','#1c3f94','#f4f4f4',40,60144,'Stadion Dragan Džajić','4-2-3-1'],
+    ['LOZ','Loznica','Loznica','Loznica','#1c3f94','#f4f4f4',42,60142,'Lagator Stadium','4-2-3-1'],
+    ['MET','Metalac GM','Metalac','Gornji Milanovac','#1c3f94','#f4f4f4',44,17389,'Stadion Metalac','4-2-3-1'],
+    ['NAPK','Napredak Krusevac','Napredak','Kruševac','#d4192b','#f4f4f4',48,13493,'Mladost Stadium','4-2-3-1'],
+    ['VRSC','OFK Vršac','OFK Vršac','Vršac','#1c3f94','#f4f4f4',40,60181,'Gradski Stadion Vršac','4-2-3-1'],
+    ['SMED','Smederevo','Smederevo','Smederevo','#1c3f94','#f4f4f4',42,17396,'Smederevo Stadium','4-2-3-1'],
+    ['TELO','Teleoptik','Teleoptik','Zemun','#1a1a1a','#f4f4f4',40,17397,'SC Partizan-Teleoptik','4-3-3'],
+  ];
+  const LOG={};
+  S2.forEach(([id,name,short,city,c1,c2,rep,crest,stad,form])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'RS',c1,c2,rep,2);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.c1=c1;c.c2=c2;c.rep=rep;c.div=2;BASE_DIV[id]=2;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+    STADIUM[id]=stad;FORM_MAIN[id]=form;
+  });
+  Object.assign(CLUB_LOGO,LOG);
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  /* presupuestos reales de la Prva liga (M€) */
+  Object.assign(BUDGET,{BORC:0.6,DUBO:0.45,FKBO:0.15,P023:0.12,SSUB:1.8,TSC:5.5,VOZ:1.1,GRAF:0.4,JAV:0.9,JUB:1.2,LOZ:0.35,MET:0.5,NAPK:1.6,VRSC:0.45,SMED:0.55,TELO:0.2});
+  /* palmarés real de los clubes de la Prva liga */
+  Object.assign(PALMARES,{
+    SMED:{cup:1},          /* Kup Srbije 2002-03 (como Sartid) */
+    JAV:{d2:2},NAPK:{d2:2},TSC:{d2:1},
+    VOZ:{d3:2},DUBO:{d3:1},GRAF:{d3:1},TELO:{d3:1},
+    BORC:{},FKBO:{},P023:{},SSUB:{},JUB:{},LOZ:{},MET:{},VRSC:{},   /* sin títulos superiores */
+  });
+  /* ciudades serbias de la Prva liga para el mapa */
+  Object.assign(CITY,{'Čačak':{ll:[20.3492,43.8914]},'Leskovac':{ll:[21.9464,42.9951]},'Bor':{ll:[22.0992,44.0778]},'Zrenjanin':{ll:[20.3908,45.3803]},'Subotica':{ll:[19.6653,46.1002]},'Bačka Topola':{ll:[19.6305,45.8122]},'Ivanjica':{ll:[20.2305,43.5817]},'Ub':{ll:[20.0740,44.4562]},'Loznica':{ll:[19.2237,44.5309]},'Gornji Milanovac':{ll:[20.4600,44.0243]},'Kruševac':{ll:[21.3261,43.5833]},'Vršac':{ll:[21.2988,45.1200]},'Smederevo':{ll:[20.9271,44.6651]}});
+})();
+
+/* ===== Serbia: clubes de categorías inferiores que completan la Kup Srbije =====
+   La Kup Srbije la juegan 36 clubes: 14 de la Super liga + 13 de la Prva liga + 9 de categorías inferiores.
+   Los 8 peores juegan una ronda previa (semana 6) y los 4 ganadores pasan al cuadro de 32. */
+const RS_CUP_TEAMS=['CRV','PTZ','VOJ','CUKR','RDK','RNIS','OFK','NPAZ','MACV','IMT','MLU','RSU','ZELP','ZEM','BORC','DUBO','SSUB','TSC','VOZ','GRAF','JAV','JUB','LOZ','NAPK','VRSC','SMED','TELO','BUDK','FAPP','TRAY','USCE','JKRU','KABL','MOKG','SLOR','TKO'];
+const RS_CUP_W0=6;   /* semana de la ronda previa (los 8 equipos de menor reputación) */
+(function(){
+  const LOW=[
+    ['BUDK','Budučnost Krušik','Budučnost','Valjevo','#1c3f94','#f4f4f4',34,60145],
+    ['FAPP','FAP Priboj','FAP','Priboj','#d4192b','#f4f4f4',32,80063],
+    ['TRAY','FK Trayal','Trayal','Kruševac','#d4192b','#f4f4f4',33,88534],
+    ['USCE','FK Ušće','Ušće','Novi Beograd','#1c3f94','#f4f4f4',32,null],
+    ['JKRU','Jedinstvo Kruševac 1936','Jedinstvo 1936','Kruševac','#1c3f94','#f4f4f4',32,159653],
+    ['KABL','Kabel Novi Sad','Kabel','Novi Sad','#d4192b','#f4f4f4',34,112284],
+    ['MOKG','Mokra Gora','Mokra Gora','Mokra Gora','#0a8a4d','#f4f4f4',31,80038],
+    ['SLOR','Sloven Ruma','Sloven Ruma','Ruma','#1c3f94','#f4f4f4',32,87391],
+    ['TKO','Tekstilac Odžaci','Tekstilac','Odžaci','#1c3f94','#f4f4f4',32,60187],
+  ];
+  const LOG={};
+  LOW.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'RS',c1,c2,rep,3);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.c1=c1;c.c2=c2;c.rep=rep;c.div=3;BASE_DIV[id]=3;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    if(crest)LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG);
+  Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  Object.assign(CITY,{'Valjevo':{ll:[19.8863,44.2709]},'Priboj':{ll:[19.5258,43.5828]},'Ruma':{ll:[19.8188,45.0078]},'Odžaci':{ll:[19.2597,45.5059]},'Mokra Gora':{ll:[19.5031,43.7898]}});
+})();
+
 
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
