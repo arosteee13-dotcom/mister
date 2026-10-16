@@ -1289,7 +1289,25 @@ const IDB={db:null,ok:false,q:Promise.resolve(),ready:null,pend:{},flushing:fals
   _get(k){return new Promise(res=>{try{const tx=IDB.db.transaction('kv','readonly'),g=tx.objectStore('kv').get(k);g.onsuccess=()=>res(g.result||null);g.onerror=()=>res(null)}catch(e){res(null)}})},
   get(k){if(!IDB.ok)return IDB.whenReady().then(()=>IDB.ok?IDB._get(k):null);return IDB.q.then(()=>IDB._get(k))},
   del(k){if(!IDB.ok)return;IDB.q=IDB.q.then(()=>new Promise(res=>{try{const tx=IDB.db.transaction('kv','readwrite');tx.objectStore('kv').delete(k);tx.oncomplete=res;tx.onerror=res}catch(e){res()}}))}
-};
+ };
+/* nº de clubes que aporta una base de datos: formato v2 ({v:2,players:{...}}) -> campo players;
+   formato clásico ({idClub:[filas],...}) -> sus claves. */
+const dbClubCount=data=>{if(!data||typeof data!=='object')return 0;if(data.v===2||(data.players&&typeof data.players==='object'&&!Array.isArray(data.players)))return Object.keys(data.players).length;return Object.keys(data).length};
+/* clubes de una base que traen una PLANTILLA real (>=16 jugadores): las fichas sueltas de 1-15 jugadores
+   que la base guarda como referencia (cesiones/traspasos/históricos) no son "un club con plantilla real". */
+const MIN_REAL_SQUAD=16;
+const dbSquadClubs=data=>{const m=(data&&data.v===2&&data.players&&typeof data.players==='object')?data.players:((data&&typeof data==='object'&&!Array.isArray(data))?data:{});return Object.keys(m||{}).filter(id=>Array.isArray(m[id])&&m[id].length>=MIN_REAL_SQUAD)};
+const dbSquadClubCount=data=>dbSquadClubs(data).length;
+/* nº de clubes con plantilla real: el MISMO número que muestra la ficha de la base en uso ("N clubes con
+   plantilla" en el gestor de bases de datos). Si no hay base importada/activa, cuenta las plantillas reales
+   que trae el propio juego. Así la tarjeta "Base de datos (jugadores reales)" y la ficha nunca se contradicen. */
+function realDbClubCount(){
+  try{
+    const e=(typeof DBMGR!=='undefined'&&DBMGR.activeId)?DBMGR.list.find(x=>x.id===DBMGR.activeId):null;
+    if(e&&e.size)return e.size;
+  }catch(err){}
+  return Object.keys(REAL_DB).filter(id=>(REAL_DB[id]||[]).length>=MIN_REAL_SQUAD).length;
+}
 /* ===================== gestor de bases de datos de jugadores reales (REAL_DB) =====================
    El juego trae de fábrica una base de datos de jugadores reales (REAL_DB, cargada desde players-db.json
    o embebida), pero el usuario puede importar sus propias bases de datos (mismo formato: objeto plano
@@ -1329,7 +1347,7 @@ const DBMGR={
   async save(name,data){
     await this.loadIndex();
     const id='db'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-    const entry={id,name:(name||'Base de datos').slice(0,60),date:Date.now(),size:Object.keys(data).length};
+    const entry={id,name:(name||'Base de datos').slice(0,60),date:Date.now(),size:dbSquadClubCount(data)};
     this.list.push(entry);
     IDB.put('realdb.index',this.list);
     IDB.put('realdb.data.'+id,data);
@@ -1400,17 +1418,17 @@ const DBMGR={
     if(!data)return null;
     await this.loadIndex();
     const e=this.list.find(x=>x.id===id);
-    if(e){e.date=Date.now();e.size=Object.keys(data).length;IDB.put('realdb.index',this.list)}
+    if(e){e.date=Date.now();e.size=dbSquadClubCount(data);IDB.put('realdb.index',this.list)}
     IDB.put('realdb.data.'+id,data);
     await this.use(id);
-    return {size:Object.keys(data).length,name:e?e.name:'Base de datos'};
+    return {size:dbSquadClubCount(data),name:e?e.name:'Base de datos'};
   },
   /* "Sustituir": reemplaza en sitio el contenido de una base ya importada (sin cambiar id ni nombre).
      Se suelta el vínculo previo, porque el archivo nuevo puede ser otro distinto del enlazado. */
   async replace(id,data){
     await this.loadIndex();
     const e=this.list.find(x=>x.id===id);if(!e)return false;
-    e.date=Date.now();e.size=Object.keys(data).length;e.linked=false;IDB.put('realdb.index',this.list);
+    e.date=Date.now();e.size=dbSquadClubCount(data);e.linked=false;IDB.put('realdb.index',this.list);
     IDB.del('realdb.handle.'+id);
     IDB.put('realdb.data.'+id,data);
     await this.use(id);
@@ -1424,7 +1442,7 @@ const DBMGR={
     for(const e of this.list){
       if(!e.linked)continue;
       const data=await this.readHandle(e.id,false);
-      if(data){e.date=Date.now();e.size=Object.keys(data).length;IDB.put('realdb.data.'+e.id,data);changed++;if(e.id===this.activeId)activeData=data;}
+      if(data){e.date=Date.now();e.size=dbSquadClubCount(data);IDB.put('realdb.data.'+e.id,data);changed++;if(e.id===this.activeId)activeData=data;}
       else blocked++;
     }
     if(changed)IDB.put('realdb.index',this.list);
@@ -1446,8 +1464,8 @@ const DBMGR={
           if(r&&r.ok){const data=await r.json();
             if(this.validate(data)){
               const SID='server:players-db.json';let e=this.list.find(x=>x.id===SID);
-              if(!e){e={id:SID,name:'players-db.json (servidor)',date:Date.now(),size:Object.keys(data).length,server:true};this.list.push(e)}
-              e.date=Date.now();e.size=Object.keys(data).length;
+              if(!e){e={id:SID,name:'players-db.json (servidor)',date:Date.now(),size:dbSquadClubCount(data),server:true};this.list.push(e)}
+              e.date=Date.now();e.size=dbSquadClubCount(data);
               IDB.put('realdb.index',this.list);IDB.put('realdb.data.'+SID,data);
               if(Store.get('mister.realdb.active')===SID){applyContent(data);this.activeId=SID;applyLocalEdits()}
             }}
@@ -1887,7 +1905,7 @@ function flagColorAt(co,nx,ny,asp){
 }
 const LAND=[EURASIA,NAMER,SAMER,AFRICA,AUS,...ISLANDS,SICILY,SARDINIA,MALLORCA];
 /* ============ CONFIGURACIÓN / PAÍSES / MAPA ============ */
-const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR','BG','TR','RU','MX','RO','UA','GR','CZ','SE','SM','SA','CN','KR','RS','NIR'];
+const PLAYABLE=['ES','EN','IT','DE','FR','PT','NL','BE','AT','DK','NO','PL','IE','SC','CH','AR','BG','TR','RU','MX','RO','UA','GR','CZ','SE','SM','SA','CN','KR','RS','NIR','WA'];
 /* Configuración de ligas congelada por partida: una partida solo puede ver/simular las ligas y divisiones
    que existían cuando se creó. Así añadir nuevas ligas al HTML no modifica partidas ya empezadas. */
 function captureLeagueConfig(){
@@ -2018,7 +2036,8 @@ const COUNTRIES={
    SE:{name:'Suecia',league:'Allsvenskan',divs:['Allsvenskan','Superettan'],pin:[15.5,59.5],polys:[SWEDEN,GOTLAND]},
    SM:{name:'San Marino',league:'Campionato Sammarinese',divs:['Campionato Sammarinese'],pin:[12.4578,43.9424],polys:[SANMARINO]},
    KR:{name:'República de Corea',league:'K League 1',divs:['K League 1','K League 2'],pin:[127.8,36.3],polys:[KOREA_S,JEJU]},
-   RS:{name:'Serbia',league:'Super liga Srbije',divs:['Super liga Srbije','Prva liga Srbije'],pin:[20.8,44.1],polys:[SERBIA]}
+   RS:{name:'Serbia',league:'Super liga Srbije',divs:['Super liga Srbije','Prva liga Srbije'],pin:[20.8,44.1],polys:[SERBIA]},
+   WA:{name:'Gales',league:'Cymru Premier',divs:['Cymru Premier'],pin:[-3.8,52.3]}
  };
 /* países de solo referencia (clubes afiliados reales fuera de las ligas modeladas): no están en PLAYABLE,
    así que nunca son seleccionables para empezar partida ni aparecen en los buscadores de afiliación por país;
@@ -2059,6 +2078,7 @@ const BELARUS_L=P(`23.60,56.00 26.50,56.20 27.80,55.80 29.30,55.80 30.60,55.90 3
 const SLOVAKIA_L=P(`17.97,47.76 18.15,47.75 18.83,47.84 19.06,48.06 20.13,48.22 20.51,48.49 21.47,48.57 21.54,48.51 21.63,48.47 21.84,48.36 22.08,48.38 22.19,48.61 22.56,49.09 22.03,49.23 21.37,49.43 20.99,49.33 20.13,49.27 19.79,49.38 19.32,49.57 18.84,49.52 18.30,49.49 17.57,49.39 17.11,49.02 16.85,48.57 16.94,48.39 17.57,48.35 17.89,48.03 17.97,47.76`);
 const MOLDOVA_L=P(`28.31,45.55 28.52,45.50 28.56,45.74 28.76,45.93 28.98,46.00 29.07,46.20 28.93,46.46 29.16,46.52 29.24,46.56 29.58,46.36 29.82,46.39 29.94,46.40 30.02,46.38 29.97,46.69 29.85,46.88 29.65,46.92 29.55,47.09 29.32,47.45 29.21,47.63 28.88,48.00 28.38,48.17 27.58,48.49 27.30,48.41 27.00,48.38 26.80,48.42 26.65,48.30 26.70,47.50 27.00,46.50 27.50,45.50 28.10,45.50 28.31,45.55`);
 const WALES_L=P(`-2.65,51.59 -3.00,51.45 -3.80,51.38 -4.30,51.45 -4.65,51.65 -4.95,51.95 -4.60,52.00 -4.10,52.25 -4.30,52.50 -4.60,52.80 -4.75,52.95 -4.30,53.00 -4.20,53.22 -3.80,53.40 -3.50,53.35 -3.10,53.10 -3.00,52.70 -2.90,52.30 -2.65,51.90 -2.65,51.59`);
+COUNTRIES.WA.polys=[WALES_L];
 const LUXEMBOURG_L=P(`6.02,50.18 5.96,50.14 5.89,50.08 5.86,50.06 5.82,50.01 5.81,49.96 5.77,49.94 5.74,49.90 5.75,49.79 5.82,49.76 5.89,49.71 5.90,49.65 5.87,49.50 6.10,49.45 6.37,49.49 6.44,49.66 6.52,49.77 6.29,49.88 6.19,49.97 6.13,50.02 6.13,50.12 6.02,50.18`);
 /* --- Sudamérica: países aún no jugables (siluetas .c2-locked) --- */
 const CHILE_L=P(`-69.50,-18.35 -70.30,-20.20 -70.69,-23.51 -70.49,-25.77 -70.96,-27.59 -71.36,-29.42 -71.55,-31.95 -71.75,-33.42 -72.03,-34.10 -72.71,-35.90 -73.50,-38.21 -73.42,-39.86 -73.78,-40.48 -73.88,-40.80 -73.50,-42.50 -73.80,-45.00 -73.40,-47.00 -72.30,-50.00 -72.50,-52.50 -72.00,-54.00 -68.60,-52.30 -68.00,-54.80 -66.50,-55.20 -67.65,-55.47 -67.90,-55.81 -67.35,-55.88 -68.60,-54.60 -68.50,-52.00 -69.80,-30.00 -68.30,-27.00 -68.50,-22.50 -69.50,-18.35`);
@@ -2116,7 +2136,6 @@ const LOCKED=[
   {id:'BY',name:'Bielorrusia',pin:[27.9,53.7],polys:[BELARUS_L]},
   {id:'SK',name:'Eslovaquia',pin:[19.5,48.7],polys:[SLOVAKIA_L]},
   {id:'MD',name:'Moldavia',pin:[28.4,47.2],polys:[MOLDOVA_L]},
-  {id:'WAL',name:'Gales',pin:[-3.8,52.3],polys:[WALES_L]},
   {id:'LU',name:'Luxemburgo',pin:[6.1,49.8],polys:[LUXEMBOURG_L]},
   {id:'AD',name:'Andorra',pin:[1.6,42.5]},
   {id:'MT',name:'Malta',pin:[14.4,35.9]}
@@ -7561,6 +7580,7 @@ function objective(id){
   if(c.co==='RS'&&c.div===1)return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=n-4?'Permanencia':'Evitar el descenso';
   if(c.co==='RS'&&c.div===2)return rank<=2?'Ascenso directo':rank<=8?'Clasificar al Grupo de Ascenso':rank<=12?'Permanencia':'Evitar el descenso';
   if(c.co==='FJ')return rank<=1?'Ganar la Liga':rank<=2?'Clasificar a la OFC Champions League':rank<=9?'Permanencia':'Evitar el descenso';
+  if(c.co==='WA')return rank<=1?'Ganar la Liga':rank<=4?'Clasificar para competición europea':rank<=13?'Permanencia':rank<=14?'Evitar el playoff de descenso':'Evitar el descenso';
   if(c.div===2)return rank<=2?'Ascenso directo':rank<=Math.ceil(n*.4)?'Clasificar a Playoffs de Ascenso':'Terminar en la zona media de la tabla';
   if(c.co==='EN'&&c.div===3)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=20?'Permanencia':'Evitar el descenso';
   if(c.co==='EN'&&c.div===4)return rank<=3?'Ascenso directo':rank<=7?'Clasificar al playoff de ascenso':rank<=22?'Permanencia':'Evitar el descenso';
@@ -7607,9 +7627,9 @@ Object.assign(FORM_MAIN,{KRSEO:'4-2-3-1',KRULS:'4-2-3-1',KRGAN:'4-4-2',KRJEJ:'4-
 Object.assign(STADIUM,{KRSEO:'Seoul World Cup Stadium',KRULS:'Ulsan Munsu Football Stadium',KRGAN:'Gangneung Stadium',KRJEJ:'Jeju World Cup Stadium',KRJEN:'Jeonju World Cup Stadium',KRDAE:'Daejeon World Cup Stadium',KRINC:'Incheon Football Stadium',KRANY:'Anyang Stadium',KRPOH:'Pohang Steel Yard',KRGIM:'Gimcheon Stadium',KRBUC:'Bucheon Stadium',KRGWA:'Gwangju Football Stadium'});
 Object.assign(BUDGET,{KRSEO:6.5,KRULS:11,KRGAN:3.8,KRJEJ:4,KRJEN:9,KRDAE:4.5,KRINC:2.8,KRANY:1.4,KRPOH:4.2,KRGIM:0,KRBUC:1.2,KRGWA:2.2});
 /* Irlanda del Norte: formación, estadio y presupuesto reales de los 12 clubes de la NIFL Premiership */
-Object.assign(FORM_MAIN,{BALY:'4-2-3-1',BNGR:'4-3-3',CARR:'4-4-2',CLIF:'3-5-2',COLR:'4-2-3-1',CRUS:'4-2-3-1',DUNS:'4-3-3',GLEN:'4-3-3',LAR:'3-4-3',LMVD:'4-4-2',LFD:'4-2-3-1',PORT:'4-4-2'});
-Object.assign(STADIUM,{BALY:'The Showgrounds (Ballymena)',BNGR:'Clandeboye Park',CARR:"Taylor's Avenue",CLIF:'Solitude',COLR:'The Showgrounds (Coleraine)',CRUS:'Seaview',DUNS:'Stangmore Park',GLEN:'The Oval',LAR:'Inver Park',LMVD:'The Showgrounds (Limavady)',LFD:'Windsor Park',PORT:'Shamrock Park'});
-Object.assign(BUDGET,{BALY:0.12,BNGR:0.095,CARR:0.11,CLIF:0.22,COLR:0.24,CRUS:0.21,DUNS:0.09,GLEN:0.28,LAR:0.45,LMVD:0.06,LFD:0.35,PORT:0.11});
+Object.assign(FORM_MAIN,{BALY:'4-4-2',BNGR:'4-3-3',CARR:'4-5-1',CLIF:'4-3-3',COLR:'4-4-2',CRUS:'4-4-2',DUNS:'4-4-2',GLEN:'4-3-3',LAR:'4-2-3-1',LMVD:'4-4-2',LFD:'4-2-3-1',PORT:'4-4-2'});
+Object.assign(STADIUM,{BALY:'The Showgrounds (Ballymena)',BNGR:'Clandeboye Park',CARR:'Loughshore Hotel Arena',CLIF:'Solitude',COLR:'The Showgrounds (Coleraine)',CRUS:'Seaview',DUNS:'Stangmore Park',GLEN:'The Oval',LAR:'Inver Park',LMVD:'The Showgrounds (Limavady)',LFD:'Windsor Park',PORT:'Shamrock Park'});
+Object.assign(BUDGET,{BALY:0.5,BNGR:0.35,CARR:0.4,CLIF:0.7,COLR:0.6,CRUS:0.8,DUNS:0.4,GLEN:1,LAR:1,LMVD:0.3,LFD:1.2,PORT:0.55});
 const formFor=id=>FORM_MAIN[id]||(FAMILY[id]&&FORM_MAIN[FAMILY[id]])||'4-3-3';
 const FOOT_S={Izquierda:'Izq.',Derecha:'Der.',Ambas:'Amb.'};
 /* pierna buena conocida de jugadores reales (D derecha, I izquierda, A ambas); ampliable */
@@ -10974,7 +10994,7 @@ let BENCH_N=9;
        Inglaterra, Alemania, Francia, Polonia, Bulgaria, Noruega, Escocia, Suiza e Irlanda 9.
    Inferiores: EN Championship 9 / L1,L2,National 7; ES Hypermotion y 1ª Federación 12, 2ª Federación 7;
        DE 2. Bundesliga y 3. Liga 9; IT Serie B 12; FR Ligue 2 9; PT Liga Portugal 2 12. */
-const BENCH_CD={IT1:15,ES1:12,PT1:12,NL1:12,BE1:12,TR1:12,RU1:12,DK1:12,AT1:12,RO1:12,UA1:12,AR1:12,RS1:11,RS2:9,EN1:9,DE1:9,FR1:9,PL1:9,BG1:9,NO1:9,SC1:9,CH1:9,IE1:9,SE1:9,MX1:10,SA1:9,
+const BENCH_CD={WA1:7,IT1:15,ES1:12,PT1:12,NL1:12,BE1:12,TR1:12,RU1:12,DK1:12,AT1:12,RO1:12,UA1:12,AR1:12,RS1:11,RS2:9,EN1:9,DE1:9,FR1:9,PL1:9,BG1:9,NO1:9,SC1:9,CH1:9,IE1:9,SE1:9,MX1:10,SA1:9,
    EN2:9,EN3:7,EN4:7,EN5:7,ES2:12,ES3:12,DE2:9,DE3:9,IT2:12,FR2:9,PT2:12,KR1:9,KR2:9,TR2:10,RU2:12,NL2:12,NIR1:9};
 const benchLimit=id=>{const c=CLUBBY[id];if(!c)return 9;const v=BENCH_CD[c.co+(c.div||1)];if(v!=null)return v;if(c.co==='ES'&&(c.div||1)>=4)return 7;return 9};
 /* orden del banquillo: porteros primero (2 con 12 suplentes, 1 con 9) y después por posición (DF, MD, FW) */
@@ -10985,7 +11005,7 @@ function sortBench(t){
   t.bench.sort((a,b)=>{const pa=map.get(a),pb=map.get(b);return((pa?benchOrder(pa):9)-(pb?benchOrder(pb):9))||((pb?pb.ovr:0)-(pa?pa.ovr:0))});
 }
 /* banquillo de 12 en la Supercopa de Europa: solo mientras el partido pendiente del usuario sea la SCE */
-function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC')?12:BENCH_N}
+function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&ct.cup.key==='WALC')return 7;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC')?12:BENCH_N}
 function autoBench(t){
   if(!t||!t.players)return[];
   const xi=new Set(t.lineup),pool=t.players.filter(p=>!xi.has(p.id)&&!unav(p)).sort((a,b)=>b.ovr-a.ovr),out=[],bn=benchN();
@@ -11574,6 +11594,30 @@ function bulGroups(L){
   const pick=arr=>arr?order.filter(id=>arr.includes(id)):[];
   return{champ:pick(g.champ),conf:pick(g.conf),releg:pick(g.releg)};
 }
+/* ---- Cymru Premier (Gales, WA1): 16 equipos, 30 jornadas de fase regular y después un split en TRES grupos
+   a una sola vuelta: Championship 1º-6º (5 jornadas), Challenger 7º-10º (3) y Descenso 11º-16º (5).
+   Los puntos de la fase regular se conservan. ---- */
+const WA_REG=30;
+const WA_GROUPS=[{n:6,nm:'Grupo Campeonato',legs:1},{n:4,nm:'Grupo Challenger',legs:1},{n:6,nm:'Grupo Descenso',legs:1}];
+const WA_GKEYS=['champ','conf','releg'];
+function waSplitIfDue(fx,tb,r){
+  if(r!==WA_REG)return null;
+  const st=sortTable(tb);if(st.length!==16)return null;
+  const groups={},fxBy=[];let i=0;
+  WA_GROUPS.forEach((g,gi)=>{const ids=st.slice(i,i+g.n).map(x=>x.id);i+=g.n;groups[WA_GKEYS[gi]]=ids;
+    const all=buildRawFixtures(ids.slice(),rng(hashStr('wa|'+state.seed+'|'+state.season+'|'+WA_GKEYS[gi])));
+    fxBy.push(g.legs===1?all.slice(0,ids.length-1):all);});
+  const n=Math.max(...fxBy.map(x=>x.length));
+  for(let k=0;k<n;k++){let rd=[];fxBy.forEach(x=>{if(x[k])rd=rd.concat(x[k])});fx.push(rd)}
+  return{groups};
+}
+function waGroups(L){
+  const order=sortTable(L.tb).map(r=>r.id);
+  if(!L.split)return{champ:order,conf:[],releg:[]};
+  const g=L.split.groups||{};
+  const pick=arr=>arr?order.filter(id=>arr.includes(id)):[];
+  return{champ:pick(g.champ),conf:pick(g.conf),releg:pick(g.releg)};
+}
 /* ---- Super League 1 (Grecia): 14 equipos, 26 jornadas de fase regular y después un split en TRES grupos
    (Play-off de Campeón 1-4, Play-off de Europa 5-8 y Play-out de Descenso 9-14), todos a doble vuelta dentro
    del grupo (6/6/10 jornadas). El Play-off de Europa arranca con la MITAD de los puntos de la fase regular
@@ -11724,6 +11768,7 @@ function splitIfDue(fx,tb,key,r){
   if(key==='GR1')return grSplitIfDue(fx,tb,r);
   if(key==='CZ1')return czSplitIfDue(fx,tb,r);
   if(key==='RS1'||key==='RS2')return rsSplitIfDue(fx,tb,key,r);
+  if(key==='WA1')return waSplitIfDue(fx,tb,r);
   const cfg=SPLITS[key];if(!cfg||r!==cfg.reg)return null;
   const st=sortTable(tb);if(st.length!==cfg.size)return null;
   const top=st.slice(0,cfg.top).map(x=>x.id),bot=st.slice(cfg.top).map(x=>x.id);
@@ -11915,7 +11960,7 @@ function playLeagueStage(){
   famInteract();
   const cups=advanceWorld(r);
   state.week++;if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
-  {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:uk==='CZ1'?CZ_REG:(uk==='RS1'||uk==='RS2')?rsRegOf({tb:state.table}):null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
+  {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:uk==='CZ1'?CZ_REG:(uk==='RS1'||uk==='RS2')?rsRegOf({tb:state.table}):uk==='WA1'?WA_REG:null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
   /* Rusia: parón invernal. Al pasar de la jornada 28 a la 29 (año cruzado, parón de invierno) ha pasado
      mucho más tiempo que una semana: todos los jugadores recuperan el 100% (se les quitan las molestias). */
   if(state.country==='RU'&&state.week===29){Object.keys(state.teams||{}).forEach(id=>{((state.teams[id]||{}).players||[]).forEach(p=>{p.inj=0})});news(`${FLAG.RU} Parón invernal en Rusia: los jugadores descansan y recuperan el 100%.`)}
@@ -14293,7 +14338,7 @@ function allLoans(){
   const push=(p,from,to)=>{if(seen.has(p.id))return;seen.add(p.id);list.push({p,from,to})};
   (state.loans||[]).forEach(l=>push(l.p,l.from,l.to));
   (state.loansOut||[]).forEach(l=>push(l.p,l.from||state.club,l.to));
-  me().players.forEach(p=>{if(p.loanIn)push(p,p.loanIn.from,state.club)});
+  const _me=me();if(_me&&_me.players)_me.players.forEach(p=>{if(p.loanIn)push(p,p.loanIn.from,state.club)});
   return list;
 }
 /* aplica las cesiones a una plantilla virtual: quita los cedidos desde su origen y añade los cedidos a su destino */
@@ -15044,10 +15089,10 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
-const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup'};
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'WA',name:'Gales',comps:['WA1','WAC','WALC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
+const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',WA:'Nathaniel MG Cup'};
 const SC_TEAMS={ES:4,TR:4,SA:4};
-const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1};
+const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1,WA:1};
 const SC_WEEKS={ES:[20,21],TR:[20,21],SA:[0,1],FJ:[1]};
 const userKey=()=>state.country+(state.div||1);
 const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C')||k==='OFCCL'||k==='OFCPL';
@@ -16489,7 +16534,7 @@ function advanceWorld(r){
       t.players.forEach(p=>{if(p.inj>0)p.inj--;if(p.sus>0)p.sus--});
     }
   }
-  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):k==='WA1'?WA_REG:null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){arWorldTally(r);arWorldEnsureCups(r);}
   for(const k in state.cups){
     const cup=state.cups[k];
@@ -16606,7 +16651,7 @@ function recordHonors(final){
   };
   gamePlayable().forEach(co=>{
     if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&d===1&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(co==='RS'&&(d===1||d===2)&&L.split){const w=rsGroups(L).champ[0];if(w)top={id:w}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
-    const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,'cup',co+'C');
+    const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,co==='WA'?'wac':'cup',co+'C');
     if(co==='EN'&&state.cups.ENT&&state.cups.ENT.champ)add(state.cups.ENT.champ,'eflt','ENT');
     if(co==='EN'&&state.cups.ENNC&&state.cups.ENNC.champ)add(state.cups.ENNC.champ,'nlc','ENNC');
     const scup=state.cups&&state.cups[co+'SC'];if(scup&&scup.champ)add(scup.champ,'sc',co+'SC');
@@ -16623,6 +16668,7 @@ function recordHonors(final){
   if(state.cups&&state.cups.PTLC&&state.cups.PTLC.champ)add(state.cups.PTLC.champ,'lc','PTLC');
   if(state.cups&&state.cups.ENLC&&state.cups.ENLC.champ)add(state.cups.ENLC.champ,'lc','ENLC');
   if(state.cups&&state.cups.NIRLC&&state.cups.NIRLC.champ)add(state.cups.NIRLC.champ,'lc','NIRLC');
+  if(state.cups&&state.cups.WALC&&state.cups.WALC.champ)add(state.cups.WALC.champ,'walc','WALC');
   if(state.cups&&state.cups.SCLC&&state.cups.SCLC.champ)add(state.cups.SCLC.champ,'lc','SCLC');
   if(state.cups&&state.cups.CHLIC&&state.cups.CHLIC.champ)add(state.cups.CHLIC.champ,'liechtenstein','CHLIC');
   if(state.cups&&state.cups.ARAK&&state.cups.ARAK.champ)add(state.cups.ARAK.champ,'apertura','ARAK');
@@ -16660,7 +16706,7 @@ function recordHonors(final){
 }
 function finishAll(){
   arEnsureCups(999);
-  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):null);if(sreg!=null&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,sreg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):k==='WA1'?WA_REG:null);if(sreg!=null&&!L.split)L.split=splitIfDue(L.fx,L.tb,k,sreg);for(let r=0;r<L.fx.length;r++)if(L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   if(state.arWorld){const fx=state.others.AR1.fx;for(let r=0;r<fx.length;r++)if(fx[r]&&fx[r][0]&&fx[r][0].hg!==undefined)arWorldTally(r);arWorldEnsureCups(999);}
   bulEnsureCups(999);czEnsureCups(999);
   for(const k in state.cups){
@@ -16968,6 +17014,16 @@ function initWorld(){
       if(lc.length>=2){state.cups.NIRLC=cupInit('NIRLC','Irish League Cup',lc);state.cups.NIRLC.et=true;}
       return;
     }
+    /* Gales: la Welsh Cup la juegan los 16 de la Cymru Premier + los clubes inferiores (a partido único con
+       prórroga y penaltis en todas las rondas). El campeón va a la previa de la Conference League. */
+    if(co==='WA'){
+      const ids=WA_CUP_TEAMS.filter(id=>CLUBBY[id]&&!isB(id));
+      if(CLUBBY[state.club]&&CLUBBY[state.club].co==='WA'&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
+      if(ids.length>=2){state.cups.WAC=cupInit('WAC','Welsh Cup',ids);state.cups.WAC.et=true;}
+      /* Nathaniel MG Cup (Copa de la Liga): a partido único con penaltis, semanas 3/7/11/15/19 */
+      if(WLC_IDS.length>=2){const wl=WLC_IDS.filter(id=>CLUBBY[id]&&!isB(id)).slice();if(CLUBBY[state.club]&&CLUBBY[state.club].co==='WA'&&!isB(state.club)&&!wl.includes(state.club))wl.push(state.club);state.cups.WALC=cupInit('WALC','Nathaniel MG Cup',wl,[3,7,11,15,19]);state.cups.WALC.et=true;}
+      return;
+    }
     /* Fiyi: la Fiji FA Cup la juegan los 10 equipos de la Premier en 2 grupos de 5 (semana 18) y semis/final
        (semana 19), a partido único con prórroga y penaltis. El campeón va a la Supercopa (Champion vs Champion). */
     if(co==='FJ'){
@@ -16982,7 +17038,8 @@ function initWorld(){
     if(CLUBBY[state.club]&&CLUBBY[state.club].co===co&&!isB(state.club)&&!(co==='CH'&&CLUB_NAT[state.club]==='LI')&&!ids.includes(state.club))ids.push(state.club);
     if(ids.length<2)return;   /* país sin equipos suficientes (clubes sueltos no jugables): sin copa nacional */
     state.cups[co+'C']=cupInit(co+'C',CUPNAME[co],ids,co==='AR'?AR_CUP_W:undefined);
-    if(co==='SA'&&state.cups.SAC)state.cups.SAC.et=true;   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
+    if(co==='SA'&&state.cups.SAC)state.cups.SAC.et=true;
+    if(co==='WA'&&state.cups.WAC)state.cups.WAC.et=true;   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
     if(co==='NIR'&&state.cups.NIRC)state.cups.NIRC.et=true;   /* Irish League Cup: prórroga + penaltis en caso de empate, en todas las rondas */
   });
   /* Supercopas: campeón y subcampeón de liga contra campeón y subcampeón de copa de la temporada anterior.
@@ -17326,6 +17383,8 @@ function qualifiers(){const s=new Set(euroSlots(state.qual,'ucl',UCL_QUAL_REPLAC
   const czCh=czGroups(leagueData('CZ1')).champ;if(czCh[0]&&CLUBBY[czCh[0]])s.add(czCh[0]);
   /* Serbia: el campeón del Grupo Campeonato va a la Champions */
   const rsChamp=rsGroups(leagueData('RS1')).champ[0];if(rsChamp&&CLUBBY[rsChamp])s.add(rsChamp);
+  /* Gales: el campeón del Grupo Campeonato va a la previa de la Champions */
+  const waCh=waGroups(leagueData('WA1')).champ[0];if(waCh&&CLUBBY[waCh])s.add(waCh);
   return[...s]}
 function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,'uel',UEL_QUAL_REPLACE));if(state.cups&&state.cups.PTC&&state.cups.PTC.champ)s.add(state.cups.PTC.champ);if(state.cups&&state.cups.NLC&&state.cups.NLC.champ)s.add(state.cups.NLC.champ);if(state.cups&&state.cups.BEC&&state.cups.BEC.champ)s.add(state.cups.BEC.champ);if(state.cups&&state.cups.ATC&&state.cups.ATC.champ)s.add(state.cups.ATC.champ);if(state.cups&&state.cups.NOC&&state.cups.NOC.champ)s.add(state.cups.NOC.champ);if(state.cups&&state.cups.IEC&&state.cups.IEC.champ)s.add(state.cups.IEC.champ);if(state.cups&&state.cups.SCC&&state.cups.SCC.champ)s.add(state.cups.SCC.champ);if(state.cups&&state.cups.BGC&&state.cups.BGC.champ)s.add(state.cups.BGC.champ);if(state.cups&&state.cups.ROC&&state.cups.ROC.champ)s.add(state.cups.ROC.champ);if(state.cups&&state.cups.TRC&&state.cups.TRC.champ)s.add(state.cups.TRC.champ);
    /* Ucrania: el campeón de Copa va a la previa de la Europa League; si ya está en Champions por la liga, la plaza pasa al siguiente mejor clasificado */
@@ -17358,6 +17417,9 @@ function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_RE
   if(grc&&CLUBBY[grc]&&!grG.champ.slice(0,4).includes(grc))s.add(grc);
   /* Serbia: el 3º del Grupo Campeonato va a la previa de la Conference League */
   const rsC=rsGroups(leagueData('RS1'));if(rsC.champ[2]&&CLUBBY[rsC.champ[2]])s.add(rsC.champ[2]);
+  /* Gales: 2º-4º del Grupo Campeonato + campeón de la Copa de Gales → previa de la Conference */
+  const waG=waGroups(leagueData('WA1'));[1,2,3].forEach(i=>{if(waG.champ[i]&&CLUBBY[waG.champ[i]])s.add(waG.champ[i])});
+  const wac=state.cups&&state.cups.WAC&&state.cups.WAC.champ;if(wac&&CLUBBY[wac]&&!waG.champ.slice(0,4).includes(wac))s.add(wac);
   return[...s]}
 /* ---- CONMEBOL: plazas argentinas desde la Tabla Anual. LIB = 1º-3º (fase de grupos 1º-2º, 3º a la
    clasificación previa); SUD = 4º-9º (fase de grupos). Coincide con las zonas mostradas en la Tabla Anual. ---- */
@@ -17639,6 +17701,8 @@ function compTrophyKey(key){
   if(key==='MXLGC')return'clausura';
   if(key==='MXCC')return'cdc';
   if(key==='MXLC')return'lcup';
+  if(key==='WAC')return'wac';
+  if(key==='WALC')return'walc';
   if(key==='CCLC')return'ccl';
   if(key==='RECS')return'recs';
   if(key==='LIB')return'lib';
@@ -17652,7 +17716,7 @@ function compTrophyKey(key){
 /* ranking de campeones de una competición: títulos reales (PALMARES) + los ganados en esta partida */
 function compPalmaresHTML(key){
   const tkey=compTrophyKey(key);
-  const co=(key==='UCL'||key==='UEL'||key==='ECL'||key==='SCE'||key==='IFC'||key==='LIB'||key==='SUD'||key==='MXLC'||key==='CCLC'||key==='OFCCL'||key==='OFCPL')?null:keyCo(key);
+  const co=(key==='UCL'||key==='UEL'||key==='ECL'||key==='SCE'||key==='IFC'||key==='LIB'||key==='SUD'||key==='MXLC'||key==='CCLC'||key==='OFCCL'||key==='OFCPL'||key==='WAC'||key==='WALC')?null:keyCo(key);
   const rows=[];
   Object.keys(CLUBBY).forEach(id=>{
     if(co&&CLUBBY[id].co!==co)return;
@@ -17736,6 +17800,13 @@ function viewComps(){
 function zoneColor(key,pos,total){
   const co=keyCo(key),d=co==='ES'?String(+keySuf(key)):String(key).slice(-1);
   if(d==='1'){
+    if(co==='WA'){   /* Cymru Premier: 1º campeón/previa UCL; 2º-4º previa Conference; 14º playoff de descenso; 15º-16º descienden */
+      if(pos===1)return'#AAE139';
+      if(pos<=4)return'#38D996';
+      if(pos<=13)return'#BCBCBC';
+      if(pos===14)return'#FCA6A1';
+      return'#ED3B46';
+    }
     if(co==='SM'){   /* Campionato Sammarinese: 1º → campeón/previa UCL; 2º-7º → cuartos del playoff; 8º-11º → ronda previa; 12º-16º neutral (sin descenso) */
       if(pos===1)return'#7cb342';
       if(pos<=7)return'#26a69a';
@@ -18763,7 +18834,7 @@ function askMode(n){
 function askDataMode(){
   openSheet(`<h3>Datos de los futbolistas</h3><p>Elige cómo se generan los jugadores de esta partida.</p>
   <button class="mode-card" data-act="mode-pick" data-m="fict">${ICO_DICE}<span><b>Jugadores ficticios</b><small>Nombres, GRL, potenciales y sueldos aleatorios: cambian cada vez que empiezas una partida nueva.</small></span></button>
-  <button class="mode-card" data-act="mode-pick-real">${ICO_DB}<span><b>Base de datos (jugadores reales)</b><small>Futbolistas reales de ${Object.keys(REAL_DB).filter(id=>(REAL_DB[id]||[]).length>=16).length} clubes, con GRL y potencial estimados. El resto se completa con jugadores generados.</small></span></button>
+  <button class="mode-card" data-act="mode-pick-real">${ICO_DB}<span><b>Base de datos (jugadores reales)</b><small>Futbolistas reales de ${realDbClubCount()} clubes, con GRL y potencial estimados. El resto se completa con jugadores generados.</small></span></button>
   <div class="row-btns"><button class="btn ghost" data-act="data-back">Volver</button></div>`);
 }
 /* ============ gestor de bases de datos de jugadores reales: pantalla de subir/elegir/borrar ============
@@ -19545,7 +19616,9 @@ const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa d
 Object.assign(TROPHY_CUP,{KR:'Korea Cup'});
 Object.assign(TROPHY_SC,{KR:'Korean Super Cup'});
 CUPNAME.KR='Korea Cup';
-const TROPHY_ORDER=['league','ofccl','ofcpl','apertura','clausura','cdc','cup','trofeo','sarg','sint','sc','lc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afcc2','afccl','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
+CUPNAME.WA='Welsh Cup';
+Object.assign(TROPHY_SC,{WA:'Supercopa de Gales'});Object.assign(TROPHY_CUP,{WA:'Welsh Cup'});
+const TROPHY_ORDER=['league','ofccl','ofcpl','apertura','clausura','cdc','cup','trofeo','sarg','sint','sc','lc','wac','walc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afcc2','afccl','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
 function trophyName(club,k,real){
   if(!real&&fictOn())return fictTrophy(club,k);
   const co=club.co;
@@ -19568,6 +19641,8 @@ function trophyName(club,k,real){
   if(k==='league'&&co==='AR')return'Liga Profesional Argentina';
   if(k==='league')return(COUNTRIES[co]&&COUNTRIES[co].divs[0])||'Liga';
   if(k==='cup')return TROPHY_CUP[co]||'Copa';
+  if(k==='wac')return'Welsh Cup';
+  if(k==='walc')return'Nathaniel MG Cup';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup'}[co]||'Copa de la Liga';
   if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
@@ -19594,7 +19669,7 @@ function trophyName(club,k,real){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={WA:{league:'https://cdn.resfu.com/img_data/competiciones/copa/39.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/638.png?size=60x&lossy=1',lc:'https://cdn.resfu.com/img_data/competiciones/copa/1502.png?size=60x&lossy=1',sc:NOFOTO_TROPHY},ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ofccl:'1703',ofcpl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
@@ -19624,7 +19699,7 @@ const MUSEUM_CONT_NAME={EU:'Europa',SA:'Sudamérica',NA:'Norteamérica',AS:'Asia
 /* algunas fotos de trofeo tienen mucho margen vacío alrededor y se ven pequeñas dentro de la
    tarjeta; aquí se les da un empujón extra de tamaño caso por caso */
 const MUSEUM_IMG_SCALE={'ES|d4':1.35,'CH|liechtenstein':1.35,'FR|d2':1.3,'BG|cup':1.3,'BE|d2':1.3};
-const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d5','d6','d7','cup','sc','lc','apertura','clausura','cdc','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','eflt','nlc','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs','afcce','afcc2','afccl','acc'];
+const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d5','d6','d7','cup','sc','lc','wac','walc','apertura','clausura','cdc','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','eflt','nlc','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs','afcce','afcc2','afccl','acc'];
 /* las competiciones que de verdad salen en cada país se sacan directamente de la pantalla de
    Competiciones del juego (GROUPS), quitando las fases previas (…Q). Así el museo nunca muestra
    nada que no se pueda ganar todavía en la partida. */
@@ -19635,6 +19710,9 @@ function museumKeysOf(co){
      La Saudi Pro League, la King's Cup y la Supercopa saudí ya se simulan en la partida (las tres
      usan el mismo motor genérico que el resto de países), así que se declaran aquí directamente. */
   if(co==='SA')return['league','cup','sc'];
+  /* Gales: la Welsh Cup y la Copa de la Liga llevan clave propia ('wac'/'walc') porque también las ganaron
+     históricamente clubes galeses que juegan en Inglaterra (Wrexham, Cardiff City, Swansea). */
+  if(co==='WA')return['league','wac','walc'];
   /* República de Corea: la K League 2 todavía no es una división jugable (solo alberga a los campeones
      históricos para el palmarés), así que su trofeo no se incluye en el Museo. */
   if(co==='KR')return['league','d2','cup','sc'];
@@ -19771,6 +19849,8 @@ function honorKindForCup(key){
   if(key==='MXLGC')return'clausura';
   if(key==='MXCC')return'cdc';
   if(key==='MXLC')return'lcup';
+  if(key==='WAC')return'wac';
+  if(key==='WALC')return'walc';
   if(key==='CCLC')return'ccl';
   if(key==='RECS')return'recs';
   if(key==='LIB')return'lib';
@@ -21131,7 +21211,7 @@ function individualAwards(){
   (state.honLog||[]).filter(e=>e.s===state.season).forEach(e=>(honors[e.id]=honors[e.id]||new Set()).add(e.k));
   const bonus=id=>{const h=honors[id];if(!h)return 0;let b=0;
     if(h.has('ucl'))b+=20;if(h.has('league'))b+=15;if(h.has('uel'))b+=10;
-    if(h.has('cup'))b+=8;if(h.has('sc')||h.has('lc'))b+=4;return b;
+    if(h.has('cup')||h.has('wac'))b+=8;if(h.has('sc')||h.has('lc')||h.has('walc'))b+=4;return b;
   };
   /* coeficiente de dificultad por liga (media de valoración del once tipo de su 1ª división):
      ligas de élite (Top 5) x2, intermedias x1.5, menores x1. Así 25 goles en una gran liga (50 pts) superan
@@ -25686,6 +25766,162 @@ REAL_LOANS.push(['Abdoul Sawadogo','ZELP','SMED',1,'Rotación',['Abdoul Sawadogo
   Object.assign(CITY,{'Auckland':{ll:[174.76,-36.85]},'Honiara':{ll:[159.95,-9.43]},'Nouméa':{ll:[166.46,-22.28]},'Māhina':{ll:[-149.46,-17.49]},'Port Vila':{ll:[168.32,-17.73]},'Lae':{ll:[146.99,-6.73]},'Avarua':{ll:[-159.78,-21.21]}});
 })();
 
+/* ===== Cymru Premier (Gales, WA1): 16 clubes reales de la liga galesa =====
+   [id, nombre, corto, ciudad, c1, c2, rep, escudo, estadio, formación, presupuesto (M€)] */
+const WA1_DATA=[
+ ['AIRB','Airbus UK','Airbus UK','Broughton','#1c3f94','#f4f4f4',28,9979,'The Airfield','4-4-2',0.45],
+ ['AMMF','Ammanford AFC','Ammanford','Ammanford','#1a1a1a','#f4f4f4',26,85702,'Recreation Ground','4-4-2',0.3],
+ ['BARR','Barry Town United','Barry Town','Barry','#0a3a8a','#f2d31b',34,30858,'Jenner Park Stadium','4-4-2',0.6],
+ ['BRFE','Briton Ferry Llansawel','Briton Ferry','Briton Ferry','#d4192b','#f4f4f4',26,20720,'Old Road','4-4-2',0.3],
+ ['CAER','Caernarfon Town','Caernarfon','Caernarfon','#f2d31b','#1a1a1a',32,607,'The Oval','4-2-3-1',0.6],
+ ['CAMB','Cambrian United','Cambrian','Clydach Vale','#0a8a4d','#f4f4f4',24,12986,'Mandaic Park','4-4-2',0.35],
+ ['CMET','Cardiff Metropolitan','Cardiff MU','Cardiff','#d4192b','#f4f4f4',32,20722,'Cyncoed Campus Stadium','4-5-1',0.45],
+ ['COLW','Colwyn Bay','Colwyn Bay','Colwyn Bay','#1c3f94','#f4f4f4',30,6502,'Llanelian Road','4-3-3',0.55],
+ ['CQN',"Connah's Quay Nomads","Connah's Quay","Connah's Quay",'#1a1a1a','#f4f4f4',36,4474,'Deeside Stadium','4-4-2',1],
+ ['FLNT','Flint Town United','Flint Town','Flint','#0a3a8a','#f2d31b',30,13007,'Cae-y-Castell','4-3-3',0.4],
+ ['HVFW','Haverfordwest County','Haverfordwest','Haverfordwest','#1c3f94','#f4f4f4',32,1301,'Bridge Meadow Stadium','3-5-2',0.5],
+ ['HWEL','Holywell Town','Holywell','Holywell','#1a1a1a','#f2d31b',26,17881,'Halkyn Road','4-4-2',0.25],
+ ['LLAN','Llandudno FC','Llandudno','Llandudno','#f4f4f4','#1a1a1a',28,13002,'Maesdu Park','4-3-3',0.35],
+ ['PYB','Penybont','Penybont','Bridgend','#1c3f94','#f2d31b',32,12987,'Bryntirion Park','4-3-3',0.7],
+ ['TNS','The New Saints','The New Saints','Oswestry','#0a8a4d','#f4f4f4',44,2491,'Park Hall','4-2-3-1',1.75],
+ ['TREF','Trefelin BGC','Trefelin','Cwmavon','#d4192b','#f4f4f4',24,94540,'Ynys Park','4-4-2',0.25],
+];
+const WA1_IDS=WA1_DATA.map(x=>x[0]);
+(function(){
+  const LOG={},STD={},FRM={},BUD={};
+  WA1_DATA.forEach(([id,name,short,city,c1,c2,rep,crest,stad,form,bud])=>{
+    let c=CLUBBY[id];if(!c){c=K(id,name,short,city,'WA',c1,c2,rep,1);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='WA';c.c1=c1;c.c2=c2;c.rep=rep;c.div=1;c.stadium=stad;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+    STD[id]=stad;FRM[id]=form;BUD[id]=bud;
+    if(typeof BASE_DIV!=='undefined')BASE_DIV[id]=1;
+  });
+  Object.assign(CLUB_LOGO,LOG);Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  Object.assign(STADIUM,STD);Object.assign(FORM_MAIN,FRM);Object.assign(BUDGET,BUD);
+  Object.assign(CITY,{'Broughton':{ll:[-2.98,53.17]},'Ammanford':{ll:[-3.99,51.79]},'Barry':{ll:[-3.27,51.40]},'Briton Ferry':{ll:[-3.82,51.63]},'Caernarfon':{ll:[-4.27,53.14]},'Clydach Vale':{ll:[-3.45,51.63]},'Cardiff':{ll:[-3.18,51.48]},'Colwyn Bay':{ll:[-3.73,53.30]},"Connah's Quay":{ll:[-3.05,53.22]},'Flint':{ll:[-3.13,53.25]},'Haverfordwest':{ll:[-4.97,51.80]},'Holywell':{ll:[-3.22,53.27]},'Llandudno':{ll:[-3.83,53.32]},'Bridgend':{ll:[-3.58,51.50]},'Oswestry':{ll:[-3.06,52.86]},'Cwmavon':{ll:[-3.75,51.62]}});
+})();
+/* ===== Welsh Cup (JD Welsh Cup, Gales): clubes de categorías inferiores (solo copa, div 3 oculta) ===== */
+const WA_CUP_CLUBS=[
+  K('ABER','Aberbargoed Buds','Aberbargoed Bu','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('ABE1','Abertillery Bluebirds','Abertillery Bl','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('ABE2','Abertillery Excelsiors','Abertillery Ex','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('ABE3','Aberystwyth Town','Aberystwyth To','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('AFAN','Afan Lido','Afan Lido','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('AFA1','Afan United','Afan United','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('BAGL','Baglan Dragons','Baglan Dragons','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('BALA','Bala Town','Bala Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('BANG','Bangor City 1876','Bangor City 18','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('BARM','Barmouth & Dyffryn Utd','Barmouth & Dyf','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('BLAE','Blaen-Y-Maes AFC','Blaen-Y-Maes A','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('BRIC','Brickfield Rangers','Brickfield Ran','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('BUCK','Buckley Town','Buckley Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CAER','Caerau Ely','Caerau Ely','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CAE1','Caerphilly Athletic','Caerphilly Ath','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CAE2','Caersws','Caersws','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CANT','Canton Liberal','Canton Liberal','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CARD','Cardiff Airport','Cardiff Airpor','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CAR1','Cardiff Corinthians','Cardiff Corint','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CAR2','Cardiff Draconians','Cardiff Dracon','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CARM','Carmarthen Town','Carmarthen Tow','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CEFN','Cefn Albion','Cefn Albion','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CHEP','Chepstow Town FC','Chepstow Town ','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('COED','Coedpoeth United','Coedpoeth Unit','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CONW','Conwy Borough FC','Conwy Borough ','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CPDY','CPD Y Felinheli','CPD Y Felinhel','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('CWMB','Cwmbran Town','Cwmbran Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('DENB','Denbigh Town','Denbigh Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('DOLG','Dolgellau Athletic','Dolgellau Athl','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('ELYR','Ely Rangers','Ely Rangers','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('EVAN','Evans & Williams','Evans & Willia','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('FCCW','FC Cwmaman','FC Cwmaman','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('GAER','Gaerwen','Gaerwen','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('GOYT','Goytre AFC','Goytre AFC','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('GOY1','Goytre United','Goytre United','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('GRES','Gresford Athletic','Gresford Athle','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('GUIL','Guilsfield FC','Guilsfield FC','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('HAWA','Hawarden Ranger','Hawarden Range','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('HOL1','Holyhead Hotspur','Holyhead Hotsp','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLAN','Llanberis','Llanberis','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA1','Llanelli Town AFC','Llanelli Town ','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA2','Llangefni Town FC','Llangefni Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA3','Llangennech AFC','Llangennech AF','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA4','Llannefydd','Llannefydd','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA5','Llanrwst United','Llanrwst Unite','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA6','Llantwit Fardre','Llantwit Fardr','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA7','Llantwit Major','Llantwit Major','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLA8','Llanuwchllyn','Llanuwchllyn','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLAY','Llay Welfare','Llay Welfare','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('LLYS','Llysfaen FC','Llysfaen FC','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('MELI','Meliden','Meliden','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('MENA','Menai Bridge Tigers','Menai Bridge T','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('MOCH','Mochdre Sports','Mochdre Sports','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('MOLD','Mold Alexandra','Mold Alexandra','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('MONM','Monmouth Town FC','Monmouth Town ','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('MUMB','Mumbles Rangers','Mumbles Ranger','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('MYNY','Mynydd Isa','Mynydd Isa','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('NAN1','Nantlle Vale FC','Nantlle Vale F','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('NEW1','Newport City','Newport City','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('NEW2','Newport Corinthians','Newport Corint','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('NEW3','Newport Saints','Newport Saints','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('NEWT','Newtown','Newtown','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PEN1','Penrhiwceiber Rangers','Penrhiwceiber ','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PEN2','Penrhyncoch FC','Penrhyncoch FC','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PENY','Penycae FC','Penycae FC','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PEN3','Penydarren BGC','Penydarren BGC','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PEN4','Penygraig United','Penygraig Unit','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PILC','PILCS','PILCS','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PON1','Pontardawe Town','Pontardawe Tow','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PON2','Pontarddulais Town','Pontarddulais ','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PON3','Pontypridd United','Pontypridd Uni','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('POR1','Porthcawl Town FC','Porthcawl Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('POR2','Porthmadog','Porthmadog','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PRES','Prestatyn Town','Prestatyn Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PURE','Pure Swansea FC','Pure Swansea F','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('PWLL','Pwllheli','Pwllheli','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('RADN','Radnor Valley','Radnor Valley','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('RHYD','Rhydyfelin Non Pol FC','Rhydyfelin Non','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('RHYL','Rhyl 1879','Rhyl 1879','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('RISC','Risca United','Risca United','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('ROCK','Rockspur','Rockspur','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('RUTH','Ruthin Town','Ruthin Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('SEVE','Seven Sisters','Seven Sisters','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('SOU1','South Gower','South Gower','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('STAS','St Asaph City','St Asaph City','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('TONG','Tongwynlais FC','Tongwynlais FC','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('TREA','Trearddur Bay','Trearddur Bay','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('TRED','Tredegar Town','Tredegar Town','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('TREO','Treowen Stars','Treowen Stars','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('TRET','Trethomas Bluebirds','Trethomas Blue','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('YGLA','Y Glannau','Y Glannau','Gales','WA','#1c3f94','#f4f4f4',24,3),
+  K('YNYS','Ynyshir Albions','Ynyshir Albion','Gales','WA','#1c3f94','#f4f4f4',24,3),
+];
+(function(){const LOG={},CREST={'ABER':'12993','ABE1':'122476','ABE2':'168436','ABE3':'9981','AFAN':'5826','AFA1':'160220','BAGL':'152615','BALA':'4473','BANG':'122483','BARM':'94535','BLAE':'173365','BRIC':'85690','BUCK':'13004','CAER':'12984','CAE1':'103546','CAE2':'12998','CANT':'152612','CARD':'143418','CAR1':'64695','CAR2':'103541','CARM':'9980','CEFN':'77145','CHEP':'85699','COED':'85705','CONW':'13000','CPDY':'143423','CWMB':'62325','DENB':'19814','DOLG':'114907','ELYR':'64703','EVAN':'160218','FCCW':'122539','GAER':'103551','GOYT':'12985','GOY1':'12979','GRES':'52532','GUIL':'13005','HAWA':'76973','HOL1':'13013','LLAN':'94539','LLA1':'77091','LLA2':'62324','LLA3':'173368','LLA4':'122538','LLA5':'86292','LLA6':'76995','LLA7':'77138','LLA8':'94538','LLAY':'85691','LLYS':'173369','MELI':'103548','MENA':'160221','MOCH':'105829','MOLD':'19816','MONM':'12995','MUMB':'160217','MYNY':'64684','NAN1':'77090','NEW1':'152616','NEW2':'164779','NEW3':'173366','NEWT':'9976','PEN1':'64699','PEN2':'13001','PENY':'12999','PEN3':'103543','PEN4':'168439','PILC':'ESC173371','PON1':'12992','PON2':'173370','PON3':'64712','POR1':'143416','POR2':'13006','PRES':'9982','PURE':'114903','PWLL':'85692','RADN':'114902','RHYD':'173367','RHYL':'143424','RISC':'65880','ROCK':'152617','RUTH':'64676','SEVE':'168435','SOU1':'160219','STAS':'52557','TONG':'173373','TREA':'152609','TRED':'122478','TREO':'76999','TRET':'94532','YGLA':'152608','YNYS':'122480'};
+  WA_CUP_CLUBS.forEach(c=>{c.co='WA';c.div=3;if(!CLUBS.includes(c))CLUBS.push(c);CLUBBY[c.id]=c;
+    const cr=CREST[c.id];if(cr)LOG[c.id]=(cr.indexOf('ESC')===0?'https://cdn.resfu.com/img_data/escudos/medium/'+cr.slice(3)+'.jpg?size=60x&lossy=1':'https://cdn.resfu.com/img_data/equipos/'+cr+'.png?size=120x&lossy=1');
+    if(typeof BASE_DIV!=='undefined')BASE_DIV[c.id]=3;});
+  Object.assign(CLUB_LOGO,LOG);Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});})();
+/* participantes de la Welsh Cup: los 16 de la Cymru Premier + los inferiores */
+const WA_CUP_TEAMS=WA1_IDS.concat(WA_CUP_CLUBS.map(c=>c.id));
+/* ===== Nathaniel MG Cup (Copa de la Liga de Gales): 16 de la Premier + U21 de Cardiff/Swansea + inferiores ===== */
+const WLC_EXTRA=[
+  K('CARU','Cardiff City U21','Cardiff U21','Cardiff','WA','#0a3a8a','#f4f4f4',30,3),
+  K('SWAU','Swansea U21','Swansea U21','Swansea','WA','#f4f4f4','#1a1a1a',30,3),
+  K('CWBC','Cwmbran Celtic','Cwmbran Celtic','Cwmbran','WA','#0a8a4d','#f4f4f4',24,3),
+  K('FLTM','Flint Mountain','Flint Mountain','Flint','WA','#d4192b','#f4f4f4',24,3),
+];
+(function(){const CREST={CARU:636,SWAU:2453,CWBC:12988,FLTM:152605},LOG={};
+  WLC_EXTRA.forEach(c=>{if(!CLUBS.includes(c))CLUBS.push(c);CLUBBY[c.id]=c;c.co='WA';c.div=3;
+    LOG[c.id]='https://cdn.resfu.com/img_data/equipos/'+CREST[c.id]+'.png?size=120x&lossy=1';
+    if(typeof BASE_DIV!=='undefined')BASE_DIV[c.id]=3;});
+  Object.assign(CLUB_LOGO,LOG);Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id];});})();
+const WLC_NAMES=['Aberystwyth Town','Afan Lido','Airbus UK','Ammanford AFC','Baglan Dragons','Bala Town','Barry Town','Brickfield Rangers','Briton Ferry','Buckley Town','Caerau Ely','Caernarfon Town','Caersws','Cambrian United','Cardiff City U21','Cardiff Draconians','Cardiff MU','Carmarthen Town','Colwyn Bay',"Connah's Quay",'Cwmbran Celtic','Denbigh Town','Flint Mountain','Flint Town United','Gresford Athletic','Guilsfield FC','Haverfordwest County','Holyhead Hotspur','Holywell Town','Llandudno FC','Llanelli Town AFC','Llantwit Major','Mold Alexandra','Newport City','Newtown','Penrhyncoch FC','Penybont','Pontypridd United','Rhyl 1879','Ruthin Town','Swansea U21','The New Saints','Trefelin BGC','Treowen Stars','Trethomas Bluebirds','Ynyshir Albions'];
+const WLC_IDS=(function(){const nm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+  const find=x=>{const k=nm(x);return CLUBS.find(c=>c.co==='WA'&&(nm(c.name)===k||nm(c.short)===k||nm(c.name).startsWith(k)||nm(c.short).startsWith(k)))};
+  return WLC_NAMES.map(find).filter(Boolean).map(c=>c.id);})();
+
+/* palmarés real de la Cymru Premier (The New Saints dominan la época moderna) */
+Object.assign(PALMARES,{TNS:{league:18,wac:9,walc:9},BARR:{league:7,wac:6,walc:4},CQN:{league:2,walc:3},CAER:{},CMET:{},PYB:{},HVFW:{},COLW:{},FLNT:{},LLAN:{},HWEL:{},BRFE:{},AMMF:{},CAMB:{},AIRB:{},TREF:{},WRE:{wac:23},CAR:{wac:22},SWA:{wac:10,walc:2},BANG:{league:3},RHYL:{league:2,walc:2},LNLN:{league:1},CWMB:{league:1}});
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
