@@ -1967,7 +1967,7 @@ function isLeagueEnabled(co,d){
   return false;
 }
 function gameClub(c){return !c||isLeagueEnabled(c.co,c.div||1)}
-const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}',NL:'\u{1F1F3}\u{1F1F1}',AT:'\u{1F1E6}\u{1F1F9}',UA:'\u{1F1FA}\u{1F1E6}',NO:'\u{1F1F3}\u{1F1F4}',BE:'\u{1F1E7}\u{1F1EA}',SK:'\u{1F1F8}\u{1F1F0}',GR:'\u{1F1EC}\u{1F1F7}',AM:'\u{1F1E6}\u{1F1F2}',BA:'\u{1F1E7}\u{1F1E6}',XK:'\u{1F1FD}\u{1F1F0}',EE:'\u{1F1EA}\u{1F1EA}',MK:'\u{1F1F2}\u{1F1F0}',MT:'\u{1F1F2}\u{1F1F9}',HU:'\u{1F1ED}\u{1F1FA}',AD:'\u{1F1E6}\u{1F1E9}',KZ:'\u{1F1F0}\u{1F1FF}',AL:'\u{1F1E6}\u{1F1F1}',FI:'\u{1F1EB}\u{1F1EE}',NIR:'\u{1F1EC}\u{1F1E7}',GI:'\u{1F1EC}\u{1F1EE}',BY:'\u{1F1E7}\u{1F1FE}',LV:'\u{1F1F1}\u{1F1FB}',IE:'\u{1F1EE}\u{1F1EA}',ME:'\u{1F1F2}\u{1F1EA}',WAL:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',SM:'\u{1F1F8}\u{1F1F2}',RO:'\u{1F1F7}\u{1F1F4}',IS:'\u{1F1EE}\u{1F1F8}',DK:'\u{1F1E9}\u{1F1F0}',PL:'\u{1F1F5}\u{1F1F1}',SE:'\u{1F1F8}\u{1F1EA}',SI:'\u{1F1F8}\u{1F1EE}',HR:'\u{1F1ED}\u{1F1F7}',GW:'\u{1F1EC}\u{1F1FC}',US:'\u{1F1FA}\u{1F1F8}',SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',CA:'\u{1F1E8}\u{1F1E6}',HT:'\u{1F1ED}\u{1F1F9}',CV:'\u{1F1E8}\u{1F1FB}',CM:'\u{1F1E8}\u{1F1F2}',GH:'\u{1F1EC}\u{1F1ED}',SA:'\u{1F1F8}\u{1F1E6}',KR:'\u{1F1F0}\u{1F1F7}','RS':'\u{1F1F7}\u{1F1F8}',PE:'\u{1F1F5}\u{1F1EA}',CO:'\u{1F1E8}\u{1F1F4}',VE:'\u{1F1FB}\u{1F1EA}',PY:'\u{1F1F5}\u{1F1FE}',GT:'\u{1F1EC}\u{1F1F9}',CR:'\u{1F1E8}\u{1F1F7}',PA:'\u{1F1F5}\u{1F1E6}',CU:'\u{1F1E8}\u{1F1FA}',DO:'\u{1F1E9}\u{1F1F4}',IR:'\u{1F1EE}\u{1F1F7}',IQ:'\u{1F1EE}\u{1F1F6}',PK:'\u{1F1F5}\u{1F1F0}'};
+const FLAG={ES:'\u{1F1EA}\u{1F1F8}',EN:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}',IT:'\u{1F1EE}\u{1F1F9}',DE:'\u{1F1E9}\u{1F1EA}',FR:'\u{1F1EB}\u{1F1F7}',PT:'\u{1F1F5}\u{1F1F9}',LT:'\u{1F1F1}\u{1F1F9}',MD:'\u{1F1F2}\u{1F1E9}',SR:'\u{1F1F8}\u{1F1F7}',TD:'\u{1F1F9}\u{1F1E9}',LU:'\u{1F1F1}\u{1F1FA}',FO:'\u{1F1EB}\u{1F1F4}',CY:'\u{1F1E8}\u{1F1FE}',EC:'\u{1F1EA}\u{1F1E8}',BG:'\u{1F1E7}\u{1F1EC}',CH:'\u{1F1E8}\u{1F1ED}',CL:'\u{1F1E8}\u{1F1F1}',CZ:'\u{1F1E8}\u{1F1FF}',DZ:'\u{1F1E9}\u{1F1FF}',TR:'\u{1F1F9}\u{1F1F7}',CG:'\u{1F1E8}\u{1F1EC}',AZ:'\u{1F1E6}\u{1F1FF}',NL:'\u{1F1F3}\u{1F1F1}',AT:'\u{1F1E6}\u{1F1F9}',UA:'\u{1F1FA}\u{1F1E6}',NO:'\u{1F1F3}\u{1F1F4}',BE:'\u{1F1E7}\u{1F1EA}',SK:'\u{1F1F8}\u{1F1F0}',GR:'\u{1F1EC}\u{1F1F7}',AM:'\u{1F1E6}\u{1F1F2}',BA:'\u{1F1E7}\u{1F1E6}',XK:'\u{1F1FD}\u{1F1F0}',EE:'\u{1F1EA}\u{1F1EA}',MK:'\u{1F1F2}\u{1F1F0}',MT:'\u{1F1F2}\u{1F1F9}',HU:'\u{1F1ED}\u{1F1FA}',AD:'\u{1F1E6}\u{1F1E9}',KZ:'\u{1F1F0}\u{1F1FF}',AL:'\u{1F1E6}\u{1F1F1}',FI:'\u{1F1EB}\u{1F1EE}',NIR:'\u{1F1EC}\u{1F1E7}',GI:'\u{1F1EC}\u{1F1EE}',BY:'\u{1F1E7}\u{1F1FE}',LV:'\u{1F1F1}\u{1F1FB}',IE:'\u{1F1EE}\u{1F1EA}',ME:'\u{1F1F2}\u{1F1EA}',WAL:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}',SM:'\u{1F1F8}\u{1F1F2}',RO:'\u{1F1F7}\u{1F1F4}',IS:'\u{1F1EE}\u{1F1F8}',DK:'\u{1F1E9}\u{1F1F0}',PL:'\u{1F1F5}\u{1F1F1}',SE:'\u{1F1F8}\u{1F1EA}',SI:'\u{1F1F8}\u{1F1EE}',HR:'\u{1F1ED}\u{1F1F7}',GW:'\u{1F1EC}\u{1F1FC}',US:'\u{1F1FA}\u{1F1F8}',SC:'\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}',CA:'\u{1F1E8}\u{1F1E6}',HT:'\u{1F1ED}\u{1F1F9}',CV:'\u{1F1E8}\u{1F1FB}',CM:'\u{1F1E8}\u{1F1F2}',GH:'\u{1F1EC}\u{1F1ED}',SA:'\u{1F1F8}\u{1F1E6}',KR:'\u{1F1F0}\u{1F1F7}','RS':'\u{1F1F7}\u{1F1F8}',PE:'\u{1F1F5}\u{1F1EA}',CO:'\u{1F1E8}\u{1F1F4}',VE:'\u{1F1FB}\u{1F1EA}',PY:'\u{1F1F5}\u{1F1FE}',GT:'\u{1F1EC}\u{1F1F9}',CR:'\u{1F1E8}\u{1F1F7}',PA:'\u{1F1F5}\u{1F1E6}',CU:'\u{1F1E8}\u{1F1FA}',DO:'\u{1F1E9}\u{1F1F4}',IR:'\u{1F1EE}\u{1F1F7}',IQ:'\u{1F1EE}\u{1F1F6}',PK:'\u{1F1F5}\u{1F1F0}',FJ:'\u{1F1EB}\u{1F1EF}'};
 const FLAG_IMG={NIR:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Flag_of_Northern_Ireland_%281953%E2%80%931972%29.svg/330px-Flag_of_Northern_Ireland_%281953%E2%80%931972%29.svg.png'};
 const flagHTML=nat=>FLAG_IMG[nat]?`<img class="flag-i" src="${FLAG_IMG[nat]}" alt="" style="height:.5em;width:auto;vertical-align:-.06em">`:(FLAG[nat]||'');
 /* clubes que juegan en la liga de un país pero pertenecen a otro (p. ej. FC Vaduz, de Liechtenstein, en Suiza):
@@ -10977,7 +10977,7 @@ function sortBench(t){
   t.bench.sort((a,b)=>{const pa=map.get(a),pb=map.get(b);return((pa?benchOrder(pa):9)-(pb?benchOrder(pb):9))||((pb?pb.ovr:0)-(pa?pa.ovr:0))});
 }
 /* banquillo de 12 en la Supercopa de Europa: solo mientras el partido pendiente del usuario sea la SCE */
-function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC')?12:BENCH_N}
+function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC')?12:BENCH_N}
 function autoBench(t){
   if(!t||!t.players)return[];
   const xi=new Set(t.lineup),pool=t.players.filter(p=>!xi.has(p.id)&&!unav(p)).sort((a,b)=>b.ovr-a.ovr),out=[],bn=benchN();
@@ -13129,6 +13129,7 @@ function newSeason(){
     }
     state.prevSC=prevSC;
     state.prevSCE=[state.cups&&state.cups.UCL&&state.cups.UCL.champ,state.cups&&state.cups.UEL&&state.cups.UEL.champ];
+    state.prevOFC=(state.cups&&state.cups.OFCPL&&state.cups.OFCPL.champ)||null;   /* representante OFC en la Intercontinental */
     /* Recopa Sudamericana y Supercopa Internacional de la temporada que arranca */
     state.prevRecs=[state.cups&&state.cups.LIB&&state.cups.LIB.champ,state.cups&&state.cups.SUD&&state.cups.SUD.champ];
     /* la Supercopa Internacional la disputan clubes argentinos: se toma la Tabla Anual argentina
@@ -15015,7 +15016,7 @@ function storeImport(n,s,meta){
   ui.importing=null;closeSheet();renderSlots();toast('Partida importada en el slot '+n);
 }
 /* ===================== mundo: otras ligas y torneos ===================== */
-const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup',RS:'Kup Srbije',NIR:'Irish Cup'};
+const CUPNAME={ES:'Copa del Rey',EN:'FA Cup',IT:'Coppa Italia',DE:'DFB-Pokal',FR:'Copa de Francia',PT:'Taça de Portugal',NL:'KNVB Beker',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',TR:'Türkiye Kupası',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup',RS:'Kup Srbije',NIR:'Irish Cup',FJ:'Fiji FA Cup'};
 /* China: los 80 equipos de la Chinese FA Cup (16 de la Super League + League One/Two + amateurs clasificados) */
 const CN_CUP_TEAMS=['BEIJ','BJPR','BJSS','BJTC','CCXD','CCYT','CLJG','CDRC','CQHA','CQTL',"DLKC",'DLKW','DLYB','DXGY','FSNS','GANR','GDGZ','GDMT','GDSH','GDWC','GXHC','GZDL','GZRG','GZFY','GZXF','GZZJ','HMCD','HNSY','HZLP','HENF','HBIS','HZCX','JXDN','JXLS','LZLY','LCLG','LNTR','MZHK','NJCT','NTHX','NTZY','NBPR','NXPL','QDFL','QDHN','QDRL','QDWC','QZQG','SAXU','SDSC','SDTS','SHPO','SHSG','SHSH','SHZT','SXCR','SXTC','SXXY','SZKS','SZ28','SZJR','SZPC','SZXJ','SJZG','SUDW','TATK','TJDH','TJJM','WZFC','WHLZ','WHTT','WHHJ','WXWG','XMCY','XMFL','YBLD','YLMN','YNCH','YNYK','ZJFC'];
 /* sorteo de la siguiente ronda de la Chinese FA Cup: de la Ronda previa a los Dieciseisavos (ri 0-2) la
@@ -15030,13 +15031,13 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup'};
 const SC_TEAMS={ES:4,TR:4,SA:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1};
-const SC_WEEKS={ES:[20,21],TR:[20,21],SA:[0,1]};
+const SC_WEEKS={ES:[20,21],TR:[20,21],SA:[0,1],FJ:[1]};
 const userKey=()=>state.country+(state.div||1);
-const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C');
+const isCup=k=>k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C')||k==='OFCCL'||k==='OFCPL';
 /* código de país y sufijo de una clave de competición. CUIDADO: 'NIR' tiene 3 letras, así que
    key.slice(0,2) daría 'NI' y rompería nombres/palmarés/zona. keyCo/keySuf lo resuelven. */
 const keyCo=k=>{k=String(k);return /^NIR/.test(k)?'NIR':k.slice(0,2)};
@@ -15077,6 +15078,8 @@ const compName=k=>{
   if(k==='MXLC')return'Leagues Cup';
   if(k==='CCLC')return'CONCACAF Champions Cup';
   if(k==='ACC')return'Arab Club Champions Cup';
+  if(k==='OFCCL')return'OFC Champions League';
+  if(k==='OFCPL')return'OFC Pro League';
   if(k==='AFCE')return'AFC Champions League Elite';
   if(k==='AFCCL')return'AFC Challenge League';
   if(k==='AFCC2')return'AFC Champions League Two';
@@ -15098,7 +15101,7 @@ const compTitle=k=>{
   return esc(compName(k));
 };
 const CONT_FLAGS={europe:'data:image/png;base64,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',africa:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAqCAIAAACMZMq1AAAAjUlEQVR42u3Yuw2DQBBF0VmWBBGQWq6BkAoowK1RGhRAjFuwLcFShIPVle7r4GjmaT8plkCniRAgQIAAAQIEVEub6IBS4IC+ZQPSe4NP4NHRO3DBAdcJB+QBXuLXHMb8s0LTCAeUnX4O/LyN1gVEpq/QF17i9QmfwOeAA5pELzH8Sem3igABAgQIEFAzN3KOE29CdVVsAAAAAElFTkSuQmCC',asia:'data:image/png;base64,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',namerica:'data:image/png;base64,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',samerica:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAqCAIAAACMZMq1AAAAiUlEQVR42u3PMQrCQBhE4ZklKBJIl8rGKufIIbyHF7HKpXIIG8kFBO2yJr+d5WIrea8eBj6P+qmQKumVdufT5VE1jnfIhb2tWHzY59t1OLbPNTs5yv+Wcrib+vtcJy9r8f9b0p8HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2BfgALQUZQZRUeDoAAAAASUVORK5CYII=',oceania:'data:image/png;base64,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'};
-const groupFlag=id=>id==='EU'?`<img class="flag-i" src="${CONT_FLAGS.europe}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='SA'?`<img class="flag-i" src="${CONT_FLAGS.samerica}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='NA'?`<img class="flag-i" src="${CONT_FLAGS.namerica}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='AS'?`<img class="flag-i" src="${CONT_FLAGS.asia}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='SAU'?FLAG['SA']:flagHTML(id);
+const groupFlag=id=>id==='EU'?`<img class="flag-i" src="${CONT_FLAGS.europe}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='SA'?`<img class="flag-i" src="${CONT_FLAGS.samerica}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='NA'?`<img class="flag-i" src="${CONT_FLAGS.namerica}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='AS'?`<img class="flag-i" src="${CONT_FLAGS.asia}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='OC'?`<img class="flag-i" src="${CONT_FLAGS.oceania}" alt="" style="height:1em;width:auto;vertical-align:-.15em">`:id==='SAU'?FLAG['SA']:flagHTML(id);
 const cname=id=>{const c=CLUBBY[id]||ensureClub(id);return c?c.name:id};
 /* ===================== nombres genéricos (modo "jugadores ficticios") =====================
    Para evitar nombres con licencia, cuando el modo es 'fict' se sustituyen el nombre de los clubes,
@@ -15813,6 +15816,45 @@ function cupInitGroupsFrom(key,name,groups,gweeks,koweeks){
   return{key,name,ids,bye:[],type:'groups',groups:grp,gweeks,gdone:false,rounds,champ:null,sc:{}};
 }
 /* Fase previa a doble partido (ida y vuelta por ronda). `weekPairs` = [[ida,vuelta], ...] por ronda. */
+/* ===================== Fiji FA Cup (Fiyi) =====================
+   Los 10 equipos de la Fiji Premier League: 2 grupos de 5 a partido único (5 jornadas con descanso, todas en
+   la semana 18) y después semifinales + final a partido único en la semana 19, con prórroga y penaltis. */
+function cupInitFijiCup(key,name,ids){
+  const r=rng(hashStr(key+'|'+state.seed+'|'+state.season));
+  const sh=shuffle(ids.slice(),r),gs=[sh.slice(0,5),sh.slice(5,10)];
+  const groups=gs.map((g,gi)=>({ids:g.slice(),tb:emptyTable(g),fx:buildRawFixtures(g.slice(),rng(hashStr(key+'|g'+gi+'|'+state.seed+'|'+state.season))).slice(0,5)}));
+  const rounds=[{n:'Semifinales',w:19,ties:null,done:false},{n:'Final',w:19,ties:null,done:false}];
+  return{key,name,ids:sh,bye:[],type:'groups',groups,gweeks:[18,18,18,18,18],gdone:false,rounds,champ:null,sc:{},etFromRound:0};
+}
+/* ===================== OFC Champions League (Oceanía) =====================
+   8 clubes de 8 países de Oceanía: 2 grupos de 4 a partido único (3 jornadas, todas en la semana 33) y después
+   semifinales + final a partido único en sede neutral (semana 34), con prórroga y penaltis. Banquillo de 12. */
+function cupInitOFC(key,name,ids){
+  const r=rng(hashStr(key+'|'+state.seed+'|'+state.season));
+  const sh=shuffle(ids.slice(),r),gs=[sh.slice(0,4),sh.slice(4,8)];
+  const groups=gs.map((g,gi)=>({ids:g.slice(),tb:emptyTable(g),fx:buildRawFixtures(g.slice(),rng(hashStr(key+'|g'+gi+'|'+state.seed+'|'+state.season))).slice(0,3)}));
+  const rounds=[{n:'Semifinales',w:34,ties:null,done:false},{n:'Final',w:34,ties:null,done:false}];
+  return{key,name,ids:sh,bye:[],type:'groups',groups,gweeks:[33,33,33],gdone:false,rounds,champ:null,sc:{},etFromRound:0,semisNeutral:true};
+}
+/* ===================== OFC Pro League (Oceanía) =====================
+   Liga continental de 8 clubes profesionales: fase regular a doble vuelta (14 jornadas, semanas 0-13) y después
+   semifinales + final a partido único (semana 18). Banquillo de 12. El campeón va a la Copa Intercontinental. */
+function cupInitOFCProLeague(key,name,ids){
+  const seeds=ids.slice().sort((a,b)=>virt(b).ovr-virt(a).ovr||cname(a).localeCompare(cname(b)));
+  const fx=buildRawFixtures(seeds.slice(),rng(hashStr(key+'|fx|'+state.seed+'|'+state.season)));
+  const rounds=[{n:'Semifinales',w:18,ties:null,done:false},{n:'Final',w:18,ties:null,done:false}];
+  return{key,name,ids:seeds,bye:[],rounds,champ:null,sc:{},etFromRound:0,semisNeutral:true,
+    league:{ids:seeds,tb:emptyTable(seeds),fx,weeks:fx.map((_,i)=>i+1),done:false}};
+}
+function finishOFCProLeague(cup){
+  cup.league.done=true;
+  const st=sortTable(cup.league.tb);
+  const mk=g=>({ids:g.slice(),tb:emptyTable(g),fx:buildRawFixtures(g.slice(),rng(hashStr('OFCPLsplit|'+g[0]+'|'+state.seed+'|'+state.season))).slice(0,3)});
+  const g0=st.slice(0,4).map(r=>r.id),g1=st.slice(4,8).map(r=>r.id);
+  cup.split={groups:[mk(g0),mk(g1)],weeks:[15,16,17],done:false,rep:null};
+  news(`Termina la fase regular de la ${cup.name}: arranca el split (Grupo Leaders 1º-4º y Grupo Challengers 5º-8º).`);
+}
+const OFC_CLUBS=['AUCK','CCST','TIGA','VENU','ABMG','LAEC','REWA','TUPA'];
 function cupInitKO2(key,name,ids,weekPairs){
   const seeds=ids.slice().sort((a,b)=>virt(b).ovr-virt(a).ovr||cname(a).localeCompare(cname(b)));
   const R=Math.max(1,Math.round(Math.log2(seeds.length))),rounds=[];
@@ -16031,7 +16073,19 @@ function finishGroupsEnnc(cup){
   cup.rounds[0].ties=ties;
   news(`Termina la fase de grupos de la ${cup.name}: comienzan las eliminatorias.`);
 }
+/* Fiji FA Cup: los 2 mejores de cada grupo (de 5) pasan a semifinales; 1º de un grupo vs 2º del otro. */
+function finishGroupsFiji(cup){
+  cup.gdone=true;
+  const firsts=[],seconds=[];
+  cup.groups.forEach(g=>{const st=sortTable(g.tb);if(st[0])firsts.push(st[0].id);if(st[1])seconds.push(st[1].id);});
+  const ties=[];
+  if(firsts[0]&&seconds[1])ties.push({h:firsts[0],a:seconds[1]});
+  if(firsts[1]&&seconds[0])ties.push({h:firsts[1],a:seconds[0]});
+  cup.rounds[0].ties=ties;
+  news(`Termina la fase de grupos de la ${cup.name}: los dos mejores de cada grupo pasan a las semifinales.`);
+}
 function finishGroups(cup){
+  if(cup.key==='FJC'||cup.key==='OFCCL')return finishGroupsFiji(cup);
   if(cup.key==='ENNC'||cup.key==='ACC')return finishGroupsEnnc(cup);
   if(cup.key==='AFCCL')return finishChallengeGroups(cup);
   if(cup.key==='AFCC2')return finishChampionsTwoGroups(cup);
@@ -16426,6 +16480,13 @@ function advanceWorld(r){
   if(state.arWorld){arWorldTally(r);arWorldEnsureCups(r);}
   for(const k in state.cups){
     const cup=state.cups[k];
+    /* OFC Pro League: split Leaders/Challengers (sem 15-17) + repechaje (fin sem 17) + final a 4 (sem 18). */
+    if(cup.key==='OFCPL'&&cup.split&&!cup.split.done){
+      const S=cup.split,rr=(typeof r==='number'?r:S.weeks[S.weeks.length-1]);
+      S.weeks.forEach((w,md)=>{if(w===rr||rr>=S.weeks[S.weeks.length-1])S.groups.forEach(g=>{g.fx[md]&&g.fx[md].forEach(t=>{if(t.hg===undefined)simGroupTie(t,cup,g.tb)})})});
+      if(rr>=S.weeks[S.weeks.length-1]&&!S.rep){const L=sortTable(S.groups[0].tb),C=sortTable(S.groups[1].tb);if(L[3]&&C[0]){const t={h:L[3].id,a:C[0].id};simTie(t,cup,true,0);S.rep=t;}}
+      if(S.rep&&S.rep.w){S.done=true;const L=sortTable(S.groups[0].tb);if(L[0]&&L[1]&&L[2])cup.rounds[0].ties=[{h:L[0].id,a:S.rep.w},{h:L[1].id,a:L[2].id}];}
+    }
     if(cup.type==='groups'&&!cup.gdone){
       cup.gweeks.forEach((w,md)=>{if(w===r)cup.groups.forEach(g=>{g.fx[md]&&g.fx[md].forEach(t=>{if(t.hg===undefined)simGroupTie(t,cup,g.tb)})})});
       if(groupsAllPlayed(cup))finishGroups(cup);
@@ -16433,7 +16494,7 @@ function advanceWorld(r){
     }
     if(cup.league&&!cup.league.done){
       cup.league.weeks.forEach((w,ri)=>{if(w===r)cup.league.fx[ri].forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup)})});
-      if(cup.league.weeks[cup.league.weeks.length-1]===r)(cup.key==='AFCE'?finishAcleLeague:finishUclLeague)(cup);
+      if(cup.league.weeks[cup.league.weeks.length-1]===r)(cup.key==='AFCE'?finishAcleLeague:cup.key==='OFCPL'?finishOFCProLeague:finishUclLeague)(cup);
     }
     cup.rounds.forEach((R,ri)=>{
       if(R.done)return;
@@ -16564,6 +16625,8 @@ function recordHonors(final){
   if(state.cups&&state.cups.LIB&&state.cups.LIB.champ)add(state.cups.LIB.champ,'lib','LIB');
   if(state.cups&&state.cups.SUD&&state.cups.SUD.champ)add(state.cups.SUD.champ,'sud','SUD');
   if(state.cups&&state.cups.ACC&&state.cups.ACC.champ)add(state.cups.ACC.champ,'acc','ACC');
+  if(state.cups&&state.cups.OFCCL&&state.cups.OFCCL.champ)add(state.cups.OFCCL.champ,'ofccl','OFCCL');
+  if(state.cups&&state.cups.OFCPL&&state.cups.OFCPL.champ)add(state.cups.OFCPL.champ,'ofcpl','OFCPL');
   if(state.cups&&state.cups.AFCE&&state.cups.AFCE.champ)add(state.cups.AFCE.champ,'afcce','AFCE');
   if(state.cups&&state.cups.AFCCL&&state.cups.AFCCL.champ)add(state.cups.AFCCL.champ,'afccl','AFCCL');
   if(state.cups&&state.cups.AFCC2&&state.cups.AFCC2.champ)add(state.cups.AFCC2.champ,'afcc2','AFCC2');
@@ -16589,6 +16652,13 @@ function finishAll(){
   bulEnsureCups(999);czEnsureCups(999);
   for(const k in state.cups){
     const cup=state.cups[k];
+    /* OFC Pro League: split Leaders/Challengers (sem 15-17) + repechaje (fin sem 17) + final a 4 (sem 18). */
+    if(cup.key==='OFCPL'&&cup.split&&!cup.split.done){
+      const S=cup.split,rr=(typeof r==='number'?r:S.weeks[S.weeks.length-1]);
+      S.weeks.forEach((w,md)=>{if(w===rr||rr>=S.weeks[S.weeks.length-1])S.groups.forEach(g=>{g.fx[md]&&g.fx[md].forEach(t=>{if(t.hg===undefined)simGroupTie(t,cup,g.tb)})})});
+      if(rr>=S.weeks[S.weeks.length-1]&&!S.rep){const L=sortTable(S.groups[0].tb),C=sortTable(S.groups[1].tb);if(L[3]&&C[0]){const t={h:L[3].id,a:C[0].id};simTie(t,cup,true,0);S.rep=t;}}
+      if(S.rep&&S.rep.w){S.done=true;const L=sortTable(S.groups[0].tb);if(L[0]&&L[1]&&L[2])cup.rounds[0].ties=[{h:L[0].id,a:S.rep.w},{h:L[1].id,a:L[2].id}];}
+    }
     if(cup.type==='groups'&&!cup.gdone){cup.groups.forEach(g=>g.fx.forEach(rd=>rd.forEach(t=>{if(t.hg===undefined)simGroupTie(t,cup,g.tb)})));finishGroups(cup);}
     if(cup.league&&!cup.league.done){
       cup.league.fx.forEach(rd=>rd.forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup)}));
@@ -16613,7 +16683,7 @@ const ECL_QUAL_IDS=['AJA','ATA','AWI','BBL','BHA','DNC','DRI','LUGA','GET','GOR'
 const ECL_QUAL_REPLACE=['AWI','RWI','QAR','MTA'];
 const FIXED_SCE_S1=['PSG','AVL'];
 /* supercopas nacionales de la 1ª temporada: participantes reales (España = Supercopa 2027, LaLiga 2025-26 FCB/RMA + Copa 2025-26 RSO/ATM; Italia = Supercoppa 2025-26 NAP/BOL; Inglaterra = Community Shield ARS/MCI; Alemania = Supercopa Franz Beckenbauer BVB/BAY) */
-const FIXED_SC_S1={IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG'],BG:['LEVS','CSOF'],TR:['GALA','TRBZ','FENR','SAMS'],RU:['ZEN','SPTM'],RO:['UCJ','UCRA'],GR:['AEKA','OFI'],SM:['TRF','LAFI'],SA:['NASR','ITTI','QADS','AHLI'],KR:['KRJEN','KRDAE']};
+const FIXED_SC_S1={IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG'],BG:['LEVS','CSOF'],TR:['GALA','TRBZ','FENR','SAMS'],RU:['ZEN','SPTM'],RO:['UCJ','UCRA'],GR:['AEKA','OFI'],SM:['TRF','LAFI'],SA:['NASR','ITTI','QADS','AHLI'],KR:['KRJEN','KRDAE'],FJ:['LABA','REWA']};
 /* Kypello Elladas: los 14 de Super League 1 + 13 equipos de categorías inferiores (afiliados reales fuera de la liga simulada) */
 const GRC_TEAMS=['AEL','KART','APK','ARI','ASTT','KTH','ATRO','ELSY','IRKL','KAL','KIF','LEVA','MARKO','NESTC','NIKV','PGE','PANI','PANS','PANTH','PASP','TRIK','VLOS','ZAK','AEKA','OLY','PAN','PAOK','OFI'];
 /* Copa Intercontinental de la FIFA: campeones de las 6 confederaciones. Los 5 de fuera de Europa se
@@ -16626,16 +16696,19 @@ function computeNextTiesIFC(cup,ri){
      entero y dejaba el cuadro a medias); simplemente no se genera ese cruce. */
   const ok=t=>t&&t.h&&t.a&&CLUBBY[t.h]&&CLUBBY[t.a];
   const win=(r,i)=>{const R=cup.rounds[r];return R&&R.ties&&R.ties[i]&&R.ties[i].w};
-  if(ri===1)return[{h:IFC_IDS[2],a:win(0,0)},{h:IFC_IDS[3],a:IFC_IDS[4]}].filter(ok);
+  const F=(cup&&cup._ifc)||IFC_IDS;
+  if(ri===1)return[{h:F[2],a:win(0,0)},{h:F[3],a:F[4]}].filter(ok);
   if(ri===2)return[{h:win(1,0),a:win(1,1)}].filter(ok);
   if(ri===3)return[{h:win(2,0),a:cup._uefa}].filter(ok);
   return[];
 }
-function cupInitIFC(uefa){
-  const ids=IFC_IDS.concat(uefa).filter(id=>CLUBBY[id]);
-  const cup={key:'IFC',name:'Copa Intercontinental de la FIFA',ids,bye:[],rounds:[],champ:null,sc:{},_uefa:uefa,_nextTies:computeNextTiesIFC};
+function cupInitIFC(uefa,ofc){
+  /* la plaza de la OFC la ocupa el CAMPEÓN de la OFC Pro League (o Auckland City si aún no hay campeón) */
+  const reps=[(ofc&&CLUBBY[ofc])?ofc:IFC_IDS[0],IFC_IDS[1],IFC_IDS[2],IFC_IDS[3],IFC_IDS[4]];
+  const ids=reps.concat(uefa).filter(id=>CLUBBY[id]);
+  const cup={key:'IFC',name:'Copa Intercontinental de la FIFA',ids,bye:[],rounds:[],champ:null,sc:{},_uefa:uefa,_ifc:reps,_nextTies:computeNextTiesIFC};
   cup.rounds=[
-    {n:'Primera ronda',w:IFC_WEEKS[0],ties:[{h:IFC_IDS[0],a:IFC_IDS[1]}],done:false},
+    {n:'Primera ronda',w:IFC_WEEKS[0],ties:[{h:reps[0],a:reps[1]}],done:false},
     {n:'Cuartos de final',w:IFC_WEEKS[1],ties:null,done:false},
     {n:'Semifinal',w:IFC_WEEKS[2],ties:null,done:false},
     {n:'Final',w:IFC_WEEKS[3],ties:null,done:false}
@@ -16882,6 +16955,14 @@ function initWorld(){
       if(lc.length>=2){state.cups.NIRLC=cupInit('NIRLC','Irish League Cup',lc);state.cups.NIRLC.et=true;}
       return;
     }
+    /* Fiyi: la Fiji FA Cup la juegan los 10 equipos de la Premier en 2 grupos de 5 (semana 18) y semis/final
+       (semana 19), a partido único con prórroga y penaltis. El campeón va a la Supercopa (Champion vs Champion). */
+    if(co==='FJ'){
+      const ids=CLUBS.filter(c=>c.co==='FJ'&&(c.div||1)===1&&!isB(c.id)).map(c=>c.id);
+      if(CLUBBY[state.club]&&CLUBBY[state.club].co==='FJ'&&!isB(state.club)&&!ids.includes(state.club))ids.push(state.club);
+      if(ids.length>=2)state.cups.FJC=cupInitFijiCup('FJC','Fiji FA Cup',ids);
+      return;
+    }
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
     let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')&&!(co==='SA'&&c.id==='ITT')).map(c=>c.id));
     if(co==='AR'&&state.season===1&&ARCOPA_S1.every(id=>CLUBBY[id]))ids=ARCOPA_S1.slice();
@@ -16908,6 +16989,10 @@ function initWorld(){
     }
     if(scIds.length>=2){
       state.cups[co+'SC']=cupInit(co+'SC',TROPHY_SC[co]||'Supercopa',scIds.slice(0,need),SC_WEEKS[co]||[0]);
+      /* Supercopa de Fiyi (Champion vs Champion): a doble partido (ida y vuelta, semana 1) con prórroga y
+         penaltis si el global queda igualado; en la 1ª temporada, Labasa vs Rewa. */
+      if(co==='FJ'&&state.cups.FJSC){const fc=state.cups.FJSC;fc.et=true;fc.homeAdv=true;
+        if(fc.rounds[0]){fc.rounds[0].w2=2;if(!state.prevSC)fc.rounds[0].ties=[{h:'LABA',a:'REWA'}];}}
       if((co==='ES'||co==='TR'||co==='SA')&&scIds.length===4&&!state.prevSC){
         const fx=FIXED_SC_S1[co],cup=state.cups[co+'SC'];
         cup.rounds[0].ties=[{h:fx[0],a:fx[1]},{h:fx[2],a:fx[3]}];
@@ -16922,6 +17007,13 @@ function initWorld(){
       if(co==='RO'&&!state.prevSC&&state.cups.ROSC&&state.cups.ROSC.rounds[0])state.cups.ROSC.rounds[0].ties=[{h:'UCJ',a:'UCRA'}];
     }
   });
+  /* OFC Champions League y OFC Pro League (Oceanía): 8 clubes continentales. Se crean aquí porque no son de un
+     país jugable concreto. */
+  if(typeof OFC_CLUBS!=='undefined'){
+    const ofc=OFC_CLUBS.filter(id=>CLUBBY[id]);
+    if(ofc.length>=2&&!state.cups.OFCCL)state.cups.OFCCL=cupInitOFC('OFCCL','OFC Champions League',ofc.slice());
+    if(ofc.length>=2&&!state.cups.OFCPL)state.cups.OFCPL=cupInitOFCProLeague('OFCPL','OFC Pro League',ofc.slice());
+  }
   /* Portugal: la liga (PT1) y la Supertaça (PTSC) ya las crea el bucle gamePlayable(); aquí se añade
      la Taça de Portugal con TODOS los clubes (incluidos los de LEGACY) y la Taça da Liga */
   {
@@ -17113,7 +17205,7 @@ const afcRep=id=>{if(!CLUBBY[id])return id;const p=afcPick(CLUBBY[id].co);return
   if(sce.length===2&&sce[0]!==sce[1])state.cups.SCE=cupInit('SCE','Supercopa de Europa',sce,[1]);
   /* Copa Intercontinental: campeón de la UCL (1ª temporada, PSG) entra directo a la final */
   const ifcUefa=(state.prevSCE&&state.prevSCE[0])||FIXED_SCE_S1[0];
-  if(ifcUefa&&CLUBBY[ifcUefa])state.cups.IFC=cupInitIFC(ifcUefa);
+  if(ifcUefa&&CLUBBY[ifcUefa])state.cups.IFC=cupInitIFC(ifcUefa,state.prevOFC);
 }
 function ensureWorld(){
   if(state.others&&state.cups){reconcileOthers();return}
@@ -17375,10 +17467,12 @@ const repDeltaHTML=(id,row)=>{const d=(state&&state.repDelta&&state.repDelta[id]
 function ccoRowsHTML(){
   const q=(ui.ccoQ||'').toLowerCase().trim();
   const match=g=>!q||g.name.toLowerCase().includes(q);
-  const eu=GROUPS.filter(g=>(g.id==='EU'||g.id==='SA'||g.id==='NA'||g.id==='AS')&&match(g));
-  const rest=GROUPS.filter(g=>g.id!=='EU'&&g.id!=='SA'&&g.id!=='NA'&&g.id!=='AS'&&match(g)).sort((a,b)=>divAvgOvr(b.id,1)-divAvgOvr(a.id,1));
+  const cont=GROUPS.filter(g=>(g.id==='EU'||g.id==='SA'||g.id==='NA'||g.id==='AS')&&match(g));
+  const oc=GROUPS.filter(g=>g.id==='OC'&&match(g));
+  const eu=cont.concat(oc);
+  const rest=GROUPS.filter(g=>g.id!=='EU'&&g.id!=='SA'&&g.id!=='NA'&&g.id!=='AS'&&g.id!=='OC'&&match(g)).sort((a,b)=>divAvgOvr(b.id,1)-divAvgOvr(a.id,1));
   const row=g=>{
-    const stat=(g.id==='EU'||g.id==='SA'||g.id==='NA'||g.id==='AS')?'':(()=>{const v=divAvgOvr(g.id,1);return`<span class="lstat"><small class="lrep">${starsFracHTML(v)} ${v}</small></span>`})();
+    const stat=(g.id==='EU'||g.id==='SA'||g.id==='NA'||g.id==='AS'||g.id==='OC')?'':(()=>{const v=divAvgOvr(g.id,1);return`<span class="lstat"><small class="lrep">${starsFracHTML(v)} ${v}</small></span>`})();
     return`<button class="lrow cco${g.id===ui.cco?' sel':''}" data-act="cco2" data-k="${g.id}"><span class="fl">${groupFlag(g.id)}</span><span class="lt"><b>${esc(g.name)}</b></span>${stat}</button>`;
   };
   const list=[...eu,...rest];
@@ -17518,6 +17612,8 @@ function compTrophyKey(key){
   if(key==='ECL')return'ecl';
   if(key==='SCE')return'sce';
   if(key==='IFC')return'ifc';
+  if(key==='OFCCL')return'ofccl';
+  if(key==='OFCPL')return'ofcpl';
   if(key==='CHLIC')return'liechtenstein';
   if(key==='LIBQ')return'libq';
   if(key==='SUDQ')return'sudq';
@@ -17543,7 +17639,7 @@ function compTrophyKey(key){
 /* ranking de campeones de una competición: títulos reales (PALMARES) + los ganados en esta partida */
 function compPalmaresHTML(key){
   const tkey=compTrophyKey(key);
-  const co=(key==='UCL'||key==='UEL'||key==='ECL'||key==='SCE'||key==='IFC'||key==='LIB'||key==='SUD'||key==='MXLC'||key==='CCLC')?null:keyCo(key);
+  const co=(key==='UCL'||key==='UEL'||key==='ECL'||key==='SCE'||key==='IFC'||key==='LIB'||key==='SUD'||key==='MXLC'||key==='CCLC'||key==='OFCCL'||key==='OFCPL')?null:keyCo(key);
   const rows=[];
   Object.keys(CLUBBY).forEach(id=>{
     if(co&&CLUBBY[id].co!==co)return;
@@ -18065,7 +18161,7 @@ function groupStageHTML(key){
      AFC Challenge League: Oeste (grupos A-C) clasifica a cuartos el 1º de cada grupo, más el mejor 2º de los
      tres (solo uno); Este (grupos D-E) clasifican 1º y 2º de cada grupo.
      Arab Club Champions Cup: 1º y 2º de cada grupo pasan a cuartos. */
-  const isLib=key==='LIB',isRuc=key==='RUC',isEnt=key==='ENT'||key==='ENNC',isAfcc2=key==='AFCC2',isAfccl=key==='AFCCL',isAcc=key==='ACC';
+  const isLib=key==='LIB',isRuc=key==='RUC',isEnt=key==='ENT'||key==='ENNC',isAfcc2=key==='AFCC2',isAfccl=key==='AFCCL',isAcc=key==='ACC',isOfccl=key==='OFCCL';
   let bestWestSecond=null;
   if(isAfccl){
     const west=cup.groups.slice(0,3).map(g=>sortTable(g.tb));
@@ -18077,12 +18173,14 @@ function groupStageHTML(key){
     :isLib?(p=>p<=2?'#49CB2B':p===3?'#29b6f6':'#e53935')
     :(isAfcc2||isAcc)?(p=>p<=2?'#49CB2B':'#e53935')
     :isAfccl?((p,gi,id)=>gi<3?(p===1?'#49CB2B':(p===2&&id===bestWestSecond?'#f0a020':'#e53935')):(p<=2?'#49CB2B':'#e53935'))
+    :isOfccl?(p=>p<=2?'#49CB2B':'#e53935')
     :(p=>p===1?'#49CB2B':p===2?'#29b6f6':'#e53935');
   const legend=isEnt?[['#4ACB29','Siguiente ronda'],['#BCBCBC','Eliminados']]
     :isRuc?[['#49CB2B','Ruta RPL (1.º-2.º)'],['#f0a020','Ruta Regiones (3.º)'],['#e53935','Eliminado']]
     :isLib?[['#49CB2B','Siguiente ronda'],['#29b6f6','Copa Sudamericana'],['#e53935','Eliminado']]
     :(isAfcc2||isAcc)?[['#49CB2B','Clasificado a cuartos/octavos (1º-2º)'],['#e53935','Eliminado']]
     :isAfccl?[['#49CB2B','Clasificado a cuartos'],['#f0a020','Mejor 2º del Oeste (solo uno clasifica)'],['#e53935','Eliminados']]
+    :isOfccl?[['#49CB2B','Clasificado a semifinales (1.\u00ba-2.\u00ba)'],['#e53935','Eliminado']]
     :[['#49CB2B','Siguiente ronda'],['#29b6f6','Fase Eliminatoria Copa Sudamericana'],['#e53935','Eliminado']];
   return cup.groups.map((g,gi)=>_groupTable('Grupo '+String.fromCharCode(65+gi),g.tb,(p,id)=>colorFn(p,gi,id),legend)).join('');
 }
@@ -18434,7 +18532,10 @@ function getWorld(){if(!WORLD){const v=makeView(-180,180,-56,84,1000,1);WORLD={v
 function getEU(){if(!EU){const v=makeView(-13,27.5,32,73.5,1000);EU={v,step:14.5,dots:dotLayers(v,14.5)}}return EU}
 function worldSVG(){
   const W=getWorld(),sw=(W.step*.58).toFixed(1);
-  return`<svg viewBox="0 0 ${W.v.W} ${W.v.H.toFixed(1)}" aria-hidden="true"><path class="d-land" stroke-width="${sw}" d="${W.dots.land}"/>${gamePlayable().map(id=>dotsPaths(W.dots[id],sw,'soft')).join('')}</svg>`;
+  /* mismo diseño que el selector de país (paso 2): cada país jugable como silueta rellena de verde
+     (.c2-fill) y clicable/hover, en vez del antiguo relleno de puntos (d-hot.soft) */
+  const groups=gamePlayable().map(id=>{const d=polyPath(COUNTRIES[id].polys.map(p=>projShape(p,W.v)));return`<g class="cty" data-act="country" data-c="${id}"><path class="c2-fill" d="${d}"/><path class="hit" d="${d}"/></g>`}).join('');
+  return`<svg viewBox="0 0 ${W.v.W} ${W.v.H.toFixed(1)}" aria-hidden="true"><path class="d-land" stroke-width="${sw}" d="${W.dots.land}"/>${groups}</svg>`;
 }
 /* ===================== pantalla de slots ===================== */
 function renderSlots(){
@@ -19426,12 +19527,12 @@ const ICO_SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const ICO_STAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z"/></svg>';
 const ICO_GLOBE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>';
 const TROPHY_ICO={league:ICO_TROPHY,cup:ICO_CUP,sc:ICO_SHIELD,lc:ICO_CUP,ucl:ICO_STAR,uel:ICO_CUP,ecl:ICO_CUP,cwc:ICO_SHIELD,sce:ICO_SHIELD,wc:ICO_GLOBE,ic:ICO_GLOBE,cf:ICO_CUP,d2:ICO_TROPHY,d3:ICO_TROPHY,d4:ICO_TROPHY,eflt:ICO_CUP,nlc:ICO_CUP,fat:ICO_CUP,scc:ICO_CUP,lp2:ICO_CUP,cisc:ICO_CUP};
-const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Türkiye Kupası',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup',RS:'Kup Srbije',NIR:'Irish Cup'};
-const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'TFF Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski',IE:'Supercopa de Irlanda',BG:'Superkupa na Balgariya',RU:'Superkupa Rossii',RO:'Supercupa României',UA:'Supercopa de Ucrania',GR:'Super Cup',SM:'Supercoppa San Marino',SA:'Saudi Super Cup',CN:'Chinese Super Cup',NIR:'NIFL Charity Shield'};
+const TROPHY_CUP={ES:'Copa del Rey',EN:'FA Cup',IT:'Copa de Italia',DE:'Copa de Alemania',NL:'KNVB Beker',TR:'Türkiye Kupası',PT:'Taça de Portugal',FR:'Copa de Francia',BE:'Beker van België',AT:'ÖFB-Cup',DK:'Oddset Pokalen',NO:'Norgesmesterskapet',PL:'Puchar Polski',IE:'Copa Irlanda FAI',SC:'Copa Escocia',CH:'Swiss Cup',AR:'Copa Argentina',BG:'Kupa na Balgariya',RU:'Copa de Rusia',MX:'Copa México',RO:'Cupa României',UA:'Copa de Ucrania',GR:'Kypello Elladas',CZ:'MOL Cup',SM:'Coppa Titano',SA:"King's Cup",CN:'Chinese FA Cup',RS:'Kup Srbije',NIR:'Irish Cup',FJ:'Fiji FA Cup'};
+const TROPHY_SC={ES:'Supercopa de España',EN:'Community Shield',IT:'Supercopa de Italia',DE:'Supercopa Franz Beckenbauer',NL:'Johan Cruyff Schaal',TR:'TFF Süper Kupa',PT:'Supertaça',FR:'Supercopa de Francia',BE:'Supercopa de Bélgica',NO:'Supercopa de Noruega',PL:'SuperPuchar Polski',IE:'Supercopa de Irlanda',BG:'Superkupa na Balgariya',RU:'Superkupa Rossii',RO:'Supercupa României',UA:'Supercopa de Ucrania',GR:'Super Cup',SM:'Supercoppa San Marino',SA:'Saudi Super Cup',CN:'Chinese Super Cup',NIR:'NIFL Charity Shield',FJ:'CVC'};
 Object.assign(TROPHY_CUP,{KR:'Korea Cup'});
 Object.assign(TROPHY_SC,{KR:'Korean Super Cup'});
 CUPNAME.KR='Korea Cup';
-const TROPHY_ORDER=['league','apertura','clausura','cdc','cup','trofeo','sarg','sint','sc','lc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afcc2','afccl','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
+const TROPHY_ORDER=['league','ofccl','ofcpl','apertura','clausura','cdc','cup','trofeo','sarg','sint','sc','lc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afcc2','afccl','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
 function trophyName(club,k,real){
   if(!real&&fictOn())return fictTrophy(club,k);
   const co=club.co;
@@ -19475,13 +19576,13 @@ function trophyName(club,k,real){
   if(k==='balon')return'Balón de Oro';
   if(k==='golden')return'Golden Boy';
   if(k==='yashin')return'Trofeo Yashin';
-  return{ucl:'Champions League',uel:'Europa League',ecl:'Conference League',cwc:'Recopa de Europa',sce:'Supercopa de Europa',wc:'Mundial de Clubes',ic:'Copa Intercontinental',ifc:'Copa Intercontinental de la FIFA',cf:'Copa de Ferias',cofed:'Copa Federación',scc:'Supercoppa Serie C',lp2:'Lega Pro 2',cisc:'Coppa Italia Serie C',ccl:'CONCACAF Champions Cup',lcup:'Leagues Cup',afcce:'AFC Champions League Elite'}[k]||k;
+  return{ucl:'Champions League',uel:'Europa League',ecl:'Conference League',cwc:'Recopa de Europa',sce:'Supercopa de Europa',wc:'Mundial de Clubes',ic:'Copa Intercontinental',ifc:'Copa Intercontinental de la FIFA',cf:'Copa de Ferias',cofed:'Copa Federación',scc:'Supercoppa Serie C',lp2:'Lega Pro 2',cisc:'Coppa Italia Serie C',ccl:'CONCACAF Champions Cup',lcup:'Leagues Cup',afcce:'AFC Champions League Elite',ofccl:'OFC Champions League',ofcpl:'OFC Pro League'}[k]||k;
 }
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711'}};
-const TROPHY_IMG_ANY={ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
+const TROPHY_IMG_CO={ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_ANY={ofccl:'1703',ofcpl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
      se muestra siempre el placeholder "sin foto" (el mismo que usan competiciones como la Supercopa Griega) */
@@ -19503,7 +19604,7 @@ function trophyIcon(club,k){
    Serie C italiana...) no están implementadas todavía, así que no se listan como desbloqueables.
    La Copa Intercontinental de la FIFA (ifc) se juega dentro del circuito europeo, así que cuenta
    como trofeo de Europa. */
-const MUSEUM_ANY_CONT={ucl:'EU',uel:'EU',ecl:'EU',sce:'EU',ifc:'EU',lib:'SA',sud:'SA',recs:'SA',ccl:'NA',lcup:'NA',acc:'AS',afcce:'AS',afccl:'AS',afcc2:'AS'};
+const MUSEUM_ANY_CONT={ofccl:'OC',ofcpl:'OC',ucl:'EU',uel:'EU',ecl:'EU',sce:'EU',ifc:'EU',lib:'SA',sud:'SA',recs:'SA',ccl:'NA',lcup:'NA',acc:'AS',afcce:'AS',afccl:'AS',afcc2:'AS'};
 const MUSEUM_CONT_NAME={EU:'Europa',SA:'Sudamérica',NA:'Norteamérica',AS:'Asia',OC:'Oceanía',AF:'África'};
 /* orden propio del museo: primero las divisiones de la liga (de la 1ª a la más baja) y luego el
    resto de competiciones nacionales (copa, supercopa, copa de liga, torneos argentinos...) */
@@ -25497,7 +25598,7 @@ REAL_LOANS.push(['Abdoul Sawadogo','ZELP','SMED',1,'Rotación',['Abdoul Sawadogo
 (function(){
   Object.assign(COUNTRIES,{FJ:{name:'Fiyi',league:'Fiji Premier League',divs:['Fiji Premier League'],pin:[178.6,-17.7],polys:[FJ_L,FJ_L2]}});
   if(!PLAYABLE.includes('FJ'))PLAYABLE.push('FJ');
-  if(!GROUPS.some(g=>g.id==='FJ'))GROUPS.push({id:'FJ',name:'Fiyi',comps:['FJ1']});
+  if(!GROUPS.some(g=>g.id==='FJ'))GROUPS.push({id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']});
   if(typeof OC_COUNTRIES!=='undefined')OC_COUNTRIES.add('FJ');
   {const i=LOCKED_OC.findIndex(x=>x.id==='FJ');if(i>=0)LOCKED_OC.splice(i,1);}
   Object.assign(BENCH_CD,{FJ1:7});
@@ -25524,8 +25625,46 @@ REAL_LOANS.push(['Abdoul Sawadogo','ZELP','SMED',1,'Rotación',['Abdoul Sawadogo
   Object.assign(FORM_MAIN,{BAFC:'4-3-3',LABA:'4-4-2',LAUT:'4-2-3-1',NADI:'4-3-3',NADR:'4-4-2',NASI:'4-3-3',NAVU:'4-3-3',REWA:'4-2-3-1',SUVA:'4-3-3',TAIN:'4-4-2'});
   Object.assign(BUDGET,{BAFC:0.35,LABA:0.3,LAUT:0.4,NADI:0.25,NADR:0.2,NASI:0.12,NAVU:0.15,REWA:0.3,SUVA:0.3,TAIN:0.1});
   Object.assign(CITY,{'Ba':{ll:[177.67,-17.53]},'Labasa':{ll:[179.38,-16.43]},'Lautoka':{ll:[177.44,-17.61]},'Nadi':{ll:[177.42,-17.80]},'Sigatoka':{ll:[177.50,-18.14]},'Nasinu':{ll:[178.53,-18.07]},'Navua':{ll:[178.18,-18.22]},'Nausori':{ll:[178.55,-18.03]},'Suva':{ll:[178.44,-18.14]}});
-  /* palmarés histórico real de la Fiji Premier League (últimas 20 temporadas, 2007-2026) */
-  Object.assign(PALMARES,{BAFC:{league:10},LAUT:{league:4},REWA:{league:3},SUVA:{league:2},NADI:{league:1},LABA:{},NADR:{},NASI:{},NAVU:{},TAIN:{}});
+  /* palmarés histórico real de Fiyi (liga, Fiji FA Cup y Supercopa 'CVC') */
+  Object.assign(PALMARES,{BAFC:{league:21,cup:8,sc:20},LAUT:{league:7,cup:3,sc:3},SUVA:{league:4,cup:4,sc:2},NADI:{league:4,cup:5},LABA:{league:3,cup:5,sc:5},REWA:{},NADR:{},NASI:{},NAVU:{},TAIN:{}});
+  /* palmarés histórico de la OFC Champions League (los campeones que no existen en el juego quedan como
+     fichas huérfanas, inofensivas, por si se añaden más adelante). La OFC Pro League empieza a 0 (en juego). */
+  Object.assign(PALMARES,{AUCK:{ofccl:12},WTKU:{ofccl:2},TWEL:{ofccl:1},HIEN:{ofccl:1},PIRA:{ofccl:1},HEKA:{ofccl:1}});
+})();
+
+
+/* ===== Clubes de Oceanía (OFC) para la OFC Champions League y la OFC Pro League =====
+   7 clubes nuevos (Rewa ya existe en Fiyi) + los países de referencia (bandera/nombre). Van con K2 (div 2,
+   fuera de CLUBS) para que NO formen liga local: solo juegan las competiciones continentales de Oceanía. */
+(function(){
+  Object.assign(COUNTRIES,{
+    NZ:{name:'Nueva Zelanda',league:'National League',divs:['National League'],pin:[174,-41],polys:[]},
+    SB:{name:'Islas Salomón',league:'Telekom S-League',divs:['Telekom S-League'],pin:[160,-9],polys:[]},
+    NC:{name:'Nueva Caledonia',league:'Super Ligue',divs:['Super Ligue'],pin:[165.5,-21.3],polys:[]},
+    PF:{name:'Polinesia Francesa',league:'Ligue 1',divs:['Ligue 1'],pin:[-149.5,-17.6],polys:[]},
+    VU:{name:'Vanuatu',league:'Port Vila Premier',divs:['Port Vila Premier'],pin:[168,-16],polys:[]},
+    PG:{name:'Papúa Nueva Guinea',league:'National Soccer League',divs:['National Soccer League'],pin:[145,-6],polys:[]},
+    CK:{name:'Islas Cook',league:'Cook Islands Round Cup',divs:['Cook Islands Round Cup'],pin:[-159.8,-21.2],polys:[]},
+  });
+  Object.assign(NATNAME,{NZ:'Nueva Zelanda',SB:'Islas Salomón',NC:'Nueva Caledonia',PF:'Polinesia Francesa',VU:'Vanuatu',PG:'Papúa Nueva Guinea',CK:'Islas Cook'});
+  Object.keys({NZ:1,SB:1,NC:1,PF:1,VU:1,PG:1,CK:1}).forEach(c=>{if(!FLAG[c]&&typeof isoFlag==='function')FLAG[c]=isoFlag(c)});
+  const SEL=[
+    ['AUCK','Auckland City','Auckland City','Auckland','NZ','#1c3f94','#f4f4f4',66,15308],
+    ['CCST','Central Coast','Central Coast','Honiara','SB','#f2d31b','#1a1a1a',50,138063],
+    ['TIGA','Tiga Sport','Tiga Sport','Nouméa','NC','#d4192b','#f4f4f4',52,62730],
+    ['VENU','Vénus','Vénus','Māhina','PF','#d4192b','#f2d31b',54,15649],
+    ['ABMG','ABM Galaxy','ABM Galaxy','Port Vila','VU','#1c3f94','#f4f4f4',50,127016],
+    ['LAEC','Lae City','Lae City','Lae','PG','#0a8a3d','#f2d31b',52,155907],
+    ['TUPA','Tupapa Maraerenga','Tupapa','Avarua','CK','#0a8a3d','#f4f4f4',44,61869],
+  ];
+  const LOG={};
+  SEL.forEach(([id,name,short,city,co,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,co,c1,c2,rep);CLUBBY[id]=c;}
+    c.div=2;
+    LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG);Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  Object.assign(CITY,{'Auckland':{ll:[174.76,-36.85]},'Honiara':{ll:[159.95,-9.43]},'Nouméa':{ll:[166.46,-22.28]},'Māhina':{ll:[-149.46,-17.49]},'Port Vila':{ll:[168.32,-17.73]},'Lae':{ll:[146.99,-6.73]},'Avarua':{ll:[-159.78,-21.21]}});
 })();
 
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
