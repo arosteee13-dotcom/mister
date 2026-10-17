@@ -1144,6 +1144,9 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
 #season-loader .sl-spin{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.22);border-top-color:#fff;animation:sl-rot .8s linear infinite}
 #season-loader .sl-txt{color:#f4f4f4;font:600 15px var(--display,inherit);letter-spacing:.02em}
 @keyframes sl-rot{to{transform:rotate(360deg)}}
+#action-loader{position:fixed;inset:0;z-index:9990;display:flex;align-items:center;justify-content:center;background:rgba(11,19,16,.35);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease .15s,visibility .18s ease .15s}
+#action-loader.show{opacity:1;visibility:visible}
+#action-loader .sl-spin{width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,.22);border-top-color:#fff;animation:sl-rot .8s linear infinite}
 </style>
 </head>
 <body>
@@ -1157,6 +1160,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
   <div class="boot-word"><b>Míster</b><small>MANAGER</small></div>
 </div>
 <div id="season-loader"><div class="sl-spin"></div><div class="sl-txt">Preparando temporada…</div></div>
+<div id="action-loader"><div class="sl-spin"></div></div>
 <div id="app">
   <div class="ambient"></div>
   <!-- Portada -->
@@ -21034,7 +21038,7 @@ home(){
       /* liga con número impar de equipos: esta jornada descansas */
       next=`<div class="card next"><div class="card-h"><h3>${esc(divName(state.country,state.div))}</h3><span>${esc(jlab)}</span></div>
       <p class="muted-s" style="margin-bottom:14px">Esta jornada descansas: tu liga tiene un número impar de equipos.</p>
-      <button class="btn primary" data-act="play">Jugar partido</button></div>`;
+      <button class="btn primary" data-act="play">Descanso</button></div>`;
     }else{
     const home=m.h===state.club,oid=home?m.a:m.h,oc=CLUBBY[oid],os=strength(state.teams[oid]);
     const pw=Math.round(s.ovr/(s.ovr+os.ovr)*100);
@@ -21173,7 +21177,7 @@ market(){
 /* qué viene después de un partido de copa: puede haber OTRO partido de copa la misma semana (p. ej. Supercopa + Champions) */
 function nextGameTxt(){
   const n=userCupTie(state.week);
-  if(n)return`Esta semana aún te toca otro partido de copa: ${n.cup.name}${n.league?' (fase de liga)':', '+n.cup.rounds[n.ri].n.toLowerCase()}. Es un partido distinto. Revisa tu once antes de jugarlo.`;
+  if(n)return`Esta semana aún te toca otro partido de copa: ${n.cup.name}${n.league?' (fase de liga)':n.group?' (fase de grupos)':', '+n.cup.rounds[n.ri].n.toLowerCase()}. Es un partido distinto. Revisa tu once antes de jugarlo.`;
   if(state.phase==='end'||state.week>=state.fixtures.length)return'La liga ya ha terminado.';
   return'Ahora toca el partido de liga de esta jornada. Revisa tu once antes de jugarlo.';
 }
@@ -21911,6 +21915,9 @@ const H={
   take(){takeControl()},
   tab(t){ui.tab=t.dataset.tab;ui.sel=null;ui.sqSort=null;renderGame();$('#gmain').scrollTop=0},
   play(){
+    const al=document.getElementById('action-loader');
+    if(al)al.classList.add('show');
+    setTimeout(()=>{
     try{
       const bad=lineupIssues(me());
       if(bad.length){
@@ -21934,7 +21941,10 @@ const H={
       /* nunca dejar el botón "muerto": si algo falla, se repinta y se avisa */
       try{renderGame()}catch(e){}
       try{toast('No se pudo jugar el partido. Vuelve a intentarlo. ('+errText(err).slice(0,120)+')')}catch(e){}
+    }finally{
+      if(al)al.classList.remove('show');
     }
+    },0);
   },
   'go-tactics'(){closeSheet();ui.tab='tactics';ui.sel=null;renderGame();$('#gmain').scrollTop=0},
   'fix-auto'(){fixLineup(me(),true);saveGame();closeSheet();renderGame();toast('Once y convocatoria corregidos')},
@@ -21972,7 +21982,7 @@ const H={
       genJobOffers();
       if(sl)sl.classList.remove('show');
       setTimeout(offersSheet,350);
-    },260);
+    },30);
   },
   'formation-menu'(){ui.styleOpen=false;openSheet(formSheetHTML())},
   'style-open'(){ui.styleOpen=false;ui.sy=null;openSheet(styleSheetHTML())},
