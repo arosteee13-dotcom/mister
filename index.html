@@ -2062,7 +2062,7 @@ Object.assign(COUNTRIES,{
   CN:{name:'China',league:'Chinese Super League',divs:['Chinese Super League'],pin:[104,35],polys:[CHINA,HAINAN]},
   IN:{name:'India',league:'Indian Super League',divs:['Indian Super League'],pin:[79,22],polys:[INDIA]}
 });
-function divName(co,d){if(fictOn())return fictLeague(co,d);const C=COUNTRIES[co];const groups=DIV_GROUPS[co]||[];for(const grp of groups){const s=grp.subs.find(x=>x[0]===d);if(s)return grp.label+' ('+s[1]+')'}if(d===2)return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',GR:'Super League 2'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
+function divName(co,d){if(fictOn())return fictLeague(co,d);const C=COUNTRIES[co];const groups=DIV_GROUPS[co]||[];for(const grp of groups){const s=grp.subs.find(x=>x[0]===d);if(s)return grp.label+' ('+s[1]+')'}if(d===2)return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',GR:'Super League 2'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
 function leagueClubs(co,d){d=d||1;if(!isLeagueEnabled(co,d))return [];const k=co+d;const frozen=state&&state.leagueTeams&&state.leagueTeams[k];
   let r=CLUBS.filter(c=>c.co===co&&c.div===d&&(!frozen||frozen.includes(c.id)));
   /* el club del usuario siempre pertenece a la división en la que compite (aunque ascienda o descienda de categoría) */
@@ -2147,7 +2147,6 @@ const LOCKED=[
   {id:'SK',name:'Eslovaquia',pin:[19.5,48.7],polys:[SLOVAKIA_L]},
   {id:'MD',name:'Moldavia',pin:[28.4,47.2],polys:[MOLDOVA_L]},
   {id:'LU',name:'Luxemburgo',pin:[6.1,49.8],polys:[LUXEMBOURG_L]},
-  {id:'AD',name:'Andorra',pin:[1.6,42.5]},
   {id:'MT',name:'Malta',pin:[14.4,35.9]}
 ];
 /* siluetas de países de Oceanía aún no jugables (Australia, AU, ya es jugable y usa COUNTRIES);
@@ -7620,6 +7619,8 @@ function objective(id){
   if(c.co==='FJ')return rank<=1?'Ganar la Liga':rank<=2?'Clasificar a la OFC Champions League':rank<=9?'Permanencia':'Evitar el descenso';
   if(c.co==='JP'&&c.div===2)return rank<=2?'Ascender a la J1':rank<=6?'Clasificar al play-off de ascenso':'Terminar en la zona media';
   if(c.co==='JP')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a la AFC Champions League Two':rank<=17?'Permanencia':'Evitar el descenso';
+  if(c.co==='AD'&&c.div===2)return rank<=1?'Ascenso directo a la Primera Divisió':rank<=2?'Clasificar al playoff de ascenso':'Permanencia';
+  if(c.co==='AD')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=8?'Permanencia':rank<=9?'Evitar el playoff de descenso':'Evitar el descenso';
   if(c.co==='WA')return rank<=1?'Ganar la Liga':rank<=4?'Clasificar para competición europea':rank<=13?'Permanencia':rank<=14?'Evitar el playoff de descenso':'Evitar el descenso';
   if(c.div===2)return rank<=2?'Ascenso directo':rank<=Math.ceil(n*.4)?'Clasificar a Playoffs de Ascenso':'Terminar en la zona media de la tabla';
   if(c.co==='EN'&&c.div===3)return rank<=2?'Ascenso directo':rank<=6?'Clasificar al playoff de ascenso':rank<=20?'Permanencia':'Evitar el descenso';
@@ -12295,7 +12296,13 @@ function planPlayoffs(){
     if(co==='BE'||co==='SE'||co==='KR'||co==='TR'||co==='RU'||co==='NL'||co==='RS')return;
     const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id)),n1=s1.length,n2=s2.length;
     let down=[],up=[],item=null;
-    if(co==='PL'){
+    if(co==='AD'){
+      /* Primera ↔ Segona: asciende directo el campeón de Segona; el 2º juega la promoción a doble partido
+         contra el penúltimo de Primera (sube el ganador); el último de Primera baja directo. Segona no
+         desciende (no hay Tercera Divisió). */
+      up=elig.slice(0,1);down=s1.slice(-1);
+      if(n1>=2&&elig[1])item={co,kind:'rel',seeds:[s1[n1-2],elig[1]]};
+    }else if(co==='PL'){
       /* Ekstraklasa ↔ Betclic 1 Liga: suben los 2 primeros de la Betclic 1 Liga + el ganador del playoff 3º-6º
          (partido único en casa del mejor clasificado); bajan los 3 últimos de la Ekstraklasa. La Betclic 1 Liga no
          desciende (no hay Betclic 2 Liga simulada). */
@@ -16798,7 +16805,7 @@ const ECL_QUAL_IDS=['AJA','ATA','AWI','BBL','BHA','DNC','DRI','LUGA','GET','GOR'
 const ECL_QUAL_REPLACE=['AWI','RWI','QAR','MTA'];
 const FIXED_SCE_S1=['PSG','AVL'];
 /* supercopas nacionales de la 1ª temporada: participantes reales (España = Supercopa 2027, LaLiga 2025-26 FCB/RMA + Copa 2025-26 RSO/ATM; Italia = Supercoppa 2025-26 NAP/BOL; Inglaterra = Community Shield ARS/MCI; Alemania = Supercopa Franz Beckenbauer BVB/BAY) */
-const FIXED_SC_S1={JP:['HIR','VISS'],IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG'],BG:['LEVS','CSOF'],TR:['GALA','TRBZ','FENR','SAMS'],RU:['ZEN','SPTM'],RO:['UCJ','UCRA'],GR:['AEKA','OFI'],SM:['TRF','LAFI'],SA:['NASR','ITTI','QADS','AHLI'],KR:['KRJEN','KRDAE'],FJ:['LABA','REWA']};
+const FIXED_SC_S1={AD:['INE','ESC'],JP:['HIR','VISS'],IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG'],BG:['LEVS','CSOF'],TR:['GALA','TRBZ','FENR','SAMS'],RU:['ZEN','SPTM'],RO:['UCJ','UCRA'],GR:['AEKA','OFI'],SM:['TRF','LAFI'],SA:['NASR','ITTI','QADS','AHLI'],KR:['KRJEN','KRDAE'],FJ:['LABA','REWA']};
 /* Kypello Elladas: los 14 de Super League 1 + 13 equipos de categorías inferiores (afiliados reales fuera de la liga simulada) */
 const GRC_TEAMS=['AEL','KART','APK','ARI','ASTT','KTH','ATRO','ELSY','IRKL','KAL','KIF','LEVA','MARKO','NESTC','NIKV','PGE','PANI','PANS','PANTH','PASP','TRIK','VLOS','ZAK','AEKA','OLY','PAN','PAOK','OFI'];
 /* Copa Intercontinental de la FIFA: campeones de las 6 confederaciones. Los 5 de fuera de Europa se
@@ -17106,13 +17113,14 @@ function initWorld(){
       return;
     }
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
-    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')&&!(co==='SA'&&c.id==='ITT')).map(c=>c.id));
+    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AD'?ADC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')&&!(co==='SA'&&c.id==='ITT')).map(c=>c.id)));
     if(co==='AR'&&state.season===1&&ARCOPA_S1.every(id=>CLUBBY[id]))ids=ARCOPA_S1.slice();
     if(CLUBBY[state.club]&&CLUBBY[state.club].co===co&&!isB(state.club)&&!(co==='CH'&&CLUB_NAT[state.club]==='LI')&&!ids.includes(state.club))ids.push(state.club);
     if(ids.length<2)return;   /* país sin equipos suficientes (clubes sueltos no jugables): sin copa nacional */
     state.cups[co+'C']=cupInit(co+'C',CUPNAME[co],ids,co==='AR'?AR_CUP_W:undefined);
     if(co==='SA'&&state.cups.SAC)state.cups.SAC.et=true;
-    if(co==='WA'&&state.cups.WAC)state.cups.WAC.et=true;   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
+    if(co==='WA'&&state.cups.WAC)state.cups.WAC.et=true;
+    if(co==='AD'&&state.cups.ADC)state.cups.ADC.et=true;   /* Copa Constitució: prórroga y penaltis en todas las rondas */   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
     if(co==='NIR'&&state.cups.NIRC)state.cups.NIRC.et=true;   /* Irish League Cup: prórroga + penaltis en caso de empate, en todas las rondas */
   });
   /* Supercopas: campeón y subcampeón de liga contra campeón y subcampeón de copa de la temporada anterior.
@@ -17144,6 +17152,8 @@ function initWorld(){
       /* Chinese Super Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad; sede neutral,
          ya garantizada por defecto al ser la final (última ronda) de la copa */
       if(co==='CN'&&state.cups.CNSC)state.cups.CNSC.et=true;
+      /* 1ª temporada en Andorra: Andorran Supercup Inter Escaldes vs Atlètic Escaldes (Inter local) */
+      if(co==='AD'&&!state.prevSC&&state.cups.ADSC&&state.cups.ADSC.rounds[0])state.cups.ADSC.rounds[0].ties=[{h:'INE',a:'ESC'}];
       if(co==='BG'&&!state.prevSC&&state.cups.BGSC&&state.cups.BGSC.rounds[0])state.cups.BGSC.rounds[0].ties=[{h:'LEVS',a:'CSOF'}];
       /* 1ª temporada en Rusia: Superkupa Rossii Zenit vs Spartak Moskva (Zenit local) */
       if(co==='RU'&&!state.prevSC&&state.cups.RUSC&&state.cups.RUSC.rounds[0])state.cups.RUSC.rounds[0].ties=[{h:'ZEN',a:'SPTM'}];
@@ -17388,7 +17398,7 @@ function reconcileOthers(){
   });
   /* EFL League One / League Two (Inglaterra): partidas guardadas antes de que existiera esa división
      todavía no tienen su liga ajena creada; se añade sobre la marcha si ya hay roster. */
-  ['EN3','EN4','EN5','DE3','TR2','NL2','PL3','PL4','PL5','PL6','PL7'].forEach(key=>{
+  ['EN3','EN4','EN5','DE3','TR2','NL2','PL3','PL4','PL5','PL6','PL7','AD2'].forEach(key=>{
     if(key===lk||state.others[key])return;
     const ids=leagueClubs(key.slice(0,2),+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
@@ -17497,6 +17507,10 @@ function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_RE
   /* Gales: 2º-4º del Grupo Campeonato + campeón de la Copa de Gales → previa de la Conference */
   const waG=waGroups(leagueData('WA1'));[1,2,3].forEach(i=>{if(waG.champ[i]&&CLUBBY[waG.champ[i]])s.add(waG.champ[i])});
   const wac=state.cups&&state.cups.WAC&&state.cups.WAC.champ;if(wac&&CLUBBY[wac]&&!waG.champ.slice(0,4).includes(wac))s.add(wac);
+  /* Andorra: 2º-3º + campeón de la Copa Constitució → previa de la Conference; si el campeón de copa ya
+     está en el top-3, la plaza pasa al 4º clasificado */
+  const adT=sortTable(leagueData('AD1').tb),adc=state.cups&&state.cups.ADC&&state.cups.ADC.champ;
+  if(adc&&CLUBBY[adc]){if(!adT.slice(0,3).some(r=>r.id===adc))s.add(adc);else if(adT[3]&&CLUBBY[adT[3].id])s.add(adT[3].id)}
   return[...s]}
 /* ---- CONMEBOL: plazas argentinas desde la Tabla Anual. LIB = 1º-3º (fase de grupos 1º-2º, 3º a la
    clasificación previa); SUD = 4º-9º (fase de grupos). Coincide con las zonas mostradas en la Tabla Anual. ---- */
@@ -17877,6 +17891,13 @@ function viewComps(){
 function zoneColor(key,pos,total){
   const co=keyCo(key),d=co==='ES'?String(+keySuf(key)):String(key).slice(-1);
   if(d==='1'){
+    if(co==='AD'){   /* Primera Divisió (10): 1º campeón/previa UCL; 2º-3º previa Conference; 9º playoff; 10º baja */
+      if(pos===1)return'#7cb342';
+      if(pos<=3)return'#38D996';
+      if(pos<=8)return'#BCBCBC';
+      if(pos===9)return'#FCA6A1';
+      return'#E53935';
+    }
     if(co==='WA'){   /* Cymru Premier: 1º campeón/previa UCL; 2º-4º previa Conference; 14º playoff de descenso; 15º-16º descienden */
       if(pos===1)return'#AAE139';
       if(pos<=4)return'#38D996';
@@ -18014,6 +18035,11 @@ function zoneColor(key,pos,total){
     return'#e53935';
   }
   if(d==='2'){
+    if(co==='AD'){   /* Segona Divisió (7): 1º asciende directo, 2º juega la promoción; sin descenso */
+      if(pos===1)return'#66bb6a';
+      if(pos===2)return'#26a69a';
+      return'#BCBCBC';
+    }
     if(co==='JP'){   /* J2 League: 1º campeón/ascenso directo, 2º ascenso directo, 3º-6º play-off de ascenso; sin descenso */
       if(pos===1)return'#AAE139';
       if(pos===2)return'#49CB2B';
@@ -18392,7 +18418,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
+  const allZones=keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -18708,8 +18734,11 @@ function getEU(){if(!EU){const v=makeView(-13,27.5,32,73.5,1000);EU={v,step:14.5
 function worldSVG(){
   const W=getWorld(),sw=(W.step*.58).toFixed(1);
   /* mismo diseño que el selector de país (paso 2): cada país jugable como silueta rellena de verde
-     (.c2-fill) y clicable/hover, en vez del antiguo relleno de puntos (d-hot.soft) */
-  const groups=gamePlayable().map(id=>{const d=polyPath(COUNTRIES[id].polys.map(p=>projShape(p,W.v)));return`<g class="cty" data-act="country" data-c="${id}"><path class="c2-fill" d="${d}"/><path class="hit" d="${d}"/></g>`}).join('');
+     (.c2-fill) y hover, en vez del antiguo relleno de puntos (d-hot.soft).
+     En el paso 1 el clic NUNCA abre el país: lleva a su continente (paso 2). Para abrir un país
+     concreto hay que estar ya en el paso 2 (allí sí se mantiene data-act="country"). */
+  const groups=gamePlayable().map(id=>{const d=polyPath(COUNTRIES[id].polys.map(p=>projShape(p,W.v))),reg=regionOf(id);
+    return`<g class="cty" data-act="hotspot" data-region="${reg}" data-c="${id}" aria-label="Explorar ${esc(REGIONS[reg].label)}"><path class="c2-fill" d="${d}"/><path class="hit" d="${d}"/></g>`}).join('');
   return`<svg viewBox="0 0 ${W.v.W} ${W.v.H.toFixed(1)}" aria-hidden="true"><path class="d-land" stroke-width="${sw}" d="${W.dots.land}"/>${groups}</svg>`;
 }
 /* ===================== pantalla de slots ===================== */
@@ -19541,7 +19570,11 @@ function openCountry(cid){
 }
 function renderCountry(cid){
   const C=COUNTRIES[cid],ins=C.inset,pts=C.polys.flat(),lons=pts.map(p=>p[0]),lats=pts.map(p=>p[1]);
-  const v=makeView(Math.min(...lons)-.45,Math.max(...lons)+.45,ins?ins.minLat:Math.min(...lats)-.35,Math.max(...lats)+.35,1000);
+  /* el margen se adapta al tamaño del país: los grandes mantienen el encuadre de siempre y los pequeños
+     (Andorra, San Marino...) se ven con más zoom en vez de quedar diminutos en medio del mapa */
+  const minLo=Math.min(...lons),maxLo=Math.max(...lons),minLa=Math.min(...lats),maxLa=Math.max(...lats);
+  const padX=Math.min(.45,Math.max(.015,(maxLo-minLo)*.3)),padY=Math.min(.35,Math.max(.015,(maxLa-minLa)*.3));
+  const v=makeView(minLo-padX,maxLo+padX,ins?ins.minLat:minLa-padY,maxLa+padY,1000);
   const allPolys=C.polys.concat(ins?ins.polys.map(pl=>pl.map(p=>insPt(ins,p))):[]);
   const shapes=allPolys.map(p=>projShape(p,v)),step=14;
   const bbox=[Math.min(...shapes.map(s=>s.x0)),Math.max(...shapes.map(s=>s.x1)),Math.min(...shapes.map(s=>s.y0)),Math.max(...shapes.map(s=>s.y1))];
@@ -19736,7 +19769,7 @@ function trophyName(club,k,real){
   if(k==='walc')return'Nathaniel MG Cup';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',JP:'Copa J. League'}[co]||'Copa de la Liga';
-  if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
+  if(k==='d2')return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
   if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',NL:'Tweede Divisie',NIR:'Intermediate League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
   if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B',NL:'Derde Divisie'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
@@ -26460,6 +26493,113 @@ const WLC_IDS=(function(){const nm=s=>String(s).toLowerCase().replace(/[^a-z0-9]
 Object.assign(PALMARES,{TNS:{league:18,wac:9,walc:9},BARR:{league:7,wac:6,walc:4},CQN:{league:2,walc:3},CAER:{},CMET:{},PYB:{},HVFW:{},COLW:{},FLNT:{},LLAN:{},HWEL:{},BRFE:{},AMMF:{},CAMB:{},AIRB:{},TREF:{},WRE:{wac:23},CAR:{wac:22},SWA:{wac:10,walc:2},BANG:{league:3},RHYL:{league:2,walc:2},LNLN:{league:1},CWMB:{league:1}});
 /* cesiones duplicadas (mismo jugador, origen y destino): se queda la entrada con ficha embebida */
 (()=>{const best=new Map();REAL_LOANS.forEach((l,i)=>{const k=l[0]+'|'+l[1]+'|'+l[2],j=best.get(k);if(j==null||(!REAL_LOANS[j][5]&&l[5]))best.set(k,i)});const keep=new Set(best.values());for(let i=REAL_LOANS.length-1;i>=0;i--)if(!keep.has(i))REAL_LOANS.splice(i,1)})();
+/* ===== Andorra: Primera Divisió (10 clubes, liga a doble vuelta = 18 jornadas) =====
+   1º → previa de la Champions; 2º-3º y campeón de la Copa Constitució → previa de la Conference League.
+   No hay Segona Divisió en la base de datos, así que de momento no hay descenso. */
+const ZONES_AD=[['#7cb342','Campeón (previa de Champions League)'],['#38D996','Previa de Conference League'],['#BCBCBC','Permanencia'],['#FCA6A1','Playoff de descenso'],['#E53935','Descenso a la Segona Divisió']];
+const ZONES_AD2=[['#66bb6a','Ascenso directo a la Primera Divisió'],['#26a69a','Playoff de ascenso (2º vs 9º de Primera)'],['#BCBCBC','Permanencia (no hay Tercera Divisió)']];
+{
+  const AD_L=P(`1.41,42.44 1.42,42.47 1.44,42.49 1.45,42.52 1.48,42.54 1.50,42.56 1.54,42.58 1.56,42.61 1.59,42.63 1.63,42.64 1.67,42.65 1.70,42.66 1.74,42.63 1.77,42.61 1.79,42.58 1.77,42.55 1.75,42.52 1.72,42.51 1.69,42.50 1.66,42.51 1.63,42.50 1.59,42.52 1.55,42.51 1.52,42.50 1.49,42.49 1.46,42.47 1.43,42.46`);
+  COUNTRIES.AD={name:'Andorra',league:'Primera Divisió',divs:['Primera Divisió','Segona Divisió'],pin:[1.6,42.5],polys:[AD_L]};
+  if(!PLAYABLE.includes('AD'))PLAYABLE.push('AD');
+  if(!GROUPS.some(g=>g.id==='AD'))GROUPS.push({id:'AD',name:'Andorra',comps:['AD1','AD2','ADC','ADSC']});
+  {const i=LOCKED.findIndex(x=>x.id==='AD');if(i>=0)LOCKED.splice(i,1);}
+  Object.assign(CUPNAME,{AD:'Copa Constitució'});
+  Object.assign(TROPHY_CUP,{AD:'Copa Constitució'});
+  Object.assign(TROPHY_SC,{AD:'Andorran Supercup'});
+  /* imágenes reales de los trofeos (BeSoccer): liga 417; copa/supercopa/2ª sin foto propia */
+  TROPHY_IMG_CO.AD={league:'417',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY};
+  EURO_SLOTS.AD={ucl:1,uel:0,ecl:2};
+  const SEL=[
+    ['INE','Inter Club d\'Escaldes','Inter Escaldes','Escaldes-Engordany','#1a237e','#f4f4f4',34,14014,1],
+    ['SACO','FC Santa Coloma','Santa Coloma','Santa Coloma','#c62828','#1a237e',33,4673,1],
+    ['ESC','Atlètic Escaldes','Atlètic Escaldes','Escaldes-Engordany','#1565c0','#f4f4f4',32,14018,1],
+    ['ORD','FC Ordino','Ordino','Ordino','#b71c1c','#111111',31,14016,1],
+    ['CRRO','FC Carroi','Carroi','Andorra la Vella','#2e7d32','#f4f4f4',30,66405,1],
+    ['RNG','FC Rànger\'s','Rànger\'s','Andorra la Vella','#0d47a1','#f4f4f4',30,14021,1],
+    ['PYE','CF Penya Encarnada','Penya Encarnada','Andorra la Vella','#c62828','#111111',29,14019,1],
+    ['EDA','Esperança d\'Andorra','Esperança','Andorra la Vella','#0277bd','#f4f4f4',28,153079,1],
+    ['SPES','Sporting Escaldes','Sporting Escaldes','Escaldes-Engordany','#558b2f','#f4f4f4',28,59536,1],
+    ['CDP','CE Casa de Portugal','Casa de Portugal','Andorra la Vella','#0b6b3a','#c62828',27,167902,1],
+    /* Segona Divisió (no hay liga en la BD): juegan la Copa Constitució */
+    /* Segona Divisió (7 clubes) */
+    ['UESC','UE Santa Coloma','UE Santa Coloma','Santa Coloma','#f2c200','#111111',28,6394,2],
+    ['ADSJ','UE Sant Julià','Sant Julià','Sant Julià de Lòria','#0b6b3a','#f4f4f4',26,4002,2],
+    ['CESC','City Escaldes FC','City Escaldes','Escaldes-Engordany','#29b6f6','#f4f4f4',24,164071,2],
+    ['MASS','FC La Massana','La Massana','La Massana','#2e7d32','#f4f4f4',23,14020,2],
+    ['AAME','Atlètic Amèrica','Atlètic Amèrica','Andorra la Vella','#1a237e','#f2c200',22,66404,2],
+    ['PIRU','Pirineus United','Pirineus','Encamp','#0d47a1','#f4f4f4',21,168397,2],
+    /* clubes históricos y CE Principat (sin liga: div 3, solo palmarés/copa) */
+    ['PRIN','CE Principat','Principat','Andorra la Vella','#1e5aa8','#f4f4f4',26,5837,3]
+  ];
+  /* clubes históricos de Andorra (sin liga: solo existen para el palmarés/museo) */
+  const SEL3=[
+    ['ADENC','FC Encamp','Encamp','Encamp','#1c3f94','#c62828',24,'https://cdn.resfu.com/img_data/equipos/5838.png?size=120x&lossy=1'],
+    ['ADLUS','FC Lusitans','Lusitans','Andorra la Vella','#c62828','#0b6b3a',24,'https://cdn.resfu.com/img_data/escudos/medium/14015.jpg?size=120x&lossy=1'],
+    ['ADCON','Constel·lació Esportiva','Constel·lació','Andorra la Vella','#c62828','#1a237e',22,'https://cdn.resfu.com/img_data/escudos/medium/59534.jpg?size=120x&lossy=1'],
+    ['ADEXT','UE Extremenya','Extremenya','La Massana','#1e5aa8','#f4f4f4',22,'https://cdn.resfu.com/img_data/equipos/14022.png?size=120x&lossy=1']
+  ];
+  const LOG={};
+  SEL.forEach(([id,name,short,city,c1,c2,rep,crest,div])=>{
+    let c=CLUBBY[id];if(!c){c=K(id,name,short,city,'AD',c1,c2,rep,div||1);CLUBBY[id]=c;}
+    c.div=div||1;try{BASE_DIV[id]=c.div}catch(e){};if(!CLUBS.includes(c))CLUBS.push(c);
+    LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  SEL3.forEach(([id,name,short,city,c1,c2,rep,logo])=>{
+    let c=CLUBBY[id];if(!c){c=K(id,name,short,city,'AD',c1,c2,rep,3);CLUBBY[id]=c;}
+    c.div=3;try{BASE_DIV[id]=3}catch(e){};if(!CLUBS.includes(c))CLUBS.push(c);
+    LOG[id]=logo;
+  });
+  /* Encamp B: filial histórico del Encamp (solo palmarés/museo) */
+  {let e=CLUBBY.ADENCB;if(!e){e=K('ADENCB','FC Encamp B','Encamp B','Encamp','AD','#1c3f94','#c62828',20,3);CLUBBY.ADENCB=e}
+   e.div=3;try{BASE_DIV.ADENCB=3}catch(e){};if(!CLUBS.includes(e))CLUBS.push(e);
+   LOG.ADENCB='https://cdn.resfu.com/img_data/equipos/5838.png?size=120x&lossy=1';}
+  /* FC Santa Coloma B: filial del Santa Coloma (juega la Segona) */
+  {let b=CLUBBY.SACOB;if(!b){b=K('SACOB','FC Santa Coloma B','Santa Coloma B','Santa Coloma','AD','#c62828','#1a237e',20,2);CLUBBY.SACOB=b}
+   b.bTeam=1;b.div=2;try{BASE_DIV.SACOB=2}catch(e){};if(!CLUBS.includes(b))CLUBS.push(b);
+   FAMILY.SACO='SACOB';FAMILY.SACOB='SACO';
+   LOG.SACOB=(CLUBBY.SACO&&CLUBBY.SACO.logo)||'https://cdn.resfu.com/img_data/equipos/4673.png?size=120x&lossy=1';}
+  Object.assign(CLUB_LOGO,LOG);Object.keys(LOG).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG[id]});
+  Object.assign(FORM_MAIN,{INE:'4-3-3',ESC:'4-3-3',SACO:'4-2-3-1',ORD:'4-4-2',CRRO:'4-4-2',RNG:'4-4-2',PYE:'4-4-2',EDA:'4-4-2',SPES:'4-4-2',CDP:'4-4-2',UESC:'4-2-3-1',ADSJ:'4-3-3',PRIN:'4-4-2',CESC:'4-4-2',MASS:'4-4-2',AAME:'4-4-2',PIRI:'4-4-2',SACOB:'4-3-3'});
+  Object.assign(BUDGET,{INE:1.2,SACO:1.0,ESC:0.7,ORD:0.4,RNG:0.35,PYE:0.35,CRRO:0.3,SPES:0.3,EDA:0.25,CDP:0.25,UESC:0.35,ADSJ:0.4,PRIN:0.2,CESC:0.18,MASS:0.25,AAME:0.2,PIRI:0.15,SACOB:0.1});
+  Object.assign(CITY,{'Escaldes-Engordany':{ll:[1.53,42.51]},'Santa Coloma':{ll:[1.49,42.50]},'Sant Julià de Lòria':{ll:[1.49,42.46]},'Ordino':{ll:[1.53,42.56]},'La Massana':{ll:[1.514,42.575]},'Encamp':{ll:[1.58,42.535]}});
+  /* los 14 participantes de la Copa Constitució (10 de Primera + 4 de Segona) */
+  window.ADC_TEAMS=['INE','SACO','ESC','ORD','CRRO','RNG','PYE','EDA','SPES','CDP','UESC','PRIN','CESC','MASS'];
+  /* palmarés histórico real (Primera Divisió, Copa Constitució y Andorran Supercup). Los clubes históricos
+     que no existen en el juego (Encamp, Sant Julià, Lusitans, Constellation, Extremenya) quedan como fichas
+     huérfanas, inofensivas, por si se añaden más adelante. */
+  Object.assign(PALMARES,{
+    SACO:{league:13,cup:10,sc:7},
+    INE:{league:3,cup:2,sc:2,d2:1},
+    ESC:{league:1,cup:2,sc:1},
+    RNG:{league:2,d2:1},
+    PRIN:{league:3,cup:4},
+    ORD:{d2:2},
+    CRRO:{d2:1},
+    PYE:{cup:1,d2:3},
+    AAME:{d2:1},
+    UESC:{cup:1,sc:1,d2:1},
+    ADENC:{league:2,cup:1},
+    ADSJ:{league:2,cup:5,sc:6},
+    ADLUS:{cup:2,sc:1,d2:2},
+    ADCON:{league:1},
+    ADEXT:{cup:1,d2:2},
+    ADENCB:{d2:1}
+  });
+  Object.assign(STADIUM,{
+    INE:"Camp d'Esports d'Aixovall",SACO:"Camp d'Esports d'Aixovall",ESC:"Camp d'Esports d'Aixovall",SPES:"Camp d'Esports d'Aixovall",
+    ORD:"Municipal d'Ordino",
+    CRR:"Centre d'Entrenament de la FAF",PYE:"Centre d'Entrenament de la FAF",EDA:"Centre d'Entrenament de la FAF",
+    RNG:"Camp de Fútbol Comunal d'Andorra la Vella",CDP:"Camp de Fútbol Comunal d'Andorra la Vella",
+    UESC:"Camp d'Esports d'Aixovall",ADSJ:"Camp d'Esports d'Aixovall",SACOB:"Camp d'Esports d'Aixovall",
+    CESC:"Camp d'Esports d'Aixovall",MASS:"Camp de Futbol de La Massana",
+    AAME:"Centre d'Entrenament de la FAF",PIRI:"Centre d'Entrenament de la FAF",
+    PRIN:"Centre d'Entrenament de la FAF"
+  });
+  Object.assign(FORM_MAIN,{INE:'4-3-3',ESC:'4-3-3',SACO:'4-2-3-1',ORD:'4-4-2',CRR:'4-4-2',RNG:'4-4-2',PYE:'4-4-2',EDA:'4-4-2',SPES:'4-4-2',CDP:'4-4-2'});
+  Object.assign(BUDGET,{INE:1.2,SACO:1.0,ESC:0.7,ORD:0.4,RNG:0.35,PYE:0.35,CRR:0.3,SPES:0.3,EDA:0.25,CDP:0.25});
+  Object.assign(CITY,{'Escaldes-Engordany':{ll:[1.53,42.51]},'Santa Coloma':{ll:[1.49,42.50]},'Sant Julià de Lòria':{ll:[1.49,42.46]},'Ordino':{ll:[1.53,42.56]}});
+}
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
