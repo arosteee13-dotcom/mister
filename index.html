@@ -274,9 +274,10 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .clubcard{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));width:min(440px,calc(100% - 24px));transform:translate(-50%,130%);opacity:0;pointer-events:none;transition:transform .55s var(--ease),opacity .35s;background:rgba(19,29,25,.93);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line2);border-radius:28px;padding:18px;z-index:20;box-shadow:0 30px 80px -20px rgba(0,0,0,.85)}
 .clubcard.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
 @media (min-width:900px){.clubcard{left:auto;right:32px;bottom:50%;width:400px;transform:translate(40px,50%)}.clubcard.show{transform:translate(0,50%)}.layer.cardopen{padding-bottom:6px;padding-right:440px}}
-.cc-head{display:flex;align-items:center;gap:14px}
+.cc-head{display:flex;align-items:center;gap:14px;min-width:0}
+.cc-head>div{min-width:0;flex:1}
 .cc-head h3{font:600 20px/1.15 var(--display);letter-spacing:-.01em}
-.cc-x{margin-left:auto;align-self:flex-start;width:32px;height:32px;border-radius:50%;background:rgba(220,240,228,.06);display:grid;place-items:center;color:var(--muted)}
+.cc-x{flex:0 0 auto;margin-left:auto;align-self:flex-start;width:32px;height:32px;border-radius:50%;background:rgba(220,240,228,.06);display:grid;place-items:center;color:var(--muted)}
 .cc-stars{color:var(--amber);letter-spacing:2px;font-size:13px}
 .cc-stars5{position:relative;display:inline-block;color:rgba(233,238,233,.22);letter-spacing:1px;font-size:10.5px;vertical-align:middle}
 .cc-stars5::before{content:'★★★★★';position:absolute;left:0;top:0;width:var(--p);overflow:hidden;color:var(--amber);white-space:nowrap}
@@ -337,7 +338,7 @@ button.pm-photo{cursor:pointer;padding:0}
 .mode-card small{display:block;color:var(--muted);font-size:13px;line-height:1.45}
 .cc-div.src{background:rgba(220,240,228,.07);color:var(--muted)}
 .cc-row{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin-top:6px}
-.cc-div{padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:600;white-space:nowrap}
+.cc-div{padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:600;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .cc-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 12px}
 .cc-bars small{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
 .cc-bars small b{color:var(--text);font-weight:600}
@@ -2119,7 +2120,6 @@ const LOCKED_SA=[
 ];
 const LOCKED_NA=[
   {id:'CA',name:'Canadá',pin:[-106,56],polys:[CANADA,CANADA_ISL,CANADA_ISL2]},
-  {id:'US',name:'Estados Unidos',pin:[-98,39],polys:[USA]},
   {id:'GT',name:'Guatemala',pin:[-90.5,15.6],polys:[GUATEMALA_L]},
   {id:'CR',name:'Costa Rica',pin:[-84.1,9.9],polys:[COSTARICA_L]},
   {id:'PA',name:'Panamá',pin:[-80.0,9.0],polys:[PANAMA_L]},
@@ -5117,7 +5117,6 @@ const REAL_LOANS=[
  ['Ousmane Sow','BRO','JAG',1,'Rotación',['Ousmane Sow','MD',2001,'SN',66,69,1.2,4.5,'MD/ED']],
  ['Jeremy Agbonifo','LEN','JAG',1,'Rotación',['Jeremy Agbonifo','MD',2006,'SE',67,76,2.2,7.1,'MD/ED']],
  ['Bartłomiej Wdowik','SPB','JAG',1,'Rotación',['Bartłomiej Wdowik','DF',2001,'PL',69,74,2,6.2,'LI/MI/MC/EI']],
- ['A. Jackson','JAG','MNU',1,'Rotación',['A. Jackson','FW',2001,'US',56,64,2.67,9.3,'EI/DC']],
  ['Alan Rybak','JAG','CHR',1,'Rotación',['Alan Rybak','FW',2006,'PL',54,62,0.47,1.6,'DC/MCO']],
  ['Camilo Mena','LGD','KOR',1,'Rotación',['Camilo Mena','MD',2003,'CO',70,75,2.4,5.1,'MD/ED']], ['Michał Niedbała','KOR','WJA',1,'Rotación',['Michał Niedbała','GK',2006,'PL',42,50,0.058,0.2,'POR']], ['Jakub Kowalski','KOR','ARK',1,'Rotación',['Jakub Kowalski','FW',2006,'PL',48,56,0.254,0.9,'ED']],
  ['Wiktor Bogacz','NYR','CRA',1,'Rotación',['Wiktor Bogacz','FW',2005,'PL',62,72,0.875,1.6,'DC']], ['Lasse Nordås','LUTN','CRA',1,'Rotación',['Lasse Nordås','FW',2002,'NO',67,74,2.1,1.5,'DC']], ['Henrich Ravas','CRA','POL',1,'Rotación',['Henrich Ravas','GK',1997,'SK',51,59,1.61,5.6,'POR']], ['Bartosz Biedrzycki','CRA','ODR',1,'Rotación',['Bartosz Biedrzycki','DF',2003,'PL',58,66,0.689,2.4,'LI/MI']], ['Konrad Golonka','CRA','ZDR',1,'Rotación',['Konrad Golonka','GK',2007,'PL',33,41,0.036,0.13,'POR']], ['Jean Florent Batoum','CRA','NYI',1,'Rotación',['Jean Florent Batoum','FW',2002,'CM',50,58,0.555,1.9,'DC/EI']],
@@ -5880,7 +5879,6 @@ const REAL_LOANS=[
   ['D. Martínez','RIVP','DYJ',1,'Rotación',['D. Martínez','DF',1998,'PY',73,75,3.1,12.5,'DFC/LI'],1],
   ['Maximiliano Salas','RIVP','INRI',1,'Titular',['Maximiliano Salas','FW',1998,'AR',75,76,6.0,19,'DC/MCO'],1],
   ['Giuliano Galoppo','RIVP','ATLU',1,'Rotación',['Giuliano Galoppo','MD',1999,'AR',63,66,5,27.4,'MC/MCO']],
-  ['M. Galarza','RIVP','MIA',1,'Rotación',['M. Galarza','MD',2002,'PY',71,74,13,60,'MC/MCD']],
   ['Kevin Castaño','RIVP','CAMG',1,'Rotación',['Kevin Castaño','MD',1997,'CO',67,70,13,74,'MCD/MC']],
   ['Bautista Dadín','RIVP','ALDO',1,'Rotación',['Bautista Dadín','FW',2006,'AR',64,73,1.3,2.8,'DC/ED/MD']],
   ['Matías Godoy','ESLP','ALDO',1,'Rotación',['Matías Godoy','MD',2002,'AR',67,73,1.6,4.6,'MD/MI/EI/ED']],
@@ -6146,7 +6144,6 @@ const REAL_LOANS=[
   ['Samuel Sosa','TALL','UCV',1,'Titular',['Samuel Sosa','FW',1999,'VE',67,70,3.28,18.7,'ED']],
   ['N. Bustos','TALL','ISFE',1,'Titular',['N. Bustos','FW',1998,'AR',67,70,2.93,16.7,'DC']],
   ['R. Guth','TALL','FSI',1,'Titular',['R. Guth','DF',2000,'BR',65,68,4.07,22.8,'DFC']],
-  ['M. Navarro','TALL','CLRP',1,'Titular',['M. Navarro','DF',1999,'VE',72,75,5.77,34.3,'LI']],
   ['A. Martínez','TALL','NACU',1,'Rotación',['A. Martínez','MD',1997,'AR',55,58,2.07,10.5,'EI']],
   ['T. Kummer','TALL','RCOR',1,'Rotación',['T. Kummer','DF',2004,'AR',52,55,0.139,0.6,'DFC']],
   ['L. Martinez','TALL','GUEM',1,'Rotación',['L. Martinez','GK',2002,'AR',50,53,0.328,1.7,'POR']],
@@ -7419,7 +7416,7 @@ function bumpVal(p,beforeOvr){
   p.val=Math.max(.2,Math.round(p.val*(b>0?a/b:1)*10)/10);
 }
 function mkPlayer(r,id,pos,ovr,age,co,used,clubId){
-  const who=mkPerson(r,co,used,clubId),gap=age<=21?6+r()*8:age<=24?3+r()*6:age<=27?r()*3:0;
+  const who=mkPerson(r,co,used,clubId),gap=age<=21?6+r()*8:age<=24?3+r()*6:age<=27?r()*3:age<=29?.5+r()*2:0;
   const p={id,n:who[0],nat:who[1],pos,age,ovr,pot:clamp(Math.round(ovr+gap),ovr,96),en:100,inj:0,g:0,ap:0};
   p.val=calcVal(p);p.wage=Math.round(p.val*4);p.at=genAttrs(p);return p;
 }
@@ -7453,10 +7450,12 @@ const seasonYear=()=>BASE_YEAR+((state&&state.season)||1)-1;
    máximos del tramo: ≤18→+14, 19-21→+12, 22-23→+8. Tope 92. */
 function youngPotOf(age,ovr,dataPot,seed){
   const dp=dataPot||0;
-  const min=age<=18?7:age<=21?5:age<=23?3:0;
-  if(age<=23&&dp<ovr+min){
+  /* margen de progresión hasta los 29 años; desde 30 no progresa (pero se respeta el POT explícito de la base) */
+  if(age>=30)return Math.max(dp,ovr);
+  const min=age<=18?7:age<=21?5:age<=23?3:age<=26?2:1;
+  if(dp<ovr+min){
     const j=rng(hashStr('yp'+seed))();
-    const gap=age<=18?7+j*7:age<=21?5+j*7:3+j*5;
+    const gap=age<=18?7+j*7:age<=21?5+j*7:age<=23?3+j*5:age<=26?2+j*4:1+j*3;
     return Math.max(dp,clamp(Math.round(ovr+gap),ovr,92));
   }
   return Math.max(dp,ovr);
@@ -7619,6 +7618,7 @@ function objective(id){
   if(c.co==='FJ')return rank<=1?'Ganar la Liga':rank<=2?'Clasificar a la OFC Champions League':rank<=9?'Permanencia':'Evitar el descenso';
   if(c.co==='JP'&&c.div===2)return rank<=2?'Ascender a la J1':rank<=6?'Clasificar al play-off de ascenso':'Terminar en la zona media';
   if(c.co==='JP')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a la AFC Champions League Two':rank<=17?'Permanencia':'Evitar el descenso';
+  if(c.co==='US')return rank<=8?'Clasificar a los MLS Cup Playoffs':'Permanencia';
   if(c.co==='AU')return rank<=1?'Ganar la liga (Premier)':rank<=6?'Clasificar a la Finals Series':'Permanencia';
   if(c.co==='AD'&&c.div===2)return rank<=1?'Ascenso directo a la Primera Divisió':rank<=2?'Clasificar al playoff de ascenso':'Permanencia';
   if(c.co==='AD')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=8?'Permanencia':rank<=9?'Evitar el playoff de descenso':'Evitar el descenso';
@@ -14212,7 +14212,8 @@ function progressTick(r){
 function trainingTick(){
   const fb=(state.fac.train-1)/14;
   me().players.forEach(p=>{
-    if(p.age<=23&&p.ovr<(p.pot||p.ovr)&&Math.random()<.008+.03*fb){const before=p.ovr;shiftOvr(p,1);bumpVal(p,before);news(`${p.n} mejora con los entrenamientos: GRL ${p.ovr}.`)}
+    /* progresión por entrenamiento hasta los 29 años (más lenta a partir de los 24) */
+    if(p.age<=29&&p.ovr<(p.pot||p.ovr)&&Math.random()<(.008+.03*fb)*(p.age<=23?1:p.age<=26?.6:.35)){const before=p.ovr;shiftOvr(p,1);bumpVal(p,before);news(`${p.n} mejora con los entrenamientos: GRL ${p.ovr}.`)}
   });
 }
 function genIntake(){
@@ -15155,12 +15156,13 @@ const SC_TEAMS={ES:4,TR:4,SA:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1,WA:1};
 const SC_WEEKS={ES:[20,21],TR:[20,21],SA:[0,1],FJ:[1]};
 const userKey=()=>state.country+(state.div||1);
-const isCup=k=>k==='AUFS'||k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C')||k==='OFCCL'||k==='OFCPL';
+const isCup=k=>k==='USPO'||k==='AUFS'||k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C')||k==='OFCCL'||k==='OFCPL';
 /* código de país y sufijo de una clave de competición. CUIDADO: 'NIR' tiene 3 letras, así que
    key.slice(0,2) daría 'NI' y rompería nombres/palmarés/zona. keyCo/keySuf lo resuelven. */
 const keyCo=k=>{k=String(k);return /^NIR/.test(k)?'NIR':k.slice(0,2)};
 const keySuf=k=>String(k).slice(keyCo(k).length);
 const compName=k=>{
+    if(k==='USPO')return 'MLS Cup Playoffs';
     if(k==='AUFS')return 'A-League Finals Series';
   if(fictOn())return fictCompName(k);
   if(k==='ENT')return'EFL Trophy';
@@ -15830,7 +15832,8 @@ function cupRehydrate(cup){
     cup._nextTies=(c,ri)=>{const prev=(c.rounds[ri-1].ties||[]).map(t=>t.w),pairs=[];for(let i=0;i+1<prev.length;i+=2){const x=prev[i],y=prev[i+1];if(!x||!y)continue;pairs.push(repOf(x)>=repOf(y)?{h:x,a:y}:{h:y,a:x});}return pairs;};
   }else if(k==='MXLGA'||k==='MXLGC'){
     cup._nextTies=mxNextTies;
-  }else if(k==='CNC'){cup._nextTies=cnCupNextTies;}
+  }else if(k==='USPO'){cup._nextTies=usNextTies;}
+  else if(k==='CNC'){cup._nextTies=cnCupNextTies;}
   else if(k==='RUC'){cup._nextTies=rucNextTies;}
   else if(k==='IFC'){cup._nextTies=computeNextTiesIFC;}
 }
@@ -16438,7 +16441,7 @@ function cupWear(t,store){
 function afterLeague(){
   for(let guard=0;guard<60;guard++){
     const w=state.week;
-    arEnsureCups(w);mxEnsureCups(w);bulEnsureCups(w);czEnsureCups(w);auEnsureCups(w);
+    arEnsureCups(w);mxEnsureCups(w);bulEnsureCups(w);czEnsureCups(w);auEnsureCups(w);usEnsureCups(w);
     if(userCupTie(w))return;
     let maxW=-1;
     for(const k in state.cups){const c=state.cups[k];
@@ -16454,7 +16457,7 @@ function afterLeague(){
 function playCupStage(){
   const ct=userCupTie(state.week);if(!ct)return null;
   ensureUserSquad();
-  if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);auEnsureCups(state.week);
+  if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);auEnsureCups(state.week);usEnsureCups(state.week);
   ensureFinBase();
   const t=me(),hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id)),mine=[];
   if(ct.group){
@@ -16592,7 +16595,7 @@ function playCupRound(cup,ri,leg){
   return out;
 }
 function advanceWorld(r){
-  arEnsureCups(r);mxEnsureCups(r);bulEnsureCups(r);auEnsureCups(r);
+  arEnsureCups(r);mxEnsureCups(r);bulEnsureCups(r);auEnsureCups(r);usEnsureCups(r);
   const mine=[];
   /* mantenimiento semanal de los clubes que NO son de tu liga: les caducan lesiones y sanciones (antes se acumulaban
      toda la temporada y degradaban al rival para siempre). Un guard evita repetirlo si advanceWorld se llama dos veces
@@ -16720,7 +16723,7 @@ function recordHonors(final){
     }
   };
   gamePlayable().forEach(co=>{
-    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&d===1&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(co==='RS'&&(d===1||d===2)&&L.split){const w=rsGroups(L).champ[0];if(w)top={id:w}}if(co==='AU'&&d===1){const ch=state.cups&&state.cups.AUFS&&state.cups.AUFS.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
+    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&d===1&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(co==='RS'&&(d===1||d===2)&&L.split){const w=rsGroups(L).champ[0];if(w)top={id:w}}if(co==='AU'&&d===1){const ch=state.cups&&state.cups.AUFS&&state.cups.AUFS.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(co==='US'){if(d===2)return;const ch=state.cups&&state.cups.USPO&&state.cups.USPO.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
     const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,co==='WA'?'wac':'cup',co+'C');
     if(co==='EN'&&state.cups.ENT&&state.cups.ENT.champ)add(state.cups.ENT.champ,'eflt','ENT');
     if(co==='EN'&&state.cups.ENNC&&state.cups.ENNC.champ)add(state.cups.ENNC.champ,'nlc','ENNC');
@@ -16733,7 +16736,7 @@ function recordHonors(final){
   if(final){try{const L=leagueData('EN5');if(L&&L.tb){const top=sortTable(L.tb)[0];if(top)add(top.id,'d5','EN5')}}catch(e){}}
   /* ligas con grupos (Primera Federación: ES5 y ES6): el campeón de cada grupo suma un título de la categoría.
      El key lo pone compTrophyKey porque el número de división no coincide con la nomenclatura del trofeo. */
-  if(final)Object.keys(DIV_GROUPS).forEach(co=>DIV_GROUPS[co].forEach(grp=>grp.subs.forEach(([d])=>{const key=co+d;
+  if(final)Object.keys(DIV_GROUPS).filter(c=>c!=='US').forEach(co=>DIV_GROUPS[co].forEach(grp=>grp.subs.forEach(([d])=>{const key=co+d;
     try{const L=leagueData(key);if(!L||!L.tb)return;const top=sortTable(L.tb)[0];if(top)add(top.id,compTrophyKey(key),key)}catch(e){}})));
   if(state.cups&&state.cups.PTLC&&state.cups.PTLC.champ)add(state.cups.PTLC.champ,'lc','PTLC');
   if(state.cups&&state.cups.ENLC&&state.cups.ENLC.champ)add(state.cups.ENLC.champ,'lc','ENLC');
@@ -17129,7 +17132,7 @@ function initWorld(){
       return;
     }
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
-    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AU'?AU_CUP_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AD'?ADC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')&&!(co==='SA'&&c.id==='ITT')).map(c=>c.id))));
+    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='US'?USC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AU'?AU_CUP_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AD'?ADC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')&&!(co==='SA'&&c.id==='ITT')).map(c=>c.id)))));
     if(co==='AR'&&state.season===1&&ARCOPA_S1.every(id=>CLUBBY[id]))ids=ARCOPA_S1.slice();
     if(CLUBBY[state.club]&&CLUBBY[state.club].co===co&&!isB(state.club)&&!(co==='CH'&&CLUB_NAT[state.club]==='LI')&&!ids.includes(state.club))ids.push(state.club);
     if(ids.length<2)return;   /* país sin equipos suficientes (clubes sueltos no jugables): sin copa nacional */
@@ -17137,7 +17140,8 @@ function initWorld(){
     if(co==='SA'&&state.cups.SAC)state.cups.SAC.et=true;
     if(co==='WA'&&state.cups.WAC)state.cups.WAC.et=true;
     if(co==='AD'&&state.cups.ADC)state.cups.ADC.et=true;
-    if(co==='AU'&&state.cups.AUC)state.cups.AUC.et=true;   /* Australia Cup: prórroga y penaltis en todas las rondas */   /* Copa Constitució: prórroga y penaltis en todas las rondas */   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
+    if(co==='AU'&&state.cups.AUC)state.cups.AUC.et=true;
+    if(co==='US'&&state.cups.USC)state.cups.USC.et=true;   /* US Open Cup: prórroga y penaltis */   /* Australia Cup: prórroga y penaltis en todas las rondas */   /* Copa Constitució: prórroga y penaltis en todas las rondas */   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
     if(co==='NIR'&&state.cups.NIRC)state.cups.NIRC.et=true;   /* Irish League Cup: prórroga + penaltis en caso de empate, en todas las rondas */
   });
   /* Supercopas: campeón y subcampeón de liga contra campeón y subcampeón de copa de la temporada anterior.
@@ -17907,6 +17911,7 @@ function viewComps(){
 }
 function zoneColor(key,pos,total){
   const co=keyCo(key),d=co==='ES'?String(+keySuf(key)):String(key).slice(-1);
+  if(co==='US'){if(pos<=8)return'#38D996';return'#BCBCBC'}
   if(d==='1'){
     if(co==='AD'){   /* Primera Divisió (10): 1º campeón/previa UCL; 2º-3º previa Conference; 9º playoff; 10º baja */
       if(pos===1)return'#7cb342';
@@ -18440,7 +18445,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
+  const allZones=keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -26360,6 +26365,67 @@ REAL_LOANS.push(['Tatsuki Nara','AVIS','MACA',1,'Rotación',['Tatsuki Nara','DF'
 REAL_LOANS.push(['Henry Merson Leonard Gray','IPS21','WEL',1,'Rotación',['Henry Merson Leonard Gray','GK',2005,'NZ',51,null,0.129,null,'POR']]);
 REAL_LOANS.push(['Riley Joshua Bidois','MBFC','WEL',1,'Rotación',['Riley Joshua Bidois','FW',2002,'NZ',46,null,0.221,null,'DC']]);
 
+/* Cesiones (MLS, Estados Unidos). */
+REAL_LOANS.push(['Micael','PALM','MIA',1,'Rotación',['Micael','DF',2000,'BR',75,null,9.76,null,'DFC']]);
+REAL_LOANS.push(['Matías Galarza','RIVP','MIA',1,'Rotación',['Matías Galarza','MD',2002,'PY',67,null,13.47,null,'MC']]);
+REAL_LOANS.push(['Leo Walta','SWA','LAF',1,'Rotación',['Leo Walta','MD',2003,'FI',71,null,6.52,null,'MCO']]);
+REAL_LOANS.push(['Hirving Lozano','SDFC','GALX',1,'Rotación',['Hirving Lozano','FW',1995,'MX',73,null,6.12,null,'EI']]);
+REAL_LOANS.push(['Nikola Petković','CLT','SEA',1,'Rotación',['Nikola Petković','MD',2003,'RS',53,null,1.65,null,'MC']]);
+
+/* Cesiones (MLS, lote 2). */
+REAL_LOANS.push(['Fabian Mrozek','LIVU','CIN',1,'Rotación',['Fabian Mrozek','GK',2003,'PL',45,null,0.109,null,'POR']]);
+REAL_LOANS.push(['Julián Malatini','SVW','CIN',1,'Rotación',['Julián Malatini','DF',2001,'AR',64,null,4.24,null,'DFC']]);
+REAL_LOANS.push(['Gonzalo Tapia','SAO','CCR',1,'Rotación',['Gonzalo Tapia','FW',2002,'CL',60,null,6.01,null,'DC']]);
+REAL_LOANS.push(['Anass Zaroury','PAN','CCR',1,'Rotación',['Anass Zaroury','FW',2000,'MA',66,null,9.85,null,'EI']]);
+REAL_LOANS.push(['Lautaro Giaccone','ARGJ','CCR',1,'Rotación',['Lautaro Giaccone','FW',2001,'AR',58,null,2.57,null,'ED']]);
+REAL_LOANS.push(['Luighi Hanri Sousa Santos','PALM','NYCFC',1,'Rotación',['Luighi Hanri Sousa Santos','FW',2006,'BR',50,null,4.0,null,'DC']]);
+REAL_LOANS.push(['Devin Padelford','MNU','NYR',1,'Rotación',['Devin Padelford','DF',2003,'US',59,null,2.04,null,'LI']]);
+REAL_LOANS.push(['David Antonio Ruiz-Ochoa','MIA','NYR',1,'Rotación',['David Antonio Ruiz-Ochoa','MD',2004,'HN',59,null,2.88,null,'MCD']]);
+
+/* Cesiones (MLS, lote 3). */
+REAL_LOANS.push(['Noah James Allen','MIA','CHIF',1,'Rotación',['Noah James Allen','DF',2004,'GR',69,null,2.0,null,'LI']]);
+REAL_LOANS.push(['Abdoulaye Faye','B04','CLT',1,'Rotación',['Abdoulaye Faye','DF',2004,'SN',56,null,1.0,null,'DFC']]);
+REAL_LOANS.push(['Santiago Moreno','FLU','DAL',1,'Rotación',['Santiago Moreno','FW',2000,'CO',72,null,8.22,null,'ED']]);
+REAL_LOANS.push(['Clay Holstad','RIFC','DAL',1,'Rotación',['Clay Holstad','MD',2000,'US',55,null,0.44,null,'MC']]);
+REAL_LOANS.push(['Nick Markanich','CAS','HOU',1,'Rotación',['Nick Markanich','FW',1999,'US',62,null,0.4,null,'ED']]);
+REAL_LOANS.push(['Lyle Foster','BUN','HOU',1,'Rotación',['Lyle Foster','FW',2000,'ZA',70,null,7.0,null,'DC']]);
+
+/* Cesiones (MLS, lote 4). */
+REAL_LOANS.push(['Cherrion Valerius','NAC','MNU',1,'Rotación',['Cherrion Valerius','DF',2005,'NL',58,null,0.65,null,'LD']]);
+REAL_LOANS.push(['Aziel Christopher Jackson','JAG','MNU',1,'Rotación',['Aziel Christopher Jackson','MD',2001,'US',59,null,1.5,null,'MCO']]);
+REAL_LOANS.push(['Elias Saad','FCA','NSH',1,'Rotación',['Elias Saad','FW',1999,'TN',65,null,2.0,null,'EI']]);
+REAL_LOANS.push(['Owen Presthus','CCR','NSH',1,'Rotación',['Owen Presthus','DF',2006,'US',48,null,0.05,null,'LD']]);
+REAL_LOANS.push(['Malachi Molina','DAL','NSH',1,'Rotación',['Malachi Molina','DF',2006,'JM',41,null,0.066,null,'LD']]);
+REAL_LOANS.push(['Matthew Charles Turner','OL','NER',1,'Rotación',['Matthew Charles Turner','GK',1994,'US',65,null,2.5,null,'POR']]);
+REAL_LOANS.push(['Joshua Liam Wynder','SLB','NER',1,'Rotación',['Joshua Liam Wynder','DF',2005,'US',56,null,0.9,null,'DFC']]);
+REAL_LOANS.push(['Tylon Christopher Smith','QPR23','NER',1,'Rotación',['Tylon Christopher Smith','DF',2005,'ZA',37,null,0.2,null,'DFC']]);
+REAL_LOANS.push(['Cody William Baker','SEA','NER',1,'Rotación',['Cody William Baker','DF',2004,'US',48,null,0.2,null,'LD']]);
+REAL_LOANS.push(['Marcos Alberto Zambrano Delgado','RSL','NER',1,'Rotación',['Marcos Alberto Zambrano Delgado','FW',2005,'US',46,null,0.15,null,'DC']]);
+REAL_LOANS.push(['Vinícius Nogueira','LUDO','ORLC',1,'Rotación',['Vinícius Nogueira','DF',2001,'BR',66,null,1.5,null,'LI']]);
+
+/* Cesiones (MLS, lote 5). */
+REAL_LOANS.push(['Colin Guske','ORLC','RSL',1,'Rotación',['Colin Guske','MD',2007,'US',42,null,0.148,null,'MCD']]);
+REAL_LOANS.push(['Luc Rollet De Fougerolles','FUL','RSL',1,'Rotación',['Luc Rollet De Fougerolles','DF',2005,'CA',53,null,1.07,null,'DFC']]);
+REAL_LOANS.push(['Zach Booth','EXC','RSL',1,'Rotación',['Zach Booth','FW',2004,'US',49,null,0.579,null,'EI']]);
+REAL_LOANS.push(['Taylor Booth','TWE','RSL',1,'Rotación',['Taylor Booth','FW',2001,'US',59,null,3.41,null,'ED']]);
+REAL_LOANS.push(['Sam Vines','HOU','SDFC',1,'Rotación',['Sam Vines','DF',1999,'US',68,null,0.6,null,'LI']]);
+REAL_LOANS.push(['Seymour Reid','NYCFC','SKC',1,'Rotación',['Seymour Reid','FW',2008,'JM',41,null,0.159,null,'DC']]);
+REAL_LOANS.push(['Rubén Ramos Jr.','GALX','SKC',1,'Rotación',['Rubén Ramos Jr.','MD',2007,'US',52,null,0.457,null,'MC']]);
+REAL_LOANS.push(['Charles-Emile Brunet','NSH','SLC',1,'Rotación',['Charles-Emile Brunet','MD',2003,'CA',28,null,0.05,null,'MCD']]);
+REAL_LOANS.push(['Zach Zengue','CCR','SLC',1,'Rotación',['Zach Zengue','FW',2004,'US',34,null,0.021,null,'EI']]);
+REAL_LOANS.push(['Damion Downs','SOU','SLC',1,'Rotación',['Damion Downs','FW',2004,'US',65,null,8.27,null,'DC']]);
+
+/* Cesiones (MLS, lote 6). */
+REAL_LOANS.push(['Benjamín Kuscevic','FTLE','TFC',1,'Rotación',['Benjamín Kuscevic','DF',1996,'CL',72,null,1.8,null,'DFC']]);
+REAL_LOANS.push(['Emilio Aristizábal','ATNA','TFC',1,'Rotación',['Emilio Aristizábal','FW',2005,'CO',56,null,1.2,null,'DC']]);
+REAL_LOANS.push(['Alejandro Piedrahita','CSOF','TFC',1,'Rotación',['Alejandro Piedrahita','FW',2002,'CO',64,null,0.9,null,'EI']]);
+REAL_LOANS.push(['Christopher Applewhite','NSH','ATX',1,'Rotación',['Christopher Applewhite','DF',2007,'US',44,null,0.298,null,'DFC']]);
+REAL_LOANS.push(['Thomas Gillier','BOL','CFM',1,'Rotación',['Thomas Gillier','GK',2004,'CL',54,null,1.79,null,'POR']]);
+REAL_LOANS.push(['Viktor Radojević','CHIF','CFM',1,'Rotación',['Viktor Radojević','DF',2004,'RS',61,null,1.54,null,'LI']]);
+REAL_LOANS.push(['Franuel Amaya','TOLU','CFM',1,'Rotación',['Franuel Amaya','MD',2000,'US',64,null,1.9,null,'MC']]);
+REAL_LOANS.push(['Ivan Losenko','SHK','CFM',1,'Rotación',['Ivan Losenko','MD',2004,'UA',57,null,2.47,null,'MC']]);
+REAL_LOANS.push(['Miguel Navarro','TALL','CLRP',1,'Rotación',['Miguel Navarro','DF',1999,'VE',74,null,2.0,null,'LI']]);
+
 
 
 
@@ -26780,6 +26846,231 @@ Object.assign(PALMARES,{
   WEL:{},
   WSYD:{afcce:1},
   WUNI:{league:1}
+});
+/* ===== Estados Unidos: Major League Soccer (30 clubes en dos conferencias de 15) =====
+   Liga cerrada (sin descensos): 28 jornadas por conferencia; los 8 mejores de cada una juegan los
+   MLS Cup Playoffs (eliminación directa a partido único) y el campeón de la MLS Cup es el campeón. */
+const ZONES_US=[['#38D996','MLS Cup Playoffs'],['#BCBCBC','Permanencia (liga cerrada, sin descensos)']];
+function usNextTies(cup,ri){
+  const prev=cup.rounds[ri-1]&&cup.rounds[ri-1].ties?cup.rounds[ri-1].ties:[];
+  const w=prev.map(t=>t.w);
+  if(w.length<2||w.some(x=>!x))return[];
+  const home=(a,b)=>((cup._seed[a]||99)<=(cup._seed[b]||99)?a:b);
+  const out=[];
+  for(let i=0;i+1<w.length;i+=2){const h=home(w[i],w[i+1]);out.push(h===w[i]?{h:w[i],a:w[i+1]}:{h:w[i+1],a:w[i]})}
+  return out;
+}
+/* MLS Cup Playoffs: 16 equipos (8 por conferencia) cuando terminan las dos fases regulares */
+function usEnsureCups(){
+  if(!state||!state.cups||state.cups.USPO)return;
+  if(!gamePlayable().includes('US'))return;
+  const A=leagueData('US1'),B=leagueData('US2');
+  if(!A||!B||!A.fx||!B.fx||!A.fx.length||!B.fx.length)return;
+  /* con 15 equipos cada jornada tiene un descanso: se comprueba que TODOS los partidos tengan resultado */
+  const done=L=>Object.keys(L.tb).length>=15&&L.fx.every(rd=>rd.every(m=>m.hg!==undefined));
+  if(!done(A)||!done(B))return;
+  const e=sortTable(A.tb).slice(0,8).map(r=>r.id),w=sortTable(B.tb).slice(0,8).map(r=>r.id);
+  if(e.length<8||w.length<8)return;
+  const seeds=e.concat(w),seed={};seeds.forEach((id,ix)=>seed[id]=ix+1);
+  const tie=(a,b)=>(seed[a]<=seed[b]?{h:a,a:b}:{h:b,a:a});
+  const w0=Math.max(state.week||0,A.fx.length);
+  state.cups.USPO={key:'USPO',name:'MLS Cup Playoffs',ids:seeds,bye:[],sc:{},champ:null,homeAdv:true,_seed:seed,_nextTies:usNextTies,
+    rounds:[
+      {n:'Ronda de conferencia',w:w0,ties:[tie(e[0],e[7]),tie(e[3],e[4]),tie(e[1],e[6]),tie(e[2],e[5]),tie(w[0],w[7]),tie(w[3],w[4]),tie(w[1],w[6]),tie(w[2],w[5])],done:false},
+      {n:'Semifinales de conferencia',w:w0+1,ties:null,done:false},
+      {n:'Finales de conferencia',w:w0+2,ties:null,done:false},
+      {n:'MLS Cup',w:w0+3,ties:null,done:false}]};
+}
+{
+  if(!PLAYABLE.includes('US'))PLAYABLE.push('US');
+  if(!GROUPS.some(g=>g.id==='US'))GROUPS.push({id:'US',name:'Estados Unidos',comps:['US1','USC','USPO']});
+  DIV_GROUPS.US=[{label:'Major League Soccer',subs:[[1,'Conferencia Este'],[2,'Conferencia Oeste']]}];
+  Object.assign(NATNAME,{US:'Estados Unidos'});
+  Object.assign(CUPNAME,{US:'US Open Cup'});
+  Object.assign(TROPHY_CUP,{US:'US Open Cup'});
+  TROPHY_IMG_CO.US={league:'69',cup:'610'};   /* imágenes reales: MLS (69) y US Open Cup (610) */
+  SC_SKIP.US=1;
+  BENCH_CD.US1=9;BENCH_CD.US2=9;
+  const SEL=[
+    /* Conferencia Este */
+    ['ATL','Atlanta United','Atlanta Utd','Atlanta',65,null,'Mercedes-Benz Stadium','4-2-3-1',22,1],
+    ['CLT','Charlotte FC','Charlotte','Charlotte',56,137770,'Bank of America Stadium','4-3-3',14,1],
+    ['CHIF','Chicago Fire','Chicago Fire','Chicago',58,null,'Soldier Field','4-2-3-1',13,1],
+    ['CIN','FC Cincinnati','Cincinnati','Cincinnati',63,null,'TQL Stadium','3-4-1-2',18,1],
+    ['CCR','Columbus Crew','Columbus','Columbus',62,null,'Lower.com Field','3-4-2-1',20,1],
+    ['DCU','DC United','DC United','Washington',55,888,'Audi Field','4-4-2',13,1],
+    ['MIA','Inter Miami','Inter Miami','Miami',69,null,'Chase Stadium','4-3-3',35,1],
+    ['CFM','CF Montréal','Montréal','Montreal',57,6385,'Stade Saputo','3-4-2-1',11,1],
+    ['NSH','Nashville SC','Nashville','Nashville',59,null,'GEODIS Park','4-2-3-1',16,1],
+    ['NER','New England Revolution','New England','Foxborough',56,3994,'Gillette Stadium','4-2-3-1',14,1],
+    ['NYCFC','New York City FC','New York City','New York',63,null,'Yankee Stadium','4-2-3-1',20,1],
+    ['NYR','New York RB','New York RB','Harrison',62,null,'Red Bull Arena','4-2-2-2',16,1],
+    ['ORLC','Orlando City','Orlando City','Orlando',60,null,'Inter&Co Stadium','4-2-3-1',16,1],
+    ['PHI','Philadelphia Union','Philadelphia','Philadelphia',61,null,'Subaru Park','4-1-2-1-2',17,1],
+    ['TFC','Toronto FC','Toronto FC','Toronto',62,2509,'BMO Field','3-4-2-1',21,1],
+    /* Conferencia Oeste */
+    ['ATX','Austin FC','Austin FC','Austin',60,null,'Q2 Stadium','4-3-3',15,2],
+    ['CLRP','Colorado Rapids','Colorado','Commerce City',55,null,"Dick's Sporting Goods Park",'4-2-3-1',11,2],
+    ['DAL','FC Dallas','FC Dallas','Frisco',60,1057,'Toyota Stadium','3-4-3',13,2],
+    ['HOU','Houston Dynamo','Houston','Houston',60,null,'Shell Energy Stadium','4-2-3-1',14,2],
+    ['GALX','LA Galaxy','LA Galaxy','Carson',66,null,'Dignity Health Sports Park','4-3-3',26,2],
+    ['LAF','Los Angeles FC','LAFC','Los Angeles',67,null,'BMO Stadium','4-3-3',28,2],
+    ['MNU','Minnesota United','Minnesota','Saint Paul',58,null,'Allianz Field','3-4-3',13,2],
+    ['PTL','Portland Timbers','Portland','Portland',61,5610,'Providence Park','4-2-3-1',16,2],
+    ['RSL','Real Salt Lake','Salt Lake','Sandy',57,null,'America First Field','4-2-3-1',14,2],
+    ['SDFC','San Diego FC','San Diego','San Diego',57,null,'Snapdragon Stadium','4-3-3',18,2],
+    ['SJQ','San Jose Earthquakes','San Jose','San Jose',54,11886,'PayPal Park','4-3-3',11,2],
+    ['SEA','Seattle Sounders','Seattle','Seattle',64,null,'Lumen Field','4-2-3-1',22,2],
+    ['SKC','Sporting Kansas City','Sporting KC','Kansas City',59,1440,"Children's Mercy Park",'4-3-3',13,2],
+    ['SLC','St. Louis City','St. Louis','St. Louis',55,null,'CITYPARK','4-2-3-1',14,2],
+    ['VWH','Vancouver Whitecaps','Vancouver','Vancouver',58,5609,'BC Place','3-4-2-1',13,2]
+  ];
+  const LOG={},STD={},FRM={},BUD={};
+  SEL.forEach(([id,name,short,city,rep,crest,stad,form,bud,div])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'US','#1c3f94','#f4f4f4',rep,div);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='US';c.rep=rep;c.div=div;c.stadium=stad;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=div}catch(e){}
+    if(crest!=null)LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+    STD[id]=stad;FRM[id]=form;BUD[id]=bud;
+  });
+  Object.assign(CLUB_LOGO,LOG);Object.keys(LOG).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG[id]});
+  Object.assign(STADIUM,STD);Object.assign(FORM_MAIN,FRM);Object.assign(BUDGET,BUD);
+  const C={'Atlanta':[-84.40,33.75],'Charlotte':[-80.84,35.23],'Chicago':[-87.62,41.88],'Cincinnati':[-84.51,39.10],
+    'Columbus':[-83.00,39.96],'Washington':[-77.04,38.91],'Miami':[-80.19,25.76],'Montreal':[-73.57,45.50],
+    'Nashville':[-86.78,36.16],'Foxborough':[-71.25,42.07],'New York':[-74.01,40.71],'Harrison':[-74.15,40.75],
+    'Orlando':[-81.38,28.54],'Philadelphia':[-75.16,39.95],'Toronto':[-79.38,43.65],'Austin':[-97.74,30.27],
+    'Commerce City':[-104.90,39.81],'Frisco':[-96.82,33.15],'Houston':[-95.37,29.76],'Carson':[-118.26,33.83],
+    'Los Angeles':[-118.24,34.05],'Saint Paul':[-93.09,44.95],'Portland':[-122.68,45.52],'Sandy':[-111.88,40.57],
+    'San Diego':[-117.16,32.72],'San Jose':[-121.89,37.34],'Seattle':[-122.33,47.61],'Kansas City':[-94.58,39.10],
+    'St. Louis':[-90.20,38.63],'Vancouver':[-123.12,49.28]};
+  const CC={};for(const k in C)CC['US|'+k]={ll:C[k]};
+  Object.assign(CITY,CC);
+}
+/* ===== U.S. Open Cup: 80 equipos (16 de la MLS + 63 de categorías inferiores + Rhode Island FC) =====
+   Eliminación directa a partido único con prórroga y penaltis. */
+const US_CUP_DATA=[
+  ['ACFS','America CFL Spurs','CFL Spurs','Winter Park',18,163186],
+  ['ASCN','ASC New Stars','ASC New Stars','Houston',18,86081],
+  ['ASHV','Asheville City','Asheville City','Asheville',22,111100],
+  ['AVAL','AV Alta','AV Alta','Lancaster',24,166081],
+  ['AZTE','Azteca FC','Azteca FC','Denver',18,101225],
+  ['BOHF','BOHFS','BOHFS','St. Louis',18,169750],
+  ['CACO','Carolina Core','Carolina Core','High Point',22,162854],
+  ['CHSB','Charleston Battery','Charleston','Charleston',28,17845],
+  ['CHIN','Charlotte Independence','Charlotte Ind.','Charlotte',24,61895],
+  ['CHTG','Chattanooga','Chattanooga','Chattanooga',22,17843],
+  ['CRWL','Chattanooga Red Wolves','Chattanooga RW','Chattanooga',22,119167],
+  ['COSS','Colorado Springs Switchback','Colorado Springs','Colorado Springs',24,61905],
+  ['CRUI','Cruizers','Cruizers','Modesto',16,169751],
+  ['DESM','Des Moines Menace','Des Moines','Des Moines',20,17840],
+  ['DETC','Detroit City','Detroit City','Detroit',26,63356],
+  ['ELFA','El Farolito','El Farolito','San Francisco',18,101214],
+  ['ELPL','El Paso Locomotive','El Paso','El Paso',26,119277],
+  ['FAIA','Faialense','Faialense','Cambridge',18,166478],
+  ['NAPL','FC Naples','FC Naples','Naples',22,165975],
+  ['FTUL','FC Tulsa','FC Tulsa','Tulsa',26,61904],
+  ['FLIN','Flint City Bucks','Flint City','Flint',18,17832],
+  ['FLBG','Florida Badgers','Florida Badgers','Pembroke Pines',16,169746],
+  ['FLWC','Flower City Union','Flower City','Rochester',20,150661],
+  ['FWDM','Forward Madison','Forward Madison','Madison',24,119168],
+  ['GRVT','Greenville Triumph','Greenville','Greenville',24,119169],
+  ['HART','Hartford Athletic','Hartford','Hartford',26,119273],
+  ['INDY','Indy Eleven','Indy Eleven','Indianapolis',28,17860],
+  ['KALO','Kalonji','Kalonji','New York',16,169745],
+  ['LAGU','Laguna United','Laguna United','Laguna Niguel',18,166476],
+  ['LARD','Laredo Heat','Laredo Heat','Laredo',18,17834],
+  ['LEXI','Lexington','Lexington','Lexington',22,156046],
+  ['LITR','Little Rock Rangers','Little Rock','Little Rock',18,111093],
+  ['LOUD','Loudoun United','Loudoun','Leesburg',26,119274],
+  ['LOUK','Louisville City','Louisville City','Louisville',30,61897],
+  ['MIRG','Michigan Rangers','Michigan Rangers','Detroit',18,157027],
+  ['MOTW','Motown','Motown','Morristown',20,101219],
+  ['NMU','New Mexico United','New Mexico','Albuquerque',28,119278],
+  ['NVIR','Northern Virginia','N. Virginia','Leesburg',20,17987],
+  ['NYRG','NY Renegades','NY Renegades','New York',18,166472],
+  ['ONEK','One Knoxville','One Knoxville','Knoxville',22,150845],
+  ['OCSC','Orange County SC','Orange County','Irvine',26,17825],
+  ['PHXR','Phoenix Rising','Phoenix Rising','Phoenix',28,17852],
+  ['PITR','Pittsburgh Riverhounds','Pittsburgh','Pittsburgh',28,17821],
+  ['PHOP','Portland Hearts of Pine','Hearts of Pine','Portland',22,166080],
+  ['REDF','Red Force','Red Force','Miami',16,17815],
+  ['RICH','Richmond Kickers','Richmond','Richmond',22,17814],
+  ['RIST','Ristozi','Ristozi','Chicago',16,169754],
+  ['SACR','Sacramento Republic','Sacramento','Sacramento',28,17812],
+  ['SATX','San Antonio','San Antonio','San Antonio',26,84195],
+  ['SRAM','San Ramon','San Ramon','San Ramon',16,120572],
+  ['SOIN','Southern Indiana','Southern Indiana','Evansville',18,166474],
+  ['SPOK','Spokane Velocity','Spokane','Spokane',22,161689],
+  ['STEE','Steel City','Steel City','Pittsburgh',20,156888],
+  ['TENN','Tennessee Tempo','Tennessee Tempo','Nashville',18,156526],
+  ['TORM','Tormenta','Tormenta','Statesboro',22,85828],
+  ['UNOM','Union Omaha','Union Omaha','Omaha',24,126982],
+  ['V559','Valley 559','Valley 559','Fresno',16,169753],
+  ['VCF','Ventura County Fusion','Ventura County','Ventura',18,17808],
+  ['VERG','Vermont Green','Vermont Green','Burlington',20,150860],
+  ['VIRD','Virginia Dream','Virginia Dream','Falls Church',18,156887],
+  ['VIST','Vistula','Vistula','Garfield',16,169748],
+  ['WCU','West Chester United','West Chester','West Chester',18,111080],
+  ['WESC','Westchester SC','Westchester','Mount Vernon',20,165972]
+];
+const US_CUP_CLUBS=US_CUP_DATA.map(x=>x[0]);
+(function(){
+  const LOG={},FRM={},BUD={};
+  US_CUP_DATA.forEach(([id,name,short,city,rep,crest])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'US','#1c3f94','#f4f4f4',rep,3);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='US';c.rep=rep;c.div=3;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=3}catch(e){}
+    LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+    FRM[id]='4-4-2';BUD[id]=rep>=26?0.3:(rep>=22?0.15:0.08);
+  });
+  {let c=CLUBBY.RIFC;if(c){c.co='US';c.div=3;c.city='Pawtucket';c.stadium='',c.rep=c.rep||26;try{BASE_DIV.RIFC=3}catch(e){}
+    LOG.RIFC='https://cdn.resfu.com/img_data/equipos/161510.png?size=120x&lossy=1';FRM.RIFC=FRM.RIFC||'4-4-2';BUD.RIFC=BUD.RIFC||0.3;}}
+  Object.assign(CLUB_LOGO,LOG);Object.keys(LOG).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG[id]});
+  Object.assign(FORM_MAIN,FRM);Object.assign(BUDGET,BUD);
+  const C={'Winter Park':[-81.35,28.60],'Asheville':[-82.55,35.60],'Lancaster':[-118.14,34.69],'Denver':[-104.99,39.74],
+    'High Point':[-80.01,35.96],'Charleston':[-79.93,32.78],'Chattanooga':[-85.31,35.05],'Colorado Springs':[-104.82,38.83],
+    'Modesto':[-120.99,37.64],'Des Moines':[-93.62,41.59],'Detroit':[-83.05,42.33],'San Francisco':[-122.42,37.77],
+    'El Paso':[-106.49,31.76],'Cambridge':[-71.11,42.37],'Naples':[-81.79,26.14],'Tulsa':[-95.99,36.15],'Flint':[-83.69,43.01],
+    'Pembroke Pines':[-80.30,26.00],'Rochester':[-77.61,43.16],'Madison':[-89.40,43.07],'Greenville':[-82.40,34.85],
+    'Hartford':[-72.68,41.76],'Indianapolis':[-86.16,39.77],'Laguna Niguel':[-117.71,33.52],'Laredo':[-99.50,27.51],
+    'Lexington':[-84.50,38.05],'Little Rock':[-92.29,34.75],'Leesburg':[-77.56,39.12],'Louisville':[-85.76,38.25],
+    'Morristown':[-74.48,40.80],'Albuquerque':[-106.65,35.08],'Knoxville':[-83.92,35.96],'Irvine':[-117.83,33.68],
+    'Phoenix':[-112.07,33.45],'Pittsburgh':[-79.99,40.44],'Richmond':[-77.44,37.54],'Sacramento':[-121.49,38.58],
+    'San Antonio':[-98.49,29.42],'San Ramon':[-121.95,37.78],'Evansville':[-87.57,37.97],'Spokane':[-117.43,47.66],
+    'Statesboro':[-81.78,32.45],'Omaha':[-95.93,41.26],'Fresno':[-119.79,36.74],'Ventura':[-119.29,34.28],
+    'Burlington':[-73.21,44.48],'Falls Church':[-77.17,38.88],'Garfield':[-74.11,40.88],'West Chester':[-75.61,39.96],
+    'Mount Vernon':[-73.84,40.91],'Pawtucket':[-71.38,41.88]};
+  const CC={};for(const k in C)CC['US|'+k]={ll:C[k]};
+  Object.assign(CITY,CC);
+})();
+const USC_TEAMS=['ATL','ATX','CLT','CHIF','CLRP','CCR','DCU','HOU','MNU','NER','NYCFC','NYR','ORLC','SJQ','SKC','SLC'].concat(US_CUP_CLUBS,['RIFC']);
+/* palmarés histórico: MLS Cup (campeón absoluto) y U.S. Open Cup. Los clubes sin títulos llevan objeto
+   vacío para que no se les genere un palmarés ficticio por reputación. */
+Object.assign(PALMARES,{
+  GALX:{league:6,cup:2,ccl:1},
+  DCU:{league:4,cup:3,ccl:1},
+  CCR:{league:3,cup:1,lcup:1},
+  SEA:{league:2,cup:4,ccl:1,lcup:1},
+  SKC:{league:2,cup:4},
+  HOU:{league:2,cup:2},
+  SJE:{league:2},
+  CHIF:{league:1,cup:4},
+  MIA:{league:1,cup:1,lcup:1},
+  LAF:{league:1,cup:1},
+  NYCFC:{league:1},
+  ATL:{league:1,cup:1},
+  TFC:{league:1},
+  PTL:{league:1},
+  CLRP:{league:1},
+  RSL:{league:1},
+  DAL:{cup:2},
+  ORLC:{cup:1},
+  NER:{cup:1},
+  ATX:{},CLT:{},CIN:{},CFM:{},MNU:{},NYR:{},PHI:{},SDFC:{},SLC:{},VWH:{}
 });
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
