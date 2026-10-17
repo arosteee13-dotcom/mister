@@ -7618,6 +7618,7 @@ function objective(id){
   if(c.co==='FJ')return rank<=1?'Ganar la Liga':rank<=2?'Clasificar a la OFC Champions League':rank<=9?'Permanencia':'Evitar el descenso';
   if(c.co==='JP'&&c.div===2)return rank<=2?'Ascender a la J1':rank<=6?'Clasificar al play-off de ascenso':'Terminar en la zona media';
   if(c.co==='JP')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a la AFC Champions League Two':rank<=17?'Permanencia':'Evitar el descenso';
+  if(c.co==='CA')return rank<=5?'Clasificar a los CPL Playoffs':'Permanencia';
   if(c.co==='US')return rank<=8?'Clasificar a los MLS Cup Playoffs':'Permanencia';
   if(c.co==='AU')return rank<=1?'Ganar la liga (Premier)':rank<=6?'Clasificar a la Finals Series':'Permanencia';
   if(c.co==='AD'&&c.div===2)return rank<=1?'Ascenso directo a la Primera Divisió':rank<=2?'Clasificar al playoff de ascenso':'Permanencia';
@@ -11352,7 +11353,7 @@ function buildRawFixtures(ids,r){
    tras el ajuste de rachas, deja menos equipos con más de 2 partidos seguidos en casa o fuera */
 /* número de "vueltas dobles" (ida+vuelta) que juega cada liga; 1 = formato estándar. La Premier Division
    irlandesa juega contra cada rival 4 veces (2 vueltas dobles) en vez de las 2 habituales. */
-const MULTI_ROUND={IE1:2};
+const MULTI_ROUND={IE1:2,CA1:2};
 /* ligas que, además de la vuelta doble (ida+vuelta) estándar, juegan una vuelta sencilla extra: la
    Super League suiza se juega a triple vuelta (33 jornadas con 12 equipos = 22 + 11) antes del split. */
 const EXTRA_LEG={CH1:true,KR1:true,NIR1:true};
@@ -15156,12 +15157,13 @@ const SC_TEAMS={ES:4,TR:4,SA:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1,WA:1};
 const SC_WEEKS={ES:[20,21],TR:[20,21],SA:[0,1],FJ:[1]};
 const userKey=()=>state.country+(state.div||1);
-const isCup=k=>k==='USPO'||k==='AUFS'||k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C')||k==='OFCCL'||k==='OFCPL';
+const isCup=k=>k==='CAPO'||k==='USPO'||k==='AUFS'||k==='UCL'||k==='UCLQ'||k==='UEL'||k==='UELQ'||k==='ECL'||k==='ECLQ'||k==='SCE'||k==='ARAK'||k==='ARLK'||k==='ARTK'||k==='ARGISC'||k==='RECS'||k==='LIB'||k==='SUD'||k==='LIBQ'||k==='SUDQ'||k==='BGPO'||k==='CZPO'||k==='MXPIA'||k==='MXLGA'||k==='MXPIC'||k==='MXLGC'||k==='MXCC'||k==='AFCEQ'||k==='AFCC2Q'||k==='AFCCLQ'||k.endsWith('C')||k==='OFCCL'||k==='OFCPL';
 /* código de país y sufijo de una clave de competición. CUIDADO: 'NIR' tiene 3 letras, así que
    key.slice(0,2) daría 'NI' y rompería nombres/palmarés/zona. keyCo/keySuf lo resuelven. */
 const keyCo=k=>{k=String(k);return /^NIR/.test(k)?'NIR':k.slice(0,2)};
 const keySuf=k=>String(k).slice(keyCo(k).length);
 const compName=k=>{
+    if(k==='CAPO')return 'CPL Playoffs';
     if(k==='USPO')return 'MLS Cup Playoffs';
     if(k==='AUFS')return 'A-League Finals Series';
   if(fictOn())return fictCompName(k);
@@ -15833,6 +15835,7 @@ function cupRehydrate(cup){
   }else if(k==='MXLGA'||k==='MXLGC'){
     cup._nextTies=mxNextTies;
   }else if(k==='USPO'){cup._nextTies=usNextTies;}
+  else if(k==='CAPO'){cup._nextTies=caNextTies;}
   else if(k==='CNC'){cup._nextTies=cnCupNextTies;}
   else if(k==='RUC'){cup._nextTies=rucNextTies;}
   else if(k==='IFC'){cup._nextTies=computeNextTiesIFC;}
@@ -16441,7 +16444,7 @@ function cupWear(t,store){
 function afterLeague(){
   for(let guard=0;guard<60;guard++){
     const w=state.week;
-    arEnsureCups(w);mxEnsureCups(w);bulEnsureCups(w);czEnsureCups(w);auEnsureCups(w);usEnsureCups(w);
+    arEnsureCups(w);mxEnsureCups(w);bulEnsureCups(w);czEnsureCups(w);auEnsureCups(w);usEnsureCups(w);caEnsureCups(w);
     if(userCupTie(w))return;
     let maxW=-1;
     for(const k in state.cups){const c=state.cups[k];
@@ -16457,7 +16460,7 @@ function afterLeague(){
 function playCupStage(){
   const ct=userCupTie(state.week);if(!ct)return null;
   ensureUserSquad();
-  if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);auEnsureCups(state.week);usEnsureCups(state.week);
+  if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);auEnsureCups(state.week);usEnsureCups(state.week);caEnsureCups(state.week);
   ensureFinBase();
   const t=me(),hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id)),mine=[];
   if(ct.group){
@@ -16595,7 +16598,7 @@ function playCupRound(cup,ri,leg){
   return out;
 }
 function advanceWorld(r){
-  arEnsureCups(r);mxEnsureCups(r);bulEnsureCups(r);auEnsureCups(r);usEnsureCups(r);
+  arEnsureCups(r);mxEnsureCups(r);bulEnsureCups(r);auEnsureCups(r);usEnsureCups(r);caEnsureCups(r);
   const mine=[];
   /* mantenimiento semanal de los clubes que NO son de tu liga: les caducan lesiones y sanciones (antes se acumulaban
      toda la temporada y degradaban al rival para siempre). Un guard evita repetirlo si advanceWorld se llama dos veces
@@ -16723,7 +16726,7 @@ function recordHonors(final){
     }
   };
   gamePlayable().forEach(co=>{
-    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&d===1&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(co==='RS'&&(d===1||d===2)&&L.split){const w=rsGroups(L).champ[0];if(w)top={id:w}}if(co==='AU'&&d===1){const ch=state.cups&&state.cups.AUFS&&state.cups.AUFS.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(co==='US'){if(d===2)return;const ch=state.cups&&state.cups.USPO&&state.cups.USPO.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
+    if(final)[1,2].forEach(d=>{try{const L=leagueData(co+d);if(!L||!L.tb)return;let top=sortTable(L.tb)[0];if(co==='DK'&&d===1&&L.split){const w=dkGroups().champ[0];if(w)top={id:w}}if(co==='BG'&&d===1&&L.split){const w=bulGroups(L).champ[0];if(w)top={id:w}}if(co==='GR'&&d===1&&L.split){const w=grGroups(L).champ[0];if(w)top={id:w}}if(co==='CZ'&&d===1&&L.split){const w=czGroups(L).champ[0];if(w)top={id:w}}if(co==='KR'&&d===1&&L.split){const w=krGroups().champ[0];if(w)top={id:w}}if(co==='RS'&&(d===1||d===2)&&L.split){const w=rsGroups(L).champ[0];if(w)top={id:w}}if(co==='AU'&&d===1){const ch=state.cups&&state.cups.AUFS&&state.cups.AUFS.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(co==='US'){if(d===2)return;const ch=state.cups&&state.cups.USPO&&state.cups.USPO.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(co==='CA'){if(d===2)return;const ch=state.cups&&state.cups.CAPO&&state.cups.CAPO.champ;if(ch&&CLUBBY[ch])top={id:ch}}if(top)add(top.id,d===1?'league':'d2',co+d)}catch(e){}});
     const cup=state.cups&&state.cups[co+'C'];if(cup&&cup.champ)add(cup.champ,co==='WA'?'wac':'cup',co+'C');
     if(co==='EN'&&state.cups.ENT&&state.cups.ENT.champ)add(state.cups.ENT.champ,'eflt','ENT');
     if(co==='EN'&&state.cups.ENNC&&state.cups.ENNC.champ)add(state.cups.ENNC.champ,'nlc','ENNC');
@@ -17132,7 +17135,7 @@ function initWorld(){
       return;
     }
     /* España: la Copa del Rey solo la juegan los clasificados (state.copaQual). El resto de países, todos los no filiales. */
-    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='US'?USC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AU'?AU_CUP_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AD'?ADC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')&&!(co==='SA'&&c.id==='ITT')).map(c=>c.id)))));
+    let ids=(co==='ES'&&state.copaQual&&state.copaQual.length)?state.copaQual.filter(id=>CLUBBY[id]&&!isB(id)):(co==='CA'?CAC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='US'?USC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AU'?AU_CUP_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='AD'?ADC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):(co==='TR'?TRC_TEAMS.filter(id=>CLUBBY[id]&&!isB(id)):CLUBS.filter(c=>gameClub(c)&&c.co===co&&!isB(c.id)&&!(co==='CH'&&CLUB_NAT[c.id]==='LI')&&!(co==='SA'&&c.id==='ITT')).map(c=>c.id))))));
     if(co==='AR'&&state.season===1&&ARCOPA_S1.every(id=>CLUBBY[id]))ids=ARCOPA_S1.slice();
     if(CLUBBY[state.club]&&CLUBBY[state.club].co===co&&!isB(state.club)&&!(co==='CH'&&CLUB_NAT[state.club]==='LI')&&!ids.includes(state.club))ids.push(state.club);
     if(ids.length<2)return;   /* país sin equipos suficientes (clubes sueltos no jugables): sin copa nacional */
@@ -17141,7 +17144,8 @@ function initWorld(){
     if(co==='WA'&&state.cups.WAC)state.cups.WAC.et=true;
     if(co==='AD'&&state.cups.ADC)state.cups.ADC.et=true;
     if(co==='AU'&&state.cups.AUC)state.cups.AUC.et=true;
-    if(co==='US'&&state.cups.USC)state.cups.USC.et=true;   /* US Open Cup: prórroga y penaltis */   /* Australia Cup: prórroga y penaltis en todas las rondas */   /* Copa Constitució: prórroga y penaltis en todas las rondas */   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
+    if(co==='US'&&state.cups.USC)state.cups.USC.et=true;
+    if(co==='CA'&&state.cups.CAC)state.cups.CAC.et=true;   /* Canadian Championship: prórroga y penaltis */   /* US Open Cup: prórroga y penaltis */   /* Australia Cup: prórroga y penaltis en todas las rondas */   /* Copa Constitució: prórroga y penaltis en todas las rondas */   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
     if(co==='NIR'&&state.cups.NIRC)state.cups.NIRC.et=true;   /* Irish League Cup: prórroga + penaltis en caso de empate, en todas las rondas */
   });
   /* Supercopas: campeón y subcampeón de liga contra campeón y subcampeón de copa de la temporada anterior.
@@ -17912,6 +17916,7 @@ function viewComps(){
 function zoneColor(key,pos,total){
   const co=keyCo(key),d=co==='ES'?String(+keySuf(key)):String(key).slice(-1);
   if(co==='US'){if(pos<=8)return'#38D996';return'#BCBCBC'}
+  if(co==='CA'){if(pos<=5)return'#38D996';return'#BCBCBC'}
   if(d==='1'){
     if(co==='AD'){   /* Primera Divisió (10): 1º campeón/previa UCL; 2º-3º previa Conference; 9º playoff; 10º baja */
       if(pos===1)return'#7cb342';
@@ -18445,7 +18450,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
+  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -19769,8 +19774,9 @@ Object.assign(TROPHY_SC,{KR:'Korean Super Cup'});
 CUPNAME.KR='Korea Cup';
 CUPNAME.WA='Welsh Cup';
 Object.assign(TROPHY_SC,{WA:'Supercopa de Gales'});Object.assign(TROPHY_CUP,{WA:'Welsh Cup'});
-const TROPHY_ORDER=['league','ofccl','ofcpl','apertura','clausura','cdc','cup','trofeo','sarg','sint','sc','lc','wac','walc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afcc2','afccl','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
+const TROPHY_ORDER=['league','cac','ofccl','ofcpl','apertura','clausura','cdc','cup','trofeo','sarg','sint','sc','lc','wac','walc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afcc2','afccl','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
 function trophyName(club,k,real){
+  if(k==='cac')return 'Canadian Championship';
   if(!real&&fictOn())return fictTrophy(club,k);
   const co=club.co;
   if(k==='apertura')return co==='MX'?'Liga MX Apertura':'Torneo Apertura';
@@ -26426,6 +26432,14 @@ REAL_LOANS.push(['Franuel Amaya','TOLU','CFM',1,'Rotación',['Franuel Amaya','MD
 REAL_LOANS.push(['Ivan Losenko','SHK','CFM',1,'Rotación',['Ivan Losenko','MD',2004,'UA',57,null,2.47,null,'MC']]);
 REAL_LOANS.push(['Miguel Navarro','TALL','CLRP',1,'Rotación',['Miguel Navarro','DF',1999,'VE',74,null,2.0,null,'LI']]);
 
+/* Cesiones (CPL, Canadá). */
+REAL_LOANS.push(['Owen Graham-Roache','CFM','CAV',1,'Rotación',['Owen Graham-Roache','FW',2008,'CA',30,null,0.199,null,'DC']]);
+REAL_LOANS.push(['Adam Pearlman','TFC','CAV',1,'Rotación',['Adam Pearlman','DF',2005,'CA',57,null,2.89,null,'DFC']]);
+REAL_LOANS.push(['Levonte Johnson','COSS','FORG',1,'Rotación',['Levonte Johnson','FW',1999,'CA',51,null,0.275,null,'EI']]);
+REAL_LOANS.push(['Liam MacKenzie','VWH','HFX',1,'Rotación',['Liam MacKenzie','MD',2007,'CA',41,null,0.2,null,'MCO']]);
+REAL_LOANS.push(['Nelson Pierre','VWH','HFX',1,'Rotación',['Nelson Pierre','FW',2005,'HT',48,null,0.175,null,'DC']]);
+REAL_LOANS.push(['Emrick Durand Fotsing','VWH','VANF',1,'Rotación',['Emrick Durand Fotsing','MD',2007,'CA',41,null,0.489,null,'MC']]);
+
 
 
 
@@ -27071,6 +27085,113 @@ Object.assign(PALMARES,{
   ORLC:{cup:1},
   NER:{cup:1},
   ATX:{},CLT:{},CIN:{},CFM:{},MNU:{},NYR:{},PHI:{},SDFC:{},SLC:{},VWH:{}
+});
+/* ===== Canadá: Canadian Premier League (8 clubes, cuádruple vuelta = 28 jornadas) =====
+   Liga cerrada sin descensos. Top-5 → CPL Playoffs (play-in 4º-5º, semis y final a partido único);
+   el campeón de los playoffs es el campeón y recibe la plaza continental junto al 1º de la liga regular. */
+const ZONES_CA=[['#38D996','CPL Playoffs'],['#BCBCBC','Permanencia (liga cerrada, sin descensos)']];
+function caNextTies(cup,ri){
+  if(ri===1){
+    const w=(cup.rounds[0].ties||[]).map(t=>t.w);
+    if(w.some(x=>!x))return[];
+    /* semis: 1º vs ganador del play-in (4º-5º) y 2º vs 3º; localía del mejor clasificado */
+    const s1=cup.bye[0],s2=cup.bye[1],s3=cup.bye[2];
+    const tie=(a,b)=>(repOf(a)>=repOf(b)?{h:a,a:b}:{h:b,a:a});
+    return [tie(s1,w[0]),tie(s2,s3)];
+  }
+  const w=(cup.rounds[1].ties||[]).map(t=>t.w);
+  if(w.some(x=>!x))return[];
+  return [{h:w[0],a:w[1]}];
+}
+function caEnsureCups(){
+  if(!state||!state.cups||state.cups.CAPO)return;
+  if(!gamePlayable().includes('CA'))return;
+  const L=leagueData('CA1');if(!L||!L.fx||!L.fx.length||!L.tb)return;
+  const ids=Object.keys(L.tb);
+  if(ids.length<5)return;
+  if(!L.fx.every(rd=>rd.every(m=>m.hg!==undefined)))return;
+  const seeds=sortTable(L.tb).slice(0,5).map(r=>r.id);
+  if(seeds.length<5)return;
+  const w0=Math.max(state.week||0,L.fx.length);
+  state.cups.CAPO={key:'CAPO',name:'CPL Playoffs',ids:seeds,bye:[seeds[0],seeds[1],seeds[2]],sc:{},champ:null,homeAdv:true,
+    _nextTies:caNextTies,
+    rounds:[
+      {n:'Play-in (4º-5º)',w:w0,ties:[{h:seeds[3],a:seeds[4]}],done:false},
+      {n:'Semifinales',w:w0+1,ties:null,done:false},
+      {n:'Final',w:w0+2,ties:null,done:false}]};
+}
+{
+  if(!PLAYABLE.includes('CA'))PLAYABLE.push('CA');
+  if(typeof NA_COUNTRIES!=='undefined')NA_COUNTRIES.add('CA');   /* Canadá está en Norteamérica, no en Europa */
+  if(!COUNTRIES.CA)COUNTRIES.CA={name:'Canadá',league:'Canadian Premier League',divs:['Canadian Premier League'],pin:[-106,56],polys:[CANADA,CANADA_ISL,CANADA_ISL2]};
+  if(!GROUPS.some(g=>g.id==='CA'))GROUPS.push({id:'CA',name:'Canadá',comps:['CA1','CAC','CAPO']});
+  {const i=LOCKED_NA.findIndex(x=>x.id==='CA');if(i>=0)LOCKED_NA.splice(i,1);}
+  Object.assign(NATNAME,{CA:'Canadá'});
+  Object.assign(CUPNAME,{CA:'Canadian Championship'});
+  Object.assign(TROPHY_CUP,{CA:'Canadian Championship'});
+  TROPHY_IMG_CO.CA={league:'2119',cup:NOFOTO_TROPHY};   /* imagen real de la CPL (2119); Canadian Championship sin foto */
+  TROPHY_IMG_ANY.cac=NOFOTO_TROPHY;
+  SC_SKIP.CA=1;
+  BENCH_CD.CA1=9;
+  const SEL=[
+    ['ATTO','Atlético Ottawa','Atlético Ottawa','Ottawa',44,135700,'TD Place Stadium','4-4-2',3.5],
+    ['CAV','Cavalry FC','Cavalry','Calgary',43,119652,'ATCO Field','4-2-3-1',3.5],
+    ['FORG','Forge FC','Forge','Hamilton',46,119662,'Tim Hortons Field','4-3-3',4],
+    ['HFX','HFX Wanderers','HFX Wanderers','Halifax',42,119651,'Wanderers Grounds','4-2-3-1',3],
+    ['ITOR','Inter Toronto FC','Inter Toronto','Toronto',43,119654,'York Lions Stadium','4-3-3',3.5],
+    ['PACF','Pacific FC','Pacific FC','Langford',42,119653,'Starlight Stadium','4-2-3-1',3],
+    ['SUP','Supra du Québec','Supra Québec','Laval',41,169533,'Complexe sportif Claude-Robillard','4-4-2',3],
+    ['VANF','Vancouver FC','Vancouver FC','Langley',40,155964,'Willoughby Community Park','4-3-3',2.5]
+  ];
+  const LOG={},STD={},FRM={},BUD={};
+  SEL.forEach(([id,name,short,city,rep,crest,stad,form,bud])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'CA','#1c3f94','#f4f4f4',rep,1);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='CA';c.rep=rep;c.div=1;c.stadium=stad;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+    STD[id]=stad;FRM[id]=form;BUD[id]=bud;
+  });
+  Object.assign(CLUB_LOGO,LOG);Object.keys(LOG).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG[id]});
+  Object.assign(STADIUM,STD);Object.assign(FORM_MAIN,FRM);Object.assign(BUDGET,BUD);
+  const C={'Ottawa':[-75.70,45.42],'Calgary':[-114.07,51.05],'Hamilton':[-79.87,43.26],'Halifax':[-63.58,44.65],
+    'Toronto':[-79.38,43.65],'Langford':[-123.51,48.45],'Laval':[-73.75,45.61],'Langley':[-122.66,49.10]};
+  const CC={};for(const k in C)CC['CA|'+k]={ll:C[k]};
+  Object.assign(CITY,CC);
+  /* Canadian Championship: 3 clubes canadienses de la MLS + 4 invitados semiprofesionales */
+  const CUP=[
+    ['CGB','Calgary Blizzard','Calgary Blizzard','Calgary','#0a5aa8','#f4f4f4',22,169874],
+    ['LGUN','Langley United','Langley United','Langley','#1a237e','#f4f4f4',20,169873],
+    ['STLR','Saint-Laurent','Saint-Laurent','Saint-Laurent','#0a8a4d','#f4f4f4',20,151363],
+    ['WBS','Woodbridge Strikers','Woodbridge','Woodbridge','#d4192b','#f4f4f4',20,151379]
+  ];
+  const LOG2={};
+  CUP.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'CA',c1,c2,rep,3);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='CA';c.div=3;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=3}catch(e){}
+    LOG2[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+    FRM[id]=FRM[id]||'4-4-2';BUD[id]=BUD[id]||0.1;
+  });
+  Object.assign(CLUB_LOGO,LOG2);Object.keys(LOG2).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG2[id]});
+  Object.assign(FORM_MAIN,FRM);Object.assign(BUDGET,BUD);
+  Object.assign(CITY,{'CA|Saint-Laurent':{ll:[-73.67,45.50]},'CA|Woodbridge':{ll:[-79.60,43.79]}});
+}
+const CAC_TEAMS=['ATTO','CAV','FORG','HFX','ITOR','PACF','SUP','VANF','TFC','CFM','VWH']
+  .concat(['CGB','LGUN','STLR','WBS']);
+/* palmarés histórico: CPL (campeón de los playoffs) y Canadian Championship (Voyageurs Cup) */
+Object.assign(PALMARES,{
+  FORG:{league:4},
+  PACF:{league:1},
+  ATTO:{league:1},
+  CAV:{league:1},
+  HFX:{},ITOR:{},SUP:{},VANF:{},
+  TFC:{league:1,cac:8},
+  CFM:{cac:5},
+  VWH:{cac:5}
 });
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
