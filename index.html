@@ -1973,8 +1973,6 @@ function isLeagueEnabled(co,d){
   if(co==='RO'&&d===2)return false;
   /* Segunda checa: solo filiales/reservas y clubes históricos, sin liga simulada -> no jugable. */
   if(co==='CZ'&&d===2)return false;
-  /* J2 League (Japón): división declarada para poder descender, pero todavía sin liga simulada. */
-  if(co==='JP'&&d===2)return false;
   /* National League de Inglaterra (5a división): clubes y escudos ya cargados para el mapa/catálogo,
      pero todavía sin motor de competición (calendario, tabla, ascensos) -> no jugable por ahora. */
   if(!state||!state.leagueConfig)return true;
@@ -7611,6 +7609,7 @@ function objective(id){
   if(c.co==='RS'&&c.div===1)return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=n-4?'Permanencia':'Evitar el descenso';
   if(c.co==='RS'&&c.div===2)return rank<=2?'Ascenso directo':rank<=8?'Clasificar al Grupo de Ascenso':rank<=12?'Permanencia':'Evitar el descenso';
   if(c.co==='FJ')return rank<=1?'Ganar la Liga':rank<=2?'Clasificar a la OFC Champions League':rank<=9?'Permanencia':'Evitar el descenso';
+  if(c.co==='JP'&&c.div===2)return rank<=2?'Ascender a la J1':rank<=6?'Clasificar al play-off de ascenso':'Terminar en la zona media';
   if(c.co==='JP')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a la AFC Champions League Two':rank<=17?'Permanencia':'Evitar el descenso';
   if(c.co==='WA')return rank<=1?'Ganar la Liga':rank<=4?'Clasificar para competición europea':rank<=13?'Permanencia':rank<=14?'Evitar el playoff de descenso':'Evitar el descenso';
   if(c.div===2)return rank<=2?'Ascenso directo':rank<=Math.ceil(n*.4)?'Clasificar a Playoffs de Ascenso':'Terminar en la zona media de la tabla';
@@ -12294,6 +12293,12 @@ function planPlayoffs(){
       const seeds=elig.slice(2,6);
       up=elig.slice(0,2);down=s1.slice(-3);
       if(seeds.length===4)item={co,kind:'plpo',seeds,single:true,homeBetter:true};
+    }else if(co==='JP'){
+      /* J1 ↔ J2: ascienden los 2 primeros de la J2 + el ganador del play-off 3º-6º (partido único en casa del
+         mejor clasificado); bajan los 3 últimos de la J1. La J2 no desciende (no hay J3 simulada). */
+      const seeds=elig.slice(2,6);
+      up=elig.slice(0,2);down=s1.slice(-3);
+      if(seeds.length===4)item={co,kind:'plpo',seeds,single:true,homeBetter:true};
     }else if(elig.length>=2){
       up=elig.slice(0,2);
       if(n1===18){down=s1.slice(-2);if(elig[2])item={co,kind:'rel',seeds:[s1[n1-3],elig[2]]}}
@@ -15121,7 +15126,7 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'WA',name:'Gales',comps:['WA1','WAC','WALC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']},{id:'JP',name:'Japón',comps:['JP1','JPC','JPLC','JPSC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'WA',name:'Gales',comps:['WA1','WAC','WALC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']},{id:'JP',name:'Japón',comps:['JP1','JP2','JPC','JPLC','JPSC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',WA:'Nathaniel MG Cup'};
 const SC_TEAMS={ES:4,TR:4,SA:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1,WA:1};
@@ -17991,6 +17996,12 @@ function zoneColor(key,pos,total){
     return'#e53935';
   }
   if(d==='2'){
+    if(co==='JP'){   /* J2 League: 1º campeón/ascenso directo, 2º ascenso directo, 3º-6º play-off de ascenso; sin descenso */
+      if(pos===1)return'#AAE139';
+      if(pos===2)return'#49CB2B';
+      if(pos<=6)return'#38D996';
+      return'#BCBCBC';
+    }
     if(co==='NL'){if(pos<=2)return'#558b2f';if(pos<=8)return'#79B9DE';return'#9e9e9e'}
     if(co==='PL'){if(pos<=2)return'#66bb6a';if(pos<=6)return'#26a69a';if(pos<=15)return'#9e9e9e';return'#e53935'}
     if(pos<=2)return'#66bb6a';
@@ -18063,6 +18074,7 @@ const ZONES_D1=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#29b6f6'
 /* China: colores exactos devueltos por zoneColor(co==='CN') para que la leyenda muestre las 5 franjas reales
    (campeón, play-offs AFC Elite, fase de grupos AFC Two, permanencia y descenso directo). */
 const ZONES_JP1=[['#AAE139','Campeón (AFC Champions League Elite)'],['#38D996','AFC Champions League Two'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso a la J2 League']];
+const ZONES_JP2=[['#AAE139','Campeón (ascenso directo a la J1)'],['#49CB2B','Ascenso directo a la J1'],['#38D996','Play-off de ascenso'],['#BCBCBC','Permanencia (sin descenso: no hay J3)']];
 const ZONES_CN=[['#7cb342','Campeón (Fase de Liga AFC Champions League Elite + Chinese Super Cup)'],['#4caf50','Play-offs (Fase Previa) AFC Champions League Elite'],['#26a69a','Fase de Grupos AFC Champions League Two'],['#9e9e9e','Permanencia'],['#e53935','Descenso directo a la League One']];
 const ZONES_PT1=[['#7cb342','Campeón'],['#4caf50','Champions League'],['#26a69a','Previa de Champions'],['#29b6f6','Previa de Europa League'],['#79B9DE','Fase Previa Conference League'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff Descenso'],['#e53935','Descenso']];
 const ZONES_NL1=[['#558b2f','Champions League'],['#7cb342','Previa de Champions'],['#29b6f6','Previa de Europa League'],['#79B9DE','Playoffs'],['#9e9e9e','Permanencia'],['#ef9a9a','Playoff de Descenso'],['#e53935','Descenso']];const ZONES_NO1=[['#AAE139','Campeón'],['#49CB2B','Previa de Champions'],['#38D996','Fase Previa Conference League'],['#BCBCBC','Permanencia'],['#FCA6A1','Playoff Descenso'],['#ED3B46','Descenso']];
@@ -18362,7 +18374,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
+  const allZones=keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FJ'?ZONES_FJ:d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -19706,7 +19718,7 @@ function trophyName(club,k,real){
   if(k==='walc')return'Nathaniel MG Cup';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',JP:'Copa J. League'}[co]||'Copa de la Liga';
-  if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
+  if(k==='d2')return{FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
   if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',NL:'Tweede Divisie',NIR:'Intermediate League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
   if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B',NL:'Derde Divisie'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
@@ -19730,7 +19742,7 @@ function trophyName(club,k,real){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={WA:{league:'https://cdn.resfu.com/img_data/competiciones/copa/39.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/638.png?size=60x&lossy=1',lc:'https://cdn.resfu.com/img_data/competiciones/copa/1502.png?size=60x&lossy=1',sc:NOFOTO_TROPHY},ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:'58',cup:'653',sc:'1506',lc:'1636'},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={WA:{league:'https://cdn.resfu.com/img_data/competiciones/copa/39.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/638.png?size=60x&lossy=1',lc:'https://cdn.resfu.com/img_data/competiciones/copa/1502.png?size=60x&lossy=1',sc:NOFOTO_TROPHY},ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:'58',d2:'181',cup:'653',sc:'1506',lc:'1636'},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ofccl:'1703',ofcpl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
@@ -19763,7 +19775,7 @@ const MUSEUM_IMG_SCALE={'ES|d4':1.35,'CH|liechtenstein':1.35,'FR|d2':1.3,'BG|cup
 const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d5','d6','d7','cup','sc','lc','wac','walc','apertura','clausura','cdc','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','eflt','nlc','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs','afcce','afcc2','afccl','acc'];
 /* Orden propio de trofeos para países concretos (Museo y cabina del club): solo reordena las claves que se
    indican; el resto sigue el orden global de cada vista. Japón: la Copa J. League va ANTES que la Supercopa. */
-const TROPHY_ORDER_CO={JP:['league','cup','lc','sc']};
+const TROPHY_ORDER_CO={JP:['league','d2','cup','lc','sc']};
 const keyRank=(base,co,k)=>{const own=TROPHY_ORDER_CO[co];if(own){const i=own.indexOf(k);if(i>=0)return i}const g=base.indexOf(k);return 100+(g<0?base.length+1:g)};
 /* las competiciones que de verdad salen en cada país se sacan directamente de la pantalla de
    Competiciones del juego (GROUPS), quitando las fases previas (…Q). Así el museo nunca muestra
@@ -19785,6 +19797,8 @@ function museumKeysOf(co){
      1. Lig sí están simuladas (TR1/TR2), pero la 2. Lig y la 3. Lig NO son jugables (no existen TR3/TR4 y
      ningún club tiene esas divisiones), así que sus trofeos (d3/d4) no salen aquí. */
   if(co==='TR')return['league','d2','cup','sc'];
+  /* Japón: la J1 y la J2 se simulan; el trofeo de J2 va justo después del de la J1. */
+  if(co==='JP')return['league','d2','cup','lc','sc'];
   /* Rusia: el Museo muestra la liga, la 1. Division, la Copa y la Supercopa. */
   if(co==='RU')return['league','d2','cup','sc'];
   /* Países Bajos: Eredivisie + Keuken Kampioen Divisie + copa y supercopa (Tweede/Derde Divisie no son jugables). */
@@ -25990,6 +26004,41 @@ const JP_CUP_IDS=JP_CUP_CLUBS.map(x=>x[0]);
 })();
 const JPC_TEAMS=["AKUS","ALBI","ARTE","ATSU","AVIS","AZUL","BASA","BELU","BLAU","BRIO","CZO","CONS","CRIA","EHIM","FAGI","MARU","FCTK","FCTO","FUJI","FUKU","FKSI","GAIN","GAM","GIFU","GIRA","GRUL","IMAB","IWAK","JSCL","JEFU","JUBI","KAGO","KAMA","KANS","KASA","KASW","KATA","KAWA","KWSO","KOCH","KYO","KYSU","MACH","MITO","MYAM","NGIU","NAGO","NARA","OITA","OKIN","OSAK","OYAM","PACI","PARN","OMI","REIL","REIN","RENO","ROAS","RYUT","SAGA","HIR","SAPU","SENS","SHIM","SHON","SRCH","TEGE","THES","TOCH","TOCG","TOHG","TOKU","TKYI","VERD","TOYS","TSUK","URA","VVLN","VANR","VEGA","VENT","VERO","VERS","VISS","YAMA","YOKF","YOKO"];
 const JPLC_TEAMS=["ALBI","AVIS","BLAU","CZO","CONS","EHIM","FAGI","FCTO","FUJI","FKSI","GAIN","GAM","GIFU","GIRA","IMAB","IWAK","JEFU","JUBI","KAGO","KAMA","KASW","KATA","KAWA","KOCH","KYO","MACH","MATS","MITO","MYAM","NAGO","NARA","OITA","OSAK","PARN","OMI","REIL","RENO","ROAS","RYUK","SGHR","SAGA","HIR","SHIM","SHON","TEGE","THES","TOCH","TOCG","TOKU","VERD","URA","VVLN","VANR","VEGA","VENT","YOKF","YOKO","ZWEI"];
+/* ===== J2 League (Japón): 20 clubes reales (temporada 2026/27) =====
+   Doble vuelta = 38 jornadas. Zonas: 1º-2º ascienden directos a la J1; 3º-6º juegan el play-off de ascenso
+   (a partido único, en casa del mejor clasificado); no hay descenso porque la J3 no está simulada.
+   Los 20 clubes ya existían como participantes de copa (`JP_CUP_CLUBS`, div 3): aquí se suben a la J2 y
+   se añaden a CLUBS. Banquillo: 9 suplentes (BENCH_N por defecto). */
+const JP2_IDS=['ALBI','BLAU','CONS','FUJI','IMAB','IWAK','JUBI','KATA','MYAM','OITA','OMI','SAGA','SHON','TEGE','TOCG','TOKU','VANR','VEGA','VENT','YOKF'];
+JP2_IDS.forEach(id=>{const c=CLUBBY[id];if(!c)return;c.div=2;c.bTeam=0;if(!CLUBS.includes(c))CLUBS.push(c);if(typeof BASE_DIV!=='undefined')BASE_DIV[id]=2;});
+
+/* Datos oficiales de la J2 (estadio, formación y presupuesto en M€) + reputación acorde al presupuesto
+   (la J2 queda por debajo de la J1, que va de 46 a 70). */
+const JP2_DATA=[
+ ['ALBI','Denka Big Swan Stadium','4-2-3-1',7,49],
+ ['BLAU','Soyu Stadium','4-4-2',3,43],
+ ['CONS','Sapporo Dome','3-4-2-1',9,51],
+ ['FUJI','Fujieda Soccer Stadium','4-3-3',3,43],
+ ['IMAB','Arigato Service Yume Stadium','4-4-2',2.5,41],
+ ['IWAK','Hawaiians Stadium Iwaki','4-4-2',3.5,44],
+ ['JUBI','Yamaha Stadium','4-2-3-1',10,52],
+ ['KATA','Toyama Stadium','4-4-2',3,43],
+ ['MYAM','ND Soft Stadium Yamagata','4-4-2',5,46],
+ ['OITA','Resonac Dome Oita','3-4-2-1',5,46],
+ ['OMI','NACK5 Stadium Omiya','4-4-2',8,50],
+ ['SAGA','Ekimae Real Estate Stadium','4-3-3',10,52],
+ ['SHON','Lemon Gas Stadium Hiratsuka','3-1-4-2',8,50],
+ ['TEGE','Ichigo Miyazaki Shin-Wa Stadium','4-4-2',2,40],
+ ['TOCG','Tochigi City Stadium','4-4-2',2.5,41],
+ ['TOKU','Pocarisweat Stadium','4-4-2',5,46],
+ ['VANR','Prifoods Stadium','4-4-2',2,40],
+ ['VEGA','Yurtec Stadium Sendai','4-4-2',7,49],
+ ['VENT','JIT Recycle Ink Stadium','4-4-2',5,46],
+ ['YOKF','NHK Spring Mitsuzawa Football Stadium','3-4-2-1',9,51]
+];
+JP2_DATA.forEach(([id,stad,form,bud,rep])=>{const c=CLUBBY[id];if(!c)return;c.stadium=stad;c.rep=rep;STADIUM[id]=stad;FORM_MAIN[id]=form;BUDGET[id]=bud;});
+Object.assign(CITY,{'Niigata':{ll:[139.04,37.90]},'Akita':{ll:[140.10,39.72]},'Sapporo':{ll:[141.35,43.06]},'Fujieda':{ll:[138.26,34.87]},'Imabari':{ll:[133.00,34.07]},'Iwaki':{ll:[140.89,37.05]},'Iwata':{ll:[137.85,34.72]},'Toyama':{ll:[137.21,36.70]},'Tendo':{ll:[140.37,38.36]},'Oita':{ll:[131.61,33.24]},'Tosu':{ll:[130.51,33.38]},'Hiratsuka':{ll:[139.35,35.34]},'Miyazaki':{ll:[131.42,31.91]},'Tochigi':{ll:[139.73,36.38]},'Tokushima':{ll:[134.55,34.07]},'Hachinohe':{ll:[141.49,40.51]},'Sendai':{ll:[140.87,38.27]},'Kofu':{ll:[138.57,35.66]}});
+
 /* ===== J1 League: cesiones reales de la temporada 2026/27 =====
    Kennedy Egbus Mikuni llega CEDIDO al Avispa Fukuoka desde el Nagoya Grampus (el Nagoya aún no tiene
    plantilla real, así que va con `ext`; el motor detecta que el Avispa ya tiene su ficha en su plantilla
@@ -26124,6 +26173,34 @@ REAL_LOANS.push(['Kei Murakami','YOKO','MATS',1,'Rotación',['Kei Murakami','DF'
 /* Cesiones del Tokyo Verdy (las de Mizoguchi y Kanda ya estaban registradas). */
 REAL_LOANS.push(['Kanya Fujimoto','BIR','VERD',1,'Rotación',['Kanya Fujimoto','MD',1999,'JP',57,null,3.47,null,'MCO']]);
 REAL_LOANS.push(['Masahiro Iida','VERD','RENO',1,'Rotación',['Masahiro Iida','GK',2000,'JP',45,null,0.112,null,'POR']]);
+
+/* Destinos de cesión que no existían en el juego. */
+CLUBBY.CTBA=K2('CTBA','Coritiba','Coritiba','Curitiba','BR','#0a8a4d','#f4f4f4',46);
+CLUBBY.CTBA.logo='https://cdn.resfu.com/img_data/equipos/837.png?size=120x&lossy=1';
+CLUBBY.BALE=K2('BALE','Balestier Khalsa','Balestier','Singapur','SG','#d4192b','#f4f4f4',34);
+CLUBBY.BALE.logo='https://cdn.resfu.com/img_data/equipos/5391.png?size=120x&lossy=1';
+CLUBBY.BGPU=K2('BGPU','BG Pathum United','BG Pathum','Pathum Thani','TH','#1c3f94','#f4f4f4',44);
+CLUBBY.BGPU.logo='https://cdn.resfu.com/img_data/equipos/13575.png?size=120x&lossy=1';
+/* Cesiones (J2, lote 1). */
+REAL_LOANS.push(['Iury Lirio Freitas De Castilho','CTBA','ALBI',1,'Rotación',['Iury Lirio Freitas De Castilho','FW',1995,'BR',64,null,1.33,null,'DC']]);
+REAL_LOANS.push(['Yushin Otake','ALBI','BALE',1,'Rotación',['Yushin Otake','MD',2005,'JP',27,null,0.041,null,'MCO']]);
+REAL_LOANS.push(['Ryuga Tashiro','ALBI','TOCH',1,'Rotación',['Ryuga Tashiro','GK',1998,'JP',55,null,0.886,null,'POR']]);
+REAL_LOANS.push(['Chie Edoojon Kawakami','FUJI','BLAU',1,'Rotación',['Chie Edoojon Kawakami','MD',1998,'JP',60,null,0.773,null,'MD']]);
+REAL_LOANS.push(['Masaki Nishimura','BLAU','GIRA',1,'Rotación',['Masaki Nishimura','FW',2001,'JP',52,null,0.164,null,'DC']]);
+REAL_LOANS.push(['Tomoki Tagawa','YOKO','CONS',1,'Rotación',['Tomoki Tagawa','GK',2002,'JP',58,null,1.07,null,'POR']]);
+REAL_LOANS.push(['Itthimon Tippanet','BGPU','CONS',1,'Rotación',['Itthimon Tippanet','FW',2007,'TH',29,null,0.014,null,'EI']]);
+REAL_LOANS.push(['Teerapat Pruetong','BGPU','CONS',1,'Rotación',['Teerapat Pruetong','FW',2007,'TH',35,null,0.116,null,'ED']]);
+REAL_LOANS.push(['Kosuke Hara','CONS','GIRA',1,'Rotación',['Kosuke Hara','MD',2005,'JP',38,null,0.119,null,'MI']]);
+REAL_LOANS.push(['Yoshikaze Tsunoda','KASW','FUJI',1,'Rotación',['Yoshikaze Tsunoda','MD',2003,'JP',34,null,0.002,null,'MCD']]);
+REAL_LOANS.push(['Wigi Kanemoto','CZO','FUJI',1,'Rotación',['Wigi Kanemoto','FW',2004,'JP',32,null,0.018,null,'DC']]);
+REAL_LOANS.push(['Hiroto Sese','FUJI','TOCH',1,'Rotación',['Hiroto Sese','MD',1999,'JP',56,null,0.592,null,'MCD']]);
+REAL_LOANS.push(['Ryo Nakamura','FUJI','THES',1,'Rotación',['Ryo Nakamura','DF',2002,'JP',34,null,0.048,null,'DFC']]);
+REAL_LOANS.push(['Hayato Kanda','FUJI','GIFU',1,'Rotación',['Hayato Kanda','FW',2002,'JP',30,null,0.041,null,'DC']]);
+REAL_LOANS.push(['Kenshin Yamazaki','FUJI','TAMP',1,'Rotación',['Kenshin Yamazaki','FW',2007,'JP',27,null,0.001,null,'ED']]);
+REAL_LOANS.push(['Yuki Kajiura','FCTO','IMAB',1,'Rotación',['Yuki Kajiura','MD',2004,'JP',53,null,1.27,null,'MC']]);
+REAL_LOANS.push(['Yoshiaki Komai','YOKF','IMAB',1,'Rotación',['Yoshiaki Komai','MD',1992,'JP',59,null,2.01,null,'MCO']]);
+REAL_LOANS.push(['Kengo Furuyama','CZO','IMAB',1,'Rotación',['Kengo Furuyama','FW',2002,'JP',37,null,0.132,null,'DC']]);
+
 /* ===== Cymru Premier (Gales, WA1): 16 clubes reales de la liga galesa =====
    [id, nombre, corto, ciudad, c1, c2, rep, escudo, estadio, formación, presupuesto (M€)] */
 const WA1_DATA=[
