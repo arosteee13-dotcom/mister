@@ -1139,6 +1139,11 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
 #boot-loader .boot-word{font:700 30px var(--display,inherit);letter-spacing:.14em;color:#f4f4f4;opacity:0;animation:boot-word-in .9s cubic-bezier(.2,.9,.25,1) .5s forwards}
 @keyframes boot-word-in{0%{opacity:0;letter-spacing:.5em;transform:translateY(6px)}100%{opacity:1;letter-spacing:-.01em;transform:translateY(0)}}
 @keyframes boot-caret{50%{border-color:transparent}}
+#season-loader{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(11,19,16,.72);backdrop-filter:blur(2px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}
+#season-loader.show{opacity:1;visibility:visible;pointer-events:auto}
+#season-loader .sl-spin{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.22);border-top-color:#fff;animation:sl-rot .8s linear infinite}
+#season-loader .sl-txt{color:#f4f4f4;font:600 15px var(--display,inherit);letter-spacing:.02em}
+@keyframes sl-rot{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -1151,6 +1156,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
 </div>
   <div class="boot-word"><b>Míster</b><small>MANAGER</small></div>
 </div>
+<div id="season-loader"><div class="sl-spin"></div><div class="sl-txt">Preparando temporada…</div></div>
 <div id="app">
   <div class="ambient"></div>
   <!-- Portada -->
@@ -21956,11 +21962,17 @@ const H={
   },
   'po-ok'(){closeSheet();renderGame();if(state.po&&state.po.done)setTimeout(seasonSheet,350)},
   newseason(){
-    closeSheet();newSeason();ui.rv=null;ui.cc=null;ui.cco=null;renderGame();
-    const d=state.repDelta&&state.repDelta[state.club];
-    toast('Nueva temporada: '+state.season+(d?` · Prestigio ${repOf(state.club)-d}→${repOf(state.club)} (${d>0?'+':''}${d})`:''));
-    genJobOffers();
-    setTimeout(offersSheet,350);
+    closeSheet();
+    const sl=document.getElementById('season-loader');
+    if(sl)sl.classList.add('show');
+    setTimeout(()=>{
+      newSeason();ui.rv=null;ui.cc=null;ui.cco=null;renderGame();
+      const d=state.repDelta&&state.repDelta[state.club];
+      toast('Nueva temporada: '+state.season+(d?` · Prestigio ${repOf(state.club)-d}→${repOf(state.club)} (${d>0?'+':''}${d})`:''));
+      genJobOffers();
+      if(sl)sl.classList.remove('show');
+      setTimeout(offersSheet,350);
+    },260);
   },
   'formation-menu'(){ui.styleOpen=false;openSheet(formSheetHTML())},
   'style-open'(){ui.styleOpen=false;ui.sy=null;openSheet(styleSheetHTML())},
