@@ -6021,7 +6021,6 @@ const REAL_LOANS=[
   ['A. Morales','ERCU','ATLA',1,'Rotación',['A. Morales','FW',1999,'AR',44,47,0.248,1.3,'ED/DC']],
   ['F. Álvarez','ERCU','ATLA',1,'Rotación',['F. Álvarez','FW',2001,'AR',53,56,0.175,0.9,'ED/EI']],
   /* cesiones del Gimnasia La Plata (Lucas Janson y Alan Sosa ya figuran como cedidos) */
-  ['Agustín Auzmendi','QUER','GLP',1,'Rotación',['Agustín Auzmendi','FW',1997,'AR',67,67,1.0,7.3,'DC'],1],
   ['Agustín Colazo','USFE','GLP',1,'Rotación',['Agustín Colazo','FW',2001,'AR',64,66,0.75,4.3,'DC/ED/MD'],1],
   ['Ignacio Miramón','LIL','GLP',1,'Titular',['Ignacio Miramón','MD',2003,'AR',68,78,2.5,6.1,'MCD/MC'],1],
   ['J. Pintado','GLP','USFE',1,'Titular',['J. Pintado','DF',1998,'UY',72,73,2.3,9.5,'LD/MD'],1],
@@ -15928,8 +15927,9 @@ function cupInitFijiCup(key,name,ids){
   const r=rng(hashStr(key+'|'+state.seed+'|'+state.season));
   const sh=shuffle(ids.slice(),r),gs=[sh.slice(0,5),sh.slice(5,10)];
   const groups=gs.map((g,gi)=>({ids:g.slice(),tb:emptyTable(g),fx:buildRawFixtures(g.slice(),rng(hashStr(key+'|g'+gi+'|'+state.seed+'|'+state.season))).slice(0,5)}));
-  const rounds=[{n:'Semifinales',w:19,ties:null,done:false},{n:'Final',w:19,ties:null,done:false}];
-  return{key,name,ids:sh,bye:[],type:'groups',groups,gweeks:[18,18,18,18,18],gdone:false,rounds,champ:null,sc:{},etFromRound:0};
+  /* Calendario escalonado para no chocar con la liga: grupos (semana 11), cuartos (15), semifinales (19) y final (22). */
+  const rounds=[{n:'Cuartos de final',w:15,ties:null,done:false},{n:'Semifinales',w:19,ties:null,done:false},{n:'Final',w:22,ties:null,done:false}];
+  return{key,name,ids:sh,bye:[],type:'groups',groups,gweeks:[11,11,11,11,11],gdone:false,rounds,champ:null,sc:{},etFromRound:0};
 }
 /* ===================== OFC Champions League (Oceanía) =====================
    8 clubes de 8 países de Oceanía: 2 grupos de 4 a partido único (3 jornadas, todas en la semana 33) y después
@@ -16181,6 +16181,14 @@ function finishGroupsEnnc(cup){
 /* Fiji FA Cup: los 2 mejores de cada grupo (de 5) pasan a semifinales; 1º de un grupo vs 2º del otro. */
 function finishGroupsFiji(cup){
   cup.gdone=true;
+  if(cup.key==='FJC'){
+    /* Fiji FA Cup: pasan los CUATRO primeros de cada grupo → cuartos (1ºA-4ºB, 2ºA-3ºB, 3ºA-2ºB, 4ºA-1ºB). */
+    const st=cup.groups.map(g=>sortTable(g.tb).map(r=>r.id)),A=st[0]||[],B=st[1]||[];
+    const q=[[A[0],B[3]],[A[1],B[2]],[A[2],B[1]],[A[3],B[0]]].filter(t=>t[0]&&t[1]).map(([h,a])=>({h,a}));
+    cup.rounds[0].ties=q;
+    news(`Termina la fase de grupos de la ${cup.name}: los cuatro primeros de cada grupo pasan a cuartos de final.`);
+    return;
+  }
   const firsts=[],seconds=[];
   cup.groups.forEach(g=>{const st=sortTable(g.tb);if(st[0])firsts.push(st[0].id);if(st[1])seconds.push(st[1].id);});
   const ties=[];
@@ -20521,6 +20529,9 @@ function previewLoans(id){
       let p=(REAL_DB[from]?realSquad(CLUBBY[from]):[]).find(x=>x.n===name);
       if(!p&&ext)p=extLoanPlayer(li);
       if(!p)return;
+      /* la ficha del cedido suele venir ya en la plantilla real del destino: se usa esa misma
+         (mismo id) para no mostrarlo dos veces en la plantilla */
+      if(to===id){const H=(REAL_DB[to]?realSquad(CLUBBY[to]):[]).find(x=>x.n===name);if(H)p=H;}
       (from===id?out:inn).push({p,from,to,share,role});
     });
   }else{
@@ -20535,7 +20546,7 @@ function previewLoans(id){
 /* plantilla de un club: quita los cedidos a otros clubes y añade los cedidos a este */
 function squadNoLoans(id,players){
   const l=previewLoans(id),out=new Set(l.out.map(x=>x.p.id)),list=players.filter(p=>!out.has(p.id));
-  l.inn.forEach(x=>{if(!x.p.loanIn)x.p.loanIn={from:x.from,season:state?state.season:1,share:x.share};if(!list.some(p=>p.id===x.p.id))list.push(x.p)});
+  l.inn.forEach(x=>{const ex=list.find(p=>p.id===x.p.id)||x.p;if(!ex.loanIn)ex.loanIn={from:x.from,season:state?state.season:1,share:x.share};if(!list.includes(ex))list.push(ex)});
   return list;
 }
 function clubViewHTML(id){
@@ -26250,6 +26261,46 @@ REAL_LOANS.push(['Yusei Yashiki','OITA','GIFU',1,'Rotación',['Yusei Yashiki','M
 REAL_LOANS.push(['Josei Sato','OITA','KOCH',1,'Rotación',['Josei Sato','MD',2004,'JP',33,null,0.035,null,'MCO']]);
 REAL_LOANS.push(['Shunsuke Ono','OITA','JURG',1,'Rotación',['Shunsuke Ono','DF',2005,'JP',26,null,0.014,null,'DFC']]);
 
+/* Destino de cesión que no existía (RB Leipzig U19). */
+CLUBBY.RBLU=K2('RBLU','RB Leipzig U19','Leipzig U19','Leipzig','DE','#d4192b','#f4f4f4',34);
+CLUBBY.RBLU.logo='https://cdn.resfu.com/img_data/equipos/60901.png?size=120x&lossy=1';
+/* Cesiones (J2, lote 3). */
+REAL_LOANS.push(['Oriola Sunday','OMI','SYD',1,'Rotación',['Oriola Sunday','FW',2003,'NG',52,null,1.19,null,'DC']]);
+REAL_LOANS.push(['Shosaku Yasumitsu','OMI','GIRA',1,'Rotación',['Shosaku Yasumitsu','DF',1999,'JP',51,null,0.565,null,'DFC']]);
+REAL_LOANS.push(['T. Kanda','OMI','RBLU',1,'Rotación',['T. Kanda','MD',2006,'JP',26,null,0.003,null,'MC']]);
+REAL_LOANS.push(['T. Matsui','OMI','GIFU',1,'Rotación',['T. Matsui','MD',2006,'JP',26,null,0.001,null,'MC']]);
+REAL_LOANS.push(['Yudai Tanaka','SAGA','TEGE',1,'Rotación',['Yudai Tanaka','MD',1999,'JP',54,null,0.85,null,'MCO']]);
+REAL_LOANS.push(['Fumiya Kitajima','SAGA','GIFU',1,'Rotación',['Fumiya Kitajima','DF',2005,'JP',35,null,0.091,null,'LI']]);
+REAL_LOANS.push(['Kento Nishiya','SAGA','POHG',1,'Rotación',['Kento Nishiya','MD',1999,'JP',64,null,1.05,null,'MCD']]);
+REAL_LOANS.push(['Rikuto Ando','TEGE','NARA',1,'Rotación',['Rikuto Ando','FW',2006,'JP',41,null,0.003,null,'DC']]);
+REAL_LOANS.push(['Tetsuya Chinen','VEGA','TOCG',1,'Rotación',['Tetsuya Chinen','DF',1997,'JP',38,null,0.145,null,'DFC']]);
+REAL_LOANS.push(['Shun Utsugi','TOCG','KAMA',1,'Rotación',['Shun Utsugi','MD',1996,'JP',43,null,0.045,null,'MCD']]);
+
+/* Clubes destino de cesión que no existían (J2, lote 4). */
+CLUBBY.FCOK=K2('FCOK','FC Osaka','Osaka','Osaka','JP','#1b3a6b','#ffffff',30);
+CLUBBY.FCOK.logo='https://cdn.resfu.com/img_data/equipos/62300.png?size=120x&lossy=1';
+CLUBBY.FKSU=K2('FKSU','Fukushima United FC','Fukushima Utd','Fukushima','JP','#d8262b','#1a1a1a',26);
+CLUBBY.FKSU.logo='https://cdn.resfu.com/img_data/equipos/15194.png?size=120x&lossy=1';
+CLUBBY.CELO=K2('CELO','Celoricense CD','Celoricense','Celorico de Basto','PT','#0b5ea8','#ffffff',20);
+CLUBBY.CELO.logo='https://cdn.resfu.com/img_data/equipos/31152.png?size=120x&lossy=1';
+/* Cesiones (J2, lote 4). */
+REAL_LOANS.push(['Thales Procopio Castro de Paula','TOKU','KAGO',1,'Rotación',['Thales Procopio Castro de Paula','MD',2001,'BR',36,null,0.059,null,'MCO']]);
+REAL_LOANS.push(['Kaung Zan Mara','MACH','VANR',1,'Rotación',['Kaung Zan Mara','GK',2002,'MM',26,null,0.001,null,'POR']]);
+REAL_LOANS.push(['Haruki Shirai','VVLN','VANR',1,'Rotación',['Haruki Shirai','DF',2000,'JP',44,null,0.2,null,'DFC']]);
+REAL_LOANS.push(['Ryunosuke Sugawara','VEGA','FCOK',1,'Rotación',['Ryunosuke Sugawara','FW',2000,'JP',43,null,0.096,null,'DC']]);
+REAL_LOANS.push(['Riku Umeda','VEGA','FCOK',1,'Rotación',['Riku Umeda','GK',2000,'JP',31,null,0.015,null,'POR']]);
+REAL_LOANS.push(['Keita Fukui','OMI','VENT',1,'Rotación',['Keita Fukui','DF',2002,'JP',37,null,0.04,null,'DFC']]);
+REAL_LOANS.push(['Kojiro Yasuda','FCTO','VENT',1,'Rotación',['Kojiro Yasuda','MD',2003,'JP',53,null,0.736,null,'MC']]);
+REAL_LOANS.push(['Kazushi Fujii','OMI','VENT',1,'Rotación',['Kazushi Fujii','FW',2001,'JP',42,null,0.487,null,'ED']]);
+REAL_LOANS.push(['Kazuyoshi Miura','YOKF','FKSU',1,'Rotación',['Kazuyoshi Miura','FW',1967,'JP',27,null,0.001,null,'DC']]);
+REAL_LOANS.push(['Jakub Słowik','YOKF','MITO',1,'Rotación',['Jakub Słowik','GK',1991,'PL',63,null,1.07,null,'POR']]);
+REAL_LOANS.push(['Junya Suzuki','YOKF','RENO',1,'Rotación',['Junya Suzuki','DF',1996,'JP',57,null,0.893,null,'LD']]);
+REAL_LOANS.push(['Izumi Miyata','YOKF','ROAS',1,'Rotación',['Izumi Miyata','FW',2001,'JP',27,null,0.001,null,'DC']]);
+REAL_LOANS.push(['Tomoya Takahashi','YOKF','CELO',1,'Rotación',['Tomoya Takahashi','DF',2006,'JP',40,null,0.143,null,'LD']]);
+REAL_LOANS.push(['Takanari Endo','YOKF','GIRA',1,'Rotación',['Takanari Endo','MD',2002,'JP',35,null,0.092,null,'ED']]);
+
+
+
 
 /* ===== Cymru Premier (Gales, WA1): 16 clubes reales de la liga galesa =====
    [id, nombre, corto, ciudad, c1, c2, rep, escudo, estadio, formación, presupuesto (M€)] */
@@ -26407,6 +26458,8 @@ const WLC_IDS=(function(){const nm=s=>String(s).toLowerCase().replace(/[^a-z0-9]
 
 /* palmarés real de la Cymru Premier (The New Saints dominan la época moderna) */
 Object.assign(PALMARES,{TNS:{league:18,wac:9,walc:9},BARR:{league:7,wac:6,walc:4},CQN:{league:2,walc:3},CAER:{},CMET:{},PYB:{},HVFW:{},COLW:{},FLNT:{},LLAN:{},HWEL:{},BRFE:{},AMMF:{},CAMB:{},AIRB:{},TREF:{},WRE:{wac:23},CAR:{wac:22},SWA:{wac:10,walc:2},BANG:{league:3},RHYL:{league:2,walc:2},LNLN:{league:1},CWMB:{league:1}});
+/* cesiones duplicadas (mismo jugador, origen y destino): se queda la entrada con ficha embebida */
+(()=>{const best=new Map();REAL_LOANS.forEach((l,i)=>{const k=l[0]+'|'+l[1]+'|'+l[2],j=best.get(k);if(j==null||(!REAL_LOANS[j][5]&&l[5]))best.set(k,i)});const keep=new Set(best.values());for(let i=REAL_LOANS.length-1;i>=0;i--)if(!keep.has(i))REAL_LOANS.splice(i,1)})();
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
