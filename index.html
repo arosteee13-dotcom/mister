@@ -15981,7 +15981,7 @@ function finishOFCProLeague(cup){
   cup.split={groups:[mk(g0),mk(g1)],weeks:[15,16,17],done:false,rep:null};
   news(`Termina la fase regular de la ${cup.name}: arranca el split (Grupo Leaders 1º-4º y Grupo Challengers 5º-8º).`);
 }
-const OFC_CLUBS=['AUCK','CCST','TIGA','VENU','ABMG','LAEC','REWA','TUPA'];
+const OFC_CLUBS=['AUC','CCST','TIGA','VENU','ABMG','LAEC','REWA','TUPA'];
 function cupInitKO2(key,name,ids,weekPairs){
   const seeds=ids.slice().sort((a,b)=>virt(b).ovr-virt(a).ovr||cname(a).localeCompare(cname(b)));
   const R=Math.max(1,Math.round(Math.log2(seeds.length))),rounds=[];
@@ -26474,6 +26474,11 @@ REAL_LOANS.push(['A. Mujagić','JOHO','KUCH',1,'Rotación']);
 REAL_LOANS.push(['R. Lambert','JOHO','KUCH',1,'Rotación']);
 REAL_LOANS.push(['Nazmi Faiz','JOHO','KUCH',1,'Rotación']);
 REAL_LOANS.push(['D. Lambert','JOHO','KUCH',1,'Rotación']);
+
+/* Cesiones (Arab Club Champions Cup). */
+REAL_LOANS.push(['Younes Bakiz','SIL','RAJA',1,'Rotación']);
+REAL_LOANS.push(['Louay Trayi','WAHD','SFAX',1,'Rotación',['Louay Trayi','FW',2005,'TN',44,null,0.907,null,'ED']]);
+REAL_LOANS.push(['Josna Loulendo','AIN','SFAX',1,'Rotación',['Josna Loulendo','FW',2004,'CG',38,null,0.326,null,'DC']]);
 
 
 
