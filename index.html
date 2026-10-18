@@ -3385,7 +3385,7 @@ Object.assign(CLUBBY,{
   TORB:K('TORB','Torpedo-BelAZ','Torpedo-BelAZ','Zhodino','BY','#1c3f94','#f4f4f4',46,2),
   NEMG:K('NEMG','Neman Grodno','Neman','Grodno','BY','#0a8a3d','#f4f4f4',46,2),
   SAMQ:K('SAMQ','Dinamo Samarqand','Dinamo Sam.','Samarcanda','UZ','#1c3f94','#f4f4f4',44,2),
-  OLIM:K('OLIM','Olimpija Ljubljana','Olimpija','Liubliana','SI','#0a8a3d','#f4f4f4',56,2),
+  OLJL:K('OLJL','Olimpija Ljubljana','Olimpija','Liubliana','SI','#0a8a3d','#f4f4f4',56,2),
   MACV:K('MACV','Mačva Šabac','Mačva','Šabac','RS','#d4192b','#f4f4f4',42,2),
   WOL21:K2('WOL21','Wolves U21','Wolves U21','Wolverhampton','EN','#f2d31b','#1a1a1a',40),
         CEL2:K2('CEL2','Celtic II','Celtic II','Glasgow','SC','#0a8a3d','#f4f4f4',44),
@@ -3397,6 +3397,7 @@ Object.assign(CLUBBY,{
   CHA21:K2('CHA21','Charlton Athletic U21','Charlton Athletic U21','Londres','EN','#d81920','#f4f4f4',49),
   STK21:K2('STK21','Stoke City U21','Stoke City U21','Stoke-on-Trent','EN','#e03a3e','#ffffff',54)
 });
+if(CLUBBY.OLJL)CLUBBY.OLJL.logo='https://cdn.resfu.com/img_data/equipos/5765.png?size=120x&lossy=1';
 [['NYCFC',59736],['BAHI',3910],['MCTO',11246],['BOLI',11369],['MELC',18574],['YOKO',2778],['SZPC',110681],['MUMC',25008]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
 /* Copa Libertadores (temporada 1): escudos reales de los participantes sudamericanos */
 [['CUSC',6399],['COQU',9139],['UNIV',2612],['FLU',1158],['LGUA',15169],['BSCE',432],['CORI',836],['ISFE',2255],['CPOR',725],['JUNI',11325],['PALM',11584],['ALWR',62958],['MIRA',5546],['LIBT',1553],['UCV',11653],['IDV',16078],['SCR',2392],['FLA',1155],['DIM',1374],['TOL',900],['CRU',858],['UCAT',2597],['PENR',1945],['LDQ',1555]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
@@ -4258,7 +4259,7 @@ const REAL_LOANS=[
  ['Jakhongir Urozov','SAMQ','RUBK',1,null,['Jakhongir Urozov','DF',2004,'UZ',61,null,2.73,null,'DFC/LD']],
  ['Ilya Samoshnikov','SPTM','RUBK',1,null,['Ilya Samoshnikov','DF',1998,'RU',60,null,3.24,null,'LI/ED']],
  /* Cedidos del Rubin Kazán (Apshatsev→Dynamo Makhachkala ya está arriba) */
- ['Marvin Çuni','RUBK','OLIM',1,null,['Marvin Çuni','FW',2001,'AL',58,null,1.12,null,'DC/EI']],
+ ['Marvin Çuni','RUBK','OLJL',1,null,['Marvin Çuni','FW',2001,'AL',58,null,1.12,null,'DC/EI']],
  ['Uroš Drezgić','RUBK','MACV',1,null,['Uroš Drezgić','DF',2002,'RS',37,null,0.27,null,'DFC/MC']],
  ['Nikita Vasiljev','RUBK','NKHZ',1,null,['Nikita Vasiljev','MD',2006,'RU',45,null,0.2,null,'MCD']],
  ['Enri Mukba','RUBK','NKHZ',1,null,['Enri Mukba','MD',2005,'RU',39,null,0.159,null,'MCO']],
@@ -4502,8 +4503,8 @@ const REAL_LOANS=[
  ['Esteban Lozano','AMFC','SLAG',1,'Rotación',['Esteban Lozano','FW',2003,'MX',64,73,1.3,null,'DC']],
  /* Santos Laguna (SLAG): cedido al club y salidas */
  ['Felipe Sánchez','S04','SLAG',1,'Rotación',['Felipe Sánchez','DF',2004,'AR',67,76,2.1,null,'DFC/LI/MCD']],
- ['Kevin Alexander Balanta Lucumí','SLAG','ISFE',1,'Rotación',['Kevin Alexander Balanta Lucumí','DF',1997,'CO',65,65,2.95,null,'DFC']],
- ['Franco Misael Fagundez Rosa','SLAG','ISFE',1,'Rotación',['Franco Misael Fagundez Rosa','MD',2000,'UY',66,66,1.21,null,'MCO']],
+ ['Kevin Balanta','SLAG','ISFE',1,'Rotación',['Kevin Balanta','DF',1997,'CO',65,65,2.95,null,'DFC']],
+ ['Franco Fagúndez','SLAG','ISFE',1,'Rotación',['Franco Fagúndez','MD',2000,'UY',66,66,1.21,null,'MCO']],
  /* Tigres UANL (UANL): cedido al club */
  ['Alan Franco','SAO','UANL',1,'Rotación',['Alan Franco','DF',1997,'AR',72,76,2.6,null,'DFC']],
  /* Club Tijuana (TIJ): cedidos fuera */
@@ -4515,7 +4516,7 @@ const REAL_LOANS=[
  ['Franuel Amaya','TOLU','CFM',1,'Rotación',['Franuel Amaya','MD',2000,'US',54,54,1.9,null,'MC']],
  ['Franco Andrés Rossi Donazar','TOLU','CHAP',1,'Rotación',['Franco Andrés Rossi Donazar','FW',2002,'UY',58,58,3.36,null,'DC']],
  ['Patricio Salas Quintal','AMFC','FAM',1,'Rotación',['Patricio Salas Quintal','FW',2004,'MX',55,55,0.019,null,'DC']],
- ['Thiago Nahuel Espinosa Dovat','AMFC','PENR',1,'Rotación',['Thiago Nahuel Espinosa Dovat','DF',2005,'UY',60,60,2.67,null,'LI']],
+ ['Thiago Espinosa','AMFC','PENR',1,'Rotación',['Thiago Espinosa','DF',2005,'UY',60,60,2.67,null,'LI']],
  /* Atlético San Luis (SLU): cedidos al club y salida */
  ['Santiago Muñóz','SLAG','SLU',1,'Rotación',['Santiago Muñóz','FW',2003,'MX',63,63,0.975,null,'DC/MCO']],
  ['Anderson Duarte','TOLU','SLU',1,'Rotación',['Anderson Duarte','FW',2004,'UY',68,68,2.7,null,'ED/MCO/EI/MD/DC/MI']],
@@ -5984,7 +5985,7 @@ const REAL_LOANS=[
   ['J. Miritello','DYJ','FTLE',1,'Titular',['J. Miritello','FW',1999,'AR',71,74,4.14,24.4,'DC']],
   ['Facundo Masuero','DYJ','NCHI',1,'Rotación',['Facundo Masuero','GK',2000,'AR',40,43,0.092,0.5,'POR']],
   ['N. Funez','DYJ','SMSJ',1,'Rotación',['N. Funez','FW',2001,'AR',67,70,0.924,5.3,'DC']],
-  ['L. Ferreira','DYJ','PENR',1,'Rotación',['L. Ferreira','DF',2000,'UY',70,73,4.63,27.1,'DFC']],
+  ['Lucas Ferreira','DYJ','PENR',1,'Rotación',['Lucas Ferreira','DF',2000,'UY',70,73,4.63,27.1,'DFC']],
   ['B. Schamine','DYJ','GCRU',1,'Rotación',['B. Schamine','MD',2003,'AR',56,59,0.705,2.8,'MCD']],
   ['E. Cannavo','DYJ','RACI',1,'Rotación',['E. Cannavo','DF',2002,'AR',70,77,3.0,9.1,'LD/MD/ED'],1],
   /* cesiones del Dep. Riestra */
@@ -6063,7 +6064,7 @@ const REAL_LOANS=[
   ['G. Requena','INST','TIGR',1,'Rotación',['G. Requena','DF',2003,'AR',61,68,0.6,2.1,'DFC'],1],
   ['L. Klimowicz','INST','EMEL',1,'Rotación',['L. Klimowicz','FW',2004,'AR',66,69,2.55,11.3,'DC/MC']],
   /* cesiones del Lanús */
-  ['W. Bou','LANU','OHIG',1,'Titular',['W. Bou','FW',1993,'AR',69,72,4.22,20.2,'DC/MCO']],
+  ['Walter Bou','LANU','OHIG',1,'Titular',['Walter Bou','FW',1993,'AR',69,72,4.22,20.2,'DC/MCO']],
   ['L. Morales','LANU','TIGR',1,'Rotación',['L. Morales','GK',2000,'AR',68,72,1.3,3.7,'POR'],1],
   ['F. Orozco','LANU','ASTR',1,'Rotación',['F. Orozco','FW',2002,'AR',52,55,1.73,8.8,'ED/EI']],
   ['M. González','LANU','DMAL',1,'Titular',['M. González','MD',2004,'AR',68,71,2.31,10.4,'MCD/MC']],
@@ -6097,7 +6098,7 @@ const REAL_LOANS=[
   ['Valentín Carboni','INT','RACI',1,'Titular',['Valentín Carboni','MD',2005,'AR',71,81,4.2,9.4,'MCO/MD/ED/MC'],1],
   ['Leonel Pérez','GREM','RACI',1,'Rotación',['Leonel Pérez','MD',2005,'AR',62,76,0.975,3,'MC/MCD'],1],
   ['Héctor Fértoli','RACI','UNIV',1,'Rotación',['Héctor Fértoli','FW',1994,'AR',57,60,1.61,6.9,'EI/MI']],
-  ['R. Sánchez','RACI','OLIM',1,'Titular',['R. Sánchez','MD',1996,'PY',65,68,4.85,27.1,'MC/MCD']],
+  ['Richard Sánchez','RACI','OLIM',1,'Titular',['Richard Sánchez','MD',1996,'PY',65,68,4.85,27.1,'MC/MCD']],
   ['E. Cardozo','RACI','NCHI',1,'Rotación',['E. Cardozo','FW',2001,'AR',52,55,0.51,2.6,'EI/MCO']],
   ['P. Tanda','RACI','GUAR',1,'Rotación',['P. Tanda','MD',2002,'AR',64,67,0.8,4.4,'MCD/MC']],
   ['M. Quiroz','RACI','GUEM',1,'Rotación',['M. Quiroz','MD',2001,'AR',44,47,0.531,2.7,'MCO/MC']],
@@ -6109,9 +6110,9 @@ const REAL_LOANS=[
   /* cesiones del Rosario Central (A. Soto y Conan Ledesma ya figuran como cedidos) */
   ['Julián Fernández','NYCFC','ROS',1,'Rotación',['Julián Fernández','FW',2004,'AR',68,75,2.5,6.9,'ED/MD/EI/MI'],1],
   ['Alan Rodríguez','INA','ROS',1,'Titular',['Alan Rodríguez','MD',2000,'UY',71,74,2.4,10.5,'MC/MCD/ED/MCO/MD'],1],
-  ['M. Lovera','ROS','ISFE',1,'Titular',['M. Lovera','FW',1999,'AR',57,60,1.82,9.4,'EI/ED']],
+  ['Maximiliano Lovera','ROS','ISFE',1,'Titular',['Maximiliano Lovera','FW',1999,'AR',57,60,1.82,9.4,'EI/ED']],
   ['G. Bogado','ROS','SPLU',1,'Titular',['G. Bogado','MD',2001,'PY',67,70,3.2,18.2,'MC/DC']],
-  ['A. Rodríguez','ROS','OLIM',1,'Rotación',['A. Rodríguez','DF',2000,'PY',67,70,2.12,12.1,'LI/MI']],
+  ['Alan Rodríguez','ROS','OLIM',1,'Rotación',['Alan Rodríguez','DF',2000,'PY',67,70,2.12,12.1,'LI/MI']],
   ['L. Ferreyra','ROS','SMSJ',1,'Rotación',['L. Ferreyra','FW',2002,'AR',54,57,1.33,6.8,'EI/MI']],
   ['M. Acosta','ROS','RUBI',1,'Rotación',['M. Acosta','MD',2000,'PY',66,69,2.03,11.5,'MC/MD']],
   ['F. Oviedo','ROS','GCRU',1,'Rotación',['F. Oviedo','FW',2004,'AR',41,44,0.308,1.2,'DC/ED']],
@@ -6133,7 +6134,7 @@ const REAL_LOANS=[
   ['F. Andueza','SARM','PROG',1,'Rotación',['F. Andueza','DF',1997,'UY',53,56,0.793,4.0,'DFC']],
   ['D. Gallardo','SARM','GJUJ',1,'Rotación',['D. Gallardo','FW',1997,'AR',63,66,0.439,2.4,'EI/MD']],
   ['B. Borasi','SARM','NAUT',1,'Rotación',['B. Borasi','FW',1997,'AR',60,63,0.599,3.2,'ED/EI']],
-  ['A. Marsengo','SARM','RECO',1,'Rotación',['A. Marsengo','GK',2002,'AR',51,54,0.234,1.2,'POR']],
+  ['Andrés Marsengo','SARM','RECO',1,'Rotación',['Andrés Marsengo','GK',2002,'AR',51,54,0.234,1.2,'POR']],
   ['S. Morales','SARM','AUCA',1,'Rotación',['S. Morales','DF',2001,'AR',63,66,0.377,2.1,'DFC/LI']],
   ['Manuel Mónaco','SARM','ACAS',1,'Rotación',['Manuel Mónaco','MD',2002,'AR',46,49,0.561,2.9,'MCO/ED']],
   ['Tomás Guiacobini','SARM','CDBO',1,'Rotación',['Tomás Guiacobini','MD',2004,'AR',49,52,0.1,0.5,'MC/MCD']],
@@ -6141,13 +6142,12 @@ const REAL_LOANS=[
   ['Diego Valoyes','JUAR','TALL',1,'Titular',['Diego Valoyes','MD',1997,'CO',74,76,4.8,13.5,'MD/MI/DC/ED'],1],
   ['Juan Sforza','VAS','TALL',1,'Titular',['Juan Sforza','MD',2002,'AR',70,79,3.5,7.3,'MC/MCD'],1],
   ['E. Reynoso','TALL','DCAL',1,'Titular',['E. Reynoso','MD',1995,'AR',66,69,3.69,17.2,'MCO']],
-  ['Samuel Sosa','TALL','UCV',1,'Titular',['Samuel Sosa','FW',1999,'VE',67,70,3.28,18.7,'ED']],
-  ['N. Bustos','TALL','ISFE',1,'Titular',['N. Bustos','FW',1998,'AR',67,70,2.93,16.7,'DC']],
+  ['Nahuel Bustos','TALL','ISFE',1,'Titular',['Nahuel Bustos','FW',1998,'AR',67,70,2.93,16.7,'DC']],
   ['R. Guth','TALL','FSI',1,'Titular',['R. Guth','DF',2000,'BR',65,68,4.07,22.8,'DFC']],
   ['Alejandro Martínez','TALL','NACU',1,'Rotación',['Alejandro Martínez','MD',1997,'AR',55,58,2.07,10.5,'EI']],
   ['T. Kummer','TALL','RCOR',1,'Rotación',['T. Kummer','DF',2004,'AR',52,55,0.139,0.6,'DFC']],
   ['L. Martinez','TALL','GUEM',1,'Rotación',['L. Martinez','GK',2002,'AR',50,53,0.328,1.7,'POR']],
-  ['L. Angulo','TALL','PENR',1,'Titular',['L. Angulo','FW',2004,'CO',64,67,6.41,27.8,'EI']],
+  ['Luis Angulo','TALL','PENR',1,'Titular',['Luis Angulo','FW',2004,'CO',64,67,6.41,27.8,'EI']],
   /* cesiones del Tigre (Ian Subiabre, Tiago Serrago, G. Requena y L. Morales ya figuran arriba) */
   ['Jerónimo Dómina','CAD','TIGR',1,'Titular',['Jerónimo Dómina','FW',2006,'AR',67,76,2.3,4.4,'DC'],1],
   ['Santiago López','INDE','TIGR',1,'Titular',['Santiago López','FW',2006,'AR',68,80,2.9,4.9,'EI/DC/MD/MI/MCO/ED'],1],
@@ -6172,9 +6172,9 @@ const REAL_LOANS=[
   ['E. Cabrera','VELZ','ATNA',1,'Titular',['E. Cabrera','MD',2003,'AR',64,67,4.86,21.1,'MCO/MC'],1],
   ['A. Quiros','VELZ','ATLE',1,'Titular',['A. Quiros','DF',2001,'AR',68,71,3.77,21.7,'DFC/LI'],1],
   ['T. Cavanagh','VELZ','DANU',1,'Rotación',['T. Cavanagh','DF',2001,'AR',58,61,0.27,1.4,'LI/DFC'],1],
-  ['P. Pernicone','VELZ','JUVD',1,'Titular',['P. Pernicone','DF',2001,'AR',70,73,0.475,2.8,'DFC/LD'],1],
+  ['Patricio Pernicone','VELZ','JUVD',1,'Titular',['Patricio Pernicone','DF',2001,'AR',70,73,0.475,2.8,'DFC/LD'],1],
   ['J. Berón','VELZ','TSUA',1,'Rotación',['J. Berón','FW',2002,'AR',54,57,0.663,3.4,'ED/DC'],1],
-  ['L. Roldán','VELZ','JUVD',1,'Titular',['L. Roldán','MD',2004,'AR',67,70,1.43,6.4,'MCD/MC'],1],
+  ['Leonel Roldán','VELZ','JUVD',1,'Titular',['Leonel Roldán','MD',2004,'AR',67,70,1.43,6.4,'MCD/MC'],1],
   ['B. Bosch','VELZ','ORENB',1,'Rotación',['B. Bosch','FW',2005,'AR',41,44,0.283,1.1,'ED/MCO'],1],
   /* cesiones del Ludogorets (entrantes desde Botafogo y salientes) */
   ['Rwan Seco','BOTF','LUDO',1,'Titular',['Rwan Seco','FW',2001,'BR',66,69,8.89,50.2,'DC/MCO'],1],
@@ -6182,7 +6182,7 @@ const REAL_LOANS=[
   ['Alberto Salido','LUDO','BOTP',1,'Rotación',['Alberto Salido','FW',2000,'ES',69,72,2.79,16.2,'DC/ED'],1],
   ['I. Yordanov','LUDO','LOKS',1,'Rotación',['I. Yordanov','MD',2001,'BG',54,57,1.61,8.2,'MCD/MC'],1],
   ['V. Nogueira','LUDO','ORLC',1,'Titular',['V. Nogueira','DF',2002,'BR',67,70,4.06,23.1,'LI/MI'],1],
-  ['E. Rodríguez','LUDO','ISFE',1,'Rotación',['E. Rodríguez','FW',2000,'CO',62,65,2.57,14,'EI/ED'],1],
+  ['Emerson Rodríguez','LUDO','ISFE',1,'Rotación',['Emerson Rodríguez','FW',2000,'CO',62,65,2.57,14,'EI/ED'],1],
   ['Eric Bile','LUDO','HPT',1,'Titular',['Eric Bile','FW',2005,'CI',63,66,6.28,27,'DC/ED'],1],
   /* cesiones del Arda Kardzhali (entrante desde CSKA 1948 y saliente al Varzim) */
   ['A. Traoré','CSK48','ARDA',1,'Rotación',['A. Traoré','DF',2000,'CI',56,59,0.436,2.2,'DFC'],1],
@@ -6422,7 +6422,6 @@ const REAL_LOANS=[
   ['Abdulmalik Al-Marwani','TAAW','JBAL',1,'Rotación',['Abdulmalik Al-Marwani','MD',2002,'SA',58,68,0.3,null,'MC/MCD']],
   /* Neom SC (NEOM): cedido al club (entrante) + cedidos a otros clubes (salida). Datos provisionales. (Haroune Camara<-Al-Nassr y los cedidos a ETIF/SHAB/RIYA/KHAL ya están registrados.) */
   ['Faisal Al Ghamdi','ITTI','NEOM',1,'Rotación',['Faisal Al Ghamdi','MD',2001,'SA',66,73,1.6,null,'MCD/MC']],
-  ['L. Rodríguez','NEOM','CRU',1,'Rotación',['L. Rodríguez','FW',2005,'UY',66,78,3,null,'DC']],
   ['Mohammed Waleed','NEOM','RAED',1,'Rotación',['Mohammed Waleed','DF',2001,'SA',57,64,0.300,null,'DFC/LI']],
   /* Beijing Guoan (BEIJ): cedidos a otros clubes (salida). Datos provisionales. */
   ['Jianzhi Zhang','BEIJ','GXHC',1,'Rotación',['Jianzhi Zhang','GK',2006,'CN',52,62,0.1,null,'POR']],
