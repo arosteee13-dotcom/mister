@@ -7470,7 +7470,7 @@ function realSquad(club){
     const age=yr-r[2];
     /* si el jugador real ya tendría la edad de retiro, se cubre su hueco con un juvenil generado
        (así los clubes regenerados nunca sacan jugadores de 40+ años) */
-    if(age>=RETIRE_AGE)return mkPlayer(gen,club.id+'r'+i,r[1],clamp(Math.round(repOf(club.id)-14+gen()*10),42,80),17+Math.floor(gen()*3),c0?c0.co:'ES',used,club.id);
+    if(age>=RETIRE_AGE)return mkPlayer(gen,club.id+'r'+i,r[1],clamp(Math.round(repOf(club.id)-14+gen()*10),42,Math.max(80,Math.round(repOf(club.id)+4))),17+Math.floor(gen()*3),c0?c0.co:'ES',used,club.id);
     /* el GRL de la base de datos corresponde al año inicial (BASE_YEAR); cada temporada que pasa, el veterano pierde nivel */
     let ovr=r[4];const dba=BASE_YEAR-r[2];for(let a=dba+1;a<=age;a++)ovr-=realAgeDecline(a);ovr=clamp(ovr,40,95);
     const p={id:club.id+'_'+i,n:r[0],nat:r[3],pos:r[1],age,ovr,pot:youngPotOf(age,ovr,r[5],potClubOf(club.id)+'_'+r[0]),en:100,inj:0,g:0,ap:0,real:1};
@@ -7520,7 +7520,7 @@ function renewVirtualSquad(players,club){
   const later=(state.season||1)>1;
   const r=rng(hashStr('rv'+club.id+'|'+state.season+'|'+state.seed));
   const used=new Set(players.map(p=>p.n));
-  const add=(pos,age)=>{const ovr=clamp(Math.round(repOf(club.id)-14+r()*9),40,84);
+  const add=(pos,age)=>{const ovr=clamp(Math.round(repOf(club.id)-14+r()*9),40,Math.max(84,Math.round(repOf(club.id)+4)));
     const q=mkPlayer(r,club.id+'v'+state.season+'_'+Math.floor(r()*1e9),pos,ovr,age,club.co,used,club.id);
     q.pot=clamp(Math.round(ovr+8+(r()-.4)*12),ovr+3,92);q.val=calcVal(q);q.wage=Math.max(.5,Math.round(q.val*4));return q;};
   /* 1) fin de ciclo: los filiales no pueden pasar de 23; en categorías inferiores los veteranos (y el tope de edad)
@@ -10368,7 +10368,8 @@ REAL_PHOTO['A. Tajaouart']='https://cdn.resfu.com/img_data/players/medium/321803
 REAL_PHOTO['Thelo Aasgaard']='https://cdn.resfu.com/img_data/players/medium/839700.jpg?size=120x&lossy=1';
 REAL_PHOTO['M. N\'diaye']='https://cdn.resfu.com/img_data/players/medium/862931.jpg?size=120x&lossy=1';
 REAL_PHOTO['Ibrahim Kanaté']='https://cdn.resfu.com/img_data/players/medium/3404561.jpg?size=120x&lossy=1';
-REAL_PHOTO['Vitinha']={PSG:'https://cdn.resfu.com/img_data/players/medium/427536.jpg?size=120x&lossy=1',GEN:'https://cdn.resfu.com/img_data/players/medium/873827.jpg?size=120x&lossy=1'};
+REAL_PHOTO['Vitinha']='https://cdn.resfu.com/img_data/players/medium/427536.jpg?size=120x&lossy=1';
+REAL_PHOTO['Vitinha Carvalho']='https://cdn.resfu.com/img_data/players/medium/873827.jpg?size=120x&lossy=1';
 /* Genoa cedidos */
 Object.entries({'Lorenzo Gagliardi':983670,'Simone Calvani':983560,'Gianluca Rossi':3192112,'Hugo Cuenca':3261973,'Tommaso Pittino':3191644,'Edoardo Meconi':3201371,'Ernestas Lysionok':3289714,'Matteo Barbini':3333031,'Gabriele Pessolani':3321831,'Alessandro Debenedetti':3358884,'Chec Doumbia':3767419}).forEach(([n,i])=>{REAL_PHOTO[n]='https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1'});
 Object.assign(REAL_ATTR,{'Hugo Cuenca':{RIT:67,TIR:55,PAS:61,REG:63,DEF:49,FÍS:62},'Tommaso Pittino':{RIT:58,TIR:34,PAS:39,REG:48,DEF:52,FÍS:57},'Ernestas Lysionok':{EST:52,PAR:54,SAQ:54,REF:59,COL:56},'Alessandro Debenedetti':{RIT:65,TIR:63,PAS:47,REG:60,DEF:31,FÍS:73}});
@@ -13284,7 +13285,7 @@ function newSeason(){
       if(fil&&a>23)return null;   /* los filiales venden a los jugadores en cuanto superan los 23 años */
       if(!fil&&a>=33&&(a>=RETIRE_AGE||r()<retireChance(a,(p.ap||0)>=10))){
         if(id===state.club){retired.push(Object.assign({},p,{cs:clubCareerStats(p,id)}));return null;}
-        return mkPlayer(r,`${id}y${state.season}_${Math.floor(r()*1e6)}`,p.pos,clamp(Math.round(repOf(id)-14+r()*8),40,80),17+Math.floor(r()*3),club.co,used,id);
+        return mkPlayer(r,`${id}y${state.season}_${Math.floor(r()*1e6)}`,p.pos,clamp(Math.round(repOf(id)-14+r()*8),40,Math.max(80,Math.round(repOf(id)+4))),17+Math.floor(r()*3),club.co,used,id);
       }
       (p.hist=p.hist||[]).push({s:state.season,ap:p.ap,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'',yc:p.yc||0,rc:p.rc||0,tm:teamStats(p),loan:!!p._loanSeason});delete p._loanSeason;if(p.hist.length>HIST_MAX)p.hist=p.hist.slice(-HIST_MAX);const base=p.o0!=null?p.o0:old;shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
       /* revisión anual del potencial: los ojeadores ajustan su estimación según el rendimiento real frente a un techo oculto (potReal), fijado al nacer con más varianza que el POT visible */
@@ -13909,7 +13910,7 @@ function aiMarket(kind){
           }
         }
         if(!q){
-          const ovr=clamp(Math.round(repOf(id)-16+Math.random()*10),42,80),age=19+Math.floor(Math.random()*13);
+          const ovr=clamp(Math.round(repOf(id)-16+Math.random()*10),42,Math.max(80,Math.round(repOf(id)+4))),age=19+Math.floor(Math.random()*13);
           q=mkPlayer(Math.random,`f${state.season}_${state.week}_${id}_${pos}${k}`,pos,ovr,age,club.co,used,id);
         }
         T.players.push(q);c[pos]++;changed.add(id);
@@ -13979,7 +13980,7 @@ function aiFillMin(id){
   ['GK','DF','MD','FW'].forEach(pos=>{
     let k=0;
     while(c[pos]<AI_LIM[pos][0]&&k++<4){
-      const ovr=clamp(Math.round(repOf(id)-16+Math.random()*10),42,80),age=19+Math.floor(Math.random()*13);
+      const ovr=clamp(Math.round(repOf(id)-16+Math.random()*10),42,Math.max(80,Math.round(repOf(id)+4))),age=19+Math.floor(Math.random()*13);
       T.players.push(mkPlayer(Math.random,`f${state.season}_${state.week}_${id}_${pos}p${k}`,pos,ovr,age,club.co,used,id));c[pos]++;
     }
   });
@@ -14341,7 +14342,7 @@ function ensureState(){
       T.players=T.players.map(p=>{
         if(!p||p.age<RETIRE_AGE){adj(p);return p}
         if(id===state.club){news(`${p.n} se retira a los ${p.age} años.`);return null}
-        return mkPlayer(r,id+'z'+(p.id||Math.floor(r()*1e6)),p.pos,clamp(Math.round(repOf(id)-14+r()*10),42,80),17+Math.floor(r()*3),c?c.co:'ES',used,id);
+        return mkPlayer(r,id+'z'+(p.id||Math.floor(r()*1e6)),p.pos,clamp(Math.round(repOf(id)-14+r()*10),42,Math.max(80,Math.round(repOf(id)+4))),17+Math.floor(r()*3),c?c.co:'ES',used,id);
       }).filter(Boolean);
       if(id===state.club){T.lineup=(T.lineup||[]).filter(pid=>T.players.some(p=>p.id===pid));fixLineup(T,false)}
       else{T.lineup=bestXI(T,T.formation);T.bench=autoBench(T)}
