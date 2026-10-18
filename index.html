@@ -3373,6 +3373,7 @@ Object.assign(CLUBBY,{
   NPAZ:K('NPAZ','FK Novi Pazar','Novi Pazar','Novi Pazar','RS','#1c3f94','#f4f4f4',46,2),
   MAGF:K('MAGF','Maghreb Fès','Maghreb Fès','Fez','MA','#d4192b','#f2d31b',44,2),
   NAVB:K('NAVB','Navbahor Namangan','Navbahor','Namangan','UZ','#1c3f94','#f4f4f4',48,2),
+  NEFU:K('NEFU','Neftchi Fergana','Neftchi','Fergana','UZ','#0a8a3d','#f4f4f4',50,2),
   DNMI:K('DNMI','Dinamo Minsk','Dinamo Minsk','Minsk','BY','#1c3f94','#f4f4f4',50,2),
   UFC:K('UFC','United FC','United','Dubái','AE','#d4192b','#f4f4f4',44,2),
   BENA:K('BENA','Ben Aknoun','Ben Aknoun','Argel','DZ','#0a8a3d','#f4f4f4',40,2),
@@ -3398,6 +3399,7 @@ Object.assign(CLUBBY,{
   STK21:K2('STK21','Stoke City U21','Stoke City U21','Stoke-on-Trent','EN','#e03a3e','#ffffff',54)
 });
 if(CLUBBY.OLJL)CLUBBY.OLJL.logo='https://cdn.resfu.com/img_data/equipos/5765.png?size=120x&lossy=1';
+if(CLUBBY.NEFU)CLUBBY.NEFU.logo='https://cdn.resfu.com/img_data/equipos/4359.png?size=120x&lossy=1';
 [['NYCFC',59736],['BAHI',3910],['MCTO',11246],['BOLI',11369],['MELC',18574],['YOKO',2778],['SZPC',110681],['MUMC',25008]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
 /* Copa Libertadores (temporada 1): escudos reales de los participantes sudamericanos */
 [['CUSC',6399],['COQU',9139],['UNIV',2612],['FLU',1158],['LGUA',15169],['BSCE',432],['CORI',836],['ISFE',2255],['CPOR',725],['JUNI',11325],['PALM',11584],['ALWR',62958],['MIRA',5546],['LIBT',1553],['UCV',11653],['IDV',16078],['SCR',2392],['FLA',1155],['DIM',1374],['TOL',900],['CRU',858],['UCAT',2597],['PENR',1945],['LDQ',1555]].forEach(([id,n])=>{if(CLUBBY[id])CLUBBY[id].logo='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1'});
@@ -6397,7 +6399,7 @@ const REAL_LOANS=[
   ['Rashid Al-Mutairi','KHOL','ANWR',1,'Rotación',['Rashid Al-Mutairi','DF',2003,'SA',56,66,0.2,null,'DFC']],
   /* Al-Qadsiah FC (QADS): cedidos a otros clubes (salida). Datos provisionales. (Amar Al-Yuhaybi->Abha y Sultan Harun->Al-Ettifaq ya están registrados.) */
   ['Otávio','QADS','RAYY',1,'Rotación',['Otávio','MD',1995,'BR',74,78,6,null,'MC/MCO/MCD']],
-  ['C. Puertas','QADS','WASL',1,'Rotación',['C. Puertas','MD',2000,'ES',66,74,1.5,null,'MC/MCD']],
+  ['Cameron Puertas','QADS','WASL',1,'Rotación',['Cameron Puertas','MD',2000,'ES',66,74,1.5,null,'MC/MCD']],
   ['S. El Karouani','QADS','SLB',1,'Rotación',['S. El Karouani','DF',2000,'MA',70,78,4,null,'LI']],
   ['Iker Almena','QADS','DZG',1,'Rotación',['Iker Almena','FW',2006,'ES',60,72,0.8,null,'EI/ED']],
   ['G. Carvalho','QADS','SHK',1,'Rotación',['G. Carvalho','FW',2005,'PT',64,76,1.5,null,'EI/DC']],
@@ -16523,7 +16525,7 @@ function cupLeg(t,R,leg){
 /* línea de resultado de copa: local a la izquierda, visitante a la derecha, global entre paréntesis y penaltis */
 function cupTieLine(t,R,leg,mine){
   const g=cupLeg(t,R,leg),agg=g.agg?` <span class="muted-s">(${g.agg.h}-${g.agg.a})</span>`:'';
-  return`<div class="res${mine?' mine':''}">${teamCell(g.h,'',false)}<b>${g.hg} - ${g.ag}</b>${agg}${teamCell(g.a,'',true)}</div>${t.et?`<div class="pen">Prórroga</div>`:''}${g.pen?`<div class="pen">Penaltis ${g.pen[0]}-${g.pen[1]}</div>`:''}${t.gk?`<div class="pen">Juega de portero ${esc(t.gk)}, el segundo portero</div>`:''}`;
+  return`<div class="res${mine?' mine':''}">${teamCell(g.h,'',false)}<b>${g.hg} - ${g.ag}</b>${agg}${teamCell(g.a,'',true)}</div>${t.et?`<div class="pen">Prórroga</div>`:''}${g.pen?`<div class="pen">${Array.isArray(g.pen)?`Penaltis ${g.pen[0]}-${g.pen[1]}`:'Penaltis'}</div>`:''}${t.gk?`<div class="pen">Juega de portero ${esc(t.gk)}, el segundo portero</div>`:''}`;
 }
 function simTie(t,cup,neutral,ri){
   const me=state.club,mine=t.h===me||t.a===me;
@@ -16865,7 +16867,7 @@ function euroQualSimTie(t){
 function afcSingleSimTie(t){
   const sh=virt(t.h),sa=virt(t.a);
   t.hg=rollGoals(xgAny(sh,sa,1));t.ag=rollGoals(xgAny(sa,sh,-1));
-  if(t.hg===t.ag){const wh=Math.random()<.5+(sh.ovr-sa.ovr)*.004;t.w=wh?t.h:t.a;t.pen=true;}
+  if(t.hg===t.ag){const wh=Math.random()<.5+(sh.ovr-sa.ovr)*.004;t.w=wh?t.h:t.a;const base=3+Math.floor(Math.random()*3),lose=Math.floor(Math.random()*base);t.pen=wh?[base,lose]:[lose,base];}
   else t.w=t.hg>t.ag?t.h:t.a;
 }
 /* Cada pareja es [equipo que ya ocupa una plaza fija en la ronda siguiente, retador]. El ganador se queda
@@ -17244,7 +17246,7 @@ const afcRank=(state&&state.afcRank)||{},afcUsed={};
 const afcPick=co=>{const ord=afcRank[co];if(!ord)return null;afcUsed[co]=afcUsed[co]||new Set();const id=ord.find(x=>CLUBBY[x]&&!afcUsed[co].has(x));if(id)afcUsed[co].add(id);return id||null};
 const afcRep=id=>{if(!CLUBBY[id])return id;const p=afcPick(CLUBBY[id].co);return p||id};
 (function(){
-  const west=['HILA','ITTI','NASR','QADS','AHLI','AIN','SHAB','SADD','AQJW','GHAR','SHML','WASL','ESTH','NEFT','PAKH','TRAC'].map(id=>afcPre.afce.win[id]||id).map(afcRep).filter(id=>CLUBBY[id]);
+  const west=['HILA','ITTI','NASR','QADS','AHLI','AIN','SHAB','SADD','AQJW','GHAR','SHML','WASL','ESTH','NEFU','PAKH','TRAC'].map(id=>afcPre.afce.win[id]||id).map(afcRep).filter(id=>CLUBBY[id]);
   const east=['GAM','KYO','KRPOH','BEIJ','BURI','CAHN','KRDAE','KRJEN','JOHO','KRULS','SDTS','NEWJ','PORF','RATC','SHPO','CDRC'].map(id=>afcPre.afce.win[id]||id).map(afcRep).filter(id=>CLUBBY[id]);
   if(west.length===16&&east.length===16)state.cups.AFCE=cupInitAcle('AFCE','AFC Champions League Elite',west,east,AFCE_LEAGUE_W,AFCE_KO_W);
 })();
@@ -18563,7 +18565,7 @@ function tieRow(t){
   if(t.l&&t.l.length){
     res=t.l.map(L=>L?`${L.hg}-${L.ag}`:'vs').join(' / ')+(d?` <small>(${t.hg}-${t.ag})</small>`:'');
   }else if(d)res=t.hg+' - '+t.ag;
-  return`<div class="res ${mine?'mine':''}">${teamCell(t.h,d&&t.w===t.h?'win':d?'los':'',false)}<b>${res}</b>${teamCell(t.a,d&&t.w===t.a?'win':d?'los':'',true)}</div>${t.pen?`<div class="pen">Penaltis ${t.pen[0]}-${t.pen[1]}</div>`:''}`;
+  return`<div class="res ${mine?'mine':''}">${teamCell(t.h,d&&t.w===t.h?'win':d?'los':'',false)}<b>${res}</b>${teamCell(t.a,d&&t.w===t.a?'win':d?'los':'',true)}</div>${t.pen?`<div class="pen">${Array.isArray(t.pen)?`Penaltis ${t.pen[0]}-${t.pen[1]}`:'Penaltis'}</div>`:''}`;
 }
 function cupCal(key){
   const cup=state.cups[key],s=myCupStatus(cup),f=cup.rounds.findIndex(R=>!R.done);
