@@ -1539,7 +1539,10 @@ function applyContent(data){
   if(data.v===2){
     if(data.attr&&typeof data.attr==='object'&&!Array.isArray(data.attr))Object.assign(REAL_ATTR,data.attr);
     if(data.foot&&typeof data.foot==='object'&&!Array.isArray(data.foot))Object.assign(REAL_FOOT,data.foot);
-    if(data.photo&&typeof data.photo==='object'&&!Array.isArray(data.photo))Object.keys(data.photo).forEach(n=>{const i=data.photo[n];REAL_PHOTO[n]=(typeof i==='string')?i:('https://cdn.resfu.com/img_data/players/medium/'+i+'.jpg?size=120x&lossy=1')});
+    if(data.photo&&typeof data.photo==='object'&&!Array.isArray(data.photo)){
+      const purl=v=>typeof v==='string'?(/^https?:/.test(v)?v:'https://cdn.resfu.com/img_data/players/medium/'+v+'.jpg?size=120x&lossy=1'):(v!=null?'https://cdn.resfu.com/img_data/players/medium/'+v+'.jpg?size=120x&lossy=1':null);
+      Object.keys(data.photo).forEach(n=>{const i=data.photo[n];if(i&&typeof i==='object'&&!Array.isArray(i)){const o={};Object.keys(i).forEach(k=>{const u=purl(i[k]);if(u)o[k]=u});REAL_PHOTO[n]=o}else REAL_PHOTO[n]=purl(i)});
+    }
     if(Array.isArray(data.loans))data.loans.forEach(l=>{if(Array.isArray(l)&&!REAL_LOANS.some(x=>x[0]===l[0]&&x[1]===l[1]&&x[2]===l[2]))REAL_LOANS.push(l)});
     if(data.countries&&typeof data.countries==='object'&&!Array.isArray(data.countries))registerCountries(data.countries,data.groups);
     if(data.clubs&&typeof data.clubs==='object'&&!Array.isArray(data.clubs))registerClubs(data.clubs);
@@ -7514,7 +7517,7 @@ function genSquad(club,seed){
        en la vida real (double-registered); si el primer equipo también tiene plantilla real y ya lo incluye,
        se quita de aquí para no verlo duplicado en las dos plantillas del mismo club */
     const parentId=isB(club.id)?FAMILY[club.id]:null;
-    if(parentId&&REAL_DB[parentId]){
+    if(parentId&&REAL_DB[parentId]&&!club.noParentFilter){
       const parentNames=new Set(REAL_DB[parentId].map(x=>x[0]));
       return list.filter(p=>!parentNames.has(p.n));
     }
@@ -7533,6 +7536,7 @@ function genSquad(club,seed){
    Así estas ligas no se quedan con plantillas estáticas de jugadores cada vez más viejos. */
 function renewVirtualSquad(players,club){
   if(!state||!club)return players;
+  if(club.noParentFilter&&curMode()==='real'&&REAL_DB[club.id]&&REAL_DB[club.id].length)return players;
   const fil=isB(club.id)||club.bTeam;
   const later=(state.season||1)>1;
   const r=rng(hashStr('rv'+club.id+'|'+state.season+'|'+state.seed));
@@ -7642,6 +7646,7 @@ function objective(id){
   if(c.co==='AD')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=8?'Permanencia':rank<=9?'Evitar el playoff de descenso':'Evitar el descenso';
   if(c.co==='WA')return rank<=1?'Ganar la Liga':rank<=4?'Clasificar para competición europea':rank<=13?'Permanencia':rank<=14?'Evitar el playoff de descenso':'Evitar el descenso';
   if(c.co==='MA')return rank<=1?'Ganar la Botola':rank<=2?'CAF Champions League':rank<=3?'CAF Confederation Cup':rank<=14?'Permanencia':'Evitar el descenso';
+  if(c.co==='UA'&&c.div===2)return rank<=2?'Ascenso directo a la Premier':rank<=4?'Playoff de ascenso':rank<=14?'Permanencia':'Evitar el descenso';
   if(c.co==='QA'&&c.div===2)return rank<=1?'Ascenso directo a la Qatar Stars League':rank<=2?'Playoff de ascenso':'Permanencia (sin descenso)';
   if(c.co==='QA')return rank<=1?'Ganar la Liga':rank<=2?'Clasificar a la AFC Champions League Two':rank<=4?'Clasificar a la Qatar Cup':'Permanencia (sin descenso)';
   if(c.div===2)return rank<=2?'Ascenso directo':rank<=Math.ceil(n*.4)?'Clasificar a Playoffs de Ascenso':'Terminar en la zona media de la tabla';
@@ -12024,12 +12029,13 @@ function playLeagueStage(){
   if(!state||state.phase!=='play')return null;
   ensureUserSquad();
   ensureFinBase();
+  if(state.country==='UA'&&state.div===2&&!state.split&&state.week>=14)ua2EnsureSplit(state);
   const r=state.week,round=state.fixtures[r],before=posOf(state.club),t=me();
   const hadInj=new Set(t.players.filter(p=>p.inj>0).map(p=>p.id));
   round.forEach(simMatch);if(state.country==='AR'){const t=arTourOf(r);if(t)arTally(round,t)}else if(state.country==='MX'){const t=mxTourOf(r);if(t)mxTally(round,t)}finance(round);updateMood();progressTick(r);positionTick();if(r===20){runAiWindow('winter')}
   famInteract();
   const cups=advanceWorld(r);
-  state.week++;if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
+  state.week++;if(state.country==='UA'&&state.div===2&&!state.split&&state.week>=14)ua2EnsureSplit(state);if(state.country==='AR')arEnsureCups(state.week);if(state.country==='MX')mxEnsureCups(state.week);bulEnsureCups(state.week);czEnsureCups(state.week);
   {const uk=userKey();const sreg=SPLITS[uk]?SPLITS[uk].reg:(uk==='BG1'?BUL_REG:uk==='GR1'?GR_REG:uk==='CZ1'?CZ_REG:(uk==='RS1'||uk==='RS2')?rsRegOf({tb:state.table}):uk==='WA1'?WA_REG:null);if(sreg!=null&&!state.split&&state.week===sreg)state.split=splitIfDue(state.fixtures,state.table,uk,state.week)}
   /* Rusia: parón invernal. Al pasar de la jornada 28 a la 29 (año cruzado, parón de invierno) ha pasado
      mucho más tiempo que una semana: todos los jugadores recuperan el 100% (se les quitan las molestias). */
@@ -12262,7 +12268,9 @@ function newGame(slot,clubId){
   const club=CLUBBY[clubId],co=club.co,seed=ui.seed,teams={};
   BENCH_N=benchLimit(clubId);
   leagueClubs(co,club.div).forEach(c=>{
-    const t={players:genSquad(c,seed),budget:budgetFor(c),formation:formFor(c.id),lineup:[]};
+    const fp=FAMILY[c.id]&&CLUBBY[FAMILY[c.id]]?FAMILY[c.id]:null;
+    const own=(curMode()==='real'&&REAL_DB[c.id]&&REAL_DB[c.id].length);
+    const t={players:genSquad(!own&&fp?CLUBBY[fp]:c,seed),budget:budgetFor(c),formation:formFor(c.id),lineup:[]};
     t.lineup=bestXI(t);if(c.id===clubId)t.bench=autoBench(t);teams[c.id]=t;
   });
   const ids=Object.keys(teams);
@@ -12323,6 +12331,13 @@ function planPlayoffs(){
        directo el campeón, y el resto pasa por un playoff encadenado con una última eliminatoria contra la
        Primera División que este bloque genérico no sabe representar. */
     if(co==='BE'||co==='SE'||co==='KR'||co==='TR'||co==='RU'||co==='NL'||co==='RS'||co==='QA')return;
+    if(co==='UA'){
+      const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id));
+      const up=elig.slice(0,2),down=s1.slice(-2);po.dir[co]={up,down};
+      const pairs=[[s1[12],elig[3]],[s1[13],elig[2]]].filter(x=>x[0]&&x[1]&&x[0]!==x[1]);
+      pairs.forEach((seeds,i)=>po.items.push({co:'UA',kind:'uapo',seeds,alive:seeds.slice(),rounds:[],winner:null,idx:i}));
+      return;
+    }
     const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id)),n1=s1.length,n2=s2.length;
     let down=[],up=[],item=null;
     if(co==='AD'){
@@ -12690,6 +12705,10 @@ function poFinish(){
   const po=state.po;po.done=true;po.res={};
   gamePlayable().forEach(co=>{
     const d=po.dir[co],it=po.items.find(x=>x.co===co),up=d.up.slice(),down=d.down.slice();
+    if(co==='UA'){
+      po.items.filter(x=>x.co==='UA').forEach(x=>{if(x.winner===x.seeds[1]){up.push(x.seeds[1]);down.push(x.seeds[0])}});
+      po.res[co]={up,down};return;
+    }
     if(it){
       if(it.kind==='promo'||it.kind==='plpo'||it.kind==='trpo'){if(it.winner)up.push(it.winner)}
       else if(it.winner!==it.seeds[0]){up.push(it.winner);down.push(it.seeds[0])}
@@ -13167,7 +13186,7 @@ function syncLeague(){
     /* un club que vuelve a la liga no recupera a jugadores que ya juegan en otro equipo (fichajes, cesiones) */
     const c=CLUBBY[id];
     /* el propio filial juega en la liga con la plantilla de la familia (misma referencia), no con una generada */
-    const _f=famOf(id);let pl=_f?_f.players:null;
+    const _f=famOf(id);let pl=(curMode()==='real'&&REAL_DB[id]&&REAL_DB[id].length)?null:(_f?_f.players:null);
     if(!pl){
       const taken=new Set();Object.values(state.teams).forEach(T=>T.players.forEach(p=>taken.add(p.id)));
       (state.loansAbroad||[]).forEach(l=>taken.add(l.p.id));(state.loansOut||[]).forEach(l=>taken.add(l.p.id));
@@ -13465,7 +13484,9 @@ function switchClub(newId){
   leagueClubs(co,club.div).forEach(c=>{
     /* si el club tiene plantilla archivada (p.ej. tú lo entrenaste antes), se conserva en vez de regenerarla desde la base */
     const arch=(state.squadArchive||{})[c.id];
-    const pl=(arch&&arch.length)?arch.filter(p=>!(state.gone||{})[p.id]):genSquad(c,seed);
+    const fp=FAMILY[c.id]&&CLUBBY[FAMILY[c.id]]?FAMILY[c.id]:null;
+    const own=(curMode()==='real'&&REAL_DB[c.id]&&REAL_DB[c.id].length);
+    const pl=(arch&&arch.length)?arch.filter(p=>!(state.gone||{})[p.id]):genSquad(!own&&fp?CLUBBY[fp]:c,seed);
     const t={players:pl,budget:budgetFor(c),formation:formFor(c.id),lineup:[]};
     t.lineup=bestXI(t);if(c.id===newId)t.bench=autoBench(t);teams[c.id]=t;
   });
@@ -15476,7 +15497,7 @@ function archiveLiteHist(){
 }
 function squadFor(id){
   if(state.teams&&state.teams[id])return state.teams[id].players;
-  const _fr=famOf(id);if(_fr)return _fr.players;
+  const _fr=famOf(id);if(_fr&&!(curMode()==='real'&&REAL_DB[id]&&REAL_DB[id].length))return _fr.players;
   if(!CLUBBY[id])return[];   /* ids de plantillas reales sin club definido: no rompen la generación */
   const k=id+'|'+state.seed+'|'+curMode();if(!SQC[k]){const gone=state.gone||{},arr=(state.arrivals&&state.arrivals[id])||[];const arch=(state.squadArchive||{})[id];const seedPl=(arch&&arch.length)?arch.map(p=>JSON.parse(JSON.stringify(p))):genSquad(CLUBBY[id],state.seed);const base=seedPl.filter(p=>!gone[p.id]).concat(arr.filter(p=>!gone[p.id]));SQC[k]=renewVirtualSquad(base,CLUBBY[id]);rehydrateLiteStats(SQC[k])}return applyLoans(id,SQC[k]);
 }
@@ -16659,7 +16680,7 @@ function advanceWorld(r){
       t.players.forEach(p=>{if(p.inj>0)p.inj--;if(p.sus>0)p.sus--});
     }
   }
-  for(const k in state.others){const L=state.others[k];const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):k==='WA1'?WA_REG:null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
+  for(const k in state.others){const L=state.others[k];if(k==='UA2'&&!L.split&&r>=14)ua2EnsureSplit(L);const sreg=SPLITS[k]?SPLITS[k].reg:(k==='BG1'?BUL_REG:k==='GR1'?GR_REG:k==='CZ1'?CZ_REG:(k==='RS1'||k==='RS2')?rsRegOf(L):k==='WA1'?WA_REG:null);if(sreg!=null&&!L.split&&r===sreg)L.split=splitIfDue(L.fx,L.tb,k,r);if(L.fx.length>r&&L.fx[r]&&L.fx[r][0]&&L.fx[r][0].hg===undefined)liteRound(L,r)}
   qaEnsureCups(r);
   if(state.arWorld){arWorldTally(r);arWorldEnsureCups(r);}
   for(const k in state.cups){
@@ -17013,6 +17034,9 @@ function initWorld(){
     if(co==='AR'&&d===1){const b=arBuild(hashStr('ar|'+state.seed+'|s'+state.season));state.others.AR1={fx:b.fixtures,tb:emptyTable(ids),sc:{}};state.arWorld={groups:b.zones,ap:{tb:{A:emptyTable(b.zones.A),B:emptyTable(b.zones.B)}},cl:{tb:{A:emptyTable(b.zones.A),B:emptyTable(b.zones.B)}}};return;}
     state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
   }));
+  /* Ucrania: Persha Liha con dos grupos y split (fase regular 14 jornadas + 8 de grupos campeonato/descenso). */
+  if(state.others.UA2){const ids=Object.keys(state.others.UA2.tb);const u=ua2InitialFixtures(ids);state.others.UA2={fx:u.fx,tb:emptyTable(ids),sc:{},ua2:u.ua2};}
+  if(state.country==='UA'&&state.div===2){const ids=Object.keys(state.teams);const u=ua2InitialFixtures(ids);state.fixtures=u.fx;state.table=emptyTable(ids);state.ua2=u.ua2;state.split=null;}
   /* Inglaterra: la League One (div 3) también se simula, para poder resolver su ascenso/playoff a Championship */
   {const key='EN3';if(key!==state.lk){const ids=leagueClubs('EN',3).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
   /* Inglaterra: la League Two (div 4) también se simula, para tener su propia clasificación */
@@ -18527,6 +18551,7 @@ function krLeagueTable(key){
        + tbl(SPLITS.KR1.lower,botList,relZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Play-off de descenso'],['#e53935','Descenso directo']]);
 }
 function leagueTable(key){
+  if(key==='UA2')return ua2LeagueTable(key);
   if(key==='DK1')return dkLeagueTable(key);
   if(key==='CH1')return chLeagueTable(key);
   if(key==='BG1')return bulLeagueTable(key);
@@ -18538,7 +18563,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
+  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='UA'&&d==='2'?ZONES_UA2:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -27603,6 +27628,7 @@ const ZONES_QA2=[['#66bb6a','Ascenso directo a la Qatar Stars League'],['#26a69a
   });
 }
 const ZONES_MA1=[['#7cb342','Campeón (CAF Champions League)'],['#4caf50','CAF Champions League'],['#26a69a','CAF Confederation Cup'],['#9e9e9e','Permanencia'],['#e53935','Descenso a Botola Pro 2']];
+const ZONES_UA2=[['#66bb6a','Ascenso directo a la Premier'],['#26a69a','Playoff de ascenso'],['#9e9e9e','Permanencia'],['#e53935','Descenso a Druha Liha']];
 
 /* ===== CAF CHAMPIONS LEAGUE (16 clubes) ===== */
 {
@@ -27775,6 +27801,108 @@ function cupInitCafSC(h,a,w){
     AHL:8,ZAMA:4,TPM:3,ESS:2,RAJA:2,ENY:2,
     ESPT:1,WYDC:1,RSBK:1,USMA:1,FARR:1,FUSR:1,AFRS:1,ASJSM:1,ORLP:1,SUND:1,LEOP:1,SEWE:1
   }).forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.cafsc=n;});
+}
+
+/* ===== UCRANIA: Persha Liha (UA2, 16 clubes, dos grupos + split) ===== */
+var UA2_GROUPS={
+  A:['AHVO','KULB','PRYK','KOLO2','NYVT','PRGO','UCSA','OLEX'],
+  B:['CHEU','FNIX','INHU','LOK','METK','POLB','SCPO','VSUM']
+};
+const UA2_META=[
+  ['AHVO','Yunist Stadium','4-4-2',2.0],['CHEU','Chernihiv Arena','4-2-3-1',1.0],
+  ['KULB','Stadium Kulikiv','4-4-2',0.8],['PRYK','Ruh Stadium','4-3-3',1.5],
+  ['FNIX','Stadium Feniks','4-4-2',0.9],['INHU','Inhulets Stadion','4-2-3-1',4.0],
+  ['KOLO2','Kolos Stadium - Anexo','4-3-3',0.5],['LOK','Lokomotiv Stadium','4-4-2',1.0],
+  ['METK','Metalist Oblast Sports Complex','4-3-3',5.0],['NYVT','Ternopil City Stadium','4-4-2',1.2],
+  ['OLEX','Nika Stadium','4-2-3-1',3.0],['POLB','Polissya Stadium - Anexo','4-3-3',0.6],
+  ['PRGO','Probiy Stadium','4-4-2',0.8],['SCPO','Lokomotiv Stadium','4-2-3-1',2.0],
+  ['UCSA','Bannikov Stadium','4-3-3',2.5],['VSUM','Yuvileyny Stadium','4-4-2',1.5]
+];
+{
+  const ug=GROUPS.find(g=>g.id==='UA');
+  if(ug&&!ug.comps.includes('UA2'))ug.comps.splice(1,0,'UA2');
+  if(!COUNTRIES.UA.divs.includes('Persha Liga'))COUNTRIES.UA.divs.push('Persha Liga');
+  BENCH_CD.UA2=12;
+  /* filiales: Kolos Kovalivka II y Polissya Zhytomyr II */
+  [['KOLO2','KOLO','Kolos Kovalivka II','Kolos II','Kovalivka',38],['POLB','POLZ','Polissya Zhytomyr II','Polissya II','Zhytomyr',40]].forEach(([id,pid,name,short,city,rep])=>{
+    if(!CLUBBY[id]){const p=CLUBBY[pid];const b=K(id,name,short,city,'UA',p?p.c1:'#1a8a3a',p?p.c2:'#f4f4f4',rep,2);b.bTeam=1;b.noParentFilter=1;if(p&&p.logo)b.logo=p.logo;CLUBBY[id]=b;FAMILY[pid]=id;FAMILY[id]=pid;}
+    if(!CLUBS.includes(CLUBBY[id]))CLUBS.push(CLUBBY[id]);
+  });
+  Object.assign(CITY,{
+    'UA|Volochysk':{ll:[26.20,49.54]},'UA|Chernihiv':{ll:[31.29,51.49]},
+    'UA|Bilka':{ll:[24.00,49.82]},'UA|Ivano-Frankivsk':{ll:[24.71,48.92]},
+    'UA|Mariupol':{ll:[37.55,47.10]},'UA|Petrove':{ll:[33.28,48.35]},
+    'UA|Kovalivka':{ll:[30.55,49.98]},'UA|Kiev':{ll:[30.52,50.45]},
+    'UA|Kharkiv':{ll:[36.23,49.99]},'UA|Ternopil':{ll:[25.59,49.55]},
+    'UA|Oleksandriya':{ll:[33.12,48.67]},'UA|Zhytomyr':{ll:[28.66,50.25]},
+    'UA|Gorodenka':{ll:[25.50,48.67]},'UA|Poltava':{ll:[34.55,49.59]},
+    'UA|Sumy':{ll:[34.80,50.91]}
+  });
+  UA2_META.forEach(([id,stad,form,bud])=>{
+    const c=CLUBBY[id];if(!c)return;
+    c.co='UA';c.div=2;c.stadium=stad;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    BASE_DIV[id]=2;
+    if(!STADIUM[id])STADIUM[id]=stad;
+    FORM_MAIN[id]=form;BUDGET[id]=bud;
+  });
+}
+function ua2InitialFixtures(ids){
+  const A=UA2_GROUPS.A.filter(id=>ids.includes(id)),B=UA2_GROUPS.B.filter(id=>ids.includes(id));
+  const seed=hashStr('UA2|'+state.seed+'|'+state.season);
+  const fa=makeFixtures(A,rng(seed^0x51ed)),fb=makeFixtures(B,rng(seed^0x7a11));
+  const fx=[];for(let i=0;i<Math.max(fa.length,fb.length);i++)fx.push([...(fa[i]||[]),...(fb[i]||[])]);
+  return {fx,ua2:{A,B}};
+}
+function ua2EnsureSplit(L){
+  if(!L||L.split||!L.ua2)return;
+  const fx=L.fx||L.fixtures,tb=L.tb||L.table;if(!fx||!tb||fx.length!==14)return;
+  const A=L.ua2.A.filter(id=>tb[id]),B=L.ua2.B.filter(id=>tb[id]);
+  if(A.length<4||B.length<4)return;
+  const order=ids=>{const sub={};ids.forEach(id=>sub[id]=tb[id]);return sortTable(sub).map(r=>r.id)};
+  const ordA=order(A),ordB=order(B);
+  const promA=ordA.slice(0,4),promB=ordB.slice(0,4);
+  const relA=ordA.slice(4),relB=ordB.slice(4);
+  const cross=(P,Q)=>{
+    const out=[];
+    for(let k=0;k<4;k++)out.push(P.map((a,i)=>({h:a,a:Q[(i+k)%4]})));
+    for(let k=0;k<4;k++)out.push(Q.map((b,i)=>({h:b,a:P[(i+k)%4]})));
+    return out;
+  };
+  const fp=cross(promA,promB),fr=cross(relA,relB);
+  for(let i=0;i<8;i++)fx.push([...(fp[i]||[]),...(fr[i]||[])]);
+  L.split={promo:[...promA,...promB],releg:[...relA,...relB],ua2:{A,B}};
+}
+function ua2LeagueTable(key){
+  const L=leagueData(key),tb=L.tb||{};
+  const sub=ids=>{const o={};ids.forEach(id=>{if(tb[id])o[id]=tb[id]});return o};
+  const leg=(a,b)=>[[a,'#66bb6a'],[b,'#26a69a']];
+  if(!L.split){
+    return _groupTable('Grupo A · Oeste',sub((L.ua2&&L.ua2.A)||UA2_GROUPS.A),p=>p<=4?'#66bb6a':'#9e9e9e',[['#66bb6a','Grupo Ascenso'],['#9e9e9e','Grupo Descenso']])
+      +_groupTable('Grupo B · Este',sub((L.ua2&&L.ua2.B)||UA2_GROUPS.B),p=>p<=4?'#66bb6a':'#9e9e9e',[['#66bb6a','Grupo Ascenso'],['#9e9e9e','Grupo Descenso']]);
+  }
+  return _groupTable('Grupo de Ascenso',sub(L.split.promo),p=>p<=2?'#66bb6a':p<=4?'#26a69a':'#9e9e9e',[['#66bb6a','Ascenso directo'],['#26a69a','Playoff de ascenso'],['#9e9e9e','Permanencia']])
+    +_groupTable('Grupo de Descenso',sub(L.split.releg),p=>p<=6?'#9e9e9e':'#e53935',[['#9e9e9e','Permanencia'],['#e53935','Descenso a Druha Liha']]);
+}
+
+/* ===== Palmarés histórico Persha Liha: clubes históricos sin liga activa ===== */
+{
+  const HIST=[
+    ['DYN2','Dynamo-2 Kyiv','Dynamo-2','Kiev',4257],
+    ['HOV','Hoverla Uzhhorod','Hoverla','Uzhhorod',9238],
+    ['ZIR','Zirka Kropyvnytskyi','Zirka','Kropyvnytskyi',13502],
+    ['ODON','Olimpik Donetsk','Olimpik','Donetsk',13528],
+    ['SEVA','Sevastopol','Sevastopol','Sevastopol',19968]
+  ];
+  HIST.forEach(([id,name,short,city,crest])=>{
+    if(!CLUBBY[id])CLUBBY[id]=K2(id,name,short,city,'UA','#1c3f94','#f4f4f4',50);
+    const log='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';CLUB_LOGO[id]=log;CLUBBY[id].logo=log;
+  });
+  Object.entries({
+    DYN2:{d2:3},HOV:{d2:3},ZIR:{d2:3},CHO:{d2:2},KARP:{d2:2},
+    ODON:{d2:1},ZOR:{d2:1},VORS:{d2:1},OLEX:{d2:1,d3:1},INHU:{d2:1},
+    METK:{d2:1,d3:1},SEVA:{d2:1},AHVO:{d3:1},PRYK:{d3:1},NYVT:{d3:1}
+  }).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>e[k]=o[k]);});
 }
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
