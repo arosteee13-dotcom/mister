@@ -85,7 +85,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 .crest-flag{position:absolute;top:calc(var(--cs,32px)*-.08);right:calc(var(--cs,32px)*-.18);width:calc(var(--cs,32px)*.46);height:calc(var(--cs,32px)*.46);border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:calc(var(--cs,32px)*.34);line-height:1}
 .crest-flag img.flag-i{width:100%;height:100%;object-fit:cover}
 .crest.logo{background:transparent;box-shadow:none;overflow:visible}
-.crest.logo img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 5px 12px rgba(0,0,0,.5))}
+.crest.logo img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 5px 12px rgba(0,0,0,.5));transform:scale(.9);transform-origin:center}
 /* museo de trofeos */
 .museum-filters{flex:none;display:flex;gap:8px;padding:2px 18px 12px;flex-wrap:wrap}
 .mfdrop{position:relative;flex:1;min-width:140px}
@@ -1729,7 +1729,7 @@ function ensureFilialesAll(){
   });
 }
 /* divisiones presentes en un país agrupadas por liga; los filiales y los que no tienen liga van a "Filiales" */
-const EDIT_LEAGUES={ES:[{disp:'1ª',label:'LaLiga EA Sports',divs:[1]},{disp:'2ª',label:'LaLiga Hypermotion',divs:[2]},{disp:'3ª',label:'Primera Federación',divs:[5,6]},{disp:'4ª',label:'Segunda Federación',divs:[7,8,9,10,11]}]};
+const EDIT_LEAGUES={ES:[{disp:'1ª',label:'LaLiga EA Sports',divs:[1]},{disp:'2ª',label:'LaLiga Hypermotion',divs:[2]},{disp:'3ª',label:'Primera Federación',divs:[5,6]},{disp:'4ª',label:'Segunda Federación',divs:[7,8,9,10,11]},{disp:'5ª',label:'Tercera Federación',divs:[12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]}]};
 function coDivOptions(co){
   ensureFilialesAll();
   const clubIds=Object.keys(CLUBBY).filter(id=>CLUBBY[id].co===co);
@@ -2083,7 +2083,11 @@ function leagueClubs(co,d){d=d||1;if(!isLeagueEnabled(co,d))return [];const k=co
    gris/bloqueada en vez de dejarlos en blanco sobre el patrón de puntos genérico. Coordenadas aproximadas,
    simplificadas a mano (no se pudo acceder a un dataset GeoJSON por restricciones de red), suficientes para
    que se reconozca la forma a esta escala; no usar para nada que requiera precisión geográfica real. */
-const FINLAND_L=P(`27.96,70.09 26.89,69.93 25.96,69.70 25.69,69.20 25.12,68.70 23.87,68.84 22.53,68.74 20.91,68.97 21.71,68.63 23.09,68.26 23.55,67.62 23.91,66.72 24.05,66.00 25.25,65.44 25.27,65.03 24.23,64.54 23.42,64.10 22.49,63.63 21.59,63.39 21.14,62.90 21.28,62.16 21.57,61.51 21.29,61.15 21.06,60.84 21.06,60.58 21.18,60.22 21.47,60.10 21.92,60.10 22.29,59.80 22.85,59.93 23.03,59.80 23.93,59.91 24.53,59.96 25.23,60.11 25.86,60.16 26.43,60.32 26.95,60.35 27.25,60.35 27.73,60.39 28.52,60.96 29.84,61.67 30.62,62.16 31.09,62.42 31.46,62.78 31.36,63.07 30.78,63.41 30.25,63.58 29.98,63.76 30.27,63.82 29.60,65.00 29.90,66.00 30.20,67.00 29.60,68.00 29.30,69.00 29.30,69.80 27.96,70.09`);
+const FINLAND_L=P(`28.95408,69.02726 28.41023,68.89853 28.80148,68.83549 28.44791,68.52972 28.66376,68.20400 29.33085,68.07269 29.65119,67.82356 30.00941,67.68584 29.91624,67.50813 29.51983,67.29817 29.09991,66.99113 29.05154,66.90780 29.52448,66.49121 29.65088,66.28789 29.90017,66.10806 30.11173,65.71201 30.09850,65.65638 29.70287,65.62938 29.83857,65.56489 29.72633,65.49151 29.72013,65.32909 29.58009,65.23540 29.83320,65.20501 29.80819,65.13530 29.85020,65.12150 29.59838,65.03438 29.63362,64.90715 29.78028,64.79558 30.11886,64.76793 30.18082,64.64277 29.95484,64.56898 30.07039,64.47188 30.03246,64.39695 30.55848,64.21970 30.53279,64.16254 30.58643,64.08467 30.55233,64.02173 30.20155,63.79265 29.98079,63.74154 30.46107,63.47287 31.20397,63.21268 31.26277,63.10059 31.56952,62.90593 31.24376,62.50334 30.92564,62.30212 30.64772,62.19277 29.20316,61.24590 28.79760,61.09684 28.61456,60.96194 28.48093,60.93346 27.80787,60.55305 27.73951,60.57416 27.75318,60.50585 27.70541,60.48542 27.63649,60.49226 27.69166,60.51895 27.61598,60.51211 27.62965,60.47114 27.50847,60.51386 27.47267,60.50585 27.50668,60.45746 27.45680,60.46369 27.23243,60.51211 27.30812,60.52578 27.21461,60.58495 27.17775,60.51211 27.05437,60.54682 26.93141,60.48542 26.96241,60.44721 26.79705,60.48591 26.68735,60.41816 26.48268,60.46800 26.62501,60.60961 26.75318,60.57416 26.65919,60.65180 26.46583,60.50812 26.46941,60.42748 26.34205,60.37556 26.24562,60.45087 26.27345,60.40217 26.14243,60.39598 25.91725,60.48542 26.10816,60.33592 26.04005,60.29979 26.00587,60.36811 25.84205,60.40217 25.91725,60.36127 25.88307,60.30663 25.93019,60.24518 25.75375,60.32075 25.84889,60.26569 25.73552,60.24726 25.64967,60.29979 25.64967,60.34138 25.70436,60.34138 25.66863,60.36465 25.52613,60.32709 25.50278,60.24616 25.31381,60.27253 25.02931,60.14785 24.99879,60.21284 24.95094,60.14346 24.84522,60.14374 24.86883,60.17976 24.80681,60.19062 24.82732,60.16266 24.67026,60.10122 24.55405,60.15595 24.59685,60.12727 24.54038,60.08755 24.60816,60.10122 24.59449,60.06025 24.44565,59.99226 24.46412,60.04658 24.31267,59.99750 24.36793,60.07392 24.31967,60.07583 24.16424,60.01944 24.00082,60.03827 23.79949,59.95661 23.42945,59.95661 23.54615,60.07392 23.23715,59.89802 23.25131,59.84113 22.90512,59.81123 23.24708,59.92243 23.32643,60.00935 23.22340,59.92988 23.11069,59.92328 23.11134,59.97427 23.25758,60.03974 23.03549,60.04458 22.99073,60.07734 23.02540,60.13532 22.96949,60.09439 22.87468,60.14960 23.08058,60.35505 22.52508,60.20425 22.64812,60.27871 22.45916,60.26496 22.62428,60.39908 22.29152,60.38264 22.10109,60.46214 22.04705,60.43879 21.90317,60.52888 21.84392,60.51553 21.87403,60.47797 21.78533,60.47797 21.84051,60.62873 21.66179,60.56733 21.61207,60.48884 21.55812,60.49226 21.51775,60.56733 21.57862,60.56733 21.40854,60.58039 21.46998,60.60830 21.35328,60.69017 21.43897,60.68033 21.42213,60.72500 21.46998,60.73115 21.32887,60.82754 21.31853,60.86469 21.42840,60.87580 21.35328,60.90253 21.42840,60.90253 21.29868,61.06013 21.48227,61.06013 21.44264,61.16999 21.55812,61.20417 21.47609,61.24575 21.54444,61.27985 21.52426,61.37531 21.44890,61.40278 21.57244,61.41641 21.42213,61.48534 21.59213,61.48534 21.48227,61.56786 21.71632,61.52692 21.53761,61.64985 21.51775,61.71125 21.58595,61.69766 21.46998,61.75971 21.48609,61.81118 21.41407,61.90689 21.23658,61.98501 21.28907,62.12157 21.38396,62.19449 21.37428,62.26679 21.31227,62.23200 21.33904,62.35554 21.27068,62.34931 21.27068,62.41079 21.21608,62.33503 21.20240,62.41763 21.13356,62.40396 21.12672,62.55414 21.19353,62.60090 21.06520,62.59577 21.07895,62.67829 21.16082,62.71931 21.11354,62.78119 21.18336,62.78238 21.24342,62.86945 21.39080,62.88032 21.46315,62.95140 21.44410,63.04092 21.49513,63.07172 21.68849,63.02709 21.52084,63.12678 21.50343,63.15746 21.55193,63.17792 21.49659,63.20897 21.74236,63.19965 21.70265,63.22577 21.89454,63.26048 21.88087,63.17792 21.98390,63.14321 21.95590,63.18476 22.02475,63.23941 22.33009,63.28384 22.37371,63.32136 22.19557,63.43122 22.24676,63.46963 22.40162,63.41816 22.28142,63.52619 22.40740,63.45694 22.49724,63.58576 22.54566,63.57518 22.49724,63.62299 22.58570,63.65705 22.58904,63.70332 22.67530,63.70238 22.77345,63.62751 22.90187,63.70551 22.83302,63.72602 22.92579,63.74339 22.90252,63.79487 23.00066,63.76362 22.99073,63.81538 23.06284,63.85297 23.41578,63.92463 23.37086,63.94652 23.39650,64.05614 23.60450,64.02765 23.57358,64.10725 23.86109,64.26789 23.94337,64.24677 23.92905,64.30142 24.00440,64.38911 24.34409,64.53075 24.42286,64.67561 24.58766,64.78119 24.53842,64.80532 24.66831,64.78913 24.73634,64.85537 25.09474,64.91836 25.25929,64.83584 25.22511,64.82274 25.35483,64.82958 25.35955,64.91112 25.19093,64.96678 25.44353,64.96678 25.35548,65.09650 25.21144,65.12377 25.32748,65.22687 25.27980,65.26097 25.33497,65.34349 25.26612,65.37763 25.35548,65.41181 25.32358,65.50678 24.85914,65.65913 24.67579,65.63544 24.66774,65.69086 24.55047,65.76350 24.71062,65.91209 24.51881,65.79605 24.40480,65.76923 24.23829,65.82270 24.20623,65.77875 24.01965,66.04894 23.68944,66.25699 23.65244,66.45884 23.88188,66.56354 23.89242,66.75091 24.00404,66.80520 23.58133,67.15314 23.60272,67.26026 23.78566,67.33752 23.75145,67.34623 23.76519,67.42007 23.47715,67.44382 23.43126,67.48552 23.55353,67.58704 23.48128,67.86464 23.66215,67.95043 23.38300,68.05125 23.30652,68.14561 23.16565,68.12204 23.15521,68.21744 23.06694,68.29025 22.80825,68.39490 22.07217,68.47701 21.91921,68.56822 21.73710,68.58791 21.46363,68.68687 21.40637,68.74888 20.90573,68.89461 20.91121,68.98070 20.62317,69.03636 20.74440,69.10436 21.07151,69.03667 21.15636,69.08762 21.03358,69.18121 21.09838,69.23950 21.31356,69.29143 21.63881,69.27138 22.37138,68.82262 22.40921,68.71291 23.07149,68.68087 23.19758,68.61804 23.73481,68.71545 23.78721,68.79978 23.92901,68.81621 24.66343,68.66609 24.90518,68.55695 25.13245,68.64765 25.20128,68.81265 25.43393,68.88386 25.62777,68.87414 25.79582,68.99331 25.73722,69.21820 25.87737,69.37081 25.84140,69.41778 25.88667,69.52087 26.00397,69.58718 25.96170,69.65255 26.00511,69.68934 26.19828,69.71544 26.53386,69.92524 27.10034,69.90175 27.31180,69.92948 27.61256,70.06206 27.86691,70.07531 28.16736,69.89434 28.38119,69.85620 28.40455,69.80225 29.14714,69.66391 29.34454,69.46439 28.85217,69.20353 28.82757,69.09077 28.95408,69.02726`);
+const FINLAND_ALAND0=P(`20.20875,60.22468 20.22975,60.20425 20.20094,60.19941 20.19166,60.19367 20.17457,60.17011 20.16196,60.16714 20.13697,60.17634 20.09547,60.17634 20.08709,60.18220 20.08888,60.19587 20.10231,60.22093 20.12289,60.23078 20.17237,60.23282 20.18824,60.24518 20.11101,60.23945 20.08188,60.22337 20.06471,60.19062 20.05787,60.19062 20.06088,60.21475 20.03191,60.23640 20.02369,60.25511 20.05714,60.29316 20.06129,60.31005 20.02369,60.31346 20.02369,60.30663 20.03386,60.29389 20.02491,60.27643 20.00327,60.26703 19.97592,60.27871 19.97975,60.26105 19.99399,60.24144 20.01295,60.22516 20.03053,60.21723 20.01490,60.20234 20.01629,60.18374 19.96412,60.19481 19.94801,60.20425 19.95574,60.21284 19.95484,60.22468 19.91456,60.21821 19.91725,60.20767 19.94361,60.18623 19.98731,60.17304 20.01002,60.15583 20.01987,60.15811 20.04420,60.17634 20.03297,60.14435 20.03053,60.11481 20.04754,60.10541 20.05047,60.09781 20.04477,60.08747 20.00636,60.09439 19.96599,60.09113 19.94899,60.08389 19.95818,60.05378 19.94850,60.04767 19.93775,60.05036 19.94117,60.06025 19.92400,60.09154 19.91033,60.10106 19.88657,60.10122 19.87330,60.09642 19.86834,60.08552 19.84506,60.07868 19.83172,60.07950 19.82325,60.08430 19.82447,60.09439 19.80698,60.09984 19.78891,60.09626 19.76303,60.07392 19.74757,60.10139 19.69467,60.17011 19.68238,60.21198 19.67091,60.21723 19.64698,60.26569 19.68287,60.26435 19.69142,60.25654 19.68849,60.23835 19.70932,60.26887 19.77052,60.28620 19.74936,60.30663 19.79656,60.29979 19.76515,60.24897 19.78419,60.22468 19.79200,60.20014 19.79859,60.19306 19.81422,60.19062 19.82179,60.19599 19.82350,60.20848 19.81764,60.23216 19.85182,60.21723 19.85865,60.24518 19.87973,60.25886 19.89283,60.30663 19.90016,60.27558 19.90553,60.27180 19.92905,60.27717 19.93434,60.28242 19.92400,60.31428 19.88950,60.34467 19.87599,60.33763 19.85768,60.31322 19.84840,60.31721 19.81918,60.34683 19.80201,60.35419 19.77735,60.35505 19.79298,60.36054 19.81764,60.38858 19.83815,60.40046 19.88234,60.40559 19.90642,60.40217 19.92750,60.35643 19.96998,60.36140 19.99562,60.35643 20.03679,60.33393 20.02369,60.36127 20.07203,60.34992 20.09303,60.35513 20.12615,60.33393 20.17807,60.32298 20.19207,60.31232 20.18141,60.28620 20.20191,60.29295 20.23805,60.28156 20.27760,60.27871 20.24285,60.24518 20.23601,60.23216 20.20875,60.22468`);
+const FINLAND_ALAND1=P(`22.84352,60.24177 22.89096,60.28555 22.92075,60.29670 22.95639,60.29295 22.94947,60.27045 22.88453,60.23530 22.86687,60.20746 22.83351,60.19306 22.84034,60.17011 22.81935,60.16266 22.84034,60.15583 22.83302,60.14216 22.84685,60.11103 22.81316,60.08210 22.73048,60.04658 22.73048,60.03974 22.75799,60.03229 22.72983,60.00495 22.68214,59.99750 22.65496,60.03229 22.60841,60.00015 22.60027,59.98452 22.59897,60.00804 22.57911,60.00495 22.57488,60.01703 22.59343,60.04658 22.52996,60.00825 22.46990,59.99750 22.47364,60.09097 22.42213,60.11481 22.48048,60.13231 22.60027,60.13532 22.60027,60.14216 22.41521,60.14960 22.44809,60.22138 22.47731,60.22468 22.45102,60.18854 22.46648,60.18374 22.56658,60.19331 22.62062,60.21109 22.81495,60.22700 22.84352,60.24177`);
+const FINLAND_ALAND2=P(`21.99757,60.33393 21.90138,60.32709 21.90138,60.34138 21.79412,60.37397 21.78533,60.38544 21.79225,60.39696 21.84604,60.40965 21.79835,60.44379 21.80812,60.46670 21.83237,60.47114 21.89234,60.44920 21.90463,60.43163 21.93198,60.42333 21.95037,60.39598 21.89454,60.39598 21.95037,60.37556 21.94223,60.36811 21.98862,60.36591 21.99757,60.35505 21.96339,60.34760 21.99757,60.34138 21.99757,60.33393`);
+const FINLAND_ALAND3=P(`22.10678,60.31346 22.24977,60.31147 22.33961,60.28620 22.33180,60.26944 22.28981,60.27314 22.26100,60.25886 22.21551,60.25312 22.20086,60.25434 22.21664,60.26569 22.20395,60.27631 22.18116,60.28132 22.14088,60.27871 22.18190,60.27871 22.16334,60.25922 22.08009,60.26948 22.08383,60.30146 22.10678,60.31346`);
 const ICELAND_L=P(`-15.99,66.55 -16.80,66.15 -17.64,66.02 -18.48,66.07 -19.52,65.93 -20.04,66.13 -20.70,65.71 -21.49,65.67 -21.29,65.99 -21.69,66.19 -22.27,66.38 -23.14,66.41 -22.75,66.12 -23.82,65.99 -24.08,65.61 -24.03,65.42 -22.87,65.51 -22.39,65.46 -22.11,65.41 -22.49,65.28 -22.69,65.10 -22.91,65.03 -23.37,64.98 -24.04,64.84 -23.38,64.79 -22.49,64.75 -22.12,64.45 -21.86,64.19 -22.60,64.10 -21.78,63.83 -18.99,63.39 -15.85,64.13 -14.45,64.46 -13.79,64.80 -13.60,65.16 -13.77,65.56 -14.73,65.79 -15.05,66.10 -15.39,66.17 -15.99,66.55`);
 const ESTONIA_L=P(`24.30616,57.86819 24.39829,58.02326 24.46412,58.07217 24.47291,58.15473 24.45484,58.19644 24.47096,58.25092 24.54851,58.28929 24.56039,58.31232 24.55104,58.33373 24.44418,58.38614 24.36183,58.39728 24.31593,58.37995 24.28688,58.31855 24.24334,58.28022 24.15602,58.27684 24.11166,58.24103 23.98024,58.31843 23.83351,58.35395 23.74098,58.34309 23.71892,58.39956 23.67742,58.43525 23.67897,58.52416 23.58432,58.54487 23.56121,58.58316 23.51637,58.55463 23.50147,58.56249 23.51824,58.60375 23.49773,58.69660 23.54664,58.70962 23.53004,58.72285 23.53305,58.74746 23.58448,58.73794 23.69703,58.75117 23.80250,58.73070 23.78549,58.77798 23.87436,58.77167 23.78419,58.80097 23.75766,58.78535 23.73951,58.79800 23.60336,58.79483 23.42945,58.76484 23.46656,58.80073 23.52613,58.81977 23.46363,58.86416 23.42237,58.90868 23.42205,58.92870 23.44370,58.94404 23.58448,58.95356 23.62770,58.97915 23.62159,59.01533 23.55983,59.05280 23.61443,59.01130 23.58033,59.00507 23.55299,58.97089 23.46127,58.99238 23.40838,59.02558 23.43629,59.02558 23.43491,59.05610 23.49073,59.08828 23.51824,59.07331 23.51938,59.12499 23.47088,59.21214 23.52565,59.23041 23.57846,59.22630 23.64186,59.25739 23.73048,59.23041 23.74293,59.25015 23.72364,59.26508 23.75685,59.28364 24.03859,59.29328 24.08058,59.27131 24.10011,59.29450 24.01938,59.36726 24.03484,59.38866 24.08058,59.39545 24.16489,59.35407 24.22193,59.35517 24.16310,59.40229 24.30616,59.41909 24.33383,59.47061 24.42254,59.47744 24.49830,59.44383 24.54819,59.46296 24.64259,59.43643 24.65659,59.44990 24.62184,59.47061 24.65854,59.47207 24.67498,59.49604 24.74440,59.44721 24.77263,59.45010 24.81577,59.48933 24.78354,59.51984 24.77263,59.55996 24.80348,59.57050 24.93442,59.50804 25.01222,59.51838 25.09783,59.49787 25.11647,59.50312 25.10792,59.52900 25.14552,59.53913 25.40943,59.49103 25.40235,59.51431 25.41578,59.52709 25.54371,59.53514 25.49708,59.57087 25.48194,59.61115 25.48487,59.66983 25.62233,59.58047 25.67677,59.56607 25.70590,59.56928 25.71852,59.58759 25.68483,59.62865 25.69068,59.64936 25.67066,59.65550 25.69467,59.67088 25.78053,59.63569 25.79371,59.59121 25.82618,59.57526 25.86134,59.58613 25.88307,59.63133 25.94451,59.59467 25.96502,59.59732 25.96437,59.62141 25.98854,59.63435 26.03639,59.62324 26.09099,59.58564 26.28004,59.58731 26.49781,59.53998 26.58473,59.55996 26.66505,59.55195 26.82691,59.47695 26.93767,59.45010 27.40903,59.45189 27.87330,59.40762 27.95346,59.42817 28.01905,59.48176 28.10483,59.43921 28.13780,59.40035 28.18648,59.37493 28.18182,59.35607 28.15754,59.36403 28.00065,59.33374 28.09687,59.31943 28.07661,59.30527 27.95972,59.30646 27.88231,59.27566 27.89078,59.25804 27.84241,59.16120 27.71333,58.99190 27.47779,58.87543 27.41061,58.75486 27.55489,58.39525 27.49412,58.31954 27.48285,58.26864 27.49535,58.22146 27.63044,58.08829 27.63157,58.00416 27.66909,57.99197 27.67519,57.96781 27.66496,57.91840 27.77441,57.89070 27.79932,57.86107 27.70072,57.82484 27.52460,57.80730 27.55385,57.79477 27.50243,57.77255 27.50776,57.71477 27.39143,57.68020 27.37702,57.65671 27.38208,57.60269 27.32803,57.58315 27.35293,57.52760 27.31996,57.51613 27.08535,57.54943 26.98107,57.60899 26.87265,57.62718 26.79576,57.57132 26.66698,57.56486 26.59009,57.52037 26.54224,57.52817 26.49955,57.51582 26.43092,57.56171 26.29718,57.59915 26.16851,57.70405 26.02475,57.77436 26.01451,57.84283 25.79262,57.85598 25.73030,57.92313 25.60152,57.91220 25.55832,57.93424 25.54168,57.96282 25.45718,57.98406 25.39662,58.02318 25.32458,58.03475 25.28169,58.07341 25.25069,58.06850 25.24955,58.05119 25.28438,58.00814 25.23250,57.98538 25.20211,57.99197 25.16697,58.05873 25.09421,58.06731 24.94931,58.00644 24.87252,58.00044 24.81681,57.97667 24.73351,57.99220 24.68483,57.94758 24.53383,57.94507 24.44164,57.90809 24.37818,57.85944 24.30616,57.86819`);
 const ESTONIA_ISL3=P(`23.38160,58.57990 23.40024,58.55541 23.36215,58.53246 23.31373,58.54466 23.27858,58.54637 23.23487,58.53465 23.13461,58.57990 23.08326,58.59052 23.05934,58.60346 23.06284,58.62458 23.07545,58.62983 23.10613,58.62421 23.12094,58.62832 23.13461,58.66181 23.15463,58.67593 23.19777,58.68061 23.28834,58.66649 23.33025,58.65306 23.34913,58.63508 23.34750,58.60716 23.38160,58.57990`);
@@ -2145,7 +2149,7 @@ const LOCKED_AS=[
   {id:'PK',name:'Pakistán',pin:[69.0,30.5],polys:[PAKISTAN_L]}
 ];
 const LOCKED=[
-  {id:'FI',name:'Finlandia',pin:[26,64.5],polys:[FINLAND_L]},
+  {id:'FI',name:'Finlandia',pin:[26,64.5],polys:[FINLAND_L,FINLAND_ALAND0,FINLAND_ALAND1,FINLAND_ALAND2,FINLAND_ALAND3]},
   {id:'IS',name:'Islandia',pin:[-19,64.9],polys:[ICELAND_L]},
   {id:'EE',name:'Estonia',pin:[25.5,58.6],polys:[ESTONIA_L,ESTONIA_ISL1,ESTONIA_ISL2,ESTONIA_ISL3]},
   {id:'LV',name:'Letonia',pin:[24.6,56.9],polys:[LATVIA_L]},
@@ -7649,6 +7653,7 @@ function objective(id){
   if(c.co==='EE')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a competición europea':rank===9?'Evitar el play-off de descenso':rank<=9?'Permanencia':'Evitar el descenso';
   if(c.co==='EE'&&c.div===2)return rank<=2?'Ascenso directo a la Premium Liiga':rank===3?'Playoff de ascenso':'Permanencia';
   if(c.co==='EE'&&c.div===3)return rank<=2?'Ascenso directo a la Esiliiga':rank===3?'Playoff de ascenso':'Permanencia';
+  if(c.co==='FI')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=10?'Permanencia':rank===11?'Playoff de permanencia':'Evitar el descenso';
   if(c.co==='JP'&&c.div===2)return rank<=2?'Ascender a la J1':rank<=6?'Clasificar al play-off de ascenso':'Terminar en la zona media';
   if(c.co==='JP')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a la AFC Champions League Two':rank<=17?'Permanencia':'Evitar el descenso';
   if(c.co==='CA')return rank<=5?'Clasificar a los CPL Playoffs':'Permanencia';
@@ -11088,7 +11093,7 @@ function sortBench(t){
   t.bench.sort((a,b)=>{const pa=map.get(a),pb=map.get(b);return((pa?benchOrder(pa):9)-(pb?benchOrder(pb):9))||((pb?pb.ovr:0)-(pa?pa.ovr:0))});
 }
 /* banquillo de 12 en la Supercopa de Europa: solo mientras el partido pendiente del usuario sea la SCE */
-function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&ct.cup.key==='WALC')return 7;if(ct&&ct.cup.key==='QASLC')return 12;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC'||ct.cup.key==='BYSC'||ct.cup.key==='EEC'||ct.cup.key==='EESC')?12:BENCH_N}
+function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&ct.cup.key==='WALC')return 7;if(ct&&ct.cup.key==='FIC')return 7;if(ct&&ct.cup.key==='ESFC')return 7;if(ct&&ct.cup.key==='QASLC')return 12;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC'||ct.cup.key==='BYSC'||ct.cup.key==='EEC'||ct.cup.key==='EESC'||ct.cup.key==='FILC')?12:BENCH_N}
 function autoBench(t){
   if(!t||!t.players)return[];
   const xi=new Set(t.lineup),pool=t.players.filter(p=>!xi.has(p.id)&&!unav(p)).sort((a,b)=>b.ovr-a.ovr),out=[],bn=benchN();
@@ -12324,12 +12329,12 @@ const divSize=d=>{let n=0;for(const id in CLUBBY)if(curDiv(id)===d)n++;return n}
 const smallestGroup=cands=>cands.reduce((best,d)=>divSize(d)<divSize(best)?d:best,cands[0]);
 /* ===== escalones reales de España (para el techo de los filiales) =====
    Div. 1 (tier 1) > Div. 2 (tier 2) > Primera Fed 5/6 (tier 3) > Segunda Fed 7-11 (tier 4). */
-const TIER_OF=d=>d===1?1:d===2?2:(d===5||d===6)?3:4;
-const TIERS={1:[1],2:[2],3:[5,6],4:[7,8,9,10,11]};
+const TIER_OF=d=>d===1?1:d===2?2:(d===5||d===6)?3:d>=12?5:4;
+const TIERS={1:[1],2:[2],3:[5,6],4:[7,8,9,10,11],5:Array.from({length:18},(_,i)=>12+i)};
 /* un filial solo puede estar, como mucho, una categoría por debajo de su primer equipo */
 function filialCanBeIn(id,to){
   if(!isB(id))return true;
-  const pid=FAMILY[id];if(!pid||!CLUBBY[pid])return true;
+  const pid=famParent(id);if(!pid||!CLUBBY[pid])return true;
   const pd=CLUBBY[pid].div!=null?CLUBBY[pid].div:BASE_DIV[pid];
   return TIER_OF(to)>=TIER_OF(pd)+1;
 }
@@ -12346,6 +12351,7 @@ function planPlayoffs(){
        Primera División que este bloque genérico no sabe representar. */
     if(co==='BE'||co==='SE'||co==='KR'||co==='TR'||co==='RU'||co==='NL'||co==='RS'||co==='QA')return;
     if(co==='EE')return;
+    if(co==='FI')return;
     if(co==='BY'){
       const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id));
       const up=elig.slice(0,2),down=s1.slice(-2);po.dir[co]={up,down};
@@ -12517,7 +12523,7 @@ function planPlayoffs(){
     if(po.rf){po.rf.down2.forEach((id,i)=>{proj[id]=5+(i%2)});po.rf.up.forEach(id=>{proj[id]=2})}
     po.esf.down.forEach(x=>{proj[x.id]=x.to});
     const pDiv=id=>proj[id]!=null?proj[id]:(CLUBBY[id]?CLUBBY[id].div:BASE_DIV[id]);
-    const canUp=(id,to)=>(!isB(id))||(()=>{const pid=FAMILY[id];if(!pid||!CLUBBY[pid])return true;return TIER_OF(to)>=TIER_OF(pDiv(pid))+1})();
+    const canUp=(id,to)=>(!isB(id))||(siblingCanBeIn(id,to)&&(()=>{const pid=famParent(id);if(!pid||!CLUBBY[pid])return true;return TIER_OF(to)>=TIER_OF(pDiv(pid))+1})());
     sf.forEach(({d,o})=>{
       const to=d<=8?5:6,taken=new Set();
       let champ=null;for(const id of o){if(canUp(id,to)){champ=id;taken.add(id);break}}
@@ -12525,6 +12531,68 @@ function planPlayoffs(){
       const pool=[];for(const id of o){if(taken.has(id))continue;if(canUp(id,to)){pool.push(id);taken.add(id)}if(pool.length===4)break}
       if(pool.length>=2)po.items.push({co:'ESCO'+d,kind:'esfpo',seeds:pool.slice(),alive:pool.slice(),rounds:[],winner:null,grp:d,to});
     });
+  }
+  /* Tercera Federación (ES12-ES29): 18 campeones de grupo y 9 ganadores de la fase nacional ascienden.
+     La fase regional la juegan los clasificados 2º-5º elegibles (sin filiales): 2º vs 5º y 3º vs 4º a ida
+     y vuelta; los 18 ganadores regionales se sortean en 9 eliminatorias nacionales. Cada grupo pierde
+     exactamente tantos equipos como ascienden de él, así que los 27 descensos de Segunda reponen los 27
+     ascensos y ningún grupo de Tercera cambia de tamaño. */
+  {
+    const tfOrders=Array.from({length:18},(_,i)=>{
+      const key='ES'+(12+i),L=leagueData(key),st=sortTable(L.tb);
+      return{d:12+i,key,o:st.map(r=>r.id),st};
+    });
+    if(tfOrders.every(x=>x.o.length>=5)){
+      const twoLeg=(a,b)=>{
+        const h1=rollGoals(xgAny(virt(a),virt(b),1)),a1=rollGoals(xgAny(virt(b),virt(a),-1));
+        const h2=rollGoals(xgAny(virt(b),virt(a),1)),a2=rollGoals(xgAny(virt(a),virt(b),-1));
+        const A=h1+a2,B=a1+h2;
+        if(A!==B)return A>B?{w:a,l:b}:{w:b,l:a};
+        return Math.random()<.5?{w:a,l:b}:{w:b,l:a};
+      };
+      const direct=[],regional=[];
+      tfOrders.forEach((x,i)=>{
+        const eligible=x.o.filter(id=>!isB(id)&&siblingCanBeIn(id,7));
+        if(!eligible.length)return;
+        direct.push({id:eligible[0],from:i,kind:'champ'});
+        const pool=eligible.slice(1,5);
+        if(pool.length>=4){
+          const s1=twoLeg(pool[0],pool[3]),s2=twoLeg(pool[1],pool[2]);
+          const f=twoLeg(s1.w,s2.w);
+          regional.push({group:i,winner:f.w,runner:f.l,seeds:pool});
+        }
+      });
+      const r=rng(hashStr('ESFC-TF|'+state.seed+'|'+state.season));
+      const sh=shuffle(regional.slice(),r),national=[];
+      for(let i=0;i+1<sh.length;i+=2){
+        const a=sh[i],b=sh[i+1];
+        const t=twoLeg(a.winner,b.winner);
+        national.push({a:a.winner,b:b.winner,w:t.w,l:t.l,ga:a.group,gb:b.group,wg:t.w===a.winner?a.group:b.group});
+      }
+      const up=direct.slice();
+      national.forEach(x=>up.push({id:x.w,from:x.wg,kind:'national'}));
+      /* si por una acumulación anómala de filiales faltasen plazas, se completan con los siguientes
+         elegibles hasta garantizar los 27 ascensos. */
+      if(up.length<27){
+        const taken=new Set(up.map(x=>x.id));
+        for(let gi=0;gi<tfOrders.length;gi++){
+          const x=tfOrders[gi];
+          for(const id of x.o){
+            if(up.length>=27)break;
+            if(isB(id)||taken.has(id)||!siblingCanBeIn(id,7))continue;
+            taken.add(id);up.push({id,from:gi,kind:'reserve'});
+          }
+          if(up.length>=27)break;
+        }
+      }
+      const upFinal=up.slice(0,27).map((x,i)=>({...x,to:7+(i%5)}));
+      const segDown=[];
+      sf.forEach((x,i)=>x.o.slice(-(i<2?6:5)).forEach(id=>segDown.push(id)));
+      const upByGroup={};upFinal.forEach(x=>{upByGroup[x.from]=(upByGroup[x.from]||0)+1});
+      const down=[];let di=0;
+      tfOrders.forEach((x,i)=>{const n=upByGroup[i]||0;for(let j=0;j<n;j++){const id=segDown[di++];if(id)down.push({id,to:12+i})}});
+      po.tf={up:upFinal,down,regional,national,direct,groups:tfOrders.length};
+    }
   }
   /* Polonia: Betclic 2 Liga (div 3) ↔ Betclic 1 Liga (div 2). Suben directos los 2 primeros de la Betclic 2 Liga
      (sin filiales) y el ganador del playoff 3º-6º (partido único en casa del mejor clasificado); bajan los 3
@@ -12723,9 +12791,10 @@ function balanceUpDown(up,down){
   else if(down.length>up.length)down.splice(0,down.length-up.length);
 }
 function poFinish(){
-  const po=state.po;po.done=true;po.res={};
+  const po=state.po;po.done=true;po.res={};state.divs=state.divs||{};state.relegated=state.relegated||{};
   gamePlayable().forEach(co=>{
-    const d=po.dir[co],it=po.items.find(x=>x.co===co),up=d.up.slice(),down=d.down.slice();
+    const d=po.dir[co];if(!d)return;
+    const it=po.items.find(x=>x.co===co),up=d.up.slice(),down=d.down.slice();
     if(co==='UA'){
       po.items.filter(x=>x.co==='UA').forEach(x=>{if(x.winner===x.seeds[1]){up.push(x.seeds[1]);down.push(x.seeds[0])}});
       po.res[co]={up,down};return;
@@ -12767,6 +12836,13 @@ function poFinish(){
   const en45=po.en45;if(en45){const it=po.items.find(x=>x.kind==='en5po');if(it&&it.winner)en45.up.push(it.winner);balanceUpDown(en45.up,en45.down)}
   const en34=po.en34;if(en34){const it=po.items.find(x=>x.kind==='en34po');if(it&&it.winner)en34.up.push(it.winner);balanceUpDown(en34.up,en34.down)}
   const de3=po.de3;if(de3){const it=po.items.find(x=>x.co==='DE3PO');if(it&&it.winner&&it.winner!==it.seeds[0]){de3.up.push(it.winner);de3.down.push(it.seeds[0])}balanceUpDown(de3.up,de3.down)}
+  /* Tercera Federación <-> Segunda Federación */
+  const tf=state.po&&state.po.tf;
+  if(tf){
+    tf.up.forEach(x=>{state.divs[x.id]=x.to;delete state.relegated[x.id]});
+    tf.down.forEach(x=>{state.divs[x.id]=x.to;state.relegated[x.id]=1});
+    news(`${FLAG.ES} Tercera Federación: ascienden a Segunda Federación ${tf.up.map(x=>cname(x.id)).join(', ')}. Bajan a Tercera Federación ${tf.down.map(x=>cname(x.id)).join(', ')}.`);
+  }
   /* Polonia: Betclic 1 Liga ↔ Betclic 2 Liga */
   const pl2=po.pl2;
   if(pl2){
@@ -12972,6 +13048,10 @@ function movesHTML(){
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('ES',2))}</b>${teamsHTML(rf.up)}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a Primera Federación</b>${teamsHTML(rf.down2.map(x=>(x&&x.id)||x))}</div></div>`:'';
   const esf=po.esf;
+  const tf=po.tf;
+  const tfHTML=tf?`
+    <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('ES',7))}</b>${teamsHTML(tf.up.map(x=>x.id))}</div></div>
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a Tercera Federación</b>${teamsHTML(tf.down.map(x=>x.id))}</div></div>`:'';
   const esfHTML=esf?`
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('ES',5))}</b>${teamsHTML(esf.up.map(x=>x.id))}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a Segunda Federación</b>${teamsHTML(esf.down.map(x=>x.id))}</div></div>`:'';
@@ -12994,7 +13074,7 @@ function movesHTML(){
   return gamePlayable().filter(co=>COUNTRIES[co]).map(co=>{const r=po.res[co],up=r&&r.up||[],down=r&&r.down||[];
     return`<div class="subh">${flagHTML(co)} ${esc(COUNTRIES[co].name)}</div>
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName(co,1))}</b>${teamsHTML(up)}</div></div>
-    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML+esfHTML:co==='EN'?enHTML+en34HTML+en45HTML:co==='DE'?de3HTML:''}`}).join('');
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML+esfHTML+tfHTML:co==='EN'?enHTML+en34HTML+en45HTML:co==='DE'?de3HTML:''}`}).join('');
 }
 function myMoveTxt(){
   const po=state.po;if(!po||!po.done||!po.res)return'';
@@ -13014,11 +13094,15 @@ function myMoveTxt(){
     if(po.de3.up.includes(state.club))return`¡Ascenso! Jugarás en ${divName('DE',2)}.`;
     if(po.de3.down.includes(state.club))return`Descenso: jugarás en ${divName('DE',3)}.`;
   }
+  if(po.tf){
+    if(po.tf.up.some(x=>x.id===state.club))return`¡Ascenso! Jugarás en ${divName('ES',7)}.`;
+    if(po.tf.down.some(x=>x.id===state.club))return`Descenso: jugarás en ${divName('ES',12)}.`;
+  }
   const r=po.res[state.country];if(!r)return'';
   return r.up.includes(state.club)?`¡Ascenso! Jugarás en ${divName(state.country,1)}.`:r.down.includes(state.club)?`Descenso: jugarás en ${divName(state.country,2)}.`:'';
 }
 /* Normaliza la pirámide española a los tamaños oficiales (1ª=20, 2ª=22, Primera Federación 20+20, Segunda
-   Federación 18*5) para que ningún desajuste arrastrado (p. ej. cuando la regla filial/primer equipo mueve un
+   Federación 18*5 y Tercera Federación 18*18) para que ningún desajuste arrastrado (p. ej. cuando la regla filial/primer equipo mueve un
    equipo de un grupo a otro) deje un grupo con un equipo de más o de menos. Mueve equipos de las divisiones con
    exceso a las que están cortas, prefiriendo el escalón adyacente, sin tocar nunca al club del usuario. */
 function normalizeEsGroups(){
@@ -13026,10 +13110,11 @@ function normalizeEsGroups(){
   const es=CLUBS.filter(c=>c.co==='ES');
   const cnt=d=>es.reduce((a,c)=>a+(c.div===d?1:0),0);
   const T={1:20,2:22,5:20,6:20,7:18,8:18,9:18,10:18,11:18};
+  for(let d=12;d<=29;d++)T[d]=18;
   const divs=Object.keys(T).map(Number);
-  const tier=d=>d===1?1:d===2?2:(d===5||d===6)?3:4;
-  const pick=d=>{const arr=es.filter(c=>c.div===d&&c.id!==state.club);const non=arr.filter(c=>!isB(c.id));const pool=(non.length?non:arr).slice();pool.sort((a,b)=>(a.rep-b.rep)||a.id.localeCompare(b.id));return pool[0]};
-  const move=(from,to)=>{const c=pick(from);if(!c||from===to)return false;state.divs=state.divs||{};state.divs[c.id]=to;c.div=to;return true};
+  const tier=d=>d===1?1:d===2?2:(d===5||d===6)?3:d>=12?5:4;
+  const pick=(d,to)=>{const arr=es.filter(c=>c.div===d&&c.id!==state.club);const non=arr.filter(c=>!isB(c.id));const base=(non.length?non:arr).slice();const pool=base.filter(c=>!isB(c.id)||(filialCanBeIn(c.id,to)&&siblingCanBeIn(c.id,to)));pool.sort((a,b)=>(a.rep-b.rep)||a.id.localeCompare(b.id));return pool[0]};
+  const move=(from,to)=>{const c=pick(from,to);if(!c||from===to)return false;state.divs=state.divs||{};state.divs[c.id]=to;c.div=to;return true};
   for(let g=0;g<240;g++){
     const over=divs.filter(d=>cnt(d)>T[d]).sort((a,b)=>(cnt(b)-T[b])-(cnt(a)-T[a]));
     const under=divs.filter(d=>cnt(d)<T[d]).sort((a,b)=>(T[b]-cnt(b))-(T[a]-cnt(a)));
@@ -13134,27 +13219,55 @@ function fixBTeams(){
   const canDiv=(co,d)=>d!=null&&(typeof isLeagueEnabled!=='function'||isLeagueEnabled(co,d));
   const nd=id=>state.divs[id]!=null?state.divs[id]:(CLUBBY[id].div!=null?CLUBBY[id].div:BASE_DIV[id]);
   /* división jugable inmediatamente por debajo de la categoría de la división `pd` del país `co` */
-  const below=(co,pd)=>{if(co==='ES'){const t=Math.min(TIER_OF(pd)+1,4),cands=(TIERS[t]||[]).filter(d=>d!==pd);return cands.length?smallestGroup(cands):undefined}
+  const below=(co,pd)=>{if(co==='ES'){const t=Math.min(TIER_OF(pd)+1,5),cands=(TIERS[t]||[]).filter(d=>d!==pd);return cands.length?smallestGroup(cands):undefined}
     const d=pd+1;return canDiv(co,d)?d:undefined};
   const cancelRel=(co,tier,except)=>{for(const id in state.divs){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co)continue;if(tierOf(co,c.div)===tier&&tierOf(co,state.divs[id])>tier){delete state.divs[id];return true}}return false};
   /* último equipo que se salvó (el que marca justo el límite de la permanencia) del grupo `div`: el mejor
      clasificado de la tabla que no desciende y que todavía no se ha movido en el reparto. */
+  const hasB=id=>{const kids=(FAMILY_ALL[id]||[]).concat(FAMILY[id]?[FAMILY[id]]:[]);return kids.some(x=>x&&x!==id&&CLUBBY[x]&&isB(x))};
+  /* el equipo inmediatamente por encima del filial en la tabla: si el filial iba a bajar a la misma
+     categoría que su primer equipo, se salva al filial y baja ese equipo en su lugar. */
+  const aboveSaved=(co,div,id,except)=>{
+    let o=[];try{o=poOrder(co,div)}catch(e){o=[]}
+    const down=new Set(((state.po&&state.po.esf&&state.po.esf.down)||[]).map(x=>x.id));
+    const idx=o.indexOf(id);
+    for(let i=(idx<0?o.length-1:idx-1);i>=0;i--){
+      const x=o[i];if(x===except||isB(x)||hasB(x))continue;
+      if(down.has(x)||state.divs[x]!=null)continue;
+      return x;
+    }
+    return null;
+  };
   const lastSaved=(co,div,except)=>{let o=[];try{o=poOrder(co,div)}catch(e){o=[]}
     if(!o.length)return null;
     const down=new Set(((state.po&&state.po.esf&&state.po.esf.down)||[]).map(x=>x.id));
-    for(let i=o.length-1;i>=0;i--){const x=o[i];if(x===except||isB(x))continue;if(down.has(x))continue;if(state.divs[x]!=null)continue;return x}
+    for(let i=o.length-1;i>=0;i--){const x=o[i];if(x===except||isB(x)||hasB(x))continue;if(down.has(x))continue;if(state.divs[x]!=null)continue;return x}
     return null};
-  const pushDown=(co,tier,target,except)=>{for(const id in CLUBBY){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co||isB(id))continue;if(state.divs[id]!=null)continue;if(tierOf(co,c.div)===tier){state.divs[id]=target;return true}}return false};
+  const pushDown=(co,tier,target,except)=>{for(const id in CLUBBY){if(id===except)continue;const c=CLUBBY[id];if(!c||c.co!==co||isB(id)||hasB(id))continue;if(state.divs[id]!=null)continue;if(tierOf(co,c.div)===tier){state.divs[id]=target;return true}}return false};
   for(let pass=0;pass<5;pass++){
     let changed=false;
     for(const id in CLUBBY){
-      if(!isB(id))continue;const pid=FAMILY[id];if(!pid||!CLUBBY[pid])continue;
+      if(!isB(id))continue;const pid=famParent(id);if(!pid||!CLUBBY[pid])continue;
       const co=CLUBBY[id].co;if(CLUBBY[pid].co!==co)continue;
       if(!inLeagues.has(id))continue;
       const fd=nd(id),pd=nd(pid);
       /* la división 3 de España es la "liga de filiales" (B/afiliados de clubes de 1ª/2ª), no una categoría del
          sistema TIERS: no la comparamos (un filial ahí con su padre en Segunda Federación daría un falso choque). */
       if(co==='ES'&&fd===3)continue;
+      const bOld=CLUBBY[id].div,bNew=state.divs[id];
+      if(bNew!=null&&tierOf(co,bNew)>tierOf(co,bOld)){
+        const repl=aboveSaved(co,bOld,id,pid);
+        if(repl){
+          state.divs[repl]=bNew;delete state.divs[id];changed=true;continue;
+        }
+      }
+      /* si el que baja es el primer equipo y el filial ya está en esa categoría, se salva al primer
+         equipo y baja el inmediatamente superior en su tabla (nunca se fuerza al filial a una categoría
+         que no existe). */
+      if(state.divs[pid]!=null&&tierOf(co,state.divs[pid])>tierOf(co,CLUBBY[pid].div)){
+        const repl=aboveSaved(co,CLUBBY[pid].div,pid,id);
+        if(repl){state.divs[repl]=state.divs[pid];delete state.divs[pid];changed=true;continue;}
+      }
       if(tierOf(co,fd)<=tierOf(co,pd)){
         const target=below(co,pd);
         if(target!=null&&tierOf(co,fd)<tierOf(co,target)){cancelRel(co,tierOf(co,fd),id);state.divs[id]=target;changed=true}
@@ -13169,6 +13282,11 @@ function fixBTeams(){
           const repl=lastSaved(co,pt,pid);
           if(repl){state.divs[repl]=ptarget;delete state.divs[pid];changed=true}
           else if(pushDown(co,tierOf(co,pt),ptarget,pid)){delete state.divs[pid];changed=true}
+          else if(id!==state.club&&pushDown(co,tierOf(co,pt),fd,pid)){
+            /* sin hueco en una categoría inferior: el filial sale de la pirámide modelada y un equipo
+               salvado de la división anterior ocupa su plaza; el primer equipo se queda donde estaba. */
+            state.divs[id]=3;delete state.divs[pid];changed=true;
+          }
         }
       }
     }
@@ -13780,7 +13898,8 @@ Object.keys(CLUBBY).forEach(id=>{if(!CLUBBY[id].logo){const p=FAMILY[id];if(p&&C
 [['SOU21','SOU'],['CHA21','CHA'],['STK21','STK'],['SPTLB','SPTL']].forEach(([id,p])=>{if(CLUBBY[id]&&CLUBBY[p]){CLUBBY[id].bTeam=1;FAMILY[id]=p;FAMILY[p]=id}});
 const isB=id=>id==='RSB'||id==='CFO'||!!(CLUBBY[id]&&CLUBBY[id].bTeam);
 /* filiales directos (hijos) de un club dentro de FAMILY */
-function famChildren(id){const out=[];for(const k in FAMILY)if(FAMILY[k]===id&&CLUBBY[k]&&isB(k))out.push(k);return out}
+const FAM_SAME={LEVB:'TF0602',MALB:'TF0903',CADM:'TF1004'};   /* registros heredados del mismo filial */
+function famChildren(id){const out=new Set();for(const k in FAMILY)if(FAMILY[k]===id&&CLUBBY[k]&&isB(k))out.add(k);(FAMILY_ALL[id]||[]).forEach(k=>{if(CLUBBY[k]&&isB(k))out.add(k)});const by={};[...out].forEach(k=>{const ck=(FAM_SAME[k]&&out.has(FAM_SAME[k]))?FAM_SAME[k]:k;const n=normTxt(CLUBBY[ck]&&CLUBBY[ck].name||ck),old=by[n];if(!old||((CLUBBY[old].div||99)===3&&(CLUBBY[ck].div||99)!==3))by[n]=ck});return Object.values(by).sort((a,b)=>(CLUBBY[a].div||99)-(CLUBBY[b].div||99)||a.localeCompare(b))}
 /* cadena de filiales por debajo de un club, de más cercano a más lejano (B, C, ...) */
 function filialDescendants(id){const out=[],q=[id];while(q.length){const x=q.shift();for(const y of famChildren(x)){out.push(y);q.push(y)}}return out}
 /* crea (si hace falta) el club B de un primer equipo "pid" y lo registra en CLUBBY/FAMILY; el filial siempre hereda el escudo del primer equipo salvo que ya tenga uno propio */
@@ -15250,7 +15369,7 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'WA',name:'Gales',comps:['WA1','WAC','WALC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'AF',name:'África',comps:['CAFCL','CAFCC','CAFSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']},{id:'JP',name:'Japón',comps:['JP1','JP2','JPC','JPLC','JPSC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESTF','ESC','ESFC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'WA',name:'Gales',comps:['WA1','WAC','WALC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'AF',name:'África',comps:['CAFCL','CAFCC','CAFSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']},{id:'JP',name:'Japón',comps:['JP1','JP2','JPC','JPLC','JPSC']}];
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',WA:'Nathaniel MG Cup'};
 const SC_TEAMS={ES:4,TR:4,SA:4};
 const SC_SKIP={AT:1,DK:1,CH:1,SC:1,MX:1,RS:1,WA:1};
@@ -15262,6 +15381,8 @@ const isCup=k=>k==='CAPO'||k==='USPO'||k==='AUFS'||k==='UCL'||k==='UCLQ'||k==='U
 const keyCo=k=>{k=String(k);return /^NIR/.test(k)?'NIR':k.slice(0,2)};
 const keySuf=k=>String(k).slice(keyCo(k).length);
 const compName=k=>{
+    if(k==='ESTF')return'Tercera Federación';
+    if(k==='ESFC')return'Copa Federación';
     if(k==='CAPO')return 'CPL Playoffs';
     if(k==='USPO')return 'MLS Cup Playoffs';
     if(k==='AUFS')return 'A-League Finals Series';
@@ -16322,6 +16443,7 @@ function finishGroupsFiji(cup){
   news(`Termina la fase de grupos de la ${cup.name}: los dos mejores de cada grupo pasan a las semifinales.`);
 }
 function finishGroups(cup){
+  if(cup.key==='FILC')return finishGroupsLiigacup(cup);
   if(cup.key==='FJC'||cup.key==='OFCCL')return finishGroupsFiji(cup);
   if(cup.key==='ENNC'||cup.key==='ACC')return finishGroupsEnnc(cup);
   if(cup.key==='AFCCL')return finishChallengeGroups(cup);
@@ -16880,6 +17002,8 @@ function recordHonors(final){
   if(state.cups&&state.cups.ECL&&state.cups.ECL.champ)add(state.cups.ECL.champ,'ecl','ECL');
   if(state.cups&&state.cups.EEC&&state.cups.EEC.champ)add(state.cups.EEC.champ,'cup','EEC');
   if(state.cups&&state.cups.EESC&&state.cups.EESC.champ)add(state.cups.EESC.champ,'sc','EESC');
+  if(state.cups&&state.cups.FILC&&state.cups.FILC.champ)add(state.cups.FILC.champ,'lc','FILC');
+  if(state.cups&&state.cups.ESFC&&state.cups.ESFC.champ)add(state.cups.ESFC.champ,'cofed','ESFC');
   if(state.cups&&state.cups.SCE&&state.cups.SCE.champ)add(state.cups.SCE.champ,'sce','SCE');
   if(state.cups&&state.cups.IFC&&state.cups.IFC.champ)add(state.cups.IFC.champ,'ifc','IFC');
   mine.forEach(k=>{const pr=PRIZE_TITLE[k];news(`Añades un título a tu palmarés: ${trophyName(CLUBBY[state.club],k)}.${pr?` La directiva te premia con ${fmtM(pr)}.`:''}`);const mc=CLUBBY[state.club];if(mc)museumUnlock(mc.co,k)});
@@ -17074,6 +17198,8 @@ function initWorld(){
   /* Ucrania: Persha Liha con dos grupos y split (fase regular 14 jornadas + 8 de grupos campeonato/descenso). */
   if(state.others.UA2){const ids=Object.keys(state.others.UA2.tb);const u=ua2InitialFixtures(ids);state.others.UA2={fx:u.fx,tb:emptyTable(ids),sc:{},ua2:u.ua2};}
   if(state.country==='UA'&&state.div===2){const ids=Object.keys(state.teams);const u=ua2InitialFixtures(ids);state.fixtures=u.fx;state.table=emptyTable(ids);state.ua2=u.ua2;state.split=null;}
+  /* Estonia: la Esiliiga B (div 3) también se simula. */
+  {const key='EE3';if(key!==state.lk){const ids=leagueClubs('EE',3).map(c=>c.id);if(ids.length>1)state.others.EE3={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};}}
   /* Inglaterra: la League One (div 3) también se simula, para poder resolver su ascenso/playoff a Championship */
   {const key='EN3';if(key!==state.lk){const ids=leagueClubs('EN',3).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
   /* Inglaterra: la League Two (div 4) también se simula, para tener su propia clasificación */
@@ -17083,7 +17209,7 @@ function initWorld(){
   {const key='DE3';if(key!==state.lk){const ids=leagueClubs('DE',3).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
   /* Primera y Segunda Federación (ES5-ES11): se simulan para que cada grupo tenga clasificación; el grupo
      del usuario ya es su propia liga (state.lk) y se salta aquí. */
-  ['ES5','ES6','ES7','ES8','ES9','ES10','ES11'].forEach(key=>{
+  ['ES5','ES6','ES7','ES8','ES9','ES10','ES11','ES12','ES13','ES14','ES15','ES16','ES17','ES18','ES19','ES20','ES21','ES22','ES23','ES24','ES25','ES26','ES27','ES28','ES29'].forEach(key=>{
     if(key===state.lk)return;
     const ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
@@ -17124,6 +17250,15 @@ function initWorld(){
       if(esc.length===2&&esc[0]!==esc[1]){
         state.cups.EESC=cupInit('EESC','Eesti Superkarikas',esc,[1]);
         state.cups.EESC.rounds[0].ties=[{h:esc[0],a:esc[1]}];
+      }
+      return;
+    }
+    /* Finlandia: Suomen Cup y Liigacup con los 12 clubes de la Veikkausliiga. */
+    if(co==='FI'){
+      const ids=leagueClubs('FI',1).map(c=>c.id);
+      if(ids.length>=2){
+        state.cups.FIC=cupInit('FIC','Suomen Cup',ids,[6,10,17,24]);const R=state.cups.FIC.rounds;R[0].n='Tercera ronda';R[1].n='Cuarta ronda';R[2].n='Semifinales';R[3].n='Final';
+        state.cups.FILC=cupInitLiigacup(ids);
       }
       return;
     }
@@ -17224,6 +17359,20 @@ function initWorld(){
       const my=(CLUBBY[state.club]&&CLUBBY[state.club].co==='ES'&&!isB(state.club))?state.club:null;
       if(my&&!first.includes(my)&&!exempt.includes(my)){first.unshift(my);if(first.length>112)first.pop();}
       if(first.length>=2)state.cups.ESC=cupInitCopa('ESC','Copa del Rey',first,exempt);
+      /* Copa Federación: 32 no filiales de Primera/Segunda/Tercera que no estén en la Copa del Rey. */
+      {
+        const used=new Set((state.cups.ESC&&state.cups.ESC.ids)||[]);
+        const pool=CLUBS.filter(c=>c.co==='ES'&&!isB(c.id)&&c.div>=5&&c.div<=29&&!used.has(c.id))
+          .sort((a,b)=>repOf(b.id)-repOf(a.id));
+        const ids=pool.slice(0,32).map(c=>c.id);
+        if(ids.length>=2){
+          state.cups.ESFC=cupInit('ESFC','Copa Federación',ids,[6,10,14,18,22]);
+          state.cups.ESFC.et=true;
+          state.cups.ESFC.rounds.forEach((R,i)=>{R.n=['Dieciseisavos de final','Octavos de final','Cuartos de final','Semifinales','Final'][i]||R.n;});
+          const r=rng(hashStr('ESFC|'+state.seed+'|'+state.season));
+          state.cups.ESFC.rounds[0].ties=pairUp(shuffle(state.cups.ESFC.ids.slice(),r));
+        }
+      }
       return;
     }
     /* San Marino: Coppa Titano. 15 equipos (todos los clubes menos la academia juvenil SMAC). El campeón
@@ -17598,7 +17747,7 @@ function reconcileOthers(){
     if(key===lk)return;
     const L=state.others[key];if(!L)return;
     let ids;
-    if(['ES5','ES6','ES7','ES8','ES9','ES10','ES11'].includes(key))ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
+    if(['ES5','ES6','ES7','ES8','ES9','ES10','ES11','ES12','ES13','ES14','ES15','ES16','ES17','ES18','ES19','ES20','ES21','ES22','ES23','ES24','ES25','ES26','ES27','ES28','ES29'].includes(key))ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
     else ids=leagueClubs(key.slice(0,2),+key.slice(2)).map(c=>c.id);
     if(ids.length<2){delete state.others[key];return}
     const cur=new Set(ids),have=new Set(Object.keys(L.tb||{}));
@@ -17607,7 +17756,7 @@ function reconcileOthers(){
   });
   /* grupos de Segunda Federación que no existían como liga ajena en el momento de crear la partida
      (p. ej. porque entonces tenían 0 o 1 equipo) pero que ahora sí tienen roster: se añaden. */
-  ['ES5','ES6','ES7','ES8','ES9','ES10','ES11'].forEach(key=>{
+  ['ES5','ES6','ES7','ES8','ES9','ES10','ES11','ES12','ES13','ES14','ES15','ES16','ES17','ES18','ES19','ES20','ES21','ES22','ES23','ES24','ES25','ES26','ES27','ES28','ES29'].forEach(key=>{
     if(key===lk||state.others[key])return;
     const ids=leagueClubs('ES',+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
@@ -17705,7 +17854,7 @@ function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,'uel',UEL_QUAL_RE
   /* Serbia: el campeón de la Kup Srbije va a la previa de la Europa League */
   if(state.cups&&state.cups.RSC&&state.cups.RSC.champ&&CLUBBY[state.cups.RSC.champ])s.add(state.cups.RSC.champ);
   return[...s]}
-function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_REPLACE));if(state.cups&&state.cups.EEC&&state.cups.EEC.champ&&CLUBBY[state.cups.EEC.champ])s.add(state.cups.EEC.champ);if(state.cups&&state.cups.NIRC&&state.cups.NIRC.champ&&CLUBBY[state.cups.NIRC.champ])s.add(state.cups.NIRC.champ);if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);if(state.smPoWinner&&CLUBBY[state.smPoWinner])s.add(state.smPoWinner);if(state.cups&&state.cups.SMC&&state.cups.SMC.champ&&CLUBBY[state.cups.SMC.champ])s.add(state.cups.SMC.champ);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);const trC=leagueData('TR1').tb?sortTable(leagueData('TR1').tb):[];if(trC[3])s.add(trC[3].id);
+function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_REPLACE));if(state.cups&&state.cups.EEC&&state.cups.EEC.champ&&CLUBBY[state.cups.EEC.champ])s.add(state.cups.EEC.champ);if(state.cups&&state.cups.FIC&&state.cups.FIC.champ&&CLUBBY[state.cups.FIC.champ])s.add(state.cups.FIC.champ);if(state.cups&&state.cups.NIRC&&state.cups.NIRC.champ&&CLUBBY[state.cups.NIRC.champ])s.add(state.cups.NIRC.champ);if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);if(state.smPoWinner&&CLUBBY[state.smPoWinner])s.add(state.smPoWinner);if(state.cups&&state.cups.SMC&&state.cups.SMC.champ&&CLUBBY[state.cups.SMC.champ])s.add(state.cups.SMC.champ);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);const trC=leagueData('TR1').tb?sortTable(leagueData('TR1').tb):[];if(trC[3])s.add(trC[3].id);
   const ruC2=state.cups&&state.cups.RUC&&state.cups.RUC.champ;
   if(ruC2){const ruSt2=leagueData('RU1').tb?sortTable(leagueData('RU1').tb):[];const ruTop2b=[ruSt2[0]&&ruSt2[0].id,ruSt2[1]&&ruSt2[1].id];if(ruTop2b.includes(ruC2)&&ruSt2[4])s.add(ruSt2[4].id)}
   /* Bulgaria: 2º del Grupo Campeonato y ganador del play-off europeo (BGPO) van a la previa de la Conference */
@@ -17755,6 +17904,12 @@ function computeCopaQual(){
     const cap=(d<=6)?12:10;let n=0;   /* Primera Federación: top 12 por grupo; Segunda Federación: top 10 por grupo */
     ord.forEach(id=>{if(n>=cap||isB(id))return;out.push(id);n++});
   });
+  const fc=state&&state.cups&&state.cups.ESFC;
+  if(fc&&fc.rounds&&fc.rounds.length>=2){
+    const fin=fc.rounds[fc.rounds.length-1],semi=fc.rounds[fc.rounds.length-2];
+    if(fin&&fin.ties&&fin.ties[0]){out.push(fin.ties[0].h,fin.ties[0].a)}
+    if(semi&&semi.ties)semi.ties.forEach(t=>out.push(t.h,t.a));
+  }
   return [...new Set(out)];
 }
 function champsLine(){
@@ -18006,6 +18161,7 @@ function compTrophyKey(key){
   if(key==='ARGISC')return'sint';
   if(key==='MXLGA')return'apertura';
   if(key==='MXLGC')return'clausura';
+  if(key==='ESFC')return'cofed';
   if(key==='MXCC')return'cdc';
   if(key==='MXLC')return'lcup';
   if(key==='QASLC')return'qslc';
@@ -18046,6 +18202,7 @@ function viewComps(){
   /* 'Primera Federación' abre el grupo en el que estés; si no juegas ahí, el Grupo 1 */
   if(ui.cc==='ESRF'){const ud=CLUBBY[state.club];ui.cc=(ud&&ud.co==='ES'&&(ud.div===5||ud.div===6))?'ES'+ud.div:'ES5'}
   if(ui.cc==='ESFR'){const ud=CLUBBY[state.club];ui.cc=(ud&&ud.co==='ES'&&ud.div>=7&&ud.div<=11)?'ES'+ud.div:'ES7'}
+  if(ui.cc==='ESTF'){const ud=CLUBBY[state.club];ui.cc=(ud&&ud.co==='ES'&&ud.div>=12&&ud.div<=29)?'ES'+ud.div:'ES12'}
   /* Argentina: la liga (AR1) ya no tiene tarjeta propia; su tabla anual se ve en la pestaña "Anual" del Apertura/Clausura */
   if(ui.cc==='AR1')ui.cc='ARAK';
   /* si la competición guardada ya no existe (copa que no se disputa esta temporada), se vuelve a la liga del usuario */
@@ -18058,7 +18215,7 @@ function viewComps(){
   const ctLbl=(opts.find(([v])=>v===ui.ct)||opts[0])[1];
   const grpInfo=(DIV_GROUPS.ES||[]).find(g=>g.subs.some(x=>('ES'+x[0])===key))||null;
   const isFed=!!grpInfo;
-  const fedName=isFed?(key==='ES5'||key==='ES6'?'Primera Federación':'Segunda Federación'):compName(key);
+  const fedName=isFed?grpInfo.label:compName(key);
   const grpSel=isFed?`<div class="grp-sel">${grpInfo.subs.map(([d,n])=>`<button class="grp-sel-btn${('ES'+d)===key?' on':''}" data-act="cc2" data-k="ES${d}">${esc(n)}</button>`).join('')}</div>`:'';
   const compCard=`<div class="lrow cco compcard sel"><button class="cc-name-btn" data-act="cc-pick"><span class="fl ico">${cup?ICO_CUP:ICO_TROPHY}</span><span class="lt"><b>${isFed?esc(fedName):esc(compName(key))}</b>${isMine(key)?'<i class="dot" title="Tu club juega aquí"></i>':''}</span></button><button class="cc-view-btn" data-act="ccview-pick"><span>${esc(ctLbl)}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>${grpSel}`;
   let body;
@@ -18109,7 +18266,8 @@ function viewComps(){
   return`<div class="sec-h"><h2 class="comp-title">${isFed?esc(fedName):compTitle(key)}</h2><span>Temporada ${state.season}</span></div>${sel}${compCard}${body}`;
 }
 function zoneColor(key,pos,total){
-  const co=keyCo(key),d=co==='ES'?String(+keySuf(key)):String(key).slice(-1);
+  const co=keyCo(key),esNum=co==='ES'?+keySuf(key):null,d=co==='ES'?String(+keySuf(key)):String(key).slice(-1);
+  if(co==='ES'&&esNum>=12){if(pos===1)return'#49CB2B';if(pos<=5)return'#38D996';if(pos<=15)return'#BCBCBC';return'#ED3B46'}
   if(co==='US'){if(pos<=8)return'#38D996';return'#BCBCBC'}
   if(co==='CA'){if(pos<=5)return'#38D996';return'#BCBCBC'}
   if(d==='1'){
@@ -18382,6 +18540,7 @@ const ZONES_EN5=[['#4ACB29','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC',
 const ZONES_BE2=[['#4ACB29','Ascenso directo'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#EC3B47','Descenso']];
 /* Segunda Federación: 1 ascenso, 2-5 playoff, 6-12 permanencia, 13 playout, 14-18 descenso */
 const ZONES_SFR=[['#49CB2B','Ascenso a Primera Federación'],['#38D996','Playoff de ascenso'],['#BCBCBC','Permanencia'],['#FCA6A1','Playout de permanencia'],['#ED3B46','Descenso']];
+const ZONES_TF=[['#49CB2B','Campeón / ascenso directo'],['#38D996','Play-off de ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
 /* ============ CLASIFICACIÓN / FIN DE TEMPORADA ============ */
 /* clasificación con el formato danés: fase regular (1-6 título / 7-12 descenso) y, tras el split, los dos
    grupos Campeonato y Descenso con sus propias zonas de clasificación europea y descenso. */
@@ -18618,7 +18777,8 @@ function groupStageHTML(key){
     :isAfccl?[['#49CB2B','Clasificado a cuartos'],['#f0a020','Mejor 2º del Oeste (solo uno clasifica)'],['#e53935','Eliminados']]
     :isOfccl?[['#49CB2B','Clasificado a semifinales (1.\u00ba-2.\u00ba)'],['#e53935','Eliminado']]
     :[['#49CB2B','Siguiente ronda'],['#29b6f6','Fase Eliminatoria Copa Sudamericana'],['#e53935','Eliminado']];
-  return cup.groups.map((g,gi)=>_groupTable('Grupo '+String.fromCharCode(65+gi),g.tb,(p,id)=>colorFn(p,gi,id),legend)).join('');
+  const note=cup.indoorGroups?'<p class="hint" style="margin:0 0 8px">Fase de grupos en pabellones cubiertos (jalkapallohalli).</p>':'';
+  return note+cup.groups.map((g,gi)=>_groupTable('Grupo '+String.fromCharCode(65+gi),g.tb,(p,id)=>colorFn(p,gi,id),legend)).join('');
 }
 /* K League 1 (República de Corea): fase regular de 33 jornadas (triple vuelta) y split en Final A (1.º-6.º) y
    Final B (7.º-12.º), a vuelta sencilla (5 jornadas), arrastrando puntos y goles. El campeón sale de la
@@ -18642,6 +18802,7 @@ function krLeagueTable(key){
        + tbl(SPLITS.KR1.lower,botList,relZone,[['#9e9e9e','Permanencia'],['#ef9a9a','Play-off de descenso'],['#e53935','Descenso directo']]);
 }
 function leagueTable(key){
+  if(key==='FI1')return fiLeagueTable(key);
   if(key==='UA2')return ua2LeagueTable(key);
   if(key==='DK1')return dkLeagueTable(key);
   if(key==='CH1')return chLeagueTable(key);
@@ -18651,10 +18812,10 @@ function leagueTable(key){
   if(key==='KR1')return krLeagueTable(key);
   if(key==='NIR1')return nirLeagueTable(key);
   if(key==='RS1'||key==='RS2')return rsLeagueTable(key);
-  const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
+  const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=keyCo(key)==='ES'?String(+keySuf(key)):String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='BY'&&d==='2'?ZONES_BY2:keyCo(key)==='BY'?ZONES_BY:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='UA'&&d==='2'?ZONES_UA2:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:null));
+  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FI'&&d==='1'?ZONES_FI1:keyCo(key)==='BY'&&d==='2'?ZONES_BY2:keyCo(key)==='BY'?ZONES_BY:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='UA'&&d==='2'?ZONES_UA2:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:(esNum&&esNum>=12?ZONES_TF:null)));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -20008,13 +20169,13 @@ function trophyName(club,k,real){
   if(k==='wac')return'Welsh Cup';
   if(k==='walc')return'Nathaniel MG Cup';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
-  if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',JP:'Copa J. League',QA:'Qatar Cup'}[co]||'Copa de la Liga';
-  if(k==='d2')return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',EE:'Esiliiga',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
-  if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',EE:'Esiliiga B',NL:'Tweede Divisie',NIR:'Intermediate League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
-  if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B',NL:'Derde Divisie'}[co]||'Cuarta categoría';
+  if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',JP:'Copa J. League',QA:'Qatar Cup',FI:'Liigacup'}[co]||'Copa de la Liga';
+  if(k==='d2')return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',EE:'Esiliiga',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League',FI:'Ykkösliiga'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
+  if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',EE:'Esiliiga B',NL:'Tweede Divisie',NIR:'Intermediate League',FI:'Ykkönen'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
+  if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B',NL:'Derde Divisie',FI:'Kakkonen'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
   if(k==='d4t')return co==='ES'?'Tercera División':'Cuarta categoría';
-  if(k==='d5')return{ES:'Tercera Federación',DE:'Oberliga',EN:'National League',FR:'National 3'}[co]||'Quinta categoría';
+  if(k==='d5')return{ES:'Tercera Federación',DE:'Oberliga',EN:'National League',FR:'National 3',FI:'Kolmonen'}[co]||'Quinta categoría';
   if(k==='d6')return co==='EN'?'National League North':'Sexta categoría';
   if(k==='d7')return co==='EN'?'National League South':'Séptima categoría';
   if(k==='eflt')return'EFL Trophy';
@@ -20028,6 +20189,7 @@ function trophyName(club,k,real){
   if(k==='cafcl')return'CAF Champions League';
   if(k==='cafcc')return'CAF Confederation Cup';
   if(k==='cafsc')return'CAF Super Cup';
+  if(k==='cofed')return'Copa Federación';
   if(k==='bota')return'Bota de Oro';
   if(k==='balon')return'Balón de Oro';
   if(k==='golden')return'Golden Boy';
@@ -20067,15 +20229,15 @@ const MUSEUM_CONT_NAME={EU:'Europa',SA:'Sudamérica',NA:'Norteamérica',AS:'Asia
 /* algunas fotos de trofeo tienen mucho margen vacío alrededor y se ven pequeñas dentro de la
    tarjeta; aquí se les da un empujón extra de tamaño caso por caso */
 const MUSEUM_IMG_SCALE={'ES|d4':1.35,'CH|liechtenstein':1.35,'FR|d2':1.3,'BG|cup':1.3,'BE|d2':1.3};
-const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d5','d6','d7','cup','sc','lc','qslc','wac','walc','apertura','clausura','cdc','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','eflt','nlc','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs','afcce','afcc2','afccl','acc'];
+const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d5','d6','d7','cup','sc','lc','qslc','wac','walc','apertura','clausura','cdc','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','cofed','eflt','nlc','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs','afcce','afcc2','afccl','acc'];
 /* Orden propio de trofeos para países concretos (Museo y cabina del club): solo reordena las claves que se
    indican; el resto sigue el orden global de cada vista. Japón: la Copa J. League va ANTES que la Supercopa. */
-const TROPHY_ORDER_CO={JP:['league','d2','cup','lc','sc']};
+const TROPHY_ORDER_CO={JP:['league','d2','cup','lc','sc'],ES:['league','d2','d3','d4','d5','cup','cofed','sc']};
 const keyRank=(base,co,k)=>{const own=TROPHY_ORDER_CO[co];if(own){const i=own.indexOf(k);if(i>=0)return i}const g=base.indexOf(k);return 100+(g<0?base.length+1:g)};
 /* las competiciones que de verdad salen en cada país se sacan directamente de la pantalla de
    Competiciones del juego (GROUPS), quitando las fases previas (…Q). Así el museo nunca muestra
    nada que no se pueda ganar todavía en la partida. */
-const MUSEUM_COMP_KEY={1:'league',2:'d2',3:'d3',4:'d4',5:'d5',6:'d6',7:'d7',C:'cup',SC:'sc',LC:'lc',SLC:'qslc',RF:'d3',FR:'d4',LIC:'liechtenstein',AP:'apertura',CL:'clausura',AK:'apertura',LK:'clausura',TK:'trofeo',GISC:'sint',LGA:'apertura',LGC:'clausura',CC:'cdc',T:'eflt',NC:'nlc'};
+const MUSEUM_COMP_KEY={1:'league',2:'d2',3:'d3',4:'d4',5:'d5',6:'d6',7:'d7',C:'cup',SC:'sc',LC:'lc',SLC:'qslc',RF:'d3',FR:'d4',TF:'d5',FC:'cofed',LIC:'liechtenstein',AP:'apertura',CL:'clausura',AK:'apertura',LK:'clausura',TK:'trofeo',GISC:'sint',LGA:'apertura',LGC:'clausura',CC:'cdc',T:'eflt',NC:'nlc'};
 function museumKeysOf(co){
   /* Arabia Saudí: 'SA' coincide con el id continental de Sudamérica dentro de GROUPS (Libertadores/
      Sudamericana/Recopa), así que no puede tener su propia entrada ahí sin romper esas competiciones.
@@ -20096,7 +20258,7 @@ function museumKeysOf(co){
   if(co==='JP')return['league','d2','cup','lc','sc'];
   if(co==='QA')return['league','d2','cup','lc','qslc'];
   /* Estonia: la Esiliiga B no se considera liga jugable para el Museo; no se muestra su trofeo d3. */
-  if(co==='EE')return['league','d2','cup','sc'];
+  if(co==='EE')return['league','d2','d3','cup','sc'];
   /* Rusia: el Museo muestra la liga, la 1. Division, la Copa y la Supercopa. */
   if(co==='RU')return['league','d2','cup','sc'];
   /* Países Bajos: Eredivisie + Keuken Kampioen Divisie + copa y supercopa (Tweede/Derde Divisie no son jugables). */
@@ -20838,10 +21000,10 @@ function clubViewHTML(id){
     return`<div class="sq-h">${label}<span>${list.length}</span></div><div class="pcs">${list.map(p=>playerCard(p,clubId)).join('')}</div>`;
   }).join('');
   const squad=squadNoLoans(id,t.players),rows=squadRows(id,squad);
-  const fid=filialOf(id),hasFilial=!!(fid&&CLUBBY[fid]);
+  const filialIds=filialOf(id)?famChildren(id):[],hasFilial=filialIds.length>0;
   const loans=previewLoans(id),hasCed=!!(loans.out.length||loans.inn.length);
   const loanBlock=(arr,viewClub,label)=>{const list=arr.slice().sort((a,b)=>byPos(a.p,b.p));return list.length?`<div class="sq-title"><h3>${label}</h3><span>${list.length} jugador${list.length>1?'es':''}</span></div><div class="pcs">${list.map(x=>playerCard(x.p,viewClub(x))).join('')}</div>`:''};
-  const filPlayers=hasFilial?squadNoLoans(fid,previewTeam(fid).players):[];
+  const filPlayers=[];
   const pal=palmaresOf(c),palTotal=palTotalOf(c.id,pal);
   const palBody=`<div class="sq-title"><h3>Palmarés</h3><span>${palTotal} título${palTotal===1?'':'s'}</span></div>${pal.length?`<div class="palgrid">${pal.map(t=>`<div class="pal"><i>${t.icon}</i><b>${t.n}</b><span>${esc(t.name)}</span>${t.add?`<em class="pal-add">+${t.add} en esta partida</em>`:''}</div>`).join('')}</div>${pal.some(t=>t.add)?'<p class="muted-s" style="margin-top:8px">Los títulos con «+» se han ganado en esta partida.</p>':''}`:'<p class="muted-s">Sin títulos oficiales.</p>'}`;
   const fl=facLevels(id);
@@ -20854,7 +21016,7 @@ function clubViewHTML(id){
   const realAff=realAffilFor(id);
   const ancestorIds=isB(id)?filialAncestors(id).filter(pid=>!(isMyFilial&&pid===state.club)):[];
   const ancestorCount=ancestorIds.length;
-  const affCount=(hasFilial?1:0)+ownAffList.length+(isMyFilial?1:0)+recipCount+realAff.length+ancestorCount;
+  const affCount=filialIds.length+ownAffList.length+(isMyFilial?1:0)+recipCount+realAff.length+ancestorCount;
   const sub=[['first','Primer equipo',squad.length],['ced','Cedidos',hasCed?(loans.out.length+loans.inn.length):null],['affil','Afiliaciones',affCount||null]];
   if(!sub.some(([k])=>k===ui.cvSub))ui.cvSub='first';
   const subSeg=`<div class="seg" style="margin-top:14px">${sub.map(([k,l,n])=>`<button class="${ui.cvSub===k?'on':''}" data-act="cv-sub" data-k="${k}">${l}${n!=null?` (${n})`:''}</button>`).join('')}</div>`;
@@ -20867,7 +21029,7 @@ function clubViewHTML(id){
   const affilBody=(()=>{
     const ups=ownAffList.filter(a=>a.dir==='up'),downs=ownAffList.filter(a=>a.dir==='down');
     const realUps=realAff.filter(a=>a.dir==='up'),realDowns=realAff.filter(a=>a.dir==='down');
-    const filRow=hasFilial?affRow(fid,'Filial','filial'):'';
+    const filRows=filialIds.map(fid=>affRow(fid,'Filial','filial')).join('');
     const parentRow=isMyFilial?affRow(state.club,'Filial','filial'):'';
     const ancestorRows=ancestorIds.map(pid=>affRow(pid,'Filial','filial')).join('');
     const recipProfRow=recipAsAffProf?affRow(state.club,affDealType(id),'down',id):'';
@@ -20875,7 +21037,7 @@ function clubViewHTML(id){
     const realUpRows=realUps.map(a=>affRow(a.id,dealTypeBetween(id,a.id),'real',id+'|'+a.id)).join('');
     const realDownRows=realDowns.map(a=>affRow(a.id,dealTypeBetween(id,a.id),'real',id+'|'+a.id)).join('');
     const upBody=(ancestorRows+parentRow+recipProfRow+realUpRows+ups.map(a=>affRow(a.id,affDealType(a.id),'up')).join(''))||'<p class="muted-s" style="padding:4px 2px">Sin afiliaciones de este tipo.</p>';
-    const downBody=(filRow+recipAfilRow+realDownRows+downs.map(a=>affRow(a.id,affDealType(a.id),'down')).join(''))||'<p class="muted-s" style="padding:4px 2px">Sin afiliaciones de este tipo.</p>';
+    const downBody=(filRows+recipAfilRow+realDownRows+downs.map(a=>affRow(a.id,affDealType(a.id),'down')).join(''))||'<p class="muted-s" style="padding:4px 2px">Sin afiliaciones de este tipo.</p>';
     return`<div class="sq-title"><h3>Afiliaciones</h3></div>
     <div class="fac-sub" style="margin-top:0;padding-top:0;border-top:0">${secHead2('Tus afiliados profesionales','up')}${upBody}</div>
     <div class="fac-sub" style="margin-top:10px;padding-top:10px">${secHead2('Tus clubes afiliados','down')}${downBody}</div>`;
@@ -26129,12 +26291,12 @@ REAL_LOANS.push(['Abdoul Sawadogo','ZELP','SMED',1,'Rotación',['Abdoul Sawadogo
 /* ===== Estonia: Premium Liiga (añadido por scraping BeSoccer, pie dominante Transfermarkt) ===== */
 (function(){
   /* ===== Estonia: Premium Liiga (10 clubes, cuádruple vuelta = 36 jornadas). ===== */
-  Object.assign(COUNTRIES,{EE:{name:'Estonia',league:'Premium Liiga',divs:['Premium Liiga','Esiliiga'],pin:[25.5,58.6],polys:[ESTONIA_L,ESTONIA_ISL1,ESTONIA_ISL2,ESTONIA_ISL3]}});
+  Object.assign(COUNTRIES,{EE:{name:'Estonia',league:'Premium Liiga',divs:['Premium Liiga','Esiliiga','Esiliiga B'],pin:[25.5,58.6],polys:[ESTONIA_L,ESTONIA_ISL1,ESTONIA_ISL2,ESTONIA_ISL3]}});
   if(!PLAYABLE.includes('EE'))PLAYABLE.push('EE');
   {const ei=LOCKED.findIndex(x=>x.id==='EE');if(ei>=0)LOCKED.splice(ei,1);}
-  if(!GROUPS.some(g=>g.id==='EE'))GROUPS.push({id:'EE',name:'Estonia',comps:['EE1','EE2','EEC','EESC']});
+  if(!GROUPS.some(g=>g.id==='EE'))GROUPS.push({id:'EE',name:'Estonia',comps:['EE1','EE2','EE3','EEC','EESC']});
   Object.assign(BENCH_CD,{EE1:12});Object.assign(TROPHY_IMG_CO,{EE:{league:'143',cup:'1604',sc:'1597',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY}});Object.assign(TROPHY_SC,{EE:'Eesti Superkarikas'});SC_SKIP.EE=1;Object.assign(CUPNAME,{EE:'Eesti Karikas'});Object.assign(TROPHY_CUP,{EE:'Eesti Karikas'});
-  MULTI_ROUND.EE1=2;MULTI_ROUND.EE2=2;Object.assign(BENCH_CD,{EE2:12}); /* doble 'doble vuelta' = 4 enfrentamientos por rival = 36 jornadas con 10 clubes */
+  MULTI_ROUND.EE1=2;MULTI_ROUND.EE2=2;MULTI_ROUND.EE3=2;Object.assign(BENCH_CD,{EE2:12,EE3:12}); /* doble 'doble vuelta' = 4 enfrentamientos por rival = 36 jornadas con 10 clubes */
   const SEL=[
     ['FLO', null, null, null, null, null, null, 4063],
     ['HJKL', 'Harju JK Laagri', 'Laagri', 'Laagri', '#1c3f94', '#f4f4f4', 47, 64759],
@@ -28176,6 +28338,10 @@ const ZONES_BY2=[['#66bb6a','Ascenso directo a la Vysheyshaya'],['#26a69a','Play
     }
     return id;
   });
+  /* 30 equipos de liga (10 EE1 + 10 EE2 + 10 EE3) y 34 inferiores.
+     Se retiran los duplicados EEC05/EEC41 y 8 equipos amateur para mantener 64. */
+  const DROP=['EEC01','EEC02','EEC06','EEC07','EEC08','EEC11','EEC15','EEC20','EEC05','EEC41'];
+  EEC_TEAMS=EEC_TEAMS.filter(id=>!DROP.includes(id));
 }
 
 /* ===== Palmarés histórico de Estonia ===== */
@@ -28218,7 +28384,7 @@ const ZONES_BY2=[['#66bb6a','Ascenso directo a la Vysheyshaya'],['#26a69a','Play
     let c=CLUBBY[id];
     if(!c){c=K(id,name,short,city,'EE','#1c3f94','#f4f4f4',div===2?40:34,div);CLUBBY[id]=c;}
     c.name=name;c.short=short;c.city=city;c.co='EE';c.div=div;c.stadium=c.stadium||'Estadio Municipal';
-    if(parent){c.bTeam=1;FAMILY[id]=parent;if(!FAMILY[parent])FAMILY[parent]=id;}
+    if(parent){c.bTeam=1;c.noParentFilter=1;FAMILY[id]=parent;if(!FAMILY[parent])FAMILY[parent]=id;}
     if(!CLUBS.includes(c))CLUBS.push(c);BASE_DIV[id]=div;
     const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';if(!c.logo){c.logo=l}CLUB_LOGO[id]=c.logo;
     if(!STADIUM[id])STADIUM[id]='Estadio Municipal';if(!FORM_MAIN[id])FORM_MAIN[id]='4-4-2';if(!BUDGET[id])BUDGET[id]=div===2?0.25:0.1;
@@ -28232,14 +28398,18 @@ const ZONES_BY2=[['#66bb6a','Ascenso directo a la Vysheyshaya'],['#26a69a','Play
   add('NUTU21','Nõmme United II','Nõmme United II','Tallin',2,'NUTD');
   {const j=CLUBS.findIndex(c=>c.id==='JOMA');if(j>=0)CLUBS.splice(j,1);}
   use('TJK Legion',3);use('Johvi Phoenix',3);use('Tabasalu Charma',3);use('Tartu Kalev',3);use('Tulevik Viljandi',3);
-  add('LEVU19','FCI Levadia U19','Levadia U19','Tallin',3,'LEVD');
-  add('NARU21','Narva Trans U21','Narva U21','Narva',3,'NTRA');
-  add('KALEVU21','Tallinna Kalev U21','Kalev U21','Tallin',3,byName('Tallinna Kalev'));
-  add('TAMU21','Tammeka U21','Tammeka U21','Tartu',3,'TAMK');
-  add('VAPU21','Vaprus U21','Vaprus U21','Pärnu',3,'VAPP');
-  const CC={'EEC47':'Tartu','EEC04':'Elva','EEC09':'Tallin','EEC53':'Viimsi','FLOU21':'Tallin','EEC40':'Tallin','LEVU21':'Tallin','NKAL2':'Tallin','NUTU21':'Tallin','MAARDU':'Maardu'};
+  add('LEVU19','Levadia III','Levadia III','Tallin',3,'LEVD');
+  add('NARU21','Trans II','Trans II','Narva',3,'NTRA');
+  add('KALEVU21','Tallinna Kalev II','Kalev II','Tallin',3,byName('Tallinna Kalev'));
+  add('TAMU21','Tammeka II','Tammeka II','Tartu',3,'TAMK');
+  add('VAPU21','Vaprus Pärnu II','Vaprus II','Pärnu',3,'VAPP');
+  const CC={'EEC47':'Tartu','EEC04':'Elva','EEC09':'Tallin','EEC53':'Viimsi','FLOU21':'Tallin','EEC40':'Tallin','LEVU21':'Tallin','NKAL2':'Tallin','NUTU21':'Tallin','MAARDU':'Maardu','EEC16':'Jõhvi','LEVU19':'Tallin','EEC37':'Tabasalu','KALEVU21':'Tallin','TAMU21':'Tartu','EEC46':'Tartu','EEC49':'Tallin','NARU21':'Narva','EEC51':'Viljandi','VAPU21':'Pärnu'};
+  const E3M={EEC16:['Jõhvi linnastaadion','4-4-2',0.4],LEVU19:['Maarjamäe staadion - Anexo','4-3-3',0.25],EEC37:['Tabasalu arena','4-4-2',0.5],KALEVU21:['Kalevi kunstmuruväljak','4-3-3',0.3],TAMU21:['Sepa jalgpallikeskus','4-3-3',0.3],EEC46:['Tartu Tamme staadion - Anexo','4-4-2',0.45],EEC49:['Kadrioru staadion','4-3-3',0.5],NARU21:['Narva Kalev-Fama staadion','4-3-3',0.25],EEC51:['Viljandi linnastaadion','4-4-2',0.5],VAPU21:['Pärnu Rannastaadion - Anexo','4-4-2',0.25]};
   Object.keys(CC).forEach(id=>{if(CLUBBY[id])CLUBBY[id].city=CC[id]});
-  Object.assign(CITY,{Elva:{ll:[26.42,58.22]},Viimsi:{ll:[24.84,59.50]},Maardu:{ll:[25.02,59.48]}});
+  Object.keys(E3M).forEach(id=>{if(CLUBBY[id]){CLUBBY[id].stadium=E3M[id][0];STADIUM[id]=E3M[id][0];FORM_MAIN[id]=E3M[id][1];BUDGET[id]=E3M[id][2];}});
+  Object.assign(CITY,{Elva:{ll:[26.42,58.22]},Viimsi:{ll:[24.84,59.50]},Maardu:{ll:[25.02,59.48]},Jõhvi:{ll:[27.42,59.36]},Tabasalu:{ll:[24.55,59.43]},Viljandi:{ll:[25.59,58.36]}});
+  /* Copa: añadir los 10 equipos de liga que faltaban (los demás ya estaban). */
+  ['LEVU21','MAARDU','NKAL2','NUTU21','LEVU19','NARU21','TAMU21','VAPU21','FLOU21','KALEVU21'].forEach(id=>{if(CLUBBY[id]&&!EEC_TEAMS.includes(id))EEC_TEAMS.push(id)});
 }
 
 /* ===== Escudos reales de equipos estonios (BeSoccer) ===== */
@@ -28254,7 +28424,461 @@ const ZONES_BY2=[['#66bb6a','Ascenso directo a la Vysheyshaya'],['#26a69a','Play
   Object.entries({NORMA:62935,TVMK:64386}).forEach(([id,n])=>{if(CLUBBY[id]){const l='https://cdn.resfu.com/img_data/escudos/medium/'+n+'.jpg?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
   Object.entries({EEC09:111291,EEC53:116818,EEC40:6386,EEC47:61423}).forEach(([id,n])=>{if(CLUBBY[id]){const l='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
   Object.entries({EEC04:61363,MAARDU:61163}).forEach(([id,n])=>{if(CLUBBY[id]){const l='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
+  Object.entries({EEC49:61366,EEC16:142870,EEC46:142816,EEC51:13354}).forEach(([id,n])=>{if(CLUBBY[id]){const l='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
+  if(CLUBBY.EEC37){const l='https://cdn.resfu.com/img_data/equipos/63110.png?size=120x&lossy=1';CLUBBY.EEC37.logo=l;CLUB_LOGO.EEC37=l;}
   if(CLUBBY.KALEVU21&&CLUBBY.EEC40){CLUBBY.KALEVU21.logo=CLUBBY.EEC40.logo;CLUB_LOGO.KALEVU21=CLUBBY.EEC40.logo;}
+}
+
+/* ===== Palmarés histórico de la Esiliiga B (d3) ===== */
+{
+  const HIST=[['MSTAR','Maardu Starbunker','Maardu Starbunker','Maardu'],['PAID21','Paide Linnameeskond U21','Paide U21','Paide'],['FCIT2','Tallinna Infonet II','Infonet II','Tallin']];
+  HIST.forEach(([id,name,short,city])=>{if(!CLUBBY[id]){const c=K2(id,name,short,city,'EE','#1c3f94','#f4f4f4',34);c.bTeam=1;const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUBBY[id]=c;CLUB_LOGO[id]=l;}});
+  Object.entries({
+    NKAL2:{d3:2},EEC09:{d3:1},NUTD:{d2:1,d3:1},KURE:{d2:1,d3:1},
+    MSTAR:{d3:1},MAARDU:{d3:1},PAID21:{d3:1},FCIT2:{d3:1},
+    EEC49:{d2:1,d3:1},EEC47:{d3:1},TAMU21:{d3:1},EEC53:{d3:1},
+    EEC51:{d2:1}
+  }).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>e[k]=o[k]);});
+}
+
+/* ===== FINLANDIA: Veikkausliiga (FI1, 12 clubes, 22 + split de 5) ===== */
+const ZONES_FI1=[['#7cb342','Campeón (previa de Champions)'],['#38D996','Previa de Conference League'],['#9e9e9e','Permanencia'],['#f0a020','Playoff de permanencia'],['#e53935','Descenso a Ykkösliiga']];
+{
+  Object.assign(COUNTRIES,{FI:{name:'Finlandia',league:'Veikkausliiga',divs:['Veikkausliiga'],pin:[26,64.5],polys:[FINLAND_L,FINLAND_ALAND0,FINLAND_ALAND1,FINLAND_ALAND2,FINLAND_ALAND3]}});
+  if(!PLAYABLE.includes('FI'))PLAYABLE.push('FI');
+  const li=LOCKED.findIndex(x=>x.id==='FI');if(li>=0)LOCKED.splice(li,1);
+  if(!GROUPS.some(g=>g.id==='FI'))GROUPS.push({id:'FI',name:'Finlandia',comps:['FI1','FIC','FILC']});
+  Object.assign(FLAG,{FI:'\u{1F1EB}\u{1F1EE}'});NATNAME.FI='Finlandia';FICT_ADJ.FI='Finlandesa';
+  BENCH_CD.FI1=9;TROPHY_IMG_CO.FI={league:'31',cup:'652',lc:'1567'};Object.assign(CUPNAME,{FI:'Suomen Cup'});Object.assign(LCNAME,{FI:'Liigacup'});Object.assign(TROPHY_CUP,{FI:'Suomen Cup'});
+  SPLITS.FI1={size:12,reg:22,top:6,upper:'Mestaruussarja',lower:'Haastajasarja'};SPLIT_SINGLE_LEG.FI1=true;
+  const SEL=[
+    ['OULU','AC Oulu','AC Oulu','Oulu',2.0,'4-2-3-1','Raatti Stadium',4424],
+    ['LAHT','FC Lahti','Lahti','Lahti',1.8,'4-4-2','Lahti Stadium',1079],
+    ['JARO','FF Jaro','Jaro','Pietarsaari',1.4,'4-4-2','Jakobstads Centralplan',0],
+    ['GNIS','Gnistan','Gnistan','Helsinki',1.2,'4-4-2','Mustapekka Areena',0],
+    ['HJK','HJK Helsinki','HJK','Helsinki',5.5,'4-3-3','Bolt Arena',0],
+    ['MARH','IFK Mariehamn','Mariehamn','Mariehamn',1.6,'4-4-2','Wiklöf Holding Arena',0],
+    ['ILVES','Ilves','Ilves','Tampere',2.5,'4-2-3-1','Tammelan stadion',12591],
+    ['ITU','Inter Turku','Inter Turku','Turku',2.8,'4-3-3','Veritas Stadion',0],
+    ['KUP','KuPS Kuopio','KuPS','Kuopio',3.0,'4-3-3','Väre Areena',0],
+    ['SJK','SJK Seinäjoki','SJK','Seinäjoki',2.6,'4-2-3-1','OmaSp Stadion',0],
+    ['TPS','TPS Turku','TPS','Turku',1.9,'4-4-2','Veritas Stadion',0],
+    ['VPS','VPS Vaasa','VPS','Vaasa',1.7,'3-4-2-1','Lemonsoft Stadion',0]
+  ];
+  const STD={},FRM={},BUD={};
+  const REP={OULU:52,LAHT:50,JARO:46,GNIS:44,HJK:70,MARH:46,ILVES:56,ITU:58,KUP:64,SJK:58,TPS:52,VPS:50};
+  SEL.forEach(([id,name,short,city,rep,form,stad,crest])=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'FI','#1c3f94','#f4f4f4',REP[id]||50,1);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='FI';c.rep=REP[id]||50;c.div=1;c.stadium=stad;
+    if(!CLUBS.includes(c))CLUBS.push(c);BASE_DIV[id]=1;
+    if(crest){const l='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';CLUB_LOGO[id]=l;c.logo=l;}
+    STD[id]=stad;FRM[id]=form;BUD[id]=rep;
+  });
+  Object.assign(STADIUM,STD);Object.assign(FORM_MAIN,FRM);Object.assign(BUDGET,BUD);
+  Object.assign(CITY,{'Oulu':{ll:[25.47,65.01]},'Lahti':{ll:[25.66,60.98]},'Pietarsaari':{ll:[22.70,63.67]},'Helsinki':{ll:[24.94,60.17]},'Mariehamn':{ll:[19.93,60.10]},'Tampere':{ll:[23.76,61.50]},'Turku':{ll:[22.27,60.45]},'Kuopio':{ll:[27.68,62.89]},'Seinäjoki':{ll:[22.84,62.79]},'Vaasa':{ll:[21.62,63.10]}});
+}
+/* ===================== Liigacup (Finlandia) =====================
+   12 clubes de la Veikkausliiga, sin filiales ni inferiores. Dos grupos geográficos fijos de 6:
+   A (Lahti, Gnistan, HJK, Mariehamn, Inter Turku, TPS) y B (Oulu, Jaro, Ilves, KuPS, SJK, VPS).
+   Liguilla a una vuelta (5 jornadas) en pabellones cubiertos, top-2 a semifinales y final a partido
+   único; sin prórroga (penaltis directos) y banquillo de 12. */
+const FILC_GROUPS=[
+  ['LAHT','GNIS','HJK','MARH','ITU','TPS'],
+  ['OULU','JARO','ILVES','KUP','SJK','VPS']
+];
+function cupInitLiigacup(ids){
+  const groups=FILC_GROUPS.map((g,gi)=>({ids:g.filter(id=>CLUBBY[id]),tb:emptyTable(g),fx:buildRawFixtures(g.filter(id=>CLUBBY[id]),rng(hashStr('FILC|g'+gi+'|'+state.seed+'|'+state.season))).slice(0,5)}));
+  const rounds=[{n:'Semifinales',w:14,ties:null,done:false},{n:'Final',w:20,ties:null,done:false}];
+  return{key:'FILC',name:'Liigacup',ids:FILC_GROUPS.flat().filter(id=>CLUBBY[id]),bye:[],type:'groups',groups,gweeks:[1,3,5,7,9],gdone:false,rounds,champ:null,sc:{},etFromRound:null,indoorGroups:true};
+}
+function finishGroupsLiigacup(cup){
+  cup.gdone=true;
+  const t=cup.groups.map(g=>sortTable(g.tb));
+  const A=t[0]||[],B=t[1]||[];
+  const ties=[];
+  if(A[0]&&B[1])ties.push({h:A[0].id,a:B[1].id});
+  if(B[0]&&A[1])ties.push({h:B[0].id,a:A[1].id});
+  cup.rounds[0].ties=ties;
+  news(`Termina la fase de grupos de la ${cup.name}: los dos mejores de cada grupo pasan a semifinales.`);
+}
+function fiGroups(){
+  const L=leagueData('FI1'),order=sortTable(L.tb).map(r=>r.id);
+  if(!L.split)return{champ:order,releg:[]};
+  return{champ:order.filter(id=>L.split.top.includes(id)),releg:order.filter(id=>L.split.bot.includes(id))};
+}
+function fiLeagueTable(key){
+  const L=leagueData(key),g=fiGroups();
+  if(!L.split)return _groupTable('Veikkausliiga',L.tb,p=>p<=6?'#66bb6a':'#9e9e9e',[['#66bb6a','Campeonato'],['#9e9e9e','Descenso']]);
+  const sub=ids=>{const o={};ids.forEach(id=>{if(L.tb[id])o[id]=L.tb[id]});return o};
+  return _groupTable('Mestaruussarja',sub(g.champ),p=>p<=1?'#7cb342':p<=3?'#38D996':'#9e9e9e',[['#7cb342','Campeón'],['#38D996','Europa'],['#9e9e9e','Permanencia']])
+    +_groupTable('Haastajasarja',sub(g.releg),p=>p<=4?'#9e9e9e':p===5?'#f0a020':'#e53935',[['#9e9e9e','Permanencia'],['#f0a020','Playoff'],['#e53935','Descenso']]);
+}
+
+/* ===== Palmarés histórico de Finlandia ===== */
+{
+  const HIST=[['HPS','HPS Helsinki','HPS','Helsinki'],['HIFK','HIFK Helsinki','HIFK','Helsinki'],['KUUSY','FC Kuusysi Lahti','Kuusysi','Lahti']];
+  HIST.forEach(([id,name,short,city])=>{if(!CLUBBY[id]){const c=K2(id,name,short,city,'FI','#1c3f94','#f4f4f4',50);const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUBBY[id]=c;CLUB_LOGO[id]=l;}});
+  Object.entries({
+    HJK:{league:33,cup:14,lc:6},
+    KUP:{league:8,cup:5,lc:1},
+    TPS:{league:8,cup:3,lc:1},
+    ILVES:{league:1,cup:4,lc:1},
+    ITU:{league:1,cup:2,lc:2},
+    SJK:{league:1,cup:1,lc:1},
+    MARH:{league:1,cup:1},
+    LAHT:{lc:3},
+    VPS:{league:2},
+    HAKA:{league:9},
+    HPS:{league:9},
+    HIFK:{league:7},
+    KUUSY:{league:5}
+  }).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>e[k]=o[k]);});
+}
+
+/* ===== Palmarés histórico de la Suomen Cup ===== */
+{
+  const HIST=[
+    ['REIP','Lahden Reipas','Reipas','Lahti'],
+    ['MYP','MyPa','MyPa','Myllykoski'],
+    ['ROPS','RoPS','RoPS','Rovaniemi'],
+    ['MP','Mikkelin Palloilijat','MP','Mikkeli'],
+    ['HONKA','FC Honka','Honka','Espoo'],
+    ['TAMPU','Tampere United','Tampere United','Tampere'],
+    ['ATLF','Atlantis FC','Atlantis','Helsinki'],
+    ['JOK','FC Jokerit','Jokerit','Helsinki'],
+    ['AIFK','Åbo IFK','Åbo IFK','Turku'],
+    ['KIFF','FC Kiffen','Kiffen','Helsinki'],
+    ['PPJ','PPJ Helsinki','PPJ','Helsinki']
+  ];
+  HIST.forEach(([id,name,short,city])=>{if(!CLUBBY[id]){const c=K2(id,name,short,city,'FI','#1c3f94','#f4f4f4',46);const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUBBY[id]=c;CLUB_LOGO[id]=l;}});
+  Object.entries({
+    HJK:15,HAKA:12,REIP:7,KUP:5,ILVES:4,KTP:4,ITU:3,TPS:3,MYP:3,ROPS:2,KUUSY:2,MP:2,
+    SJK:1,MARH:1,HONKA:1,TAMPU:1,ATLF:1,JOK:1,AIFK:1,HPS:1,KIFF:1,PPJ:1
+  }).forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.cup=n;});
+}
+
+/* ===== Palmarés histórico de la Liigacup ===== */
+{
+  if(!CLUBBY.ALLIA){const c=K2('ALLIA','AC Allianssi','Allianssi','Vantaa','FI','#1c3f94','#f4f4f4',46);const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUBBY.ALLIA=c;CLUB_LOGO.ALLIA=l;}
+  Object.entries({HJK:6,ITU:4,LAHT:3,HONKA:3,VPS:2,ALLIA:2,TAMPU:1,TPS:1,SJK:1,KUP:1,HAKA:1}).forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.lc=n;});if(PALMARES.ILVES)delete PALMARES.ILVES.lc;
+}
+
+/* ===== Palmarés detallado de Finlandia (incluye divisiones inferiores históricas) ===== */
+{
+  const P={
+    KUP:{d2:3,d4:1},
+    TPS:{d2:2},
+    ILVES:{d2:1,d4:1,d5:1,lc:1},
+    ITU:{d4:1,d5:1},
+    SJK:{d2:1,d4:1},
+    MARH:{d4:1,d5:2},
+    VPS:{d2:1},
+    LAHT:{d2:2},
+    JARO:{},
+    OULU:{d2:2},
+    GNIS:{d4:2}
+  };
+  Object.entries(P).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>e[k]=o[k]);});
+  TROPHY_ORDER_CO.FI=['league','d2','d3','d4','d5','cup','lc'];
+}
+
+/* ===== Tercera Federación (18 grupos, 324 clubes) ===== */
+const TF_LOGOS={"1|Alondras CF":"https://futbolme.com/static/img/club/escudo4132.png","1|Antela FC":"https://futbolme.com/static/img/club/escudo6967.png","1|Arenteiro":"https://futbolme.com/static/img/club/escudo1958.png","1|At. Arteixo":"https://futbolme.com/static/img/club/escudo4650.png","1|At. Coruña Montañeros":"https://futbolme.com/static/img/club/escudo4324.png","1|Barco":"https://futbolme.com/static/img/club/escudo2090.png","1|Boiro":"https://futbolme.com/static/img/club/escudo2146.png","1|CD Estradense":"https://futbolme.com/static/img/club/escudo4796.png","1|CD Lalín":"https://futbolme.com/static/img/club/escudo14082.png","1|Céltiga FC":"https://futbolme.com/static/img/club/escudo2347.png","1|Gran Peña":"https://futbolme.com/static/img/club/escudo2873.png","1|Pontevedra B":"https://futbolme.com/static/img/club/escudo4415.png","1|Portonovo":"https://futbolme.com/static/img/club/escudo4572.png","1|RC Villalbés":"https://futbolme.com/static/img/club/escudo68.png","1|SD Sarriana":"https://futbolme.com/static/img/club/escudo7026.png","1|Silva SD":"https://futbolme.com/static/img/club/escudo7259.png","1|Somozas":"https://futbolme.com/static/img/club/escudo4238.png","1|Viveiro":"https://futbolme.com/static/img/club/escudo5050.png","2|Andés":"https://futbolme.com/static/img/club/escudo4314.png","2|Astur":"https://futbolme.com/static/img/club/escudo1988.png","2|Avilés Stadium":"https://futbolme.com/static/img/club/escudo9776.png","2|Caudal Deportivo":"https://futbolme.com/static/img/club/escudo4169.png","2|CD Colunga":"https://futbolme.com/static/img/club/escudo1115.png","2|CD Covadonga":"https://futbolme.com/static/img/club/escudo4301.png","2|CD Mosconia":"https://futbolme.com/static/img/club/escudo4147.png","2|CD Praviano":"https://futbolme.com/static/img/club/escudo4223.png","2|Club Siero":"https://futbolme.com/static/img/club/escudo3870.png","2|Condal":"https://futbolme.com/static/img/club/escudo4441.png","2|EI San Martín":"https://futbolme.com/static/img/club/escudo8143.png","2|Lealtad Villaviciosa":"https://futbolme.com/static/img/club/escudo4255.png","2|Llanes":"https://futbolme.com/static/img/club/escudo4560.png","2|L´Entregu CF":"https://futbolme.com/static/img/club/escudo3072.png","2|Sporting Atlético":"https://futbolme.com/static/img/club/escudo4438.png","2|UC Ceares":"https://futbolme.com/static/img/club/escudo4125.png","2|UD Gijón Industrial":"https://futbolme.com/static/img/club/escudo4192.png","2|UP Langreo":"https://futbolme.com/static/img/club/escudo4267.png","3|Atlético Albericia":"https://futbolme.com/static/img/club/escudo4280.png","3|Atlético Mineros":"https://futbolme.com/static/img/club/escudo9772.png","3|Barquereño":"https://futbolme.com/static/img/club/escudo40.png","3|Castro":"https://futbolme.com/static/img/club/escudo4380.png","3|Cayón":"https://futbolme.com/static/img/club/escudo6.png","3|CD Bezana":"https://futbolme.com/static/img/club/escudo94.png","3|CD Guarnizo":"https://futbolme.com/static/img/club/escudo4174.png","3|CD Laredo":"https://futbolme.com/static/img/club/escudo4381.png","3|CD Naval":"https://futbolme.com/static/img/club/escudo3299.png","3|CF Vimenor":"https://futbolme.com/static/img/club/escudo4382.png","3|Revilla":"https://futbolme.com/static/img/club/escudo3568.png","3|Sámano":"https://futbolme.com/static/img/club/escudo3752.png","3|SD Solares":"https://futbolme.com/static/img/club/escudo4244.png","3|SD Torina":"https://futbolme.com/static/img/club/escudo5405.png","3|Selaya":"https://futbolme.com/static/img/club/escudo3851.png","3|Tropezón":"https://futbolme.com/static/img/club/escudo4416.png","3|UM Escobedo":"https://futbolme.com/static/img/club/escudo4310.png","3|Velarde CF":"https://futbolme.com/static/img/club/escudo7.png","4|Amurrio":"https://futbolme.com/static/img/club/escudo4200.png","4|Aretxabaleta":"https://futbolme.com/static/img/club/escudo4043.png","4|Beasain KE":"https://futbolme.com/static/img/club/escudo4207.png","4|CD Aurrera Vitoria":"https://futbolme.com/static/img/club/escudo4210.png","4|CD Derio":"https://futbolme.com/static/img/club/escudo2493.png","4|CD Lagun Onak":"https://futbolme.com/static/img/club/escudo120.png","4|Deportivo Alavés C":"https://futbolme.com/static/img/club/escudo4476.png","4|Eibar C":"https://futbolme.com/static/img/club/escudo4486.png","4|Leioa":"https://futbolme.com/static/img/club/escudo4233.png","4|Pasaia KE":"https://futbolme.com/static/img/club/escudo4175.png","4|Real Sociedad C":"https://futbolme.com/static/img/club/escudo4464.png","4|Real Unión Club B":"https://futbolme.com/static/img/club/escudo4557.png","4|San Ignacio":"https://futbolme.com/static/img/club/escudo3766.png","4|Santurtzi":"https://futbolme.com/static/img/club/escudo4687.png","4|SCD Durango":"https://futbolme.com/static/img/club/escudo4282.png","4|SD Erandio":"https://futbolme.com/static/img/club/escudo5423.png","4|Sodupe":"https://futbolme.com/static/img/club/escudo3894.png","4|Touring KE":"https://futbolme.com/static/img/club/escudo670.png","5|Atlètic Lleida":"https://futbolme.com/static/img/club/escudo18280.png","5|Badalona":"https://futbolme.com/static/img/club/escudo4387.png","5|CE Europa B":"https://futbolme.com/static/img/club/escudo4385.png","5|Cerdanyola FC":"https://futbolme.com/static/img/club/escudo2350.png","5|CF Peralada":"https://futbolme.com/static/img/club/escudo3455.png","5|CF Pobla de Mafumet":"https://futbolme.com/static/img/club/escudo4495.png","5|CFJ Mollerussa":"https://futbolme.com/static/img/club/escudo1406.png","5|CP San Cristóbal":"https://futbolme.com/static/img/club/escudo3760.png","5|FE Grama":"https://futbolme.com/static/img/club/escudo9293.png","5|L'Escala":"https://futbolme.com/static/img/club/escudo2950.png","5|L´Hospitalet":"https://futbolme.com/static/img/club/escudo4203.png","5|Martinenc":"https://futbolme.com/static/img/club/escudo5400.png","5|Montañesa":"https://futbolme.com/static/img/club/escudo4801.png","5|San Juan At. Montcada":"https://futbolme.com/static/img/club/escudo9138.png","5|UE Cornellà":"https://futbolme.com/static/img/club/escudo4312.png","5|UE Tona":"https://futbolme.com/static/img/club/escudo8867.png","5|UE Vilassar de Mar":"https://futbolme.com/static/img/club/escudo5026.png","5|Vilanova i la Geltrú CF":"https://futbolme.com/static/img/club/escudo4576.png","6|AC Torrellano":"https://futbolme.com/static/img/club/escudo16365.png","6|At. Levante":"https://futbolme.com/static/img/club/escudo4469.png","6|At. Saguntino":"https://futbolme.com/static/img/club/escudo4803.png","6|Atzeneta":"https://futbolme.com/static/img/club/escudo8899.png","6|Buñol":"https://futbolme.com/static/img/club/escudo2183.png","6|CD Acero":"https://futbolme.com/static/img/club/escudo4456.png","6|CD Roda":"https://futbolme.com/static/img/club/escudo3716.png","6|CD Utiel":"https://futbolme.com/static/img/club/escudo4979.png","6|Crevillente Deportivo":"https://futbolme.com/static/img/club/escudo4501.png","6|Eldense B":"https://futbolme.com/static/img/club/escudo4515.png","6|Español de San Vicente":"https://futbolme.com/static/img/club/escudo4503.png","6|Hércules B":"https://futbolme.com/static/img/club/escudo4211.png","6|Ontinyent 1931":"https://futbolme.com/static/img/club/escudo17894.png","6|SC Torrevieja":"https://futbolme.com/static/img/club/escudo15786.png","6|Soneja":"https://futbolme.com/static/img/club/escudo16317.png","6|Torrent CF":"https://futbolme.com/static/img/club/escudo4008.png","6|UD Vall de Uxó":"https://futbolme.com/static/img/club/escudo4992.png","6|Villarreal C":"https://futbolme.com/static/img/club/escudo4425.png","7|AD Torrejón CF":"https://futbolme.com/static/img/club/escudo4873.png","7|Cala Pozuelo":"https://futbolme.com/static/img/club/escudo9843.png","7|CD Colonia Moscardó":"https://futbolme.com/static/img/club/escudo4212.png","7|CD Móstoles URJC":"https://futbolme.com/static/img/club/escudo2290.png","7|CF Pozuelo":"https://futbolme.com/static/img/club/escudo9843.png","7|CP Parla Escuela":"https://futbolme.com/static/img/club/escudo3430.png","7|Fuenlabrada":"https://futbolme.com/static/img/club/escudo4463.png","7|Galapagar":"https://futbolme.com/static/img/club/escudo8171.png","7|Las Rozas":"https://futbolme.com/static/img/club/escudo3974.png","7|Leganés B":"https://futbolme.com/static/img/club/escudo4349.png","7|México FC":"https://futbolme.com/static/img/club/escudo4494.png","7|Rayo C. Alcobendas":"https://futbolme.com/static/img/club/escudo9007.png","7|Rayo Vallecano B":"https://futbolme.com/static/img/club/escudo4405.png","7|Real Aranjuez CF":"https://futbolme.com/static/img/club/escudo3556.png","7|Siello FC":"https://futbolme.com/static/img/club/escudo5038.png","7|Trival Valderas":"https://futbolme.com/static/img/club/escudo4165.png","7|UD Sanse B":"https://futbolme.com/static/img/club/escudo4349.png","7|Unión Adarve":"https://futbolme.com/static/img/club/escudo4653.png","8|Arandina":"https://futbolme.com/static/img/club/escudo1.png","8|Atl. Bembibre":"https://futbolme.com/static/img/club/escudo4736.png","8|Atl. Mansillés":"https://futbolme.com/static/img/club/escudo16393.png","8|Burgos CF B":"https://futbolme.com/static/img/club/escudo4199.png","8|Calasanz de Soria":"https://futbolme.com/static/img/club/escudo1180.png","8|CD Colegios Diocesanos":"https://futbolme.com/static/img/club/escudo5104.png","8|CD Villaralbo":"https://futbolme.com/static/img/club/escudo4782.png","8|Guijuelo":"https://futbolme.com/static/img/club/escudo4391.png","8|Júpiter Leonés":"https://futbolme.com/static/img/club/escudo4389.png","8|La Virgen del Camino":"https://futbolme.com/static/img/club/escudo4841.png","8|Mirandés B":"https://futbolme.com/static/img/club/escudo4721.png","8|Palencia CF":"https://futbolme.com/static/img/club/escudo8921.png","8|Palencia Cristo Atlético":"https://futbolme.com/static/img/club/escudo103.png","8|Salamanca UDS B":"https://futbolme.com/static/img/club/escudo7863.png","8|SD Almazán":"https://futbolme.com/static/img/club/escudo4732.png","8|Turégano":"https://futbolme.com/static/img/club/escudo16422.png","8|UD Santa Marta":"https://futbolme.com/static/img/club/escudo4772.png","8|Unionistas Salamanca B":"https://futbolme.com/static/img/club/escudo8879.png","9|Almería B":"https://futbolme.com/static/img/club/escudo80.png","9|Arenas de Armilla":"https://futbolme.com/static/img/club/escudo4719.png","9|At. Malagueño":"https://futbolme.com/static/img/club/escudo4424.png","9|At. Marbella Paraíso":"https://futbolme.com/static/img/club/escudo16450.png","9|Atletico Porcuna":"https://futbolme.com/static/img/club/escudo7939.png","9|CD Alhaurino":"https://futbolme.com/static/img/club/escudo4738.png","9|CD Cantoria":"https://futbolme.com/static/img/club/escudo16448.png","9|CF Motril":"https://futbolme.com/static/img/club/escudo8958.png","9|Churriana de la Vega":"https://futbolme.com/static/img/club/escudo5692.png","9|FC Marbellí":"https://futbolme.com/static/img/club/escudo2022.png","9|Huétor Vega":"https://futbolme.com/static/img/club/escudo2946.png","9|Málaga Juniors":"https://futbolme.com/static/img/club/escudo2097.png","9|Mancha Real":"https://futbolme.com/static/img/club/escudo4679.png","9|Recreativo Granada":"https://futbolme.com/static/img/club/escudo4561.png","9|UD Melilla":"https://futbolme.com/static/img/club/escudo117.png","9|UD San Pedro":"https://futbolme.com/static/img/club/escudo4766.png","9|UD Torre Del Mar":"https://futbolme.com/static/img/club/escudo4004.png","9|UDC Torredonjimeno":"https://futbolme.com/static/img/club/escudo5232.png","10|AD Ceuta FC B":"https://futbolme.com/static/img/club/escudo55.png","10|Atlético Onubense":"https://futbolme.com/static/img/equipos/escudo672.png","10|Bollullos CF":"https://futbolme.com/static/img/club/escudo4713.png","10|Cádiz CF Mirandilla":"https://futbolme.com/static/img/equipos/escudo117.png","10|CD Pozoblanco":"https://futbolme.com/static/img/club/escudo4771.png","10|Chiclana CF":"https://futbolme.com/static/img/club/escudo2380.png","10|Conil":"https://futbolme.com/static/img/club/escudo4807.png","10|Córdoba CF B":"https://futbolme.com/static/img/club/escudo4360.png","10|Dos Hermanas 1971":"https://futbolme.com/static/img/club/escudo11864.png","10|Egabrense":"https://futbolme.com/static/img/club/escudo6097.png","10|RB Linense":"https://futbolme.com/static/img/club/escudo79.png","10|RC Portuense":"https://futbolme.com/static/img/club/escudo4743.png","10|Real Betis C":"https://futbolme.com/static/img/club/escudo4419.png","10|San Roque de Lepe":"https://futbolme.com/static/img/club/escudo4625.png","10|Sevilla C":"https://futbolme.com/static/img/club/escudo4420.png","10|UD Tomares":"https://futbolme.com/static/img/club/escudo4777.png","10|Utrera":"https://futbolme.com/static/img/club/escudo4980.png","10|Xerez Deportivo":"https://futbolme.com/static/img/club/escudo8989.png","11|Binissalem":"https://futbolme.com/static/img/club/escudo4473.png","11|Cardassar":"https://futbolme.com/static/img/club/escudo2221.png","11|CD Migjorn":"https://futbolme.com/static/img/club/escudo3225.png","11|CE Andratx":"https://futbolme.com/static/img/club/escudo1932.png","11|Constància":"https://futbolme.com/static/img/club/escudo4827.png","11|Inter Ibiza":"https://futbolme.com/static/img/club/escudo9249.png","11|Llosetense":"https://futbolme.com/static/img/club/escudo4480.png","11|Manacor":"https://futbolme.com/static/img/club/escudo4739.png","11|Mercadal":"https://futbolme.com/static/img/club/escudo4702.png","11|PE Sant Jordi":"https://futbolme.com/static/img/club/escudo3671.png","11|Platges de Calvià":"https://futbolme.com/static/img/club/escudo4078.png","11|Santanyi":"https://futbolme.com/static/img/club/escudo4698.png","11|SD Formentera":"https://futbolme.com/static/img/club/escudo3840.png","11|SD Ibiza":"https://futbolme.com/static/img/club/escudo9249.png","11|Sineu":"https://futbolme.com/static/img/club/escudo8893.png","11|UD Arenal":"https://futbolme.com/static/img/club/escudo4632.png","11|UE Alcudia":"https://futbolme.com/static/img/club/escudo3.png","11|UE Porreres":"https://futbolme.com/static/img/club/escudo671.png","12|CD Laguna":"https://futbolme.com/static/img/club/escudo4601.png","12|CD Mensajero":"https://futbolme.com/static/img/club/escudo4413.png","12|CD San Miguel":"https://futbolme.com/static/img/club/escudo49.png","12|Estrella":"https://futbolme.com/static/img/club/escudo4843.png","12|Lanzarote":"https://futbolme.com/static/img/club/escudo4593.png","12|Llanos Aridane":"https://futbolme.com/static/img/club/escudo3170.png","12|Marino":"https://futbolme.com/static/img/club/escudo4323.png","12|Panadería Pulido":"https://futbolme.com/static/img/club/escudo8270.png","12|Playas de Sotavento":"https://futbolme.com/static/img/club/escudo4056.png","12|Real Unión Tenerife":"https://futbolme.com/static/img/club/escudo4411.png","12|San Bartolomé CF":"https://futbolme.com/static/img/club/escudo3758.png","12|SD Villaverde Norte":"https://futbolme.com/static/img/club/escudo588.png","12|Tenerife C":"https://futbolme.com/static/img/club/escudo4411.png","12|UD Añaza":"https://futbolme.com/static/img/club/escudo15312.png","12|UD Las Palmas C":"https://futbolme.com/static/img/club/escudo4449.png","12|UD San Fernando":"https://futbolme.com/static/img/club/escudo6428.png","12|Union Sur Yaiza":"https://futbolme.com/static/img/club/escudo2331.png","12|Villa Santa Brígida":"https://futbolme.com/static/img/club/escudo4084.png","13|Aguilas FC B":"https://futbolme.com/static/img/club/escudo4461.png","13|Alcantarilla FC":"https://futbolme.com/static/img/club/escudo9174.png","13|Atl. Santa Cruz":"https://futbolme.com/static/img/club/escudo14959.png","13|Atlético Pulpileño":"https://futbolme.com/static/img/club/escudo109.png","13|Bala Azul":"https://futbolme.com/static/img/club/escudo4700.png","13|Bullas Deportivo":"https://futbolme.com/static/img/club/escudo14935.png","13|CD Algar":"https://futbolme.com/static/img/club/escudo6379.png","13|CD Cotillas EG":"https://futbolme.com/static/img/club/escudo2548.png","13|Deportivo Marítimo":"https://futbolme.com/static/img/club/escudo5707.png","13|FC Cartagena B":"https://futbolme.com/static/img/club/escudo4234.png","13|Mar Menor San Javier":"https://futbolme.com/static/img/club/escudo15647.png","13|Mazarrón FC":"https://futbolme.com/static/img/club/escudo8935.png","13|Minerva":"https://futbolme.com/static/img/club/escudo8934.png","13|Olímpico de Totana":"https://futbolme.com/static/img/club/escudo4253.png","13|Santomera":"https://futbolme.com/static/img/club/escudo4455.png","13|UCAM Murcia B":"https://futbolme.com/static/img/club/escudo4582.png","13|UD Los Garres":"https://futbolme.com/static/img/club/escudo3169.png","13|Unión Molinense":"https://futbolme.com/static/img/club/escudo5951.png","14|AD Llerenense":"https://futbolme.com/static/img/club/escudo6032.png","14|Cabeza Del Buey":"https://futbolme.com/static/img/club/escudo16463.png","14|Castuera":"https://futbolme.com/static/img/club/escudo2249.png","14|CD Azuaga":"https://futbolme.com/static/img/club/escudo2062.png","14|CD Gévora":"https://futbolme.com/static/img/club/escudo8232.png","14|CD Quintana":"https://futbolme.com/static/img/club/escudo1405.png","14|CD Zafra":"https://futbolme.com/static/img/club/escudo9779.png","14|CF Jaraíz":"https://futbolme.com/static/img/club/escudo378.png","14|CF Villanovense":"https://futbolme.com/static/img/club/escudo4720.png","14|EF Puebla de la Calzada":"https://futbolme.com/static/img/club/escudo3508.png","14|Guadiana":"https://futbolme.com/static/img/club/escudo2888.png","14|Jerez":"https://futbolme.com/static/img/club/escudo4268.png","14|Moralo":"https://futbolme.com/static/img/club/escudo4568.png","14|Plasencia":"https://futbolme.com/static/img/club/escudo124.png","14|Pueblonuevo":"https://futbolme.com/static/img/club/escudo4337.png","14|Santa Amalia":"https://futbolme.com/static/img/club/escudo4591.png","14|UD Montijo":"https://futbolme.com/static/img/club/escudo3258.png","14|Villafranca":"https://futbolme.com/static/img/club/escudo99.png","15|AD San Juan":"https://futbolme.com/static/img/club/escudo4672.png","15|Aoiz":"https://futbolme.com/static/img/club/escudo4098.png","15|Avance Ezcabarte":"https://futbolme.com/static/img/club/escudo2262.png","15|Beti Kozkor":"https://futbolme.com/static/img/club/escudo8254.png","15|Beti Onak":"https://futbolme.com/static/img/club/escudo4408.png","15|Cantolagua":"https://futbolme.com/static/img/club/escudo2270.png","15|CD Cortes":"https://futbolme.com/static/img/club/escudo4160.png","15|CD Huarte":"https://futbolme.com/static/img/club/escudo4139.png","15|CD Pamplona":"https://futbolme.com/static/img/club/escudo4155.png","15|CD Valle de Egüés":"https://futbolme.com/static/img/club/escudo4353.png","15|Cirbonero":"https://futbolme.com/static/img/club/escudo4121.png","15|Doneztebe":"https://futbolme.com/static/img/club/escudo16489.png","15|FC Bidezarra":"https://futbolme.com/static/img/club/escudo9337.png","15|Gazte Berriak":"https://futbolme.com/static/img/club/escudo2282.png","15|Izarra":"https://futbolme.com/static/img/club/escudo4095.png","15|Mutilvera":"https://futbolme.com/static/img/club/escudo4685.png","15|Subiza":"https://futbolme.com/static/img/club/escudo2320.png","15|UDC Txantrea":"https://futbolme.com/static/img/club/escudo4219.png","16|Agoncillo":"https://futbolme.com/static/img/club/escudo4597.png","16|Anguiano":"https://futbolme.com/static/img/club/escudo4122.png","16|Calasancio":"https://futbolme.com/static/img/club/escudo4378.png","16|Casalarreina":"https://futbolme.com/static/img/club/escudo2230.png","16|CD Alfaro":"https://futbolme.com/static/img/club/escudo4616.png","16|CD Berceo":"https://futbolme.com/static/img/club/escudo4112.png","16|CD Calahorra":"https://futbolme.com/static/img/club/escudo4187.png","16|CD Varea":"https://futbolme.com/static/img/club/escudo4835.png","16|Cenicero":"https://futbolme.com/static/img/club/escudo4145.png","16|Comillas CF":"https://futbolme.com/static/img/club/escudo2361.png","16|Haro Deportivo":"https://futbolme.com/static/img/club/escudo4614.png","16|La Calzada":"https://futbolme.com/static/img/club/escudo3080.png","16|Oyonesa":"https://futbolme.com/static/img/club/escudo4111.png","16|Pradejón":"https://futbolme.com/static/img/club/escudo4652.png","16|River Ebro":"https://futbolme.com/static/img/club/escudo4728.png","16|San Marcial":"https://futbolme.com/static/img/club/escudo96.png","16|Vianés":"https://futbolme.com/static/img/club/escudo4338.png","16|Yagüe":"https://futbolme.com/static/img/club/escudo5075.png","17|Almudévar":"https://futbolme.com/static/img/club/escudo4933.png","17|Andorra CF":"https://futbolme.com/static/img/club/escudo4541.png","17|Atlético Monzón":"https://futbolme.com/static/img/club/escudo4544.png","17|Brea":"https://futbolme.com/static/img/club/escudo2162.png","17|CD Belchite 97":"https://futbolme.com/static/img/club/escudo2105.png","17|CD Binéfar":"https://futbolme.com/static/img/club/escudo4208.png","17|CD Caspe":"https://futbolme.com/static/img/club/escudo4293.png","17|CD Cuarte":"https://futbolme.com/static/img/club/escudo4639.png","17|CD La Almunia":"https://futbolme.com/static/img/club/escudo3074.png","17|CDJ Tamarite":"https://futbolme.com/static/img/club/escudo3965.png","17|CF Epila":"https://futbolme.com/static/img/club/escudo8167.png","17|Deportivo Aragón":"https://futbolme.com/static/img/club/escudo4396.png","17|Ejea":"https://futbolme.com/static/img/club/escudo4307.png","17|Huesca B":"https://futbolme.com/static/img/club/escudo4623.png","17|Illueca":"https://futbolme.com/static/img/club/escudo2966.png","17|Internacional Huesca":"https://futbolme.com/static/img/club/escudo4623.png","17|Robres":"https://futbolme.com/static/img/club/escudo4514.png","17|UD Fraga":"https://futbolme.com/static/img/club/escudo4046.png","18|AD San Clemente":"https://futbolme.com/static/img/club/escudo9353.png","18|CD Illescas":"https://futbolme.com/static/img/club/escudo4222.png","18|CD Manchego Ciudad Real":"https://futbolme.com/static/img/club/escudo2398.png","18|CD Marchamalo":"https://futbolme.com/static/img/club/escudo21.png","18|CD Noblejas":"https://futbolme.com/static/img/club/escudo3342.png","18|CD Quintanar del Rey":"https://futbolme.com/static/img/club/escudo4579.png","18|CD Tarancón":"https://futbolme.com/static/img/club/escudo6419.png","18|CD Toledo":"https://futbolme.com/static/img/club/escudo4186.png","18|CD Torrijos":"https://futbolme.com/static/img/club/escudo4664.png","18|CD Villacañas":"https://futbolme.com/static/img/club/escudo4099.png","18|CF La Solana":"https://futbolme.com/static/img/club/escudo3102.png","18|CP Villarrobledo":"https://futbolme.com/static/img/club/escudo4666.png","18|Guadalajara Promesas":"https://futbolme.com/static/img/club/escudo4661.png","18|Huracán de Balazote":"https://futbolme.com/static/img/club/escudo8950.png","18|UD Almansa":"https://futbolme.com/static/img/club/escudo111.png","18|UD Yugo Socuéllamos":"https://futbolme.com/static/img/club/escudo4635.png","18|Villa CD":"https://futbolme.com/static/img/club/escudo9794.png","18|Villarrubia CF":"https://futbolme.com/static/img/club/escudo4838.png"};
+const TF_CITY_LL={"Cangas":[-8.83035,42.27263],"Xinzo de Limia":[-7.70073,42.01898],"Carballiño":[-8.08081,42.44214],"Arteixo":[-8.50872,43.29868],"La Coruña":[-8.396,43.37135],"El Barco de Valdeorras":[-6.99005,42.41642],"Boiro":[-8.87826,42.65195],"A Estrada":[-8.48842,42.68911],"Lalín":[-8.11667,42.71667],"A Illa de Arousa":[-8.86725,42.54962],"Pontevedra":[-8.64435,42.431],"Portonovo":[-8.82563,42.39424],"Villalba":[-7.6813,43.29806],"Sarria":[2.1162,41.40269],"As Somozas":[-7.93333,43.53333],"Viveiro":[-7.59344,43.66228],"Navia":[-6.71935,43.53544],"Oviedo":[-5.87339,43.35796],"Avilés":[-5.93333,43.56667],"Mieres":[-5.76667,43.25],"Colunga":[-5.27009,43.48531],"Grado":[-6.09978,43.3134],"Pravia":[-6.1508,43.49063],"Siero":[-5.66667,43.38333],"Noreña":[-5.70828,43.39672],"San Martín del Rey Aurelio":[-5.61667,43.26667],"Villaviciosa":[-5.41763,43.47535],"Llanes":[-4.78878,43.41892],"El Entrego":[-5.638,43.28752],"Gijón":[-5.66152,43.53573],"Langreo":[-5.69938,43.2916],"Santander":[-3.81994,43.47225],"Reocín":[-4.1364,43.34852],"San Vicente de la Barquera":[-4.38436,43.37958],"Castro Urdiales":[-3.24397,43.38054],"Sarón":[-3.85179,43.32571],"Santa Cruz de Bezana":[-3.89898,43.46064],"Guarnizo":[-3.85534,43.39329],"Laredo":[-3.42404,43.40739],"Reinosa":[-4.13801,42.99959],"Piélagos":[-3.95,43.36667],"Camargo":[-3.85983,43.42054],"Medio Cudeyo":[-3.75243,43.38389],"Bárcena de Cicero":[-3.48577,43.40547],"Selaya":[-3.77178,43.20191],"Tanos":[-4.04009,43.33514],"Amurrio":[-3.0,43.05],"Aretxabaleta":[-2.4857,43.03019],"Beasain":[-2.21791,43.07326],"Vitoria":[-2.67268,42.84998],"Derio":[-2.88741,43.30541],"Azpeitia":[-2.26693,43.18246],"Eibar":[-2.47327,43.18426],"Leioa":[-2.98884,43.32686],"Pasaia":[-1.92707,43.3253],"San Sebastián":[-1.97499,43.31283],"Irún":[-1.78938,43.33904],"Santurce":[-2.05665,43.26657],"Durango":[-2.65343,43.16071],"Erandio":[-2.9464,43.30732],"Sodupe":[-3.04769,43.20447],"Rentería":[-1.89873,43.31253],"Lérida":[0.62218,41.61674],"Badalona":[2.24842,41.44826],"Barcelona":[2.15899,41.38879],"Sardañola del Vallés":[-3.60047,36.92777],"Peralada":[3.00768,42.3077],"La Pobla de Mafumet":[1.20919,41.18462],"Mollerusa":[-3.45572,38.07812],"Tarrasa":[-8.0259,42.60332],"Santa Coloma de Gramanet":[-2.63682,42.35842],"L'Escala":[3.13179,42.12248],"Hospitalet de Llobregat":[2.11172,41.36578],"Moncada y Reixach":[-0.39124,39.55679],"Cornellá de Llobregat":[2.07567,41.35633],"Tona":[2.22507,41.84642],"Vilasar de Mar":[-4.00938,43.4002],"Vilanova i la Geltrú":[1.72176,41.22231],"Elche":[-0.70107,38.26218],"Valencia":[-0.37966,39.47391],"Sagunto":[-0.26667,39.68333],"Atzeneta de Albaida":[-0.51721,38.83798],"Buñol":[-0.86908,39.42402],"Puerto de Sagunto":[-0.26667,39.68333],"Villarreal":[-7.21533,38.72572],"Utiel":[-1.20342,39.60144],"Crevillente":[-0.80975,38.24994],"Elda":[-0.79157,38.47783],"San Vicente del Raspeig":[-0.54963,38.43428],"Alicante":[-0.48149,38.34517],"Onteniente":[-0.60603,38.82191],"Torrevieja":[-0.67491,37.98956],"Soneja":[-0.38412,39.82466],"Torrente":[-0.4969,39.42591],"Vall de Uxó":[1.84021,42.39735],"Torrejón de Ardoz":[-3.45805,40.46746],"Pozuelo de Alarcón":[-3.8165,40.43004],"Madrid":[-3.70256,40.4165],"Móstoles":[-3.86496,40.32234],"Parla":[-3.77209,40.23378],"Fuenlabrada":[-3.7973,40.28854],"Galapagar":[-3.97669,40.55947],"Las Rozas":[-4.03289,42.97402],"Leganés":[-3.7635,40.32718],"Alcobendas":[-3.64197,40.54746],"Aranjuez":[-3.65907,40.0202],"Alcorcón":[-3.82487,40.34582],"San Sebastián de los Reyes":[-3.59417,40.57944],"Aranda de Duero":[-3.68365,41.69215],"Bembibre":[-6.41545,42.61771],"Mansilla de las Mulas":[-5.38405,42.4995],"Burgos":[-3.68221,42.34997],"Soria":[-2.47935,41.77016],"Ávila":[-4.66064,40.66864],"Villaralbo":[-5.66493,41.49988],"Guijuelo":[-5.67854,40.5704],"León":[-5.56716,42.57357],"La Virgen del Camino":[-5.64108,42.58058],"Miranda de Ebro":[-2.94695,42.6865],"Palencia":[-4.56492,41.98601],"Salamanca":[-5.68022,40.95597],"Almazán":[-2.53581,41.50284],"Turégano":[-4.00696,41.1561],"Santa Marta de Tormes":[-5.62398,40.94666],"Almería":[-2.33333,37.16667],"Armilla":[-3.61883,37.15097],"Málaga":[-4.42034,36.72016],"Marbella":[-4.88583,36.51543],"Porcuna":[-4.18501,37.87102],"Alhaurín el Grande":[-4.69079,36.64239],"Cantoria":[-2.16057,37.32998],"Motril":[-3.47028,36.73643],"Churriana de la Vega":[-3.63801,37.1541],"San Pedro de Alcántara":[-2.58556,43.37985],"Huétor Vega":[-3.56963,37.14529],"Mancha Real":[-3.60115,37.86352],"Granada":[-3.59078,37.18863],"Melilla":[-2.94434,35.29215],"Torre del Mar":[-4.09291,36.742],"Torredonjimeno":[-3.95776,37.76748],"Ceuta":[-5.31738,35.88682],"Huelva":[-6.92932,37.2582],"Bollullos Par del Condado":[-6.54478,37.33316],"Puerto Real":[-6.14715,36.53221],"Pozoblanco":[-4.8484,38.37235],"Chiclana de la Frontera":[-6.14367,36.41976],"Conil de la Frontera":[-6.0885,36.27719],"Córdoba":[-4.77768,37.90448],"Dos Hermanas":[-5.95985,37.25217],"Cabra":[-4.44206,37.47249],"La Línea de la Concepción":[-5.34777,36.16809],"El Puerto de Santa María":[-6.23298,36.59389],"Sevilla":[-5.97317,37.38283],"Lepe":[-7.19039,37.27891],"Tomares":[-6.04372,37.3727],"Utrera":[-5.78093,37.18516],"Jerez de la Frontera":[-6.13606,36.68645],"Binissalem":[2.84396,39.68744],"Sant Llorenç des Cardassar":[3.28268,39.6087],"Es Migjorn Gran":[4.03469,39.93952],"Andraitx":[-2.50455,43.03391],"Inca":[2.90588,39.71868],"Ibiza":[1.43577,38.90894],"Lloseta":[2.86589,39.71785],"Manacor":[3.20955,39.56964],"Es Mercadal":[4.10906,40.01455],"San José":[-2.10912,36.76048],"Calviá":[2.50621,39.5657],"Santanyí":[3.12819,39.35378],"Formentera":[1.45871,38.71905],"Sinéu":[3.00819,39.64271],"Llucmajor":[2.88983,39.49003],"Alcudia":[3.12138,39.85316],"Porreras":[0.85608,41.18883],"San Cristóbal de La Laguna":[-16.29962,28.5091],"Santa Cruz de La Palma":[-17.79415,28.70597],"San Miguel de Abona":[-16.61785,28.09712],"Santa Lucía de Tirajana":[-15.4891,27.87003],"Arrecife":[-13.54769,28.96302],"Los Llanos de Aridane":[-17.91821,28.65851],"Arona":[-16.68102,28.09962],"Vega de San Mateo":[-15.55304,27.99941],"Pájara":[-14.1076,28.35039],"Santa Cruz de Tenerife":[-16.25462,28.46824],"San Bartolomé":[-13.613,29.00093],"Fuerteventura":[-14.03074,28.38113],"Las Palmas de Gran Canaria":[-15.41573,28.10178],"San Bartolomé de Tirajana":[-15.58081,27.82506],"Yaiza":[-13.76535,28.95678],"Santa Brígida":[-15.49173,28.03132],"Águilas":[-1.55921,37.44703],"Alcantarilla":[-1.22963,37.97727],"Caravaca de la Cruz":[-2.03481,37.99116],"Pulpí":[-1.74496,37.41154],"Mazarrón":[-1.31493,37.5992],"Bullas":[-1.67227,38.04667],"El Algar":[-0.86699,37.6474],"Las Torres de Cotillas":[-1.26274,38.02478],"Cartagena":[-0.98397,37.60197],"San Javier":[-0.83728,37.80958],"Alumbres":[-0.91616,37.60607],"Totana":[-1.56479,37.77889],"Santomera":[-1.06892,38.08906],"Sangonera la Verde":[-1.20794,37.92862],"Los Garres":[-1.09151,37.95679],"Molina de Segura":[-1.1986,38.09564],"Llerena":[-6.0739,38.23537],"Cabeza del Buey":[-5.21946,38.72227],"Castuera":[-5.46891,38.78915],"Azuaga":[-5.68333,38.26667],"Gévora":[-6.98,38.92],"Quintana de la Serena":[-5.67233,38.74595],"Zafra":[-6.4572,38.44471],"Jaraíz de la Vera":[-5.75231,40.03407],"Villanueva de la Serena":[-5.73039,39.00931],"Puebla de la Calzada":[-6.62698,38.87934],"Guadiana":[-3.22043,37.90826],"Jerez de los Caballeros":[-6.7726,38.32063],"Navalmoral de la Mata":[-5.56202,39.93694],"Plasencia":[-6.14341,40.01244],"Pueblonuevo del Guadiana":[-6.76594,38.93744],"Santa Amalia":[-6.01158,39.01118],"Montijo":[-6.61785,38.90839],"Villafranca de los Barros":[-6.3381,38.56144],"Pamplona":[-1.64323,42.81687],"Aoiz":[-1.37252,42.78633],"Ezcabarte":[-1.63533,42.87729],"Lecumberri":[-1.90389,43.00608],"Villava":[-1.60933,42.83223],"Sangüesa":[-1.26114,42.57154],"Cortes":[-1.43961,41.93946],"Huarte":[-1.59087,42.83035],"Egüés":[-1.56673,42.81347],"Cintruénigo":[-1.8088,42.07769],"Doneztebe":[-1.67031,43.13503],"Noáin":[-1.63448,42.76239],"Ansoáin":[-1.64045,42.83586],"Estella":[-2.03226,42.67182],"Mutilva":[-1.62126,42.78753],"Subiza":[-1.67172,42.7177],"Agoncillo":[-2.27884,42.43622],"Anguiano":[-2.76463,42.26381],"Calahorra":[-1.95262,42.30787],"Casalarreina":[-2.90537,42.54737],"Alfaro":[-1.82434,42.15962],"Logroño":[-2.45115,42.46615],"Cenicero":[-2.64503,42.47934],"Haro":[-2.8476,42.57634],"Santo Domingo de la Calzada":[-2.9555,42.42847],"Oyón":[-2.43638,42.50571],"Pradejón":[-2.04225,42.32684],"Rincón de Soto":[-1.8477,42.2377],"Lardero":[-2.47206,42.41409],"Viana":[-2.3495,42.4944],"Almudévar":[-0.58483,42.06353],"Andorra":[-0.44721,40.97655],"Monzón":[0.17021,41.90231],"Brea de Aragón":[-1.60261,41.52387],"Belchite":[-0.754,41.306],"Binéfar":[0.29683,41.84881],"Caspe":[-0.02252,41.26919],"Cuarte de Huerva":[-0.92652,41.59259],"La Almunia de Doña Godina":[-1.37451,41.4767],"Tamarite de Litera":[0.39098,41.81441],"Épila":[-1.33241,41.591],"Zaragoza":[-0.88303,41.64829],"Ejea de los Caballeros":[-1.13716,42.12632],"Huesca":[-0.41253,42.14838],"Illueca":[-1.62747,41.53818],"Robres":[-0.48055,41.86176],"Fraga":[0.19751,41.47828],"San Clemente":[-2.43607,39.43146],"Illescas":[-3.85713,40.13581],"Ciudad Real":[-3.98099,38.95542],"Marchamalo":[-3.20822,40.68427],"Noblejas":[-3.42577,40.00253],"Quintanar del Rey":[-1.93892,39.33819],"Tarancón":[-2.99984,40.00851],"Toledo":[-4.02263,39.8581],"Torrijos":[-4.28108,39.98377],"Villacañas":[-3.33813,39.62367],"La Solana":[-3.2381,38.94422],"Villarrobledo":[-2.60119,39.26992],"Guadalajara":[-3.16185,40.62862],"Balazote":[-2.1518,38.88444],"Almansa":[-1.12445,38.83324],"Socuéllamos":[-2.83447,39.27038],"Villarrubia de los Ojos":[-3.60802,39.22085]};
+Object.assign(TF_CITY_LL,{"La Oliva":[-13.93,28.61],"Sarria": [-7.4143, 42.7807], "Tarrasa": [2.011, 41.563], "Sardañola del Vallés": [2.139, 41.491], "Villarreal": [-0.102, 39.938], "San Pedro de Alcántara": [-4.992, 36.487], "Andraitx": [2.373, 39.574], "Mollerusa": [0.894, 41.631], "Vilasar de Mar": [2.392, 41.505], "San José": [1.382, 38.889], "Santa Coloma de Gramanet": [2.209, 41.451], "Vall de Uxó": [-0.237, 39.823], "Guadiana": [-6.69, 38.93], "Moncada y Reixach": [2.189, 41.486], "Las Rozas": [-3.873, 40.492], "Porreras": [3.021, 39.514]});
+const TF_DATA=[["I","Galicia",[["Alondras CF",0.3,"4-4-2","O Morrazo","Cangas"],["Antela FC",0.2,"4-4-2","A Moreira","Xinzo de Limia"],["Arenteiro",0.8,"4-2-3-1","Espiñedo","Carballiño"],["At. Arteixo",0.25,"4-4-2","Municipal de Arzúa","Arteixo"],["At. Coruña Montañeros",0.2,"4-3-3","Rodrigo García Vizoso","La Coruña"],["Barco",0.3,"4-4-2","Calabagueiros","El Barco de Valdeorras"],["Boiro",0.35,"4-4-2","Barraña","Boiro"],["CD Estradense",0.25,"4-4-2","Municipal de A Estrada","A Estrada"],["CD Lalín",0.25,"4-4-2","Cortizo","Lalín"],["Céltiga FC",0.2,"4-4-2","Isla de San Simón","A Illa de Arousa"],["Gran Peña",0.15,"4-3-3","Baltar","Pontevedra"],["Pontevedra B",0.15,"4-3-3","A Xunqueira","Pontevedra"],["Portonovo",0.2,"4-4-2","Baltar","Portonovo"],["RC Villalbés",0.4,"4-2-3-1","A Cheda","Villalba"],["SD Sarriana",0.25,"4-4-2","A Ribela","Sarria"],["Silva SD",0.25,"4-4-2","Grela 1","La Coruña"],["Somozas",0.4,"4-4-2","Pardiñas","As Somozas"],["Viveiro",0.25,"4-4-2","Cantarrana","Viveiro"]]],["II","Asturias",[["Andés",0.2,"4-4-2","San Pedro","Navia"],["Astur",0.2,"4-4-2","Hermanos Llana","Oviedo"],["Avilés Stadium",0.25,"4-4-2","Muro de Zata","Avilés"],["Caudal Deportivo",0.5,"4-2-3-1","El Hermanos Antuña","Mieres"],["CD Colunga",0.2,"4-4-2","Santianes","Colunga"],["CD Covadonga",0.35,"4-3-3","Rabearte","Oviedo"],["CD Mosconia",0.2,"4-4-2","El Marqués","Grado"],["CD Praviano",0.25,"4-4-2","Santa Catalina","Pravia"],["Club Siero",0.2,"4-4-2","El Berrón","Siero"],["Condal",0.2,"4-4-2","Alejandro Ortea","Noreña"],["EI San Martín",0.2,"4-4-2","El Florán","San Martín del Rey Aurelio"],["Lealtad Villaviciosa",0.45,"4-2-3-1","Les Caleyes","Villaviciosa"],["Llanes",0.25,"4-4-2","San José","Llanes"],["L´Entregu CF",0.35,"4-4-2","Nuevo Nalón","El Entrego"],["Sporting Atlético",0.2,"4-3-3","Escuela de Fútbol de Mareo","Gijón"],["UC Ceares",0.25,"4-4-2","La Cruz","Gijón"],["UD Gijón Industrial",0.2,"4-4-2","Santa Cruz","Gijón"],["UP Langreo",0.6,"4-2-3-1","Ganzábal","Langreo"]]],["III","Cantabria",[["Atlético Albericia",0.25,"4-4-2","Juan Hormaechea","Santander"],["Atlético Mineros",0.2,"4-4-2","Municipal de Reocín","Reocín"],["Barquereño",0.2,"4-4-2","El Castañar","San Vicente de la Barquera"],["Castro",0.25,"4-4-2","Riomar","Castro Urdiales"],["Cayón",0.4,"4-2-3-1","Fernando Astobiza","Sarón"],["CD Bezana",0.25,"4-4-2","Municipal de Bezana","Santa Cruz de Bezana"],["CD Guarnizo",0.25,"4-4-2","El Pilar","Guarnizo"],["CD Laredo",0.5,"4-2-3-1","San Lorenzo","Laredo"],["CD Naval",0.25,"4-4-2","San Francisco","Reinosa"],["CF Vimenor",0.25,"4-4-2","La Vidriera","Piélagos"],["Revilla",0.2,"4-4-2","El Crucero","Camargo"],["Sámano",0.2,"4-4-2","Vallegón","Castro Urdiales"],["SD Solares",0.2,"4-4-2","La Estación","Medio Cudeyo"],["SD Torina",0.2,"4-4-2","Municipal del Alisal","Bárcena de Cicero"],["Selaya",0.2,"4-4-2","El Caruco","Selaya"],["Tropezón",0.35,"4-4-2","Santa Ana","Tanos"],["UM Escobedo",0.35,"4-2-3-1","Eusebio Arce","Camargo"],["Velarde CF",0.2,"4-4-2","La Maruca","Camargo"]]],["IV","País Vasco",[["Amurrio",0.25,"4-4-2","Basarte","Amurrio"],["Aretxabaleta",0.2,"4-4-2","Ibarra","Aretxabaleta"],["Beasain KE",0.4,"4-2-3-1","Loinaz","Beasain"],["CD Aurrera Vitoria",0.25,"4-4-2","Olaranbe","Vitoria"],["CD Derio",0.25,"4-4-2","Municipal de Derio","Derio"],["CD Lagun Onak",0.3,"4-4-2","Garmendipe","Azpeitia"],["Deportivo Alavés C",0.15,"4-3-3","Ibaia","Vitoria"],["Eibar C",0.15,"4-3-3","Unbe","Eibar"],["Leioa",0.35,"4-2-3-1","Sarriena","Leioa"],["Pasaia KE",0.2,"4-4-2","Don Bosco","Pasaia"],["Real Sociedad C",0.3,"4-3-3","Zubieta","San Sebastián"],["Real Unión Club B",0.15,"4-3-3","Stadium Gal - Anexo","Irún"],["San Ignacio",0.25,"4-4-2","Adurtzabal","Vitoria"],["Santurtzi",0.25,"4-4-2","San Jorge","Santurce"],["SCD Durango",0.35,"4-4-2","Tabira","Durango"],["SD Erandio",0.2,"4-4-2","Ategorri","Erandio"],["Sodupe",0.2,"4-4-2","Hurtado de Amezaga","Sodupe"],["Touring KE",0.2,"4-4-2","Fanderia","Rentería"]]],["V","Cataluña",[["Atlètic Lleida",0.35,"4-3-3","Ramon Farrús","Lérida"],["Badalona",0.5,"4-2-3-1","Municipal de Badalona","Badalona"],["CE Europa B",0.15,"4-3-3","Nou Sardenya","Barcelona"],["Cerdanyola FC",0.4,"4-2-3-1","Fontetes","Sardañola del Vallés"],["CF Peralada",0.3,"4-4-2","Municipal de Peralada","Peralada"],["CF Pobla de Mafumet",0.3,"4-3-3","Municipal de la Pobla","La Pobla de Mafumet"],["CFJ Mollerussa",0.25,"4-4-2","Camp Municipal de Mollerusa","Mollerusa"],["CP San Cristóbal",0.25,"4-4-2","Ca N'Anglada","Tarrasa"],["FE Grama",0.3,"4-3-3","Nou Municipal de Santa Coloma","Santa Coloma de Gramanet"],["L'Escala",0.25,"4-4-2","Municipal de L'Escala","L'Escala"],["L´Hospitalet",0.6,"4-2-3-1","Municipal de L'Hospitalet","Hospitalet de Llobregat"],["Martinenc",0.25,"4-4-2","Municipal del Guinardó","Barcelona"],["Montañesa",0.35,"4-4-2","Nou Barris","Barcelona"],["San Juan At. Montcada",0.2,"4-4-2","Municipal de Montcada","Moncada y Reixach"],["UE Cornellà",0.7,"4-3-3","Nou Municipal de Cornellà","Cornellá de Llobregat"],["UE Tona",0.25,"4-4-2","Municipal de Tona","Tona"],["UE Vilassar de Mar",0.25,"4-4-2","Xevi Ramon","Vilasar de Mar"],["Vilanova i la Geltrú CF",0.3,"4-4-2","Municipal dels Alumnes Operaris","Vilanova i la Geltrú"]]],["VI","Comunidad Valenciana",[["AC Torrellano",0.25,"4-4-2","Municipal de Torrellano","Elche"],["At. Levante",0.5,"4-3-3","Ciudad de Valencia - Anexo","Valencia"],["At. Saguntino",0.45,"4-2-3-1","Nou Morvedre","Sagunto"],["Atzeneta",0.35,"4-4-2","El Regit","Atzeneta de Albaida"],["Buñol",0.2,"4-4-2","Beltrán Baguena","Buñol"],["CD Acero",0.25,"4-4-2","El Fornàs","Puerto de Sagunto"],["CD Roda",0.35,"4-3-3","Ciudad Deportiva Pamesa","Villarreal"],["CD Utiel",0.25,"4-4-2","La Celadilla","Utiel"],["Crevillente Deportivo",0.25,"4-4-2","Enrique Miralles","Crevillente"],["Eldense B",0.15,"4-3-3","Nuevo Pepico Amat - Anexo","Elda"],["Español de San Vicente",0.2,"4-4-2","Ciudad Deportiva San Vicente","San Vicente del Raspeig"],["Hércules B",0.15,"4-3-3","Divina Pastora","Alicante"],["Ontinyent 1931",0.35,"4-4-2","El Clariano","Onteniente"],["SC Torrevieja",0.25,"4-4-2","Nelson Mandela","Torrevieja"],["Soneja",0.2,"4-4-2","El Arco","Soneja"],["Torrent CF",0.5,"4-2-3-1","San Gregorio","Torrente"],["UD Vall de Uxó",0.25,"4-4-2","José Mangriñán","Vall de Uxó"],["Villarreal C",0.5,"4-3-3","Ciudad Deportiva José Manuel Llaneza","Villarreal"]]],["VII","Comunidad de Madrid",[["AD Torrejón CF",0.35,"4-4-2","Las Veredillas","Torrejón de Ardoz"],["Cala Pozuelo",0.25,"4-4-2","Valle de las Cañas","Pozuelo de Alarcón"],["CD Colonia Moscardó",0.35,"4-4-2","Román Valero","Madrid"],["CD Móstoles URJC",0.5,"4-2-3-1","El Soto","Móstoles"],["CF Pozuelo",0.25,"4-4-2","Valle de las Cañas","Pozuelo de Alarcón"],["CP Parla Escuela",0.2,"4-4-2","Las Americas","Parla"],["Fuenlabrada",1.2,"4-2-3-1","Fernando Torres","Fuenlabrada"],["Galapagar",0.25,"4-4-2","El Chopo","Galapagar"],["Las Rozas",0.45,"4-2-3-1","Dehesa de Navalcarbón","Las Rozas"],["Leganés B",0.5,"4-3-3","Instalaciones Deportivas Butarque","Leganés"],["México FC",0.25,"4-3-3","García de la Mata","Madrid"],["Rayo C. Alcobendas",0.25,"4-4-2","José Luis Marqués","Alcobendas"],["Rayo Vallecano B",0.5,"4-3-3","Ciudad Deportiva Rayo Vallecano","Madrid"],["Real Aranjuez CF",0.2,"4-4-2","El Deleite","Aranjuez"],["Siello FC",0.2,"4-4-2","Municipal","Madrid"],["Trival Valderas",0.25,"4-4-2","La Estación","Alcorcón"],["UD Sanse B",0.15,"4-3-3","Matapiñonera","San Sebastián de los Reyes"],["Unión Adarve",0.45,"4-3-3","Vicente del Bosque","Madrid"]]],["VIII","Castilla y León",[["Arandina",0.5,"4-2-3-1","El Montecillo","Aranda de Duero"],["Atl. Bembibre",0.25,"4-4-2","La Devesa","Bembibre"],["Atl. Mansillés",0.2,"4-4-2","Municipal de Mansilla","Mansilla de las Mulas"],["Burgos CF B",0.5,"4-3-3","Castañares","Burgos"],["Calasanz de Soria",0.2,"4-4-2","José Andrés Diarte","Soria"],["CD Colegios Diocesanos",0.2,"4-4-2","Sancti Spíritu","Ávila"],["CD Villaralbo",0.2,"4-4-2","Los Barreros","Villaralbo"],["Guijuelo",0.6,"4-2-3-1","Municipal de Guijuelo","Guijuelo"],["Júpiter Leonés",0.3,"4-3-3","Área Deportiva de Puente Castro","León"],["La Virgen del Camino",0.25,"4-4-2","Los Dominicos","La Virgen del Camino"],["Mirandés B",0.2,"4-3-3","Ence","Miranda de Ebro"],["Palencia CF",0.45,"4-2-3-1","Nueva Balastera","Palencia"],["Palencia Cristo Atlético",0.5,"4-2-3-1","Nueva Balastera","Palencia"],["Salamanca UDS B",0.3,"4-3-3","Helmántico - Anexo","Salamanca"],["SD Almazán",0.25,"4-4-2","La Arboleda","Almazán"],["Turégano",0.2,"4-4-2","El Burgo","Turégano"],["UD Santa Marta",0.25,"4-4-2","Alfonso San Casto","Santa Marta de Tormes"],["Unionistas Salamanca B",0.15,"4-3-3","Reina Sofía - Anexo","Salamanca"]]],["IX","Andalucía oriental y Melilla",[["Almería B",0.6,"4-3-3","Anexo Estadio Juegos Mediterráneos","Almería"],["Arenas de Armilla",0.25,"4-4-2","Municipal de Armilla","Armilla"],["At. Malagueño",0.7,"4-3-3","Federación Malagueña","Málaga"],["At. Marbella Paraíso",0.25,"4-4-2","Luis Teruel Aguilar","Marbella"],["Atletico Porcuna",0.2,"4-4-2","San Benito","Porcuna"],["CD Alhaurino",0.25,"4-4-2","Los Manantiales","Alhaurín el Grande"],["CD Cantoria",0.2,"4-4-2","Los Olivos","Cantoria"],["CF Motril",0.35,"4-4-2","Escribano Castilla","Motril"],["Churriana de la Vega",0.2,"4-4-2","El Tivoli","Churriana de la Vega"],["FC Marbellí",0.25,"4-4-2","Antonio Naranjo","San Pedro de Alcántara"],["Huétor Vega",0.25,"4-4-2","Las Viñas","Huétor Vega"],["Málaga Juniors",0.15,"4-3-3","Ciudad Deportiva MCF","Málaga"],["Mancha Real",0.35,"4-2-3-1","La Juventud","Mancha Real"],["Recreativo Granada",0.6,"4-3-3","Ciudad Deportiva GCF","Granada"],["UD Melilla",0.8,"4-2-3-1","Municipal Álvarez Claro","Melilla"],["UD San Pedro",0.2,"4-4-2","Municipal de San Pedro","San Pedro de Alcántara"],["UD Torre Del Mar",0.35,"4-4-2","Juan Manuel Azuaga","Torre del Mar"],["UDC Torredonjimeno",0.25,"4-4-2","Matías Prats","Torredonjimeno"]]],["X","Andalucía occidental y Ceuta",[["AD Ceuta FC B",0.3,"4-3-3","José Martínez 'Pirri'","Ceuta"],["Atlético Onubense",0.3,"4-3-3","Ciudad Deportiva Decano","Huelva"],["Bollullos CF",0.25,"4-4-2","Eloy Ávila Cano","Bollullos Par del Condado"],["Cádiz CF Mirandilla",0.6,"4-3-3","El Rosal","Puerto Real"],["CD Pozoblanco",0.25,"4-4-2","Municipal de Pozoblanco","Pozoblanco"],["Chiclana CF",0.25,"4-4-2","Municipal de Chiclana","Chiclana de la Frontera"],["Conil",0.25,"4-4-2","Municipal de Conil","Conil de la Frontera"],["Córdoba CF B",0.5,"4-3-3","Ciudad Deportiva AFC","Córdoba"],["Dos Hermanas 1971",0.25,"4-4-2","Miguel Román","Dos Hermanas"],["Egabrense",0.2,"4-4-2","Municipal de Cabra","Cabra"],["RB Linense",0.8,"4-2-3-1","Municipal de La Línea","La Línea de la Concepción"],["RC Portuense",0.25,"4-4-2","José del Cuvillo","El Puerto de Santa María"],["Real Betis C",0.15,"4-3-3","Luis del Sol","Sevilla"],["San Roque de Lepe",0.45,"4-2-3-1","Ciudad de Lepe","Lepe"],["Sevilla C",0.3,"4-3-3","Ciudad Deportiva José Ramón Cisneros","Sevilla"],["UD Tomares",0.2,"4-4-2","San Sebastián","Tomares"],["Utrera",0.35,"4-4-2","San Juan Bosco","Utrera"],["Xerez Deportivo",0.8,"4-2-3-1","Municipal de Chapín","Jerez de la Frontera"]]],["XI","Islas Baleares",[["Binissalem",0.25,"4-4-2","Miquel Pons","Binissalem"],["Cardassar",0.2,"4-4-2","Es Moleter","Sant Llorenç des Cardassar"],["CD Migjorn",0.2,"4-4-2","Los Pinos","Es Migjorn Gran"],["CE Andratx",0.45,"4-2-3-1","Sa Plana","Andraitx"],["Constància",0.35,"4-4-2","Camp Nou d'Inca","Inca"],["Inter Ibiza",0.25,"4-4-2","Can Misses - Anexo","Ibiza"],["Llosetense",0.25,"4-4-2","Municipal de Lloseta","Lloseta"],["Manacor",0.25,"4-4-2","Na Capellera","Manacor"],["Mercadal",0.2,"4-4-2","San Martí","Es Mercadal"],["PE Sant Jordi",0.2,"4-4-2","Kiko Serra","San José"],["Platges de Calvià",0.35,"4-4-2","Municipal de Magaluf","Calviá"],["Santanyi",0.25,"4-4-2","Municipal de Santanyí","Santanyí"],["SD Formentera",0.45,"4-2-3-1","Municipal de San Francisco","Formentera"],["SD Ibiza",0.35,"4-4-2","Can Misses","Ibiza"],["Sineu",0.2,"4-4-2","Municipal de Sineu","Sinéu"],["UD Arenal",0.2,"4-4-2","Municipal s'Arenal","Llucmajor"],["UE Alcudia",0.2,"4-4-2","Municipal de Alcúdia","Alcudia"],["UE Porreres",0.2,"4-4-2","Municipal de Porreres","Porreras"]]],["XII","Islas Canarias",[["CD Laguna",0.2,"4-4-2","Francisco Peraza","San Cristóbal de La Laguna"],["CD Mensajero",0.45,"4-2-3-1","Silvestre Carrillo","Santa Cruz de La Palma"],["CD San Miguel",0.2,"4-4-2","Paco Tejera","San Miguel de Abona"],["Estrella",0.2,"4-4-2","Las Palmitas","Santa Lucía de Tirajana"],["Lanzarote",0.45,"4-2-3-1","Ciudad Deportiva de Lanzarote","Arrecife"],["Llanos Aridane",0.2,"4-4-2","Municipal Aceró","Los Llanos de Aridane"],["Marino",0.25,"4-4-2","Antonio Domínguez Alfonso","Arona"],["Panadería Pulido",0.35,"4-4-2","San Mateo","Vega de San Mateo"],["Playas de Sotavento",0.2,"4-4-2","Municipal de Morro Jable","Pájara"],["Real Unión Tenerife",0.2,"4-4-2","La Salud","Santa Cruz de Tenerife"],["San Bartolomé CF",0.2,"4-4-2","Municipal de San Bartolomé","San Bartolomé"],["SD Villaverde Norte",0.2,"4-4-2","La Oliva","Fuerteventura"],["Tenerife C",0.15,"4-3-3","Ciudad Deportiva Javier Pérez","San Cristóbal de La Laguna"],["UD Añaza",0.2,"4-4-2","Municipal de Añaza","Santa Cruz de Tenerife"],["UD Las Palmas C",0.15,"4-3-3","Anexo Estadio Gran Canaria","Las Palmas de Gran Canaria"],["UD San Fernando",0.45,"4-2-3-1","Ciudad Deportiva de Maspalomas","San Bartolomé de Tirajana"],["Union Sur Yaiza",0.35,"4-4-2","Municipal de Yaiza","Yaiza"],["Villa Santa Brígida",0.25,"4-4-2","El Guiniguada","Santa Brígida"]]],["XIII","Región de Murcia",[["Aguilas FC B",0.15,"4-3-3","El Rubial - Anexo","Águilas"],["Alcantarilla FC",0.2,"4-4-2","Ángel Sornichero","Alcantarilla"],["Atl. Santa Cruz",0.2,"4-4-2","Municipal de Caravaca","Caravaca de la Cruz"],["Atlético Pulpileño",0.35,"4-4-2","San Miguel","Pulpí"],["Bala Azul",0.2,"4-4-2","Playas de Mazarrón","Mazarrón"],["Bullas Deportivo",0.2,"4-4-2","Nicolás de las Peñas","Bullas"],["CD Algar",0.2,"4-4-2","Sánchez Luengo","El Algar"],["CD Cotillas EG",0.2,"4-4-2","Municipal de Las Torres","Las Torres de Cotillas"],["Deportivo Marítimo",0.2,"4-4-2","Mundial 82","Cartagena"],["FC Cartagena B",0.5,"4-3-3","Ciudad Deportiva Gómez Meseguer","Cartagena"],["Mar Menor San Javier",0.45,"4-2-3-1","Pitín","San Javier"],["Mazarrón FC",0.2,"4-4-2","Municipal de Mazarrón","Mazarrón"],["Minerva",0.2,"4-4-2","El Secante","Alumbres"],["Olímpico de Totana",0.2,"4-4-2","Juan Cayuela","Totana"],["Santomera",0.2,"4-4-2","El Limonar","Santomera"],["UCAM Murcia B",0.3,"4-3-3","El Mayayo","Sangonera la Verde"],["UD Los Garres",0.2,"4-4-2","Las Jonqueras","Los Garres"],["Unión Molinense",0.35,"4-4-2","Sánchez Cánovas","Molina de Segura"]]],["XIV","Extremadura",[["AD Llerenense",0.35,"4-4-2","Fernando Robledo","Llerena"],["Cabeza Del Buey",0.2,"4-4-2","Municipal de Cabeza del Buey","Cabeza del Buey"],["Castuera",0.2,"4-4-2","El Guijar","Castuera"],["CD Azuaga",0.25,"4-4-2","Municipal de Deportes","Azuaga"],["CD Gévora",0.2,"4-4-2","Municipal de Gévora","Gévora"],["CD Quintana",0.2,"4-4-2","Municipal de Quintana","Quintana de la Serena"],["CD Zafra",0.25,"4-4-2","Nuevo Estadio de Zafra","Zafra"],["CF Jaraíz",0.2,"4-4-2","Municipal de Jaraíz","Jaraíz de la Vera"],["CF Villanovense",0.5,"4-2-3-1","Municipal Villanovense","Villanueva de la Serena"],["EF Puebla de la Calzada",0.2,"4-4-2","Municipal de Puebla","Puebla de la Calzada"],["Guadiana",0.2,"4-4-2","Municipal de Guadiana","Guadiana"],["Jerez",0.25,"4-4-2","Manuel Calzado Galván","Jerez de los Caballeros"],["Moralo",0.35,"4-4-2","Municipal de Deportes","Navalmoral de la Mata"],["Plasencia",0.35,"4-4-2","Municipal de Plasencia","Plasencia"],["Pueblonuevo",0.2,"4-4-2","Antonio Amaya","Pueblonuevo del Guadiana"],["Santa Amalia",0.2,"4-4-2","Municipal de Santa Amalia","Santa Amalia"],["UD Montijo",0.35,"4-4-2","Municipal de Montijo","Montijo"],["Villafranca",0.25,"4-4-2","Municipal de Villafranca","Villafranca de los Barros"]]],["XV","Navarra",[["AD San Juan",0.35,"4-4-2","San Juan","Pamplona"],["Aoiz",0.2,"4-4-2","Nuevo Terraplén","Aoiz"],["Avance Ezcabarte",0.2,"4-4-2","Igaro","Ezcabarte"],["Beti Kozkor",0.25,"4-4-2","Gurutzeta","Lecumberri"],["Beti Onak",0.25,"4-4-2","Lorenzo Goikoa","Villava"],["Cantolagua",0.25,"4-4-2","Municipal de Cantolagua","Sangüesa"],["CD Cortes",0.25,"4-4-2","San Francisco Javier","Cortes"],["CD Huarte",0.3,"4-4-2","Areta","Huarte"],["CD Pamplona",0.25,"4-4-2","Lizarraga","Pamplona"],["CD Valle de Egüés",0.35,"4-4-2","Sarriguren","Egüés"],["Cirbonero",0.3,"4-4-2","San Juan","Cintruénigo"],["Doneztebe",0.2,"4-4-2","Mitxiko","Doneztebe"],["FC Bidezarra",0.2,"4-4-2","Municipal de Noáin","Noáin"],["Gazte Berriak",0.2,"4-4-2","Ansoáin","Ansoáin"],["Izarra",0.5,"4-2-3-1","Merkatugaray","Estella"],["Mutilvera",0.45,"4-2-3-1","Mutilnova","Mutilva"],["Subiza",0.3,"4-4-2","Sotoburu","Subiza"],["UDC Txantrea",0.35,"4-4-2","Chantrea","Pamplona"]]],["XVI","La Rioja",[["Agoncillo",0.2,"4-4-2","San Roque","Agoncillo"],["Anguiano",0.3,"4-4-2","Isla","Anguiano"],["Calasancio",0.2,"4-4-2","La Planilla - Anexo","Calahorra"],["Casalarreina",0.2,"4-4-2","El Soto","Casalarreina"],["CD Alfaro",0.35,"4-4-2","La Molineta","Alfaro"],["CD Berceo",0.2,"4-4-2","La Isla","Logroño"],["CD Calahorra",0.6,"4-2-3-1","La Planilla","Calahorra"],["CD Varea",0.35,"4-4-2","Municipal de Varea","Logroño"],["Cenicero",0.2,"4-4-2","Las Viñas","Cenicero"],["Comillas CF",0.2,"4-4-2","Mundial 82","Logroño"],["Haro Deportivo",0.45,"4-2-3-1","El Mazo","Haro"],["La Calzada",0.25,"4-4-2","El Rollo","Santo Domingo de la Calzada"],["Oyonesa",0.25,"4-4-2","Oion Arena","Oyón"],["Pradejón",0.25,"4-4-2","Municipal de Pradejón","Pradejón"],["River Ebro",0.2,"4-4-2","San Miguel","Rincón de Soto"],["San Marcial",0.2,"4-4-2","Ángel Marcos","Lardero"],["Vianés",0.2,"4-4-2","Municipal de Viana","Viana"],["Yagüe",0.2,"4-4-2","El Salvador","Logroño"]]],["XVII","Aragón",[["Almudévar",0.25,"4-4-2","La Corona","Almudévar"],["Andorra CF",0.35,"4-4-2","Juan Antonio Endeiza","Andorra"],["Atlético Monzón",0.3,"4-4-2","Isidro Calderón","Monzón"],["Brea",0.35,"4-4-2","Piedrabuena","Brea de Aragón"],["CD Belchite 97",0.2,"4-4-2","Municipal de Belchite","Belchite"],["CD Binéfar",0.3,"4-4-2","Los Olmos","Binéfar"],["CD Caspe",0.25,"4-4-2","Los Rosales","Caspe"],["CD Cuarte",0.35,"4-4-2","Municipal de Cuarte","Cuarte de Huerva"],["CD La Almunia",0.2,"4-4-2","Tenerías","La Almunia de Doña Godina"],["CDJ Tamarite",0.2,"4-4-2","La Colomina","Tamarite de Litera"],["CF Epila",0.3,"4-4-2","La Huerta","Épila"],["Deportivo Aragón",0.6,"4-3-3","Ciudad Deportiva Real Zaragoza","Zaragoza"],["Ejea",0.45,"4-2-3-1","Municipal de Ejea","Ejea de los Caballeros"],["Huesca B",0.4,"4-3-3","Base Aragonesa de Fútbol","Huesca"],["Illueca",0.3,"4-4-2","Papa Luna","Illueca"],["Internacional Huesca",0.2,"4-4-2","San Jorge","Huesca"],["Robres",0.25,"4-4-2","San Blas","Robres"],["UD Fraga",0.2,"4-4-2","La Lasanta","Fraga"]]],["XVIII","Castilla-La Mancha",[["AD San Clemente",0.2,"4-4-2","Municipal de San Clemente","San Clemente"],["CD Illescas",0.45,"4-2-3-1","Municipal de Illescas","Illescas"],["CD Manchego Ciudad Real",0.5,"4-2-3-1","Rey Juan Carlos I","Ciudad Real"],["CD Marchamalo",0.35,"4-4-2","La Solana","Marchamalo"],["CD Noblejas",0.2,"4-4-2","Ángel Luengo","Noblejas"],["CD Quintanar del Rey",0.45,"4-2-3-1","San Marcos","Quintanar del Rey"],["CD Tarancón",0.25,"4-4-2","Municipal de Tarancón","Tarancón"],["CD Toledo",0.8,"4-2-3-1","Salto del Caballo","Toledo"],["CD Torrijos",0.25,"4-4-2","San Francisco","Torrijos"],["CD Villacañas",0.25,"4-4-2","Las Peñuelas","Villacañas"],["CF La Solana",0.25,"4-4-2","La Moheda","La Solana"],["CP Villarrobledo",0.35,"4-4-2","Nuestra Señora de la Caridad","Villarrobledo"],["Guadalajara Promesas",0.15,"4-3-3","Pedro Escartín - Anexo","Guadalajara"],["Huracán de Balazote",0.2,"4-4-2","Municipal de Balazote","Balazote"],["UD Almansa",0.25,"4-4-2","Paco Simón","Almansa"],["UD Yugo Socuéllamos",0.45,"4-2-3-1","Paquito Giménez","Socuéllamos"],["Villa CD",0.2,"4-4-2","Municipal de Villa","Villacañas"],["Villarrubia CF",0.4,"4-2-3-1","Nuevo Municipal","Villarrubia de los Ojos"]]]];
+const TF_REGION_LL=[[-8.0,42.5],[-5.8,43.3],[-4.0,43.2],[-2.5,43.0],[1.8,41.7],[-0.4,39.3],[-3.7,40.4],[-4.5,41.6],[-4.3,37.0],[-5.6,37.2],[2.9,39.6],[-15.4,28.1],[-1.2,37.9],[-6.2,39.0],[-1.6,42.7],[-2.4,42.3],[-1.0,41.6],[-3.0,39.5]];
+const tfNorm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'');
+const tfShort=n=>{
+  const s=String(n).replace(/\(.*?\)/g,' ').replace(/\b(CF|FC|CD|UD|SD|AD|UE|CP|RC|SCD|At\.|Atl\.|Club|Deportivo|Real|Rayo|Racing|Sporting|Union|Unión|Villa|UDC)\b/gi,' ').trim();
+  const w=s.split(/\s+/).filter(Boolean);
+  return ((w.length>1?w.map(x=>x[0]).join(''):w[0])||n).slice(0,4).toUpperCase();
+};
+const TF_PARENT={granpena:'CEL',pontevedrab:'PONV',sportingatletico:'SPO',realsociedadc:'RSO',deportivoalavesc:'ALA',eibarc:'EIB',realunionclubb:'RUS',ceeuropab:'EUR',cfpoblademafumet:'NAS',atlevante:'LEV',cdroda:'VIL',eldenseb:'ELD',herculesb:'HER',villarrealc:'VIL',leganesb:'LEG',rayovallecanob:'RAY',udsanseb:'SANS',burgoscfb:'BUR',jupiterleones:'CUL',mirandesb:'MIR',salamancaudsb:'SALU',unionistassalamancab:'UNI',almeriab:'ALM',atmalagueno:'MAL',malagajuniors:'MAL',recreativogranada:'GRA',adceutafcb:'CEU',atleticoonubense:'REC',cadizcfmirandilla:'CAD',cordobacfb:'CORD',realbetisc:'BET',sevillac:'SEV',tenerifec:'TEN',udlaspalmasc:'LPA',aguilasfcb:'AGU',fccartagenab:'CTG',ucammurciab:'UCAM',deportivoaragon:'ZAR',huescab:'HUE',guadalajarapromesas:'GUA'};
+const tfExisting={};
+Object.values(CLUBBY).filter(c=>c&&c.co==='ES').forEach(c=>{const k=tfNorm(c.name);if(!tfExisting[k])tfExisting[k]=c.id;});
+const TF_GROUPS=[];
+TF_DATA.forEach(([roman,region,rows],gi)=>{
+  const div=12+gi, ll=TF_REGION_LL[gi]||[-3.7,40.2];
+  const subs=[];
+  rows.forEach(([name,budget,form,stadium,city],ti)=>{
+    let id=tfExisting[tfNorm(name)];
+    if(!id)id='TF'+String(gi+1).padStart(2,'0')+String(ti+1).padStart(2,'0');
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,tfShort(name),city,'ES','#1c3f94','#f4f4f4',36,div);CLUBS.push(c);CLUBBY[id]=c;}
+    const cityKey=city==='Fuerteventura'?'La Oliva':city;
+    c.name=name;c.short=c.short||tfShort(name);c.city=cityKey;c.co='ES';c.div=div;
+    c.rep=Math.max(34,Math.round(35+budget*4));
+    const logo=TF_LOGOS[(gi+1)+'|'+name];
+    if(logo){c.logo=logo;CLUB_LOGO[id]=logo;}
+    else if(!c.logo){const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUB_LOGO[id]=l;}
+    STADIUM[id]=stadium;FORM_MAIN[id]=form;BUDGET[id]=budget;BASE_DIV[id]=div;
+    const parent=TF_PARENT[tfNorm(name)];
+    if(parent&&CLUBBY[parent]&&parent!==id){c.bTeam=1;FAMILY[id]=parent;if(!FAMILY[parent])FAMILY[parent]=id;}
+    const off=[((ti%6)-2.5)*0.16,(Math.floor(ti/6)-1)*0.16];
+    const cobj={ll:TF_CITY_LL[cityKey]||[ll[0]+off[0],ll[1]+off[1]]};
+    if(gi===11)cobj.inset=1;
+    CITY['ES|'+cityKey]=cobj;
+  });
+  TF_GROUPS.push({div,label:'Grupo '+roman+' · '+region});
+});
+/* El enlace FAMILY es bidireccional: si un primer equipo tiene varios filiales, se conserva como
+   filial principal el que realmente es su B/C (no un filial asociado como Roda en el Villarreal). */
+/* Enlaces múltiples B/C: FAMILY solo guarda el filial principal, FAMILY_ALL conserva todos. */
+if(CLUBBY.EIBB&&CLUBBY.EIB){CLUBBY.EIBB.bTeam=1;if(!FAMILY.EIBB)FAMILY.EIBB='EIB';}
+const FAMILY_ALL={};
+Object.keys(FAMILY).forEach(id=>{
+  const c=CLUBBY[id];if(!c||!isB(id))return;
+  const p=FAMILY[id];if(!p||!CLUBBY[p])return;
+  (FAMILY_ALL[p]=FAMILY_ALL[p]||[]).push(id);
+});
+Object.values(FAMILY_ALL).forEach(ids=>ids.sort((a,b)=>(CLUBBY[a].div||99)-(CLUBBY[b].div||99)||a.localeCompare(b)));
+Object.entries(FAMILY_ALL).forEach(([p,ids])=>{if(ids[0])FAMILY[p]=ids[0]});
+/* FAMILY es bidireccional para la UI; para la lógica de filiales hace falta el padre real, incluso
+   cuando el filial es a su vez padre de otro (Real Madrid Castilla -> Real Madrid C, por ejemplo). */
+const FAM_PARENT={};
+Object.entries(FAMILY_ALL).forEach(([p,ids])=>(ids||[]).forEach(id=>{if(!FAM_PARENT[id])FAM_PARENT[id]=p}));
+const famParent=id=>{
+  if(FAM_PARENT[id])return FAM_PARENT[id];
+  const p=FAMILY[id];
+  return p&&CLUBBY[p]&&!isB(p)?p:null;
+};
+/* jerarquía B < C/III dentro del mismo primer equipo: una C nunca puede estar en la misma categoría
+   o por encima de la B. Se usa al validar ascensos y al recolocar equipos, no para decidir la tabla. */
+const famRank=id=>{const n=(CLUBBY[id]&&CLUBBY[id].name||'').toLowerCase();if(/\biii\b/.test(n))return 3;if(/\bc\b/.test(n))return 2;if(/\bb\b/.test(n)||/\bii\b/.test(n)||/\bu21\b/.test(n))return 1;return 0};
+const siblingCanBeIn=(id,to)=>{
+  if(!isB(id)||famRank(id)<2)return true;
+  const p=famParent(id);if(!p)return true;
+  let floor=null;
+  if(isB(p))floor=TIER_OF(curDiv(p));
+  else{
+    const bs=famChildren(p).filter(x=>x!==id&&famRank(x)===1).map(x=>TIER_OF(curDiv(x)));
+    if(bs.length)floor=Math.min(...bs);
+  }
+  return floor==null||TIER_OF(to)>floor;
+};
+
+Object.values(CLUBBY).filter(c=>c&&c.co==='ES').forEach(c=>{const k=tfNorm(c.name);if(!tfExisting[k])tfExisting[k]=c.id;});
+
+/* ===== Palmarés histórico de la Copa Federación ===== */
+const TF_COFED=[
+ ['CD San Roque de Lepe',2],['CD Puertollano',2],['Ourense CF',2],['Pontevedra CF',2],
+ ['RCD Mallorca B',1],['Burgos CF',1],['CD Binéfar',1],['Racing de Santander B',1],
+ ['Marino de Luanco',1],['RC Celta de Vigo B',1],['Avilés Industrial',1],['CF Badalona',1],
+ ['Benidorm CF',1],['Real Jaén',1],['Lemona',1],['Tenerife B',1],['Alavés B',1],
+ ['Real Unión Club',1],['Atlético Baleares',1],['Atlético Saguntino',1],['CD Mirandés',1],
+ ['Real Murcia',1],['UE Llagostera',1],['Córdoba CF',1],['CD Arenteiro',1],
+ ['CF Badalona Futur',1],['Extremadura UD',1],['Recreativo de Huelva',1]
+];
+const TF_COFED_ALIAS={
+  cdpurtollano:'PUER',cdpuertollano:'PUER',ourensecf:'ORCF',pontevedracf:'PONV',cdsanroquedelepe:(tfExisting['sanroquedelepe']||null),
+  rcdmallorcab:'MLLB',cdmirandes:'MIR',cfbadalona:'BAD',benidormcf:'BENI',cordobacf:'CORD',
+  cdarenteiro:(tfExisting['arenteiro']||null),avilesindustrial:(tfExisting['realavilesindustrial']||'AVIL'),
+  atleticosaguntino:(tfExisting['atsaguntino']||null),atleticobaleares:'ATBA',alavesb:'DAB',
+  deportivoalavesb:'DAB',recreativodehuelva:'REC'
+};
+Object.values(PALMARES).forEach(e=>{if(e&&e.cofed)delete e.cofed});
+let cfh=0;
+TF_COFED.forEach(([name,n])=>{
+  const k=tfNorm(name);
+  let id=TF_COFED_ALIAS[k]||tfExisting[k]||null;
+  if(!id||!CLUBBY[id]){
+    id='CFH'+String(++cfh).padStart(2,'0');
+    const c=K(id,name,tfShort(name),'España','ES','#1c3f94','#f4f4f4',38,5);
+    const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUB_LOGO[id]=l;
+    CLUBBY[id]=c;BASE_DIV[id]=5;
+  }
+  const e=PALMARES[id]=PALMARES[id]||{};e.cofed=(e.cofed||0)+n;
+});
+/* ===== Campeones históricos de grupo de Tercera Federación (2021-2026) ===== */
+const TF_HIST=[
+  ['Polvorín FC',1,1],['CD Arenteiro',1,1],['Bergantiños FC',1,1],['UD Ourense',1,1],['Arosa SC',1,1],
+  ['Real Oviedo Vetusta',2,2],['CD Covadonga',1,2],['UD Llanera',1,2],
+  ['Gimnástica de Torrelavega',1,3],['CD Cayón',1,3],['CD Laredo',1,3],['UD Sámano',1,3],['RS Gimnástica',1,3],
+  ['Deportivo Alavés B',1,4],['Barakaldo CF',1,4],['Bilbao Athletic',1,4],['CD Basconia',1,4],['Club Portugalete',1,4],
+  ['CE Manresa',1,5],['CE Europa',1,5],['UE Olot',1,5],['Reus Fútbol Club Reddis',1,5],
+  ['Valencia Mestalla',1,6],['Orihuela CF',1,6],['Elche Ilicitano',1,6],['CD Castellón B',1,6],['UD Castellonense',1,6],
+  ['Atlético de Madrid B',1,7],['CDE Ursaria',1,7],['Real Madrid C',1,7],['RSD Alcalá',1,7],['Atlético de Madrid "C"',1,7],
+  ['CD Guijuelo',1,8],['Arandina CF',1,8],['Real Ávila CF',1,8],['Atlético Astorga CF',1,8],['Salamanca CF UDS',1,8],
+  ['Juventud de Torremolinos',2,9],['Marbella FC',1,9],['Atlético Malagueño',1,9],['Real Jaén',1,9],
+  ['Recreativo de Huelva',1,10],['Atlético Antoniano',1,10],['Xerez CD',1,10],['Salerm Cosmetics Puente Genil',1,10],['Ciudad de Lucena',1,10],
+  ['RCD Mallorca B',1,11],['SE Penya Independent',1,11],['Ibiza Islas Pitiusas',1,11],['UD Poblense',1,11],['CD Constància',1,11],
+  ['CD Atlético Paso',1,12],['CD Mensajero',1,12],['Tenerife B',1,12],['UD Las Palmas Atlético',1,12],['CD San Fernando',1,12],
+  ['Yeclano Deportivo',1,13],['Águilas FC',1,13],['Deportiva Minera',1,13],['CF Lorca Deportiva',1,13],['CD Cieza',1,13],
+  ['CD Diocesano',1,14],['AD Llerenense',1,14],['CD Don Benito',1,14],['CD Extremadura',1,14],
+  ['Atlético Cirbonero',1,15],['CD Valle de Egüés',1,15],['CD Subiza',1,15],['UD Mutilvera',1,15],['Peña Sport FC',1,15],
+  ['CD Alfaro',1,16],['Náxara CD',1,16],['UD Logroñés B',1,16],['CD Calahorra',1,16],
+  ['Deportivo Aragón',1,17],['Robres',1,17],['SD Ejea',1,17],['CD Ebro',1,17],['Calamocha CF',1,17],
+  ['CD Guadalajara',1,18],['CD Manchego Ciudad Real',1,18],['UB Conquense',1,18],['CD Quintanar del Rey',1,18],['CD Toledo',1,18]
+];
+const TF_HIST_ALIAS={
+  clubportugalete:'POR',rsgimnasica:'GTO',reusfutbolclubreddis:'REU',recreativodehuelva:'REC',
+  salermcosmeticspuentegenil:'SPG',rcdmallorcab:'MLLB',udpoblense:'POB',udlaspalmasatletico:'LPAB',
+  cdguijuelo:(tfExisting['guijuelo']||null),arandinacf:(tfExisting['arandina']||null),
+  atleticoastorgacf:'AST',salamancacfuds:'SALU',juventudtorremolinos:'TRM',atleticomalagueno:'MALB',
+  cddiocesano:(tfExisting['colegiosdiocesanos']||null),atleticocirbonero:(tfExisting['cirbonero']||null),
+  realoviedovetusta:'OVIB'
+};
+let tfh=0;
+TF_HIST.forEach(([name,n,group])=>{
+  const k=tfNorm(name);
+  let id=TF_HIST_ALIAS[k]||tfExisting[k]||null;
+  if(!id||!CLUBBY[id]){
+    id='TFH'+String(++tfh).padStart(2,'0');
+    const c=K(id,name,tfShort(name),'España','ES','#1c3f94','#f4f4f4',38,12+group-1);
+    const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUB_LOGO[id]=l;
+    CLUBBY[id]=c;BASE_DIV[id]=12+group-1;
+  }
+  const e=PALMARES[id]=PALMARES[id]||{};
+  e.d5=(e.d5||0)+n;
+});
+DIV_GROUPS.ES.push({label:'Tercera Federación',subs:TF_GROUPS.map(g=>[g.div,g.label])});
+
+/* ===== Palmarés de clubs del Grupo I y grupos II-IV (Segunda B→d3, Tercera→d4, Tercera Federación→d5) ===== */
+{
+  const TF_PAL={
+    TF0103:{cofed:1,d4:2},       /* Arenteiro: Copa Federación + Segunda Federación + Tercera División */
+    TF0107:{d4:1},               /* Boiro */
+    TF0117:{d4:1},               /* Somozas */
+    TF0206:{d5:1},               /* Covadonga */
+    TF0208:{d4:1},               /* Praviano */
+    TF0209:{d4:3},               /* Club Siero */
+    TF0210:{d4:2},               /* Condal */
+    TF0212:{d4:5},               /* Lealtad */
+    TF0214:{d4:1},               /* L´Entregu */
+    TF0215:{d3:2,d4:4},          /* Sporting Atlético */
+    TF0216:{d4:1},               /* Ceares */
+    TF0218:{d4:5},               /* Langreo */
+    TF0204:{d4:15},              /* Caudal */
+    TF0305:{d5:1,d4:1},          /* Cayón */
+    TF0308:{d4:4},               /* Laredo */
+    TF0312:{d5:1},               /* Sámano */
+    TF0316:{d4:3},               /* Tropezón */
+    TF0317:{d5:1,d4:3},          /* Escobedo */
+    TF0318:{d4:1},               /* Velarde */
+    TF0401:{d4:1},               /* Amurrio */
+    TF0404:{d3:1,d4:1},          /* Aurrera Vitoria */
+    TF0406:{d4:1},               /* Lagun Onak */
+    TF0409:{d4:1},               /* Leioa */
+    TF0414:{d4:2},               /* Santurtzi */
+    TF0415:{d4:3},               /* Durango */
+    TF0416:{d4:2},               /* Erandio */
+    TF0502:{d3:1,d4:7},          /* Badalona */
+    TF0507:{d3:1,d4:1},          /* Mollerussa */
+    TF0511:{d4:6},               /* L´Hospitalet */
+    TF0512:{d4:1},               /* Martinenc */
+    TF0515:{d4:2},               /* Cornellà */
+    TF0602:{d4:1},               /* At. Levante */
+    TF0603:{cofed:1,d4:1},       /* At. Saguntino */
+    TF0606:{d4:3},               /* CD Acero */
+    TF0616:{d4:2},               /* Torrent */
+    TF0617:{d4:1}                /* Vall de Uxó */
+  };
+  Object.entries(TF_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.assign(e,o)});
+}
+
+/* ===== Palmarés de clubes de los grupos VII-VIII (conversión histórica) ===== */
+{
+  const P={
+    TF0703:{d4:3},        /* Colonia Moscardó */
+    TF0707:{d3:1,d4:2},   /* Fuenlabrada */
+    LEGB:{d4:1},          /* Leganés B */
+    TRIV:{d4:1},          /* Trival Valderas */
+    TF0714:{d4:5},        /* Real Aranjuez */
+    TF0713:{d4:1},        /* Rayo Vallecano B */
+    TF0711:{d4:1},        /* México FC */
+    TF0802:{d4:1},        /* Atl. Bembibre */
+    TF0808:{d5:1},        /* Guijuelo */
+    TF0801:{d5:1,d4:2},   /* Arandina */
+    JUP:{d4:3}            /* Júpiter Leonés */
+  };
+  Object.entries(P).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.assign(e,o)});
+}
+
+/* ===== Palmarés de clubes de los grupos IX-XIV (conversión histórica) ===== */
+{
+  const P={
+    TF0903:{d5:1,d4:6},      /* At. Malagueño */
+    TF0913:{d4:2},           /* Mancha Real */
+    TF0915:{d3:1,d4:4},      /* UD Melilla */
+    TF1004:{d4:4},           /* Cádiz Mirandilla */
+    TF1005:{d4:1},           /* Pozoblanco */
+    TF1008:{d4:1},           /* Córdoba B */
+    TF1011:{d4:5},           /* RB Linense */
+    TF1012:{d4:2},           /* RC Portuense */
+    TF1014:{cofed:1,d4:1},   /* San Roque de Lepe */
+    TF1017:{d4:2},           /* Utrera */
+    TF1018:{d4:2},           /* Xerez Deportivo */
+    TF1101:{cofed:1},        /* Binissalem */
+    TF1108:{d4:3},           /* Manacor */
+    TF1104:{d5:1},           /* CE Andratx */
+    TF1105:{d4:12},          /* Constància */
+    TF1111:{d4:1},           /* Platges de Calvià */
+    TF1114:{d5:1,d4:1},      /* SD Ibiza */
+    TF1113:{d4:2},           /* SD Formentera */
+    TF1201:{d4:1},           /* CD Laguna */
+    TF1204:{d4:1},           /* Estrella */
+    TF1202:{d5:1,d4:3},      /* CD Mensajero */
+    TF1207:{d4:3},           /* Marino */
+    TF1218:{d4:1},           /* Villa Santa Brígida */
+    TF1205:{d3:1,d4:2},      /* Lanzarote */
+    TF1314:{d4:1},           /* Olímpico de Totana */
+    TF1401:{d5:1},           /* AD Llerenense */
+    TF1412:{d4:2},           /* Jerez */
+    TF1413:{d4:2},           /* Moralo */
+    TF1409:{d4:4},           /* CF Villanovense */
+    TF1414:{d4:2}            /* Plasencia */
+  };
+  Object.entries(P).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.assign(e,o)});
+}
+
+/* ===== Palmarés de clubes de los grupos XV, XVII y XVIII ===== */
+{
+  const P={
+    TF1501:{d4:1},           /* AD San Juan */
+    TF1506:{d4:1},           /* Cantolagua */
+    TF1510:{d5:1,d4:2},      /* Valle de Egüés */
+    TF1515:{d4:4},           /* Izarra */
+    TF1511:{d5:1},           /* Cirbonero */
+    TF1516:{d5:1,d4:2},      /* Mutilvera */
+    TF1517:{d5:1},           /* Subiza */
+    TF1605:{d4:1},           /* Alfaro */
+    TF1607:{d4:8},           /* Calahorra */
+    TF1608:{d4:3},           /* Varea */
+    TF1613:{d4:1},           /* Oyonesa */
+    TF1611:{d4:3},           /* Haro Deportivo */
+    ZARB:{d5:1,d4:6},        /* Deportivo Aragón */
+    TF1702:{d4:8},           /* Andorra CF */
+    TF1703:{d4:1},           /* Atlético Monzón */
+    TF1706:{d4:5},           /* CD Binéfar */
+    TF1713:{d5:1,d4:2},      /* Ejea */
+    TF1717:{d5:1},           /* Robres */
+    TF1718:{d4:4},           /* UD Fraga */
+    TF1803:{d5:1},           /* Manchego Ciudad Real */
+    TF1806:{d5:1,d4:1},      /* Quintanar del Rey */
+    TF1808:{d4:7},           /* CD Toledo */
+    TF1812:{d4:2},           /* CP Villarrobledo */
+    TF1815:{d4:1},           /* UD Almansa */
+    TF1816:{d4:2}            /* UD Yugo Socuéllamos */
+  };
+  Object.entries(P).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.assign(e,o)});
+}
+const TF_LOGO_UPDATES={"Alondras CF":189,"Boiro":517,"RC Villalbés":9332,"Céltiga FC":717,"Silva SD":9371,"Somozas":2363,"Barco":433,"CD Lalín":9391,"Arenteiro":249,"Portonovo":2003,"Antela FC":18923,"At. Arteixo":267,"Gran Peña":1250,"Pontevedra B":1996,"Viveiro":2734,"Andés":219,"Astur":299,"Avilés Stadium":66454,"Caudal Deportivo":7609,"CD Colunga":9417,"CD Covadonga":3274,"CD Mosconia":1742,"CD Praviano":2013,"Club Siero":4692,"Condal":824,"EI San Martín":18990,"Lealtad Villaviciosa":1529,"Llanes":1571,"L´Entregu CF":1605,"Sporting Atlético":2124,"UC Ceares":2588,"UD Gijón Industrial":4140,"UP Langreo":2615,"Atlético Albericia":300,"Atlético Mineros":91349,"Barquereño":3920,"Castro":657,"Cayón":664,"CD Bezana":489,"CD Guarnizo":3921,"CD Laredo":1515,"CD Naval":25036,"CF Vimenor":2725,"Revilla":2153,"Sámano":2214,"SD Solares":4116,"SD Torina":6073,"Selaya":2304,"Tropezón":2538,"UM Escobedo":2580,"Velarde CF":2670,"Amurrio":215,"Aretxabaleta":250,"Beasain KE":453,"CD Aurrera Vitoria":6084,"CD Derio":9460,"CD Lagun Onak":1503,"Deportivo Alavés C":85045,"Eibar C":164222,"Pasaia KE":6075,"SCD Durango":576,"Touring KE":10140,"Atlètic Lleida":138431,"CE Europa B":18386,"CP San Cristóbal":2220,"L'Escala":9254,"L´Hospitalet":1606,"Montañesa":1721,"UE Cornellà":839,"UE Tona":18201,"UE Vilassar de Mar":2697,"AC Torrellano":47710,"At. Levante":1548,"CD Roda":47001,"Crevillente Deportivo":4659,"Eldense B":102779,"Español de San Vicente":1420,"Ontinyent 1931":122191,"SC Torrevieja":46445,"Villarreal C":11846,"AD Torrejón CF":2516,"Cala Pozuelo":18594,"CD Colonia Moscardó":816,"Las Rozas":1522,"México FC":3904,"Rayo C. Alcobendas":18676,"Rayo Vallecano B":2081,"Real Aranjuez CF":3928,"Trival Valderas":2536,"UD Sanse B":4678,"Arandina":239,"Burgos CF B":12212,"CD Colegios Diocesanos":53290,"Júpiter Leonés":579,"La Virgen del Camino":1501,"Mirandés B":1700,"Palencia CF":53378,"UD Santa Marta":7699,"Unionistas Salamanca B":66416,"Almería B":184,"CD Alhaurino":170,"Churriana de la Vega":8555,"FC Marbellí":14048,"Huétor Vega":3950,"Málaga Juniors":138698,"Mancha Real":371,"UD Torre Del Mar":8455,"UDC Torredonjimeno":8610,"AD Ceuta FC B":41799,"Bollullos CF":521,"Cádiz CF Mirandilla":604,"Córdoba CF B":832,"RC Portuense":9335,"Real Betis C":2100,"San Roque de Lepe":2243,"Sevilla C":16477,"Xerez Deportivo":14111,"Binissalem":499,"Cardassar":635,"Constància":829,"Llosetense":1576,"Manacor":1631,"PE Sant Jordi":66193,"Santanyi":2260,"SD Formentera":8322,"SD Ibiza":66187,"UD Arenal":9595,"UE Alcudia":158,"CD Laguna":683,"CD Mensajero":1676,"CD San Miguel":85278,"Estrella":5171,"Lanzarote":2562,"San Bartolomé CF":6132,"Tenerife C":2479,"UD San Fernando":11994,"Union Sur Yaiza":2594,"Aguilas FC B":91655,"Bullas Deportivo":164727,"CD Algar":11949,"Deportivo Marítimo":163910,"FC Cartagena B":3906,"Mar Menor San Javier":164864,"Mazarrón FC":50322,"Olímpico de Totana":1857,"Santomera":2267,"AD Llerenense":10259,"Cabeza Del Buey":66174,"CD Quintana":30067,"Guadiana":1264,"Jerez":1413,"Plasencia":1975,"Pueblonuevo":376,"UD Montijo":1725,"Villafranca":2705,"AD San Juan":2232,"Beti Kozkor":19017,"CD Cortes":841,"CD Huarte":1336,"CD Pamplona":1909,"CD Valle de Egüés":2655,"Cirbonero":6063,"FC Bidezarra":102458,"Izarra":1397,"Atlético Onubense":2142,"CD Pozoblanco":2009,"Chiclana CF":759,"Conil":825,"Dos Hermanas 1971":"https://cdn.resfu.com/img_data/escudos/medium/41799.jpg?size=60x&lossy=1","Egabrense":955,"RB Linense":1561,"UD Tomares":"https://cdn.resfu.com/img_data/escudos/medium/41799.jpg?size=60x&lossy=1","Utrera":2639,"CD Migjorn":11443,"CE Andratx":222,"Inter Ibiza":"https://cdn.resfu.com/img_data/escudos/medium/499.jpg?size=60x&lossy=1","Mercadal":1677,"Platges de Calvià":"https://cdn.resfu.com/img_data/escudos/medium/499.jpg?size=60x&lossy=1","Sineu":18547,"UE Porreres":85201,"Llanos Aridane":"https://cdn.resfu.com/img_data/escudos/medium/683.jpg?size=60x&lossy=1","Marino":1651,"Panadería Pulido":21192,"Playas de Sotavento":147482,"Real Unión Tenerife":85235,"SD Villaverde Norte":11999,"UD Añaza":112317,"UD Las Palmas C":"https://cdn.resfu.com/img_data/escudos/medium/683.jpg?size=60x&lossy=1","Villa Santa Brígida":4667,"Alcantarilla FC":58755,"Atl. Santa Cruz":152560,"Atlético Pulpileño":6059,"Bala Azul":"https://cdn.resfu.com/img_data/escudos/medium/91655.jpg?size=60x&lossy=1","CD Cotillas EG":"https://cdn.resfu.com/img_data/escudos/medium/91655.jpg?size=60x&lossy=1","Minerva":58752,"UCAM Murcia B":"https://cdn.resfu.com/img_data/escudos/medium/91655.jpg?size=60x&lossy=1","UD Los Garres":5187,"Unión Molinense":143591,"Castuera":"https://cdn.resfu.com/img_data/escudos/medium/10259.jpg?size=60x&lossy=1","CD Azuaga":"https://cdn.resfu.com/img_data/escudos/medium/10259.jpg?size=60x&lossy=1","CD Gévora":19027,"CD Zafra":103051,"CF Jaraíz":11108,"CF Villanovense":739,"EF Puebla de la Calzada":2025,"Santa Amalia":2249,"Aoiz":231,"Avance Ezcabarte":"https://cdn.resfu.com/img_data/escudos/medium/2232.jpg?size=60x&lossy=1","Beti Onak":10589,"Cantolagua":631,"Doneztebe":143427,"Gazte Berriak":1208,"Mutilvera":7808,"Subiza":"https://cdn.resfu.com/img_data/escudos/medium/2232.jpg?size=60x&lossy=1","UDC Txantrea":746,"Agoncillo":84,"Anguiano":225,"Calasancio":614,"Casalarreina":3648,"CD Alfaro":667,"CD Berceo":478,"CD Calahorra":"https://cdn.resfu.com/img_data/escudos/medium/84.jpg?size=60x&lossy=1","CD Varea":2661,"Cenicero":718,"Comillas CF":112848,"Haro Deportivo":4821,"La Calzada":6150,"Oyonesa":1894,"Pradejón":2011,"River Ebro":6065,"San Marcial":44758,"Vianés":3649,"Yagüe":2773,"Almudévar":186,"Andorra CF":"https://cdn.resfu.com/img_data/escudos/medium/186.jpg?size=60x&lossy=1","Atlético Monzón":326,"Brea":539,"CD Belchite 97":460,"CD Binéfar":497,"CD Caspe":649,"CD Cuarte":4728,"CD La Almunia":1481,"CDJ Tamarite":3965,"CF Epila":18992,"Deportivo Aragón":"https://cdn.resfu.com/img_data/escudos/medium/186.jpg?size=60x&lossy=1","Ejea":962,"Huesca B":"https://cdn.resfu.com/img_data/escudos/medium/186.jpg?size=60x&lossy=1","Illueca":1367,"Internacional Huesca":29030,"Robres":2171,"UD Fraga":1170,"AD San Clemente":66200,"CD Illescas":1366,"CD Manchego Ciudad Real":11247,"CD Marchamalo":1646,"CD Noblejas":1818,"CD Quintanar del Rey":2046,"CD Tarancón":4282,"CD Toledo":5721,"CD Torrijos":2520,"CD Villacañas":2702,"CF La Solana":1498,"CP Villarrobledo":2720,"Guadalajara Promesas":139432,"Huracán de Balazote":30478,"UD Almansa":177,"UD Yugo Socuéllamos":2357,"Villa CD":30511,"Villarrubia CF":4278,"SD Sarriana":18875,"SD Erandio":9448,"Sodupe":2358,"Badalona":412,"CFJ Mollerussa":18139,"FE Grama":23983,"CF Peralada":1950,"Cerdanyola FC":6089,"CF Pobla de Mafumet":1980,"San Juan At. Montcada":18153,"San Ignacio":2225,"Atzeneta":46365,"UD Vall de Uxó":5139,"Torrent CF":2518,"Buñol":561,"CD Acero":62,"Soneja":47085,"CP Parla Escuela":3929,"Galapagar":18581,"Siello FC":4263,"Guijuelo":1271,"Palencia Cristo Atlético":855,"Atl. Mansillés":53339,"SD Almazán":180,"CD Villaralbo":2713,"Atl. Bembibre":4722,"Calasanz de Soria":53406,"Turégano":53387,"CD Cantoria":8531,"Arenas de Armilla":9051,"UD Melilla":1673,"Moralo":1732,"Leioa":1539,"CF Pozuelo":2010,"Leganés B":3930,"Unión Adarve":2585,"Fuenlabrada":1179,"CD Móstoles URJC":11995};
+
+/* ===== Escudos BeSoccer de Tercera Federación (solo URLs reales; se omiten placeholders genéricos) ===== */
+{
+  Object.entries(TF_LOGO_UPDATES).forEach(([name,id])=>{
+    const c=Object.values(CLUBBY).find(x=>x&&x.co==='ES'&&x.name===name);
+    if(!c)return;
+    let u=typeof id==='string'?id:'https://cdn.resfu.com/img_data/equipos/'+id+'.png?size=120x&lossy=1';
+    if(typeof id==='string'&&id.includes('/escudos/medium/')){
+      const alt=Object.entries(TF_LOGOS).find(([k])=>k.endsWith('|'+name));
+      if(alt)u=alt[1];
+    }
+    c.logo=u;CLUB_LOGO[c.id]=u;
+  });
+  [['TF0411','RSO'],['TF0412','RUS'],['TF0612','HER'],['TF0814','SALU'],['GRAB','GRA'],['TF0903','MAL'],['TF1215','LPA'],['TF1316','UCAM'],['TF1714','HUE']].forEach(([id,p])=>{if(CLUBBY[id]&&CLUBBY[p]&&CLUBBY[p].logo){CLUBBY[id].logo=CLUBBY[p].logo;CLUB_LOGO[id]=CLUBBY[p].logo;}});
 }
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
