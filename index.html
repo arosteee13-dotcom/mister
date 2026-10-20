@@ -7646,6 +7646,9 @@ function objective(id){
   if(c.co==='RS'&&c.div===1)return rank<=1?'Ganar la Liga':rank<=3?'Clasificar para competición europea':rank<=n-4?'Permanencia':'Evitar el descenso';
   if(c.co==='RS'&&c.div===2)return rank<=2?'Ascenso directo':rank<=8?'Clasificar al Grupo de Ascenso':rank<=12?'Permanencia':'Evitar el descenso';
   if(c.co==='FJ')return rank<=1?'Ganar la Liga':rank<=2?'Clasificar a la OFC Champions League':rank<=9?'Permanencia':'Evitar el descenso';
+  if(c.co==='EE')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a competición europea':rank===9?'Evitar el play-off de descenso':rank<=9?'Permanencia':'Evitar el descenso';
+  if(c.co==='EE'&&c.div===2)return rank<=2?'Ascenso directo a la Premium Liiga':rank===3?'Playoff de ascenso':'Permanencia';
+  if(c.co==='EE'&&c.div===3)return rank<=2?'Ascenso directo a la Esiliiga':rank===3?'Playoff de ascenso':'Permanencia';
   if(c.co==='JP'&&c.div===2)return rank<=2?'Ascender a la J1':rank<=6?'Clasificar al play-off de ascenso':'Terminar en la zona media';
   if(c.co==='JP')return rank<=1?'Ganar la Liga':rank<=3?'Clasificar a la AFC Champions League Two':rank<=17?'Permanencia':'Evitar el descenso';
   if(c.co==='CA')return rank<=5?'Clasificar a los CPL Playoffs':'Permanencia';
@@ -11085,7 +11088,7 @@ function sortBench(t){
   t.bench.sort((a,b)=>{const pa=map.get(a),pb=map.get(b);return((pa?benchOrder(pa):9)-(pb?benchOrder(pb):9))||((pb?pb.ovr:0)-(pa?pa.ovr:0))});
 }
 /* banquillo de 12 en la Supercopa de Europa: solo mientras el partido pendiente del usuario sea la SCE */
-function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&ct.cup.key==='WALC')return 7;if(ct&&ct.cup.key==='QASLC')return 12;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC'||ct.cup.key==='BYSC')?12:BENCH_N}
+function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&ct.cup.key==='WALC')return 7;if(ct&&ct.cup.key==='QASLC')return 12;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC'||ct.cup.key==='BYSC'||ct.cup.key==='EEC'||ct.cup.key==='EESC')?12:BENCH_N}
 function autoBench(t){
   if(!t||!t.players)return[];
   const xi=new Set(t.lineup),pool=t.players.filter(p=>!xi.has(p.id)&&!unav(p)).sort((a,b)=>b.ovr-a.ovr),out=[],bn=benchN();
@@ -12342,6 +12345,7 @@ function planPlayoffs(){
        directo el campeón, y el resto pasa por un playoff encadenado con una última eliminatoria contra la
        Primera División que este bloque genérico no sabe representar. */
     if(co==='BE'||co==='SE'||co==='KR'||co==='TR'||co==='RU'||co==='NL'||co==='RS'||co==='QA')return;
+    if(co==='EE')return;
     if(co==='BY'){
       const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id));
       const up=elig.slice(0,2),down=s1.slice(-2);po.dir[co]={up,down};
@@ -13286,6 +13290,15 @@ function newSeason(){
   {const L=leagueData('SM1'),sm=(L&&L.tb)?sortTable(L.tb).map(r=>r.id).filter(id=>!isB(id)):[];
    state.smUclq=sm[0]?[sm[0]]:[];
    state.prevSMC=(state.cups&&state.cups.SMC&&state.cups.SMC.champ)||null;}
+  /* Estonia: campeón de la Premium Liiga → previa de la Champions; 2º y 3º → previa de la Conference League.
+     La 4ª plaza condicionada a que el campeón de la Copa de Estonia termine en el top 3 de liga, y el play-off
+     de descenso 9º vs ascendido de la Esiliiga, no se implementan: este motor no tiene la Copa de Estonia ni
+     la Esiliiga como competiciones jugables (requeriría construir esas dos competiciones enteras, no solo
+     datos de clubes). */
+  {const L=leagueData('EE1'),ee=(L&&L.tb)?sortTable(L.tb).map(r=>r.id).filter(id=>!isB(id)):[];
+   state.eeUclq=ee[0]?[ee[0]]:[];
+   state.eeEclq=[ee[1],ee[2]].filter(Boolean);
+  }
   { const prevSC={};
     archiveLiteHist();
     gamePlayable().forEach(co=>{
@@ -13322,6 +13335,8 @@ function newSeason(){
     {const L=leagueData('BY1'),top=L&&L.tb?sortTable(L.tb)[0]:null,bc=state.cups&&state.cups.BYC;
      let bcr=null;if(bc&&bc.champ){const R=bc.rounds[bc.rounds.length-1],t=R&&R.ties&&R.ties[0];if(t)bcr=t.h===bc.champ?t.a:t.h;}
      state.prevBY=[top&&top.id,bc&&bc.champ,bcr];}
+    {const L=leagueData('EE1'),st=L&&L.tb?sortTable(L.tb):[],ec=state.cups&&state.cups.EEC;
+     state.prevEESC=[st[0]&&st[0].id,st[1]&&st[1].id,ec&&ec.champ];}
     {const cl=state.cups&&state.cups.CAFCL,cc=state.cups&&state.cups.CAFCC;let ccR=null;
      if(cc&&cc.champ){const R=cc.rounds[cc.rounds.length-1],t=R&&R.ties&&R.ties[0];if(t)ccR=t.h===cc.champ?t.a:t.h;}
      state.prevCAF=[cl&&cl.champ,cc&&cc.champ,ccR];}
@@ -16863,6 +16878,8 @@ function recordHonors(final){
   if(state.cups&&state.cups.UCL&&state.cups.UCL.champ)add(state.cups.UCL.champ,'ucl','UCL');
   if(state.cups&&state.cups.UEL&&state.cups.UEL.champ)add(state.cups.UEL.champ,'uel','UEL');
   if(state.cups&&state.cups.ECL&&state.cups.ECL.champ)add(state.cups.ECL.champ,'ecl','ECL');
+  if(state.cups&&state.cups.EEC&&state.cups.EEC.champ)add(state.cups.EEC.champ,'cup','EEC');
+  if(state.cups&&state.cups.EESC&&state.cups.EESC.champ)add(state.cups.EESC.champ,'sc','EESC');
   if(state.cups&&state.cups.SCE&&state.cups.SCE.champ)add(state.cups.SCE.champ,'sce','SCE');
   if(state.cups&&state.cups.IFC&&state.cups.IFC.champ)add(state.cups.IFC.champ,'ifc','IFC');
   mine.forEach(k=>{const pr=PRIZE_TITLE[k];news(`Añades un título a tu palmarés: ${trophyName(CLUBBY[state.club],k)}.${pr?` La directiva te premia con ${fmtM(pr)}.`:''}`);const mc=CLUBBY[state.club];if(mc)museumUnlock(mc.co,k)});
@@ -17089,6 +17106,27 @@ function initWorld(){
     }
     /* México: no existe Copa México como competición (solo Apertura, Clausura y Campeón de Campeones) */
     if(co==='MX')return;
+    /* Estonia: Eesti Karikas (64 clubes; fases de verano y final en primavera). */
+    if(co==='EE'){
+      const ids=EEC_TEAMS.filter(id=>CLUBBY[id]);
+      if(ids.length>=2){
+        state.cups.EEC=cupInit('EEC','Eesti Karikas',ids,[14,17,21,40,43,45]);
+        const R=state.cups.EEC.rounds;
+        if(R[0])R[0].n='1/64 de final';if(R[1])R[1].n='1/32 de final';if(R[2])R[2].n='Octavos de final';if(R[3])R[3].n='Cuartos de final';if(R[4])R[4].n='Semifinales';if(R[5])R[5].n='Final';
+        state.cups.EEC.et=true;
+      }
+      let esc;
+      if(state.season>1&&state.prevEESC){
+        const league=state.prevEESC[0],runner=state.prevEESC[1],cup=state.prevEESC[2];
+        esc=[league,cup===league?runner:cup];
+      }else esc=['FLO','NKAL'];
+      esc=esc.filter(id=>id&&CLUBBY[id]);
+      if(esc.length===2&&esc[0]!==esc[1]){
+        state.cups.EESC=cupInit('EESC','Eesti Superkarikas',esc,[1]);
+        state.cups.EESC.rounds[0].ties=[{h:esc[0],a:esc[1]}];
+      }
+      return;
+    }
     /* Bielorrusia: Betera-Belarusian Cup (16 de la Vysheyshaya) + Supercopa campeón de liga vs campeón de copa. */
     if(co==='BY'){
       const by1=leagueClubs('BY',1),by2=leagueClubs('BY',2).slice().sort((a,b)=>repOf(b.id)-repOf(a.id)).slice(0,16);
@@ -17477,6 +17515,8 @@ try{if(typeof CAF_CC_TEAMS!=='undefined'&&CAF_CC_TEAMS.length>=16)state.cups.CAF
   (state.seUclq||[]).forEach(id=>{if(id&&CLUBBY[id]&&!((state.qual)||[]).includes(id)&&uclPool.indexOf(id)<0)uclPool.push(id);});
   /* San Marino: campeón del Campionato → previa de la Champions (sustituye al Tre Fiori "fijo" de la 1ª temporada). */
   (state.smUclq||[]).forEach(id=>{const ti=uclPool.indexOf('TRF');if(ti>=0)uclPool.splice(ti,1);if(id&&CLUBBY[id]&&!((state.qual)||[]).includes(id)&&uclPool.indexOf(id)<0)uclPool.push(id);});
+  /* Estonia: campeón de la Premium Liiga → previa de la Champions */
+  (state.eeUclq||[]).forEach(id=>{if(id&&CLUBBY[id]&&!((state.qual)||[]).includes(id)&&uclPool.indexOf(id)<0)uclPool.push(id);});
   const winU=hasQual?runQualifying('ucl',uclPool):[];
   const q=hasQual?fitEuroField(state.qual.concat(winU),winU,state.club,36):FIXED_UCL_S1.filter(id=>CLUBBY[id]);
   state.cups.UCL=cupInitUCL(q);
@@ -17506,6 +17546,8 @@ try{if(typeof CAF_CC_TEAMS!=='undefined'&&CAF_CC_TEAMS.length>=16)state.cups.CAF
   (state.plEclq||[]).forEach(id=>{if(id&&CLUBBY[id]&&!((state.qual)||[]).includes(id)&&!((state.qualEL)||[]).includes(id)&&qECset.indexOf(id)<0&&eclPool.indexOf(id)<0&&!usedSet.has(id))eclPool.push(id);});
   /* Suecia: 2º y 3º de la Allsvenskan (+ el 4º si el campeón de Copa acaba en el top-3) → previa de la Conference */
   (state.seEclq||[]).forEach(id=>{if(id&&CLUBBY[id]&&!((state.qual)||[]).includes(id)&&!((state.qualEL)||[]).includes(id)&&qECset.indexOf(id)<0&&eclPool.indexOf(id)<0&&!usedSet.has(id))eclPool.push(id);});
+  /* Estonia: 2º y 3º de la Premium Liiga → previa de la Conference League */
+  (state.eeEclq||[]).forEach(id=>{if(id&&CLUBBY[id]&&!((state.qual)||[]).includes(id)&&!((state.qualEL)||[]).includes(id)&&qECset.indexOf(id)<0&&eclPool.indexOf(id)<0&&!usedSet.has(id))eclPool.push(id);});
   const winC=hasQualEC?runQualifying('ecl',eclPool):[];
   const qEC=hasQualEC?fitEuroField(state.qualEC.concat(winC),winC,usedSet.has(state.club)?null:state.club,36,usedSet):FIXED_ECL_S1.filter(id=>CLUBBY[id]);
   state.cups.ECL=cupInitECL(qEC);
@@ -17663,7 +17705,7 @@ function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,'uel',UEL_QUAL_RE
   /* Serbia: el campeón de la Kup Srbije va a la previa de la Europa League */
   if(state.cups&&state.cups.RSC&&state.cups.RSC.champ&&CLUBBY[state.cups.RSC.champ])s.add(state.cups.RSC.champ);
   return[...s]}
-function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_REPLACE));if(state.cups&&state.cups.NIRC&&state.cups.NIRC.champ&&CLUBBY[state.cups.NIRC.champ])s.add(state.cups.NIRC.champ);if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);if(state.smPoWinner&&CLUBBY[state.smPoWinner])s.add(state.smPoWinner);if(state.cups&&state.cups.SMC&&state.cups.SMC.champ&&CLUBBY[state.cups.SMC.champ])s.add(state.cups.SMC.champ);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);const trC=leagueData('TR1').tb?sortTable(leagueData('TR1').tb):[];if(trC[3])s.add(trC[3].id);
+function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_REPLACE));if(state.cups&&state.cups.EEC&&state.cups.EEC.champ&&CLUBBY[state.cups.EEC.champ])s.add(state.cups.EEC.champ);if(state.cups&&state.cups.NIRC&&state.cups.NIRC.champ&&CLUBBY[state.cups.NIRC.champ])s.add(state.cups.NIRC.champ);if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);if(state.smPoWinner&&CLUBBY[state.smPoWinner])s.add(state.smPoWinner);if(state.cups&&state.cups.SMC&&state.cups.SMC.champ&&CLUBBY[state.cups.SMC.champ])s.add(state.cups.SMC.champ);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);const trC=leagueData('TR1').tb?sortTable(leagueData('TR1').tb):[];if(trC[3])s.add(trC[3].id);
   const ruC2=state.cups&&state.cups.RUC&&state.cups.RUC.champ;
   if(ruC2){const ruSt2=leagueData('RU1').tb?sortTable(leagueData('RU1').tb):[];const ruTop2b=[ruSt2[0]&&ruSt2[0].id,ruSt2[1]&&ruSt2[1].id];if(ruTop2b.includes(ruC2)&&ruSt2[4])s.add(ruSt2[4].id)}
   /* Bulgaria: 2º del Grupo Campeonato y ganador del play-off europeo (BGPO) van a la previa de la Conference */
@@ -18178,6 +18220,14 @@ function zoneColor(key,pos,total){
     if(co==='FJ'){   /* Fiji Premier League: 1º-2º → OFC Champions League; 3º-9º permanencia; 10º desciende */
       if(pos<=2)return'#7cb342';
       return pos<=9?'#9e9e9e':'#e53935';
+    }
+    if(co==='EE'){   /* Premium Liiga de Estonia: 1º → previa Champions; 2º-3º → previa Conference; 9º → play-off
+       de descenso (visual: la Esiliiga no es una división jugable en este motor, así que no hay rival real);
+       10º desciende directo (sin movimiento real de clubes, igual que en otras ligas de una sola división). */
+      if(pos===1)return'#7cb342';
+      if(pos<=3)return'#64b5f6';
+      if(pos===9)return'#ffb74d';
+      return pos<=8?'#9e9e9e':'#e53935';
     }
     if(co==='PL'){
       if(pos===1)return'#7cb342';
@@ -19959,8 +20009,8 @@ function trophyName(club,k,real){
   if(k==='walc')return'Nathaniel MG Cup';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',JP:'Copa J. League',QA:'Qatar Cup'}[co]||'Copa de la Liga';
-  if(k==='d2')return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
-  if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',NL:'Tweede Divisie',NIR:'Intermediate League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
+  if(k==='d2')return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',EE:'Esiliiga',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
+  if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',EE:'Esiliiga B',NL:'Tweede Divisie',NIR:'Intermediate League'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
   if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B',NL:'Derde Divisie'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
   if(k==='d4t')return co==='ES'?'Tercera División':'Cuarta categoría';
@@ -20045,6 +20095,8 @@ function museumKeysOf(co){
   /* Japón: la J1 y la J2 se simulan; el trofeo de J2 va justo después del de la J1. */
   if(co==='JP')return['league','d2','cup','lc','sc'];
   if(co==='QA')return['league','d2','cup','lc','qslc'];
+  /* Estonia: la Esiliiga B no se considera liga jugable para el Museo; no se muestra su trofeo d3. */
+  if(co==='EE')return['league','d2','cup','sc'];
   /* Rusia: el Museo muestra la liga, la 1. Division, la Copa y la Supercopa. */
   if(co==='RU')return['league','d2','cup','sc'];
   /* Países Bajos: Eredivisie + Keuken Kampioen Divisie + copa y supercopa (Tweede/Derde Divisie no son jugables). */
@@ -25773,7 +25825,7 @@ Object.keys(CLUBBY).forEach(id=>{const c=CLUBBY[id];if(c&&c.co==='TR'&&(c.div||1
       if(!c){c=K(id,name,short,city,'PL',c1,c2,rep,div);CLUBBY[id]=c;}
       c.div=div;BASE_DIV[id]=div;
       if(!CLUBS.includes(c))CLUBS.push(c);
-      if(parent){c.bTeam=1;FAMILY[id]=parent;if(!FAMILY[parent])FAMILY[parent]=id;}
+      if(parent){c.bTeam=1;c.noParentFilter=1;FAMILY[id]=parent;if(!FAMILY[parent])FAMILY[parent]=id;}
     });
   });
   /* los 4 grupos de la 3. Liga son divs 4-7 de la misma competición */
@@ -26071,6 +26123,42 @@ REAL_LOANS.push(['Abdoul Sawadogo','ZELP','SMED',1,'Rotación',['Abdoul Sawadogo
   /* palmarés histórico de la OFC Champions League (los campeones que no existen en el juego quedan como
      fichas huérfanas, inofensivas, por si se añaden más adelante). La OFC Pro League empieza a 0 (en juego). */
   Object.assign(PALMARES,{AUCK:{ofccl:12},WTKU:{ofccl:2},TWEL:{ofccl:1},HIEN:{ofccl:1},PIRA:{ofccl:1},HEKA:{ofccl:1}});
+})();
+
+
+/* ===== Estonia: Premium Liiga (añadido por scraping BeSoccer, pie dominante Transfermarkt) ===== */
+(function(){
+  /* ===== Estonia: Premium Liiga (10 clubes, cuádruple vuelta = 36 jornadas). ===== */
+  Object.assign(COUNTRIES,{EE:{name:'Estonia',league:'Premium Liiga',divs:['Premium Liiga','Esiliiga'],pin:[25.5,58.6],polys:[ESTONIA_L,ESTONIA_ISL1,ESTONIA_ISL2,ESTONIA_ISL3]}});
+  if(!PLAYABLE.includes('EE'))PLAYABLE.push('EE');
+  {const ei=LOCKED.findIndex(x=>x.id==='EE');if(ei>=0)LOCKED.splice(ei,1);}
+  if(!GROUPS.some(g=>g.id==='EE'))GROUPS.push({id:'EE',name:'Estonia',comps:['EE1','EE2','EEC','EESC']});
+  Object.assign(BENCH_CD,{EE1:12});Object.assign(TROPHY_IMG_CO,{EE:{league:'143',cup:'1604',sc:'1597',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY}});Object.assign(TROPHY_SC,{EE:'Eesti Superkarikas'});SC_SKIP.EE=1;Object.assign(CUPNAME,{EE:'Eesti Karikas'});Object.assign(TROPHY_CUP,{EE:'Eesti Karikas'});
+  MULTI_ROUND.EE1=2;MULTI_ROUND.EE2=2;Object.assign(BENCH_CD,{EE2:12}); /* doble 'doble vuelta' = 4 enfrentamientos por rival = 36 jornadas con 10 clubes */
+  const SEL=[
+    ['FLO', null, null, null, null, null, null, 4063],
+    ['HJKL', 'Harju JK Laagri', 'Laagri', 'Laagri', '#1c3f94', '#f4f4f4', 47, 64759],
+    ['KURE', 'JK Kuressaare', 'Kuressaare', 'Kuressaare', '#1a1a1a', '#f2d31b', 49, 4353],
+    ['LEVD', 'FCI Levadia Tallin', 'Levadia', 'Tallin', '#145c34', '#f4f4f4', 53, 6378],
+    ['NTRA', 'JK Narva Trans', 'Narva Trans', 'Narva', '#1c3f94', '#f2d31b', 49, 4032],
+    ['NKAL', 'JK Nõmme Kalju', 'Nõmme Kalju', 'Tallin', '#1e5bb8', '#f4f4f4', 54, 4022],
+    ['NUTD', 'Nõmme United FC', 'Nõmme United', 'Tallin', '#d4192b', '#1a1a1a', 46, 61381],
+    ['PAID', 'Paide Linnameeskond', 'Paide', 'Paide', '#f2d31b', '#1c3f94', 51, 4349],
+    ['TAMK', 'Tartu JK Tammeka', 'Tammeka', 'Tartu', '#1c3f94', '#f4f4f4', 55, 4354],
+    ['VAPP', 'JK Vaprus Pärnu', 'Vaprus', 'Pärnu', '#f2a01c', '#1a1a1a', 53, 17796],
+  ];
+  const LOG={};
+  SEL.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K(id,name,short,city,'EE',c1,c2,rep,1);CLUBBY[id]=c;}
+    c.div=1;c.co='EE';try{BASE_DIV[id]=1}catch(e){};if(!CLUBS.includes(c))CLUBS.push(c);
+    if(crest)LOG[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG);Object.keys(CLUB_LOGO).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=CLUB_LOGO[id]});
+  Object.assign(STADIUM,{"FLO":"A. Le Coq Arena","HJKL":"Laagri kunstmuruväljak","KURE":"Kuressaare linnastaadion","LEVD":"A. Le Coq Arena","NTRA":"Narva Kreenholmi staadion","NKAL":"Hiiu staadion","NUTD":"Männiku kunstmuruväljak","PAID":"Paide linnastaadion","TAMK":"Tamme staadion","VAPP":"Pärnu Rannastaadion"});
+  Object.assign(FORM_MAIN,{"FLO":"4-2-3-1","HJKL":"4-4-2","KURE":"4-4-2","LEVD":"4-3-3","NTRA":"4-2-3-1","NKAL":"4-3-3","NUTD":"4-3-3","PAID":"4-2-3-1","TAMK":"4-4-2","VAPP":"4-4-2"});
+  Object.assign(BUDGET,{"FLO":3.5,"HJKL":0.6,"KURE":0.8,"LEVD":4,"NTRA":1.5,"NKAL":2,"NUTD":0.7,"PAID":2.2,"TAMK":0.9,"VAPP":0.7});
+  Object.assign(CITY,{"Laagri": {"ll": [24.57, 59.34]}, "Kuressaare": {"ll": [22.48, 58.25]}, "Tallin": {"ll": [24.75, 59.44]}, "Narva": {"ll": [28.19, 59.38]}, "Paide": {"ll": [25.57, 58.89]}, "Tartu": {"ll": [26.72, 58.38]}, "Pärnu": {"ll": [24.5, 58.39]}});
+  Object.assign(PALMARES,{HJKL:{},KURE:{},LEVD:{},NTRA:{},NKAL:{},NUTD:{},PAID:{},TAMK:{},VAPP:{}});
 })();
 
 
@@ -28072,6 +28160,101 @@ const ZONES_BY2=[['#66bb6a','Ascenso directo a la Vysheyshaya'],['#26a69a','Play
 /* ===== Palmarés histórico de la Pershaya Liga bielorrusa (Segunda División) ===== */
 {
   Object.entries({MOLO:2,LIDA:2,SLUT:1}).forEach(([id,n])=>{const e=PALMARES[id]=PALMARES[id]||{};e.d2=n;});
+}
+
+/* ===== Eesti Karikas: 64 clubes (10 de la Premium Liiga + 54 de categorías inferiores) ===== */
+{
+  const EX={'FC Flora':'FLO','Harju JK Laagri':'HJKL','Kuressaare':'KURE','Levadia':'LEVD','Narva Trans':'NTRA','Nomme Kalju':'NKAL','Nõmme United':'NUTD','Paide':'PAID','Tammeka':'TAMK','Vaprus Pärnu':'VAPP'};
+  const NAMES=['Aruküla','Deliirium FC','EstHam United','FC Elva','FC Flora','FC Flora Tallin II','FC Freedom','FC Generation','FC Kummik','FC Tallinn','Harju JK Laagri','Helios Tartu','Hell Hunt','Hiiumaa','Järva-Jaani','JK Arsenal - JK Volta','Jõgeva Wolves','Johvi Phoenix','Joker','Keila JK','Kena JK','Kohvile','Kose','Kristiine JK','Kuressaare','Kuusalu Kalev','Läänemaa Haapsalu','Lähte United','Levadia','Marjamaa Kompanii','Narva Trans','Nomme Kalju','Nõmme United','Nõmme United U19','Paide','Põhja-Tallinna JK Volta','Poseidon JK','Rae Spordikool','Raplamaa','Rumori Calcio','Rumori Calcio II','Saku Sporting','Saue JK Laagri','Soccernet','Tabasalu Charma','Tabasalu Ulasabat','Tallinna FC Olympic','Tallinna Kalev','Tallinna Kalev II','Tallinna Wolves','Tallinna Zapoos','TalTech JK','Tammeka','Tamper','Tartu Kalev','Tartu Welco','Team Helm','TJK Legion','TransferWise','Tulevik Viljandi','Vana Hea Puur','Vaprus Pärnu','Viimsi JK','Zealot Sporting'];
+  let k=0;var EEC_TEAMS=NAMES.map(name=>{
+    let id=EX[name];
+    if(!id){
+      k++;id='EEC'+String(k).padStart(2,'0');
+      const c=K(id,name,name,'Estonia','EE','#1c3f94','#f4f4f4',26,2);c.logo='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';
+      CLUBBY[id]=c;CLUB_LOGO[id]=c.logo;
+      STADIUM[id]='Estadio Municipal';FORM_MAIN[id]='4-4-2';BUDGET[id]=0.08;
+    }
+    return id;
+  });
+}
+
+/* ===== Palmarés histórico de Estonia ===== */
+{
+  const HIST=[
+    ['LANT','Lantana Tallinn','Lantana','Tallin'],
+    ['NORMA','Norma Tallinn','Norma','Tallin'],
+    ['TVMK','TVMK Tallinn','TVMK','Tallin'],
+    ['FCIT','FCI Tallinn','FCI Tallinn','Tallin'],
+    ['TSAD','Tallinna Sadam','Tallinna Sadam','Tallin'],
+    ['LEVM','Levadia Maardu','Levadia Maardu','Maardu']
+  ];
+  HIST.forEach(([id,name,short,city])=>{
+    if(!CLUBBY[id]){const c=K2(id,name,short,city,'EE','#1c3f94','#f4f4f4',42);const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';c.logo=l;CLUBBY[id]=c;CLUB_LOGO[id]=l;}
+  });
+  Object.entries({
+    FLO:{league:15,cup:8,sc:12},
+    LEVD:{league:11,cup:11,sc:8},
+    NKAL:{league:2,cup:1,sc:1},
+    LANT:{league:2},
+    NORMA:{league:2,cup:2},
+    TVMK:{league:1,cup:2,sc:2},
+    FCIT:{league:1,cup:1,sc:1},
+    NTRA:{cup:3,sc:2},
+    PAID:{cup:1,sc:1},
+    TSAD:{cup:1,sc:3},
+    LEVM:{cup:1},
+    NUTD:{d2:1,d3:1},
+    HJKL:{d2:1,d3:1},
+    KURE:{d2:1,d3:1},
+    VAPP:{d2:2},
+    TAMK:{d2:1}
+  }).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>e[k]=o[k]);});
+}
+
+/* ===== Estonia: Esiliiga (EE2) y Esiliiga B (EE3), 10 clubes cada una ===== */
+{
+  const byName=n=>EEC_TEAMS.find(id=>CLUBBY[id]&&CLUBBY[id].name===n);
+  const add=(id,name,short,city,div,parent)=>{
+    let c=CLUBBY[id];
+    if(!c){c=K(id,name,short,city,'EE','#1c3f94','#f4f4f4',div===2?40:34,div);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='EE';c.div=div;c.stadium=c.stadium||'Estadio Municipal';
+    if(parent){c.bTeam=1;FAMILY[id]=parent;if(!FAMILY[parent])FAMILY[parent]=id;}
+    if(!CLUBS.includes(c))CLUBS.push(c);BASE_DIV[id]=div;
+    const l='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';if(!c.logo){c.logo=l}CLUB_LOGO[id]=c.logo;
+    if(!STADIUM[id])STADIUM[id]='Estadio Municipal';if(!FORM_MAIN[id])FORM_MAIN[id]='4-4-2';if(!BUDGET[id])BUDGET[id]=div===2?0.25:0.1;
+  };
+  const use=(name,div,parent)=>{const id=byName(name);if(id)add(id,CLUBBY[id].name,CLUBBY[id].short,CLUBBY[id].city,div,parent);return id};
+  use('FC Elva',2);use('FC Tallinn',2);use('Viimsi JK',2);use('Tallinna Kalev',2);use('Tartu Welco',2);
+  add('LEVU21','Levadia Tallinn II','Levadia II','Tallin',2,'LEVD');
+  add('FLOU21','FC Flora Tallin II','Flora II','Tallin',2,'FLO');
+  add('MAARDU','Maardu FC','Maardu','Maardu',2);
+  add('NKAL2','Nõmme Kalju II','Kalju II','Tallin',2,'NKAL');STADIUM.NKAL2='Hiiu staadion';FORM_MAIN.NKAL2='4-3-3';
+  add('NUTU21','Nõmme United II','Nõmme United II','Tallin',2,'NUTD');
+  {const j=CLUBS.findIndex(c=>c.id==='JOMA');if(j>=0)CLUBS.splice(j,1);}
+  use('TJK Legion',3);use('Johvi Phoenix',3);use('Tabasalu Charma',3);use('Tartu Kalev',3);use('Tulevik Viljandi',3);
+  add('LEVU19','FCI Levadia U19','Levadia U19','Tallin',3,'LEVD');
+  add('NARU21','Narva Trans U21','Narva U21','Narva',3,'NTRA');
+  add('KALEVU21','Tallinna Kalev U21','Kalev U21','Tallin',3,byName('Tallinna Kalev'));
+  add('TAMU21','Tammeka U21','Tammeka U21','Tartu',3,'TAMK');
+  add('VAPU21','Vaprus U21','Vaprus U21','Pärnu',3,'VAPP');
+  const CC={'EEC47':'Tartu','EEC04':'Elva','EEC09':'Tallin','EEC53':'Viimsi','FLOU21':'Tallin','EEC40':'Tallin','LEVU21':'Tallin','NKAL2':'Tallin','NUTU21':'Tallin','MAARDU':'Maardu'};
+  Object.keys(CC).forEach(id=>{if(CLUBBY[id])CLUBBY[id].city=CC[id]});
+  Object.assign(CITY,{Elva:{ll:[26.42,58.22]},Viimsi:{ll:[24.84,59.50]},Maardu:{ll:[25.02,59.48]}});
+}
+
+/* ===== Escudos reales de equipos estonios (BeSoccer) ===== */
+{
+  const LOGOS={'FC Elva':61363,'FC Tallinn':111291,'Johvi Phoenix':142870,'Tabasalu Charma':63110,'Tallinna Kalev':6386,'Tartu Kalev':142816,'Tartu Welco':61423,'TJK Legion':61366,'Tulevik Viljandi':13354,'Viimsi JK':116818,'Maardu FC':102096,'Norma Tallinn':62935,'EstHam United':142831,'Järva-Jaani':65288,'Jõgeva Wolves':64757,'Keila JK':61376,'Kena JK':171599,'Kristiine JK':13123,'Kuusalu Kalev':150960,'Lähte United':170721,'Marjamaa Kompanii':111290,'Poseidon JK':64770,'Rae Spordikool':167171,'Rumori Calcio':64792,'Saku Sporting':116759,'Tabasalu Ulasabat':156997,'Tallinna Wolves':88953,'Tallinna Zapoos':101457,'TalTech JK':167172,'Team Helm':121588,'Zealot Sporting':163353,'TVMK Tallinn':64386};
+  const byName=n=>(typeof EEC_TEAMS!=='undefined'?EEC_TEAMS:[]).find(id=>CLUBBY[id]&&CLUBBY[id].name===n);
+  Object.keys(LOGOS).forEach(n=>{const id=byName(n);if(id){const l='https://cdn.resfu.com/img_data/escudos/medium/'+LOGOS[n]+'.jpg?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
+  const parent=[['LEVU21','LEVD'],['LEVU19','LEVD'],['FLOU21','FLO'],['NKAL2','NKAL'],['NUTU21','NUTD'],['NARU21','NTRA'],['TAMU21','TAMK'],['VAPU21','VAPP'],['EEC41','EEC40'],['EEC05','FLO'],['EEC27','NUTD']];
+  parent.forEach(([id,pid])=>{if(CLUBBY[id]&&CLUBBY[pid]&&CLUBBY[pid].logo){CLUBBY[id].logo=CLUBBY[pid].logo;CLUB_LOGO[id]=CLUBBY[id].logo;}});
+  if(CLUBBY.KALEVU21&&CLUBBY.EEC40){CLUBBY.KALEVU21.logo=CLUBBY.EEC40.logo;CLUB_LOGO.KALEVU21=CLUBBY.EEC40.logo;}
+  if(CLUBBY.MAARDU){CLUBBY.MAARDU.logo='https://cdn.resfu.com/img_data/escudos/medium/102096.jpg?size=120x&lossy=1';CLUB_LOGO.MAARDU=CLUBBY.MAARDU.logo;}
+  Object.entries({NORMA:62935,TVMK:64386}).forEach(([id,n])=>{if(CLUBBY[id]){const l='https://cdn.resfu.com/img_data/escudos/medium/'+n+'.jpg?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
+  Object.entries({EEC09:111291,EEC53:116818,EEC40:6386,EEC47:61423}).forEach(([id,n])=>{if(CLUBBY[id]){const l='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
+  Object.entries({EEC04:61363,MAARDU:61163}).forEach(([id,n])=>{if(CLUBBY[id]){const l='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1';CLUBBY[id].logo=l;CLUB_LOGO[id]=l;}});
+  if(CLUBBY.KALEVU21&&CLUBBY.EEC40){CLUBBY.KALEVU21.logo=CLUBBY.EEC40.logo;CLUB_LOGO.KALEVU21=CLUBBY.EEC40.logo;}
 }
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
