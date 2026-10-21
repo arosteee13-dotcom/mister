@@ -644,6 +644,9 @@ button.foc.sel{opacity:1;background:var(--accent-soft);color:var(--accent);box-s
 .pal i{display:block;width:30px;height:30px;color:var(--amber)}
 .pal i svg{width:100%;height:100%;display:block}
 .pal i img,.pal-chip i img,.pal-ico img{width:100%;height:100%;object-fit:contain;display:block}
+.pal-top{display:flex;align-items:center;justify-content:center;gap:8px}
+.pal-av{flex:none;width:30px;height:30px;border-radius:50%;overflow:hidden;padding:0;border:1px solid var(--line);background:rgba(220,240,228,.08);cursor:pointer}
+.pal-av img{width:100%;height:100%;object-fit:cover;display:block}
 .pal b{font:700 22px/1 var(--display);color:var(--accent);letter-spacing:-.02em}
 .pal span{font-size:11.5px;color:var(--muted);line-height:1.25}
 .pal .pal-add{font-style:normal;font-size:10.5px;font-weight:600;color:var(--accent)}
@@ -11920,7 +11923,8 @@ function scorerOf(t,side,cupSc,cid,acc,clubId){
   return{s:side,n:shortName(p.n),min:1+Math.floor(Math.random()*90),id:p.id};
 }
 function tallyIn(tb,id,gf,ga){
-  const r=tb[id];r.p++;r.gf+=gf;r.ga+=ga;
+  const r=tb[id]||(tb[id]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0});   /* si al equipo le falta fila en la tabla (ascenso/descenso o reajuste de copa a mitad de temporada), se crea en vez de reventar */
+  r.p++;r.gf+=gf;r.ga+=ga;
   if(gf>ga){r.w++;r.pts+=3}else if(gf===ga){r.d++;r.pts+=1}else r.l++;
 }
 function tally(id,gf,ga){tallyIn(state.table,id,gf,ga)}
@@ -22184,9 +22188,9 @@ function individualAwardsHTML(){
   if(!defs.length)return'';
   const cards=defs.map(([key,label,win])=>{
     const c=CLUBBY[win.clubId],mine=win.clubId===state.club;
-    return`<div class="pal"${mine?' style="border-color:var(--accent-line)"':''}><i><img src="${INDIV_TROPHY_IMG[key]}" alt=""></i><b style="font-size:13px">${esc(win.p.n)}</b><span>${esc(label)}<br>${c?esc(c.name):''}</span></div>`;
+    return`<div class="pal"${mine?' style="border-color:var(--accent-line)"':''}><div class="pal-top"><i><img src="${INDIV_TROPHY_IMG[key]}" alt=""></i><button class="pal-av" data-act="pl" data-id="${win.p.id}" data-club="${win.clubId}" aria-label="Ver ficha de ${esc(win.p.n)}">${avatarHTML(win.p)}</button></div><b style="font-size:13px">${esc(win.p.n)}</b><span>${esc(label)}<br>${c?esc(c.name):''}</span></div>`;
   }).join('');
-  return`<div class="subh">Trofeos individuales</div><div class="palgrid">${cards}</div><p class="hint">Rendimiento ponderado por la dificultad de la liga: los goles y las notas en ligas de élite (Top 5) valen ×2, en ligas intermedias ×1,5 y en ligas menores ×1. Así, 25 goles en una gran liga (50 pts) superan a 40 en San Marino (40 pts). El Balón de Oro añade bonos por títulos (sobre todo continentales) y el Golden Boy solo se concede en ligas de élite o intermedias.</p>`;
+  return`<div class="subh" style="display:flex;align-items:center;gap:6px">Trofeos individuales<button class="ibtn" data-act="act-info" data-title="Trofeos individuales" data-desc="Rendimiento ponderado por la dificultad de la liga: los goles y las notas en ligas de élite (Top 5) valen ×2, en ligas intermedias ×1,5 y en ligas menores ×1. Así, 25 goles en una gran liga (50 pts) superan a 40 en San Marino (40 pts). El Balón de Oro añade bonos por títulos (sobre todo continentales) y el Golden Boy solo se concede en ligas de élite o intermedias." aria-label="Información: Trofeos individuales">i</button></div><div class="palgrid">${cards}</div>`;
 }
 function teamStatCardsHTML(){
   const team=state.teams&&state.teams[state.club];if(!team)return'';
