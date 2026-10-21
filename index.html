@@ -2030,7 +2030,7 @@ const COUNTRIES={
   ES:{name:'España',league:'LaLiga EA Sports',divs:['LaLiga EA Sports','LaLiga Hypermotion'],pin:[-3.7,40.2],polys:[SPAIN,MALLORCA,MENORCA,EIVISSA],inset:CANARIAS},
   EN:{name:'Inglaterra',league:'Premier League',divs:['Premier League','Championship','League One','League Two','National League'],pin:[-1.3,52.9],polys:[ENGLAND]},
   IT:{name:'Italia',league:'Serie A',divs:['Serie A','Serie B'],pin:[12.4,42.5],polys:[ITALY,SICILY,SARDINIA]},
-  DE:{name:'Alemania',league:'Bundesliga',divs:['Bundesliga','2. Bundesliga','3. Liga'],pin:[10.3,51.1],polys:[GERMANY]},
+  DE:{name:'Alemania',league:'Bundesliga',divs:['Bundesliga','2. Bundesliga','3. Liga','Regionalliga Nord','Regionalliga Nordost','Regionalliga Bayern','Regionalliga West','Regionalliga Südwest'],pin:[10.3,51.1],polys:[GERMANY]},
   NL:{name:'Países Bajos',league:'Eredivisie',divs:['Eredivisie','Keuken Kampioen Divisie'],pin:[5.3,52.1],polys:[NETHERLANDS]},
    TR:{name:'Turquía',league:'Süper Lig',divs:['Süper Lig','1. Lig'],pin:[32.9,39.9],polys:[TURKEY]},
    PT:{name:'Portugal',league:'Liga Portugal',divs:['Liga Portugal','Liga Portugal 2','Liga 3 Placard'],pin:[-8,39.6],polys:[PORTUGAL],inset:MADEIRA_AZORES},
@@ -11103,7 +11103,7 @@ function sortBench(t){
   t.bench.sort((a,b)=>{const pa=map.get(a),pb=map.get(b);return((pa?benchOrder(pa):9)-(pb?benchOrder(pb):9))||((pb?pb.ovr:0)-(pa?pa.ovr:0))});
 }
 /* banquillo de 12 en la Supercopa de Europa: solo mientras el partido pendiente del usuario sea la SCE */
-function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&ct.cup.key==='WALC')return 7;if(ct&&ct.cup.key==='FIC')return 7;if(ct&&ct.cup.key==='ESFC')return 7;if(ct&&ct.cup.key==='BRC')return 12;if(ct&&ct.cup.key==='BRSC')return 12;if(ct&&ct.cup.key==='FOC'||ct&&ct.cup.key==='FOSC')return 7;if(ct&&ct.cup.key==='SPC'||ct&&ct.cup.key==='CRJ'||ct&&ct.cup.key==='MGC')return 12;if(ct&&ct.cup.key==='QASLC')return 12;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC'||ct.cup.key==='BYSC'||ct.cup.key==='EEC'||ct.cup.key==='EESC'||ct.cup.key==='FILC')?12:BENCH_N}
+function benchN(){const ct=state&&state.phase==='play'?userCupTie(state.week):null;if(ct&&(ct.cup.key==='NZ1'||ct.cup.key==='NZC'||ct.cup.key==='NZSC'))return 7;if(ct&&ct.cup.key==='NIRC')return 7;if(ct&&ct.cup.key==='WALC')return 7;if(ct&&ct.cup.key==='FIC')return 7;if(ct&&ct.cup.key==='ESFC')return 7;if(ct&&ct.cup.key==='BRC')return 12;if(ct&&ct.cup.key==='BRSC')return 12;if(ct&&ct.cup.key==='FOC'||ct&&ct.cup.key==='FOSC')return 7;if(ct&&ct.cup.key==='SPC'||ct&&ct.cup.key==='CRJ'||ct&&ct.cup.key==='MGC')return 12;if(ct&&ct.cup.key==='QASLC')return 12;if(ct&&(ct.cup.key==='OFCCL'||ct.cup.key==='OFCPL'))return 12;return ct&&(ct.cup.key==='SCE'||ct.cup.key==='AFCE'||ct.cup.key==='AFCCL'||ct.cup.key==='AFCC2'||ct.cup.key==='RSC'||ct.cup.key==='BYSC'||ct.cup.key==='EEC'||ct.cup.key==='EESC'||ct.cup.key==='FILC')?12:BENCH_N}
 function autoBench(t){
   if(!t||!t.players)return[];
   const xi=new Set(t.lineup),pool=t.players.filter(p=>!xi.has(p.id)&&!unav(p)).sort((a,b)=>b.ovr-a.ovr),out=[],bn=benchN();
@@ -12552,6 +12552,21 @@ function planPlayoffs(){
       po.de3={up:de3elig.slice(0,2),down:de2.slice(-2)};
     }
   }
+  /* Alemania: 3. Liga (div3) ↔ Regionalliga (DE4-DE8). Bajan los 4 últimos de 3. Liga a su grupo
+     geográfico. Suben directos los campeones de Südwest (DE8) y Nordost (DE5); el mejor de Nord (DE4),
+     West (DE7) y Bayern (DE6) por puntos y diferencia de goles sube directo; los otros dos juegan un
+     playoff único neutral con prórroga y penaltis. */
+  {
+    const de3all=poOrder('DE',3),dchamp=d=>{const L=leagueData('DE'+d);return L&&L.tb?sortTable(L.tb)[0]:null};
+    const c4=dchamp(4),c5=dchamp(5),c6=dchamp(6),c7=dchamp(7),c8=dchamp(8);
+    if(de3all.length>=4&&c4&&c5&&c6&&c7&&c8){
+      const cand=[c4,c7,c6].slice().sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||cname(a.id).localeCompare(cname(b.id)));
+      const up=[c8.id,c5.id,cand[0].id],down=de3all.slice(-4);
+      const poSeeds=[cand[1].id,cand[2].id];
+      po.items.push({co:'DE4PO',kind:'rel',seeds:poSeeds,alive:poSeeds.slice(),rounds:[],winner:null,custom:true,single:true});
+      po.deRL={up,down,playoffSeeds:poSeeds};
+    }
+  }
   /* Eredivisie: minitorneo de las posiciones 4-7 (semifinales 4-7 y 5-6, final) por la plaza de la fase previa
      de la Conference League. Formato de eliminación directa a partido único. */
   const nl1=poOrder('NL',1);
@@ -12912,6 +12927,7 @@ function poFinish(){
   const en45=po.en45;if(en45){const it=po.items.find(x=>x.kind==='en5po');if(it&&it.winner)en45.up.push(it.winner);balanceUpDown(en45.up,en45.down)}
   const en34=po.en34;if(en34){const it=po.items.find(x=>x.kind==='en34po');if(it&&it.winner)en34.up.push(it.winner);balanceUpDown(en34.up,en34.down)}
   const de3=po.de3;if(de3){const it=po.items.find(x=>x.co==='DE3PO');if(it&&it.winner&&it.winner!==it.seeds[0]){de3.up.push(it.winner);de3.down.push(it.seeds[0])}balanceUpDown(de3.up,de3.down)}
+  const deRL=po.deRL;if(deRL){const it=po.items.find(x=>x.co==='DE4PO');if(it&&it.winner)deRL.up.push(it.winner);po.res.DE4={up:deRL.up.slice(),down:deRL.down.slice()}}
   /* Tercera Federación <-> Segunda Federación */
   const tf=state.po&&state.po.tf;
   if(tf){
@@ -13002,6 +13018,18 @@ function poFinish(){
   const dkpo=po.items.find(x=>x.kind==='dkpo');
   if(dkpo&&dkpo.winner)state.dkPoWinner=dkpo.winner;
 }
+/* Playoff alemán de ascenso a 3. Liga: partido único neutral con prórroga y penaltis. */
+function deRlPoAdvance(it,mine){
+  if(it.winner)return;
+  let R=it.rounds[0];
+  if(!R){const t={h:it.seeds[0],a:it.seeds[1]};R={n:'Playoff de ascenso',w:0,ties:[t],done:false};it.rounds=[R];}
+  if(R.done)return;
+  const t=R.ties[0];if(!t)return;
+  const cup={key:'DE4PO',name:'Playoff de ascenso',sc:{},et:true,rounds:[R]};
+  simTie(t,cup,true,0);
+  R.done=true;it.winner=t.w;
+  if(t.h===state.club||t.a===state.club)mine.push({it,R,t,leg:0});
+}
 /* juega la ida o la vuelta de todos los playoffs; devuelve las eliminatorias del usuario */
 function poAdvance(){
   const po=state.po;if(!po||po.done)return[];
@@ -13022,6 +13050,7 @@ function poAdvance(){
   });
   /* Turquía: el playoff de la 1. Lig avanza con su propio contador (rondas de partido único y a doble partido) */
   po.items.forEach(it=>{if(it.custom&&!it.winner)trPoAdvance(it,mine)});
+  po.items.forEach(it=>{if(it.custom&&it.co==='DE4PO'&&!it.winner)deRlPoAdvance(it,mine)});
   if(leg===1){
     po.items.forEach(it=>{
       if(it.winner||it.single||it.pending||it.custom)return;const R=it.rounds[it.rounds.length-1];R.ties.forEach(t=>poDecide(t,it,R));R.done=true;
@@ -13144,13 +13173,17 @@ function movesHTML(){
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('EN',3))}</b>${teamsHTML(en34.up)}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName('EN',4))}</b>${teamsHTML(en34.down)}</div></div>`:'';
   const de3=po.de3;
+  const deRL=po.deRL;
+  const deRLHTML=deRL?`
+    <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('DE',3))}</b>${teamsHTML(deRL.up)}</div></div>
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a Regionalliga</b>${teamsHTML(deRL.down)}</div></div>`:'';
   const de3HTML=de3?`
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName('DE',2))}</b>${teamsHTML(de3.up)}</div></div>
     <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName('DE',3))}</b>${teamsHTML(de3.down)}</div></div>`:'';
   return gamePlayable().filter(co=>COUNTRIES[co]).map(co=>{const r=po.res[co],up=r&&r.up||[],down=r&&r.down||[];
     return`<div class="subh">${flagHTML(co)} ${esc(COUNTRIES[co].name)}</div>
     <div class="mv-row"><span class="mv-arrow up">▲</span><div class="mv-col"><b class="mv-div up">Ascienden a ${esc(divName(co,1))}</b>${teamsHTML(up)}</div></div>
-    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML+esfHTML+tfHTML:co==='EN'?enHTML+en34HTML+en45HTML:co==='DE'?de3HTML:''}`}).join('');
+    <div class="mv-row"><span class="mv-arrow down">▼</span><div class="mv-col"><b class="mv-div down">Descienden a ${esc(divName(co,2))}</b>${teamsHTML(down)}</div></div>${co==='ES'?rfHTML+esfHTML+tfHTML:co==='EN'?enHTML+en34HTML+en45HTML:co==='DE'?de3HTML+deRLHTML:''}`}).join('');
 }
 function myMoveTxt(){
   const po=state.po;if(!po||!po.done||!po.res)return'';
@@ -13169,6 +13202,10 @@ function myMoveTxt(){
   if(po.de3){
     if(po.de3.up.includes(state.club))return`¡Ascenso! Jugarás en ${divName('DE',2)}.`;
     if(po.de3.down.includes(state.club))return`Descenso: jugarás en ${divName('DE',3)}.`;
+  }
+  if(po.deRL){
+    if(po.deRL.up.includes(state.club))return`¡Ascenso! Jugarás en ${divName('DE',3)}.`;
+    if(po.deRL.down.includes(state.club)){const r=deRegionOf(state.club);return`Descenso: jugarás en ${divName('DE',deRegionDiv(r))}.`;}
   }
   if(po.tf){
     if(po.tf.up.some(x=>x.id===state.club))return`¡Ascenso! Jugarás en ${divName('ES',7)}.`;
@@ -13243,6 +13280,13 @@ function applyMoves(){
     de3.up.forEach(id=>{state.divs[id]=2;delete state.relegated[id]});
     de3.down.forEach(id=>{state.divs[id]=3;state.relegated[id]=1});
     news(`${FLAG.DE} Ascienden a ${divName('DE',2)}: ${de3.up.map(cname).join(', ')}. Descienden a ${divName('DE',3)}: ${de3.down.map(cname).join(', ')}.`);
+  }
+  const deRL=state.po&&state.po.deRL;
+  if(deRL){
+    const setDiv=(id,d)=>{state.divs[id]=d;CLUBS.forEach(c=>{if(c.id===id)c.div=d});if(CLUBBY[id])CLUBBY[id].div=d};
+    deRL.up.forEach(id=>{setDiv(id,3);delete state.relegated[id]});
+    deRL.down.forEach(id=>{const r=deRegionOf(id);setDiv(id,deRegionDiv(r));state.relegated[id]=1});
+    news(`${FLAG.DE} Ascienden a ${divName('DE',3)}: ${deRL.up.map(cname).join(', ')}. Descienden a Regionalliga: ${deRL.down.map(id=>cname(id)+' ('+deRegionOf(id)+')').join(', ')}.`);
   }
   const rf=state.po&&state.po.rf;
   if(rf){
@@ -15452,7 +15496,7 @@ function cnCupNextTies(cup,ri){
   return t;
 }
 const CUP_W6=[4,7,10,13,16,19],UCL_LEAGUE_W=[3,6,9,12,15,18,20,21],UCL_KO_W=[28,29,31,32,34,35,37,38,39],ECL_LEAGUE_W=[3,6,9,12,15,18];const AFCE_LEAGUE_W=[2,5,8,11,14,17,20,23],AFCE_KO_W=[26,27,30,33,36];const AFCCL_G_W=[2,5,8],AFCCL_KO_W=[12,14,17,19,22];const AFCC2_G_W=[2,4,6,9,11,13],AFCC2_KO_W=[16,18,21,23,26,28,31];
-const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESTF','ESC','ESFC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'WA',name:'Gales',comps:['WA1','WAC','WALC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'AF',name:'África',comps:['CAFCL','CAFCC','CAFSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']},{id:'JP',name:'Japón',comps:['JP1','JP2','JPC','JPLC','JPSC']}];
+const GROUPS=[{id:'EU',name:'Europa',comps:['UCLQ','UCL','UELQ','UEL','ECLQ','ECL','SCE','IFC']},{id:'ES',name:'España',comps:['ES1','ES2','ESRF','ESFR','ESTF','ESC','ESFC','ESSC']},{id:'EN',name:'Inglaterra',comps:['EN1','EN2','EN3','EN4','EN5','ENC','ENLC','ENSC','ENT','ENNC']},{id:'FR',name:'Francia',comps:['FR1','FR2','FRC','FRSC']},{id:'IT',name:'Italia',comps:['IT1','IT2','ITC','ITSC']},{id:'DE',name:'Alemania',comps:['DE1','DE2','DE3','DEC','DESC','DE4','DE5','DE6','DE7','DE8']},{id:'PT',name:'Portugal',comps:['PT1','PT2','PTC','PTSC']},{id:'NL',name:'Países Bajos',comps:['NL1','NL2','NLC','NLSC']},{id:'BE',name:'Bélgica',comps:['BE1','BE2','BEC','BESC']},{id:'AT',name:'Austria',comps:['AT1','ATC']},{id:'DK',name:'Dinamarca',comps:['DK1','DKC']},{id:'NO',name:'Noruega',comps:['NO1','NOC']},{id:'PL',name:'Polonia',comps:['PL1','PL2','PL3','PLC']},{id:'IE',name:'República de Irlanda',comps:['IE1','IEC','IESC']},{id:'SC',name:'Escocia',comps:['SC1','SCC','SCLC']},{id:'CH',name:'Suiza',comps:['CH1','CHC','CHLIC']},{id:'AR',name:'Argentina',comps:['ARAK','ARLK','ARTK','ARGISC','ARC']},{id:'SA',name:'Sudamérica',comps:['LIBQ','SUDQ','LIB','SUD','RECS']},{id:'BG',name:'Bulgaria',comps:['BG1','BGC','BGSC','BGPO']},{id:'TR',name:'Turquía',comps:['TR1','TR2','TRC','TRSC']},{id:'RU',name:'Rusia',comps:['RU1','RU2','RUC','RUSC']},{id:'MX',name:'México',comps:['MXAP','MXCL','MXCC']},{id:'RO',name:'Rumanía',comps:['RO1','ROC','ROSC']},{id:'UA',name:'Ucrania',comps:['UA1','UAC','UASC']},{id:'GR',name:'Grecia',comps:['GR1','GRC','GRSC']},{id:'CZ',name:'Chequia',comps:['CZ1','CZC','CZPO']},{id:'SE',name:'Suecia',comps:['SE1','SE2','SEC']},{id:'SM',name:'San Marino',comps:['SM1','SMC','SMSC']},{id:'SAU',name:'Arabia Saudí',comps:['SA1','SAC','SASC']},{id:'CN',name:'China',comps:['CN1','CNC','CNSC']},{id:'KR',name:'República de Corea',comps:['KR1','KR2','KRC','KRSC']},{id:'RS',name:'Serbia',comps:['RS1','RS2','RSC']},{id:'WA',name:'Gales',comps:['WA1','WAC','WALC']},{id:'FJ',name:'Fiyi',comps:['FJ1','FJC','FJSC']},{id:'AF',name:'África',comps:['CAFCL','CAFCC','CAFSC']},{id:'OC',name:'Oceanía',comps:['OFCCL','OFCPL']},{id:'NIR',name:'Irlanda del Norte',comps:['NIR1','NIRC','NIRLC','NIRSC']},{id:'NA',name:'Norteamérica',comps:['MXLC','CCLC']},{id:'AS',name:'Asia',comps:['AFCEQ','AFCE','AFCC2Q','AFCC2','AFCCLQ','AFCCL','ACC']},{id:'JP',name:'Japón',comps:['JP1','JP2','JPC','JPLC','JPSC']}];
 GROUPS.push({id:'FO',name:'Islas Feroe',comps:['FO1','FOC','FOSC']});
 const LCNAME={EN:'EFL Cup',PT:'Taça da Liga',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',WA:'Nathaniel MG Cup'};
 const SC_TEAMS={ES:4,TR:4,SA:4,BR:2};
@@ -16657,6 +16701,7 @@ function finishGroups(cup){
   if(cup.key==='AFCCL')return finishChallengeGroups(cup);
   if(cup.key==='AFCC2')return finishChampionsTwoGroups(cup);
   if(cup.key==='RUC'&&cup.type==='groups')return finishGroupsRuc(cup);
+  if(cup.key==='NZ1')return finishGroupsNZ(cup);
   if(cup.key==='CAFCL'||cup.key==='CAFCC')return finishCafGroups(cup);
   if(cup.key==='ROC')return roFinishGroups(cup);
   cup.gdone=true;
@@ -16679,6 +16724,43 @@ function finishGroups(cup){
   news(`Termina la fase de grupos de la ${cup.name}: comienzan las eliminatorias.`);
 }
 function groupsAllPlayed(cup){return cup.groups.every(g=>g.fx.every(rd=>rd.every(t=>t.hg!==undefined)))}
+/* ===== National League Championship (Nueva Zelanda, NZ1) =====
+   Al revés que los splits habituales (liga completa -> grupos), aquí primero se juegan 3 grupos
+   regionales REALES (Northern 12, Central 10, Southern 10 = los 32 clubes) y luego los clasificados
+   forman una mini-liga final a una vuelta. Clasifican: 4 mejores de Northern (sin contar a Auckland FC
+   Reserves) + Auckland FC Reserves fijo (5), 3 mejores de Central (sin contar a Wellington Phoenix
+   Reserves) + Wellington Phoenix Reserves fijo (4), y los 2 mejores de Southern (2) = 11 equipos.
+   Limitación conocida: los filiales (AUC2/WPHX) no pueden ser campeones en la realidad; esa restricción
+   no se modela automáticamente si terminan 1os de la liguilla final. */
+function finishGroupsNZ(cup){
+  cup.gdone=true;
+  const ord=g=>sortTable(g.tb).map(r=>r.id);
+  const pick=(arr,fixedId,n)=>{const rest=arr.filter(id=>id!==fixedId),top=rest.slice(0,n);return arr.includes(fixedId)?[...top,fixedId]:top;};
+  const north=ord(cup.groups[0]),central=ord(cup.groups[1]),south=ord(cup.groups[2]);
+  const qual=[...pick(north,'AUC2',4),...pick(central,'WPHX',3),...south.slice(0,2)];
+  const seeds=qual.slice().sort((a,b)=>virt(b).ovr-virt(a).ovr||cname(a).localeCompare(cname(b)));
+  const full=buildRawFixtures(seeds.slice(),rng(hashStr('NZ1|final|'+state.seed+'|'+state.season)));
+  const single=full.slice(0,full.length/2);
+  const lastGW=cup.gweeks[cup.gweeks.length-1]||0;
+  cup.league={ids:seeds,tb:emptyTable(seeds),fx:single,weeks:single.map((_,i)=>lastGW+i+1),done:false};
+  news(`Termina la fase regional de la ${cup.name}: Northern, Central y Southern League clasifican a 11 equipos (4+Auckland FC Reserves, 3+Wellington Phoenix Reserves y 2) para la fase de Campeonato.`);
+}
+function finishNZLeague(cup){
+  cup.league.done=true;
+  const st=sortTable(cup.league.tb);
+  cup.champ=st[0]?st[0].id:null;
+  news(`Termina la fase de Campeonato de la ${cup.name}: el campeón se lleva el trofeo y la plaza de la OFC Champions League.`);
+}
+function cupInitNZChampionship(){
+  const north=['AUCK','AUC2','AUNI','BIRK','EAST','BAYO','ECBA','FENC','MANK','MELU','TAUR','WSPR'];
+  const central=['NAPI','WOLY','MRAN','WPHX','FCWE','ISLB','PETO','UPHU','WATE','WSUB'];
+  const south=['CASH','FERR','CHRU','COAS','DUNE','NELS','NOMA','NORA','SELW','WANA'];
+  const mkGroup=ids=>({ids:ids.slice(),tb:emptyTable(ids),fx:buildRawFixtures(ids.slice(),rng(hashStr('NZ1|g|'+ids[0]+'|'+state.seed+'|'+state.season)))});
+  const groups=[mkGroup(north),mkGroup(central),mkGroup(south)];
+  const maxLen=Math.max(...groups.map(g=>g.fx.length));
+  const gweeks=Array.from({length:maxLen},(_,i)=>i+1);
+  return{key:'NZ1',name:'National League Championship',ids:[...north,...central,...south],bye:[],type:'groups',groups,gweeks,gdone:false,rounds:[],champ:null,sc:{}};
+}
 /* ============ CUPA ROMÂNIEI (24 equipos: 16 de la SuperLiga + 8 de categorías inferiores) ============
    Fase de grupos atípica: 4 grupos de 6 equipos repartidos en 3 urnas de 8 por nivel. Dentro de cada
    grupo NO se juega todos contra todos: cada equipo disputa solo 3 partidos (uno contra un rival de
@@ -17066,7 +17148,7 @@ function advanceWorld(r){
     }
     if(cup.league&&!cup.league.done){
       cup.league.weeks.forEach((w,ri)=>{if(w===r)cup.league.fx[ri].forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup)})});
-      if(cup.league.weeks[cup.league.weeks.length-1]===r)(cup.key==='AFCE'?finishAcleLeague:cup.key==='OFCPL'?finishOFCProLeague:cup.key==='QASLC'?finishQslLeague:finishUclLeague)(cup);
+      if(cup.league.weeks[cup.league.weeks.length-1]===r)(cup.key==='AFCE'?finishAcleLeague:cup.key==='OFCPL'?finishOFCProLeague:cup.key==='QASLC'?finishQslLeague:cup.key==='NZ1'?finishNZLeague:finishUclLeague)(cup);
     }
     cup.rounds.forEach((R,ri)=>{
       if(R.done)return;
@@ -17245,7 +17327,7 @@ function finishAll(){
     if(cup.type==='groups'&&!cup.gdone){cup.groups.forEach(g=>g.fx.forEach(rd=>rd.forEach(t=>{if(t.hg===undefined)simGroupTie(t,cup,g.tb)})));finishGroups(cup);}
     if(cup.league&&!cup.league.done){
       cup.league.fx.forEach(rd=>rd.forEach(t=>{if(t.hg===undefined)simLeagueTie(t,cup)}));
-      (cup.key==='AFCE'?finishAcleLeague:finishUclLeague)(cup);
+      (cup.key==='AFCE'?finishAcleLeague:cup.key==='NZ1'?finishNZLeague:finishUclLeague)(cup);
     }
     cup.rounds.forEach((R,ri)=>{if(!R.done)playCupRound(cup,ri)});
   }
@@ -17266,7 +17348,7 @@ const ECL_QUAL_IDS=['AJA','ATA','AWI','BBL','BHA','DNC','DRI','LUGA','GET','GOR'
 const ECL_QUAL_REPLACE=['AWI','RWI','QAR','MTA'];
 const FIXED_SCE_S1=['PSG','AVL'];
 /* supercopas nacionales de la 1ª temporada: participantes reales (España = Supercopa 2027, LaLiga 2025-26 FCB/RMA + Copa 2025-26 RSO/ATM; Italia = Supercoppa 2025-26 NAP/BOL; Inglaterra = Community Shield ARS/MCI; Alemania = Supercopa Franz Beckenbauer BVB/BAY) */
-const FIXED_SC_S1={BR:['CORI','FLA'],AD:['INE','ESC'],JP:['HIR','VISS'],IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG'],BG:['LEVS','CSOF'],TR:['GALA','TRBZ','FENR','SAMS'],RU:['ZEN','SPTM'],RO:['UCJ','UCRA'],GR:['AEKA','OFI'],SM:['TRF','LAFI'],SA:['NASR','ITTI','QADS','AHLI'],KR:['KRJEN','KRDAE'],FO:['HB','KIK'],FJ:['LABA','REWA']};
+const FIXED_SC_S1={BR:['CORI','FLA'],AD:['INE','ESC'],JP:['HIR','VISS'],IT:['NAP','BOL'],ES:['FCB','ATM','RSO','RMA'],EN:['ARS','MCI'],DE:['BVB','BAY'],PT:['FCP','TRZ'],NL:['PSV','AJA'],BE:['BRU','USG'],BG:['LEVS','CSOF'],TR:['GALA','TRBZ','FENR','SAMS'],RU:['ZEN','SPTM'],RO:['UCJ','UCRA'],GR:['AEKA','OFI'],SM:['TRF','LAFI'],SA:['NASR','ITTI','QADS','AHLI'],KR:['KRJEN','KRDAE'],FO:['HB','KIK'],FJ:['LABA','REWA'],NZ:['WOLY','CHRU']};
 /* Kypello Elladas: los 14 de Super League 1 + 13 equipos de categorías inferiores (afiliados reales fuera de la liga simulada) */
 const GRC_TEAMS=['AEL','KART','APK','ARI','ASTT','KTH','ATRO','ELSY','IRKL','KAL','KIF','LEVA','MARKO','NESTC','NIKV','PGE','PANI','PANS','PANTH','PASP','TRIK','VLOS','ZAK','AEKA','OLY','PAN','PAOK','OFI'];
 /* Copa Intercontinental de la FIFA: campeones de las 6 confederaciones. Los 5 de fuera de Europa se
@@ -17419,6 +17501,12 @@ function initWorld(){
   {const key='EN5';if(key!==state.lk){const ids=leagueClubs('EN',5).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
   /* Alemania: la 3. Liga (div 3) también se simula, para poder resolver su ascenso/playoff con la 2. Bundesliga */
   {const key='DE3';if(key!==state.lk){const ids=leagueClubs('DE',3).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
+  /* Alemania: las 5 Regionalliga (div 4-8) también se simulan, cada una como su propia liga cerrada. */
+  {const key='DE4';if(key!==state.lk){const ids=leagueClubs('DE',4).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
+  {const key='DE5';if(key!==state.lk){const ids=leagueClubs('DE',5).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
+  {const key='DE6';if(key!==state.lk){const ids=leagueClubs('DE',6).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
+  {const key='DE7';if(key!==state.lk){const ids=leagueClubs('DE',7).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
+  {const key='DE8';if(key!==state.lk){const ids=leagueClubs('DE',8).map(c=>c.id);if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}}}}
   /* Primera y Segunda Federación (ES5-ES11): se simulan para que cada grupo tenga clasificación; el grupo
      del usuario ya es su propia liga (state.lk) y se salta aquí. */
   ['ES5','ES6','ES7','ES8','ES9','ES10','ES11','ES12','ES13','ES14','ES15','ES16','ES17','ES18','ES19','ES20','ES21','ES22','ES23','ES24','ES25','ES26','ES27','ES28','ES29'].forEach(key=>{
@@ -17435,6 +17523,7 @@ function initWorld(){
   });
   gamePlayable().forEach(co=>{
     if(co==='SB'){state.cups.SBC=cupInitSolomonCup();return;}
+    if(co==='NZ'){state.cups.NZ1=cupInitNZChampionship();return;}
     if(co==='FO'){
       state.cups.FOC=cupInitLogmans();
       return;
@@ -17700,6 +17789,7 @@ function initWorld(){
     if(co==='US'&&state.cups.USC)state.cups.USC.et=true;
     if(co==='CA'&&state.cups.CRJ)state.cups.CRJ.et=true;   /* Canadian Championship: prórroga y penaltis */   /* US Open Cup: prórroga y penaltis */   /* Australia Cup: prórroga y penaltis en todas las rondas */   /* Copa Constitució: prórroga y penaltis en todas las rondas */   /* Welsh Cup: prórroga + penaltis en todas las rondas */   /* King's Cup: prórroga de 30' (dos tiempos de 15) + penaltis si sigue la igualdad, en todas las rondas */
     if(co==='NIR'&&state.cups.NIRC)state.cups.NIRC.et=true;   /* Irish League Cup: prórroga + penaltis en caso de empate, en todas las rondas */
+    if(co==='NZ'&&state.cups.NZC)state.cups.NZC.et=true;   /* Chatham Cup: prórroga y penaltis en todas las rondas */
   });
   /* Supercopas: campeón y subcampeón de liga contra campeón y subcampeón de copa de la temporada anterior.
      En España se juega a 4 (semifinal y final) en enero; en el resto, partido único al arrancar la temporada. */
@@ -17988,7 +18078,7 @@ function reconcileOthers(){
   });
   /* EFL League One / League Two (Inglaterra): partidas guardadas antes de que existiera esa división
      todavía no tienen su liga ajena creada; se añade sobre la marcha si ya hay roster. */
-  ['EN3','EN4','EN5','DE3','TR2','NL2','PL3','PL4','PL5','PL6','PL7','AD2'].forEach(key=>{
+  ['EN3','EN4','EN5','DE3','DE4','DE5','DE6','DE7','DE8','TR2','NL2','PL3','PL4','PL5','PL6','PL7','AD2'].forEach(key=>{
     if(key===lk||state.others[key])return;
     const ids=leagueClubs(key.slice(0,2),+key.slice(2)).map(c=>c.id);
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
@@ -18361,6 +18451,7 @@ function ccViewSheetHTML(key){
    d5 = Tercera Federación). Se busca el key cuyo nombre real sea el de la competición. Sus dos grupos
    comparten palmarés: es el de la competición entera, no el del grupo. */
 function divTrophyKey(co,d){
+  if(co==='DE'&&d>=4&&d<=8)return'd4.'+(d-3);
   for(const grp of (DIV_GROUPS[co]||[])){
     if(grp.subs.some(x=>x[0]===d)){
       const target=grp.label.toLowerCase();
@@ -19052,7 +19143,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=keyCo(key)==='ES'?String(+keySuf(key)):String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='FO'?ZONES_FO1:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FI'&&d==='1'?ZONES_FI1:keyCo(key)==='BY'&&d==='2'?ZONES_BY2:keyCo(key)==='BY'?ZONES_BY:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='UA'&&d==='2'?ZONES_UA2:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='SB'?ZONES_SB1:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:(esNum&&esNum>=12?ZONES_TF:null)));
+  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='FO'?ZONES_FO1:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='DE'&&d==='4'?ZONES_DE4:keyCo(key)==='DE'&&d==='5'?ZONES_DE5:keyCo(key)==='DE'&&d==='6'?ZONES_DE6:keyCo(key)==='DE'&&d==='7'?ZONES_DE7:keyCo(key)==='DE'&&d==='8'?ZONES_DE8:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FI'&&d==='1'?ZONES_FI1:keyCo(key)==='BY'&&d==='2'?ZONES_BY2:keyCo(key)==='BY'?ZONES_BY:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='UA'&&d==='2'?ZONES_UA2:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='SB'?ZONES_SB1:keyCo(key)==='NZ'&&d==='1'?ZONES_NZ2:keyCo(key)==='NZ'&&d==='2'?ZONES_NZ3:keyCo(key)==='NZ'&&d==='3'?ZONES_NZ4:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:(esNum&&esNum>=12?ZONES_TF:null)));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -20224,7 +20315,7 @@ function renderCountry(cid){
   renderDivCtl();renderPins();
   const l=$('#L2');if(l.scrollTo)l.scrollTo((l.scrollWidth-l.clientWidth)/2,(l.scrollHeight-l.clientHeight)/2);
 }
-const DIV_GROUPS={ES:[{label:'Primera Federación',subs:[[5,'Grupo 1'],[6,'Grupo 2']]},{label:'Segunda Federación',subs:[[7,'Grupo 1'],[8,'Grupo 2'],[9,'Grupo 3'],[10,'Grupo 4'],[11,'Grupo 5']]}]};
+const DIV_GROUPS={ES:[{label:'Primera Federación',subs:[[5,'Grupo 1'],[6,'Grupo 2']]},{label:'Segunda Federación',subs:[[7,'Grupo 1'],[8,'Grupo 2'],[9,'Grupo 3'],[10,'Grupo 4'],[11,'Grupo 5']]}],DE:[{label:'Regionalliga',subs:[[4,'Nord'],[5,'Nordost'],[6,'Bayern'],[7,'West'],[8,'Südwest']]}]};
 function renderDivCtl(){
   const C=COUNTRIES[ui.country];
   const groups=DIV_GROUPS[ui.country]||[];
@@ -20380,7 +20471,29 @@ Object.assign(TROPHY_CUP,{BR:'Copa do Brasil'});CUPNAME.BR='Copa do Brasil';
 CUPNAME.KR='Korea Cup';
 CUPNAME.WA='Welsh Cup';
 Object.assign(TROPHY_SC,{WA:'Supercopa de Gales'});Object.assign(TROPHY_CUP,{WA:'Welsh Cup'});
-const TROPHY_ORDER=['league','cac','ofccl','ofcpl','apertura','clausura','cdc','cup','trofeo','sarg','sint','sc','lc','qslc','wac','walc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afccl','afcc2','cafcl','cafcc','cafsc','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','spc','crj','mgc','pna','pbm','pcm','d2','d3','d3b','d4','d4t','d5','d6','d7','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
+const TROPHY_ORDER=['league','cac','ofccl','ofcpl','apertura','clausura','cdc','cup','ddr','fdgb','dfvsc','intertoto','trofeo','sarg','sint','sc','lc','qslc','wac','walc','leinster','munster','challenge','liechtenstein','ucl','uel','ecl','afcce','afccl','afcc2','cafcl','cafcc','cafsc','acc','lib','sud','recs','ccl','lcup','cinter','cwc','sce','wc','ic','ifc','cf','cofed','spc','crj','mgc','pna','pbm','pcm','d2','d3','d3b','d4','d4.1','d4.2','d4.3','d4.4','d4.5','d4.6','d4t','d5','d5.1','d5.2','d5.3','d5.4','d5.5','d5.6','d5.7','d5.8','d5.9','d5.10','d5.11','d5.12','d5.13','d5.14','d5.15','d5.16','d6','d6.1','d6.2','d6.3','d6.4','d6.5','d6.6','d6.7','d6.8','d6.9','d6.10','d6.11','d6.12','d6.13','d6.14','d6.15','d6.16','d6.17','d6.18','d6.19','d6.20','d6.21','d6.22','d6.23','d6.24','d6.25','d6.26','d6.27','d6.28','d6.29','d6.30','d6.31','d6.32','d6.33','d6.34','d6.35','d6.36','d6.37','d6.38','d6.39','d6.40','d6.41','d6.42','d6.43','d6.44','d6.45','d7','d8','eflt','nlc','fat','scc','lp2','cisc','bota','balon','golden','yashin'];
+const DE_L5_NAME={
+  'd5.1':'Oberliga Baden-Württemberg','d5.2':'Oberliga Westfalen','d5.3':'Oberliga Schleswig-Holstein',
+  'd5.4':'Oberliga Niedersachsen','d5.5':'Oberliga Niederrhein','d5.6':'Hessenliga',
+  'd5.7':'NOFV-Oberliga Nord','d5.8':'Bayernliga Nord','d5.9':'Bayernliga Süd',
+  'd5.10':'Mittelrheinliga','d5.11':'NOFV-Oberliga Süd','d5.12':'Oberliga Hamburg',
+  'd5.13':'Bremenliga','d5.14':'Oberliga Rheinland-Pfalz/Saar','d5.15':'Oberliga Nord (histórica)',
+  'd5.16':'Oberliga Hamburg/Schleswig-Holstein'
+};
+const DE_L6_NAME={
+  'd6.1':'Westfalenliga 1','d6.2':'Landesliga Bayern Südost','d6.3':'Westfalenliga 2',
+  'd6.4':'Landesliga Mittelrhein Staffel 1','d6.5':'Schröder-Liga Saar','d6.6':'Brandenburgliga',
+  'd6.7':'Landesliga Bayern Nordwest','d6.8':'Landesliga Mittelrhein Staffel 2','d6.9':'Verbandsliga Baden',
+  'd6.10':'Landesliga Bayern Nordost','d6.11':'Landesliga Lüneburg','d6.12':'Landesliga Weser-Ems',
+  'd6.13':'Rheinlandliga','d6.14':'Landesliga Bayern Südwest','d6.15':'Landesliga Niederrhein - Gruppe 1',
+  'd6.16':'Landesliga Niederrhein - Gruppe 2','d6.17':'Verbandsliga Württemberg','d6.18':'Verbandsliga Südwest',
+  'd6.19':'Landesliga Bayern Mitte','d6.20':'Landesliga Hansa','d6.21':'Landesliga Bremen',
+  'd6.22':'Landesliga Hammonia','d6.23':'Landesliga Holstein','d6.24':'Landesliga Schleswig',
+  'd6.25':'Landesliga Braunschweig','d6.26':'Landesliga Hannover','d6.27':'Sachsenliga',
+  'd6.28':'Thüringenliga','d6.29':'Berlin-Liga','d6.30':'Verbandsliga Hessen-Mitte',
+  'd6.31':'Verbandsliga Hessen-Nord','d6.32':'Verbandsliga Hessen-Süd','d6.33':'Verbandsliga Mecklenburg-Vorpommern',
+  'd6.34':'Verbandsliga Sachsen-Anhalt','d6.35':'Verbandsliga Südbaden','d6.36':'Verbandsliga Niedersachsen','d6.37':'Landesliga Südwest-Ost','d6.38':'Bezirksoberliga Oberpfalz','d6.39':'Bezirksoberliga Schwaben','d6.40':'Bezirksoberliga Mittelfranken','d6.41':'Bezirksoberliga Unterfranken','d6.42':'Bezirksoberliga Oberbayern','d6.43':'Bezirksliga Schwaben-Süd','d6.44':'Landesliga/A-Klasse Bayern','d6.45':'Bezirksliga/Landesliga Schwaben'
+};
 function trophyName(club,k,real){
   if(k==='cac')return 'Canadian Championship';
   if(k==='league'&&club&&club.co==='BR')return 'Brasileirão Série A';
@@ -20414,15 +20527,28 @@ function trophyName(club,k,real){
   if(k==='walc')return'Nathaniel MG Cup';
   if(k==='sc')return TROPHY_SC[co]||'Supercopa';
   if(k==='lc')return{EN:'EFL Cup',DE:'Copa de la Liga de Alemania',SC:'Copa de la Liga de Escocia',NIR:'Irish League Cup',JP:'Copa J. League',QA:'Qatar Cup',FI:'Liigacup'}[co]||'Copa de la Liga';
+  if(k==='ddr')return'DDR-Oberliga';
+  if(k==='fdgb')return'FDGB-Pokal';
+  if(k==='dfvsc')return'Supercopa de Alemania del Este';
+  if(k==='intertoto')return'Copa Intertoto';
+  if(k.indexOf('d5.')===0)return DE_L5_NAME[k]||'Oberliga';
+  if(k.indexOf('d6.')===0)return DE_L6_NAME[k]||'Sexta categoría';
   if(k==='d2'&&co==='FO')return'1. deild';
   if(k==='d2')return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',IE:'Segunda Irlanda',SC:'Championship Escocia',CH:'Segunda Suiza',BG:'Segunda Bulgaria B PFG',RU:'1. Division',EE:'Esiliiga',UA:'Persha Liga',GR:'Super League 2',CZ:'ChNL',SE:'Superettan',SA:'Saudi First Division League',NIR:'Segunda Irlanda del Norte',JP:'J2 League',FI:'Ykkösliiga'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[1])||'Segunda categoría';
   if(k==='d3')return{RS:'Srpska Liga',ES:'Primera Federación',EN:'League One',DE:'3. Liga',IT:'Serie C',FR:'Ligue 3',AT:'Regionalliga',NO:'PostNord-ligaen',PL:'Betclic 2 Liga',SC:'League One Escocia',RU:'2. Division A',UA:'Druga Liga',GR:'Gamma Ethniki',SE:'Ettan',TR:'2. Lig',EE:'Esiliiga B',NL:'Tweede Divisie',NIR:'Intermediate League',FI:'Ykkönen'}[co]||(COUNTRIES[co]&&COUNTRIES[co].divs[2])||'Tercera categoría';
+  if(k==='d4.1')return'Regionalliga Nord';
+  if(k==='d4.2')return'Regionalliga Nordost';
+  if(k==='d4.3')return'Regionalliga Bayern';
+  if(k==='d4.4')return'Regionalliga West';
+  if(k==='d4.5')return'Regionalliga Südwest';
+  if(k==='d4.6')return'Regionalliga Süd (histórica)';
   if(k==='d4')return{ES:'Segunda Federación',EN:'League Two',DE:'Regionalliga',IT:'Serie D',FR:'National 2',AT:'Landesliga',PL:'Betclic 3 Liga',SC:'League Two Escocia',RO:'Liga IV',TR:'3. Lig',RU:'2. Division B',NL:'Derde Divisie',FI:'Kakkonen'}[co]||'Cuarta categoría';
   if(k==='d3b')return co==='ES'?'Segunda División B':'Tercera categoría';
   if(k==='d4t')return co==='ES'?'Tercera División':'Cuarta categoría';
-  if(k==='d5')return{ES:'Tercera Federación',DE:'Oberliga',EN:'National League',FR:'National 3',FI:'Kolmonen'}[co]||'Quinta categoría';
-  if(k==='d6')return co==='EN'?'National League North':'Sexta categoría';
-  if(k==='d7')return co==='EN'?'National League South':'Séptima categoría';
+  if(k==='d5')return{ES:'Tercera Federación',DE:'Regionalliga Nordost',EN:'National League',FR:'National 3',FI:'Kolmonen'}[co]||'Quinta categoría';
+  if(k==='d6')return co==='EN'?'National League North':(co==='DE'?'Regionalliga Bayern':'Sexta categoría');
+  if(k==='d7')return co==='EN'?'National League South':(co==='DE'?'Regionalliga West':'Séptima categoría');
+  if(k==='d8')return co==='DE'?'Regionalliga Südwest':'Octava categoría';
   if(k==='eflt')return'EFL Trophy';
   if(k==='nlc')return'National League Cup';
   if(k==='fat')return'FA Trophy';
@@ -20444,7 +20570,7 @@ function trophyName(club,k,real){
 /* imágenes reales de los trofeos por competición (BeSoccer); si no hay imagen, se usa el icono SVG */
 const NOFOTO_TROPHY='https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1';
 /* las divisiones/copas sin imagen propia usan el placeholder cup_nofoto (antes caían al icono SVG) */
-const TROPHY_IMG_CO={WA:{league:'https://cdn.resfu.com/img_data/competiciones/copa/39.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/638.png?size=60x&lossy=1',lc:'https://cdn.resfu.com/img_data/competiciones/copa/1502.png?size=60x&lossy=1',wac:'https://cdn.resfu.com/img_data/competiciones/copa/638.png?size=60x&lossy=1',walc:'https://cdn.resfu.com/img_data/competiciones/copa/1502.png?size=60x&lossy=1',sc:NOFOTO_TROPHY},ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178',d5:NOFOTO_TROPHY},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:'58',d2:'181',cup:'653',sc:'1506',lc:'1636'},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY}};
+const TROPHY_IMG_CO={WA:{league:'https://cdn.resfu.com/img_data/competiciones/copa/39.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/638.png?size=60x&lossy=1',lc:'https://cdn.resfu.com/img_data/competiciones/copa/1502.png?size=60x&lossy=1',wac:'https://cdn.resfu.com/img_data/competiciones/copa/638.png?size=60x&lossy=1',walc:'https://cdn.resfu.com/img_data/competiciones/copa/1502.png?size=60x&lossy=1',sc:NOFOTO_TROPHY},ES:{league:'1',cup:'129',sc:'132',d2:'2',d3:'2468',d3b:'2468',d4:'2469',d4t:'2469',d5:'2470'},EN:{league:'10',cup:'139',sc:'322',lc:'523',d2:'25',d3:'87',d4:'88',d5:NOFOTO_TROPHY,d6:NOFOTO_TROPHY,d7:NOFOTO_TROPHY,eflt:'1870',nlc:NOFOTO_TROPHY,fat:'1913'},DE:{league:'8',cup:'140',sc:'180',d2:'93',d3:'https://img.a.transfermarkt.technology/erfolge/verybigquad/424.png?lm=1791356648',d4:'178','d4.1':'https://img.a.transfermarkt.technology/erfolge/verybigquad/703.png?lm=1791356648','d4.2':'https://img.a.transfermarkt.technology/erfolge/verybigquad/699.png?lm=1791356648','d4.3':'https://img.a.transfermarkt.technology/erfolge/verybigquad/700.png?lm=1791356648','d4.4':'https://img.a.transfermarkt.technology/erfolge/verybigquad/702.png?lm=1791356648','d4.5':'https://img.a.transfermarkt.technology/erfolge/verybigquad/701.png?lm=1791356648',d5:'https://img.a.transfermarkt.technology/erfolge/verybigquad/840.png?lm=1791356648','d5.4':'https://img.a.transfermarkt.technology/erfolge/verybigquad/840.png?lm=1791356648','d5.13':'https://img.a.transfermarkt.technology/erfolge/verybigquad/571.png?lm=1791356648',d6:'https://img.a.transfermarkt.technology/erfolge/verybigquad/571.png?lm=1791356648',d7:'178',d8:'178'},IT:{league:'7',cup:'296',sc:'179',d2:'89',d3:'90',d4:NOFOTO_TROPHY},PT:{league:'19',cup:'326',sc:'300',lc:'601',d2:'96',d3:'2489'},FR:{league:'16',cup:'325',sc:'297',lc:'324',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/981.png?lm=4711',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,d5:NOFOTO_TROPHY},NL:{league:'9',cup:'524',sc:'298',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},BE:{league:'12',cup:'651',sc:'676',d2:'https://img.a.transfermarkt.technology/erfolge/verybigquad/786.png?lm=1791356640',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},AT:{league:'11',cup:'1562',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},DK:{league:'13',cup:'604',d2:NOFOTO_TROPHY},NO:{league:'18',cup:'593',sc:'1708',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY},PL:{league:'128',cup:'641',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},CO:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},HU:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},JP:{league:'58',d2:'181',cup:'653',sc:'1506',lc:'1636'},KR:{league:'59',d2:NOFOTO_TROPHY,cup:'1720',sc:NOFOTO_TROPHY},LT:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY},RS:{league:'https://cdn.resfu.com/img_data/competiciones/copa/386.png?size=60x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/645.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'},US:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY},IE:{league:'346',cup:'1692',sc:NOFOTO_TROPHY,leinster:'1623',munster:NOFOTO_TROPHY,d2:'347'},SC:{league:'14',cup:'1500',lc:'1499',d2:'23',d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,challenge:NOFOTO_TROPHY},CH:{league:'36',cup:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,liechtenstein:'1647'},AR:{league:NOFOTO_TROPHY,cup:'525',apertura:'26',clausura:'118',trofeo:'2167',pna:'192',sarg:NOFOTO_TROPHY,sint:'2761',pbm:NOFOTO_TROPHY,pcm:NOFOTO_TROPHY},BG:{league:'205',cup:'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgarian_cup.png',sc:'323',d2:NOFOTO_TROPHY},TR:{league:'37',cup:'528',sc:'527',d2:'https://cdn.resfu.com/img_data/competiciones/copa/358.png?size=120x&lossy=1',d3:'https://cdn.resfu.com/img_data/competiciones/copa/359.png?size=120x&lossy=1',d4:NOFOTO_TROPHY},RU:{league:'27',cup:'602',sc:'679',d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:'382'},MX:{league:NOFOTO_TROPHY,cup:NOFOTO_TROPHY,apertura:'68',clausura:'141',cdc:'1957'},RO:{league:'20',cup:'1658',sc:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY},SA:{league:'61',cup:'1788',sc:'1815',d2:NOFOTO_TROPHY},CN:{league:'29',cup:'1723',sc:NOFOTO_TROPHY},NIR:{league:'32',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY,lc:'1829',d2:NOFOTO_TROPHY,d3:'1816'},FJ:{league:'https://img.a.transfermarkt.technology/erfolge/verybigquad/502.png?lm=4711',cup:NOFOTO_TROPHY,sc:NOFOTO_TROPHY}};
 const TROPHY_IMG_ANY={ofccl:'1703',ofcpl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',ucl:'107',uel:'117',ecl:'2492',lib:'204',sud:'304',recs:'684',cinter:'2894',cwc:'1722',sce:'133',wc:'137',ic:'2976',ifc:'2976',cf:'2529',cofed:'169',scc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',lp2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cisc:'1668',ccl:'706',lcup:'2149',afcce:'265',acc:'2075',afccl:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',afcc2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',cafcl:'1508',cafcc:'850',cafsc:'1510'};
 function trophyImg(club,k){
   /* en modo ficticio (sin base de datos real activa) no se usan las imágenes reales de los trofeos:
@@ -20452,7 +20578,7 @@ function trophyImg(club,k){
   if(fictOn())return NOFOTO_TROPHY;
   const co=club&&club.co;
   const v=(TROPHY_IMG_CO[co]&&TROPHY_IMG_CO[co][k])||TROPHY_IMG_ANY[k]||INDIV_TROPHY_IMG[k];
-  if(!v)return null;
+  if(!v)return NOFOTO_TROPHY;
   return /^https?:/.test(v)?v:'https://cdn.resfu.com/img_data/competiciones/copa/'+v+'.png?size=120x&lossy=1';
 }
 function trophyIcon(club,k){
@@ -20474,7 +20600,7 @@ const MUSEUM_CONT_NAME={EU:'Europa',SA:'Sudamérica',NA:'Norteamérica',AS:'Asia
 /* algunas fotos de trofeo tienen mucho margen vacío alrededor y se ven pequeñas dentro de la
    tarjeta; aquí se les da un empujón extra de tamaño caso por caso */
 const MUSEUM_IMG_SCALE={'ES|d4':1.35,'CH|liechtenstein':1.35,'FR|d2':1.3,'BG|cup':1.3,'BE|d2':1.3};
-const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d5','d6','d7','cup','sc','lc','qslc','wac','walc','apertura','clausura','cdc','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','cofed','eflt','nlc','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs','afcce','afcc2','afccl','acc'];
+const MUSEUM_KEY_ORDER=['league','d2','d3','d4','d4.1','d4.2','d4.3','d4.4','d4.5','d5','d6','d7','d8','cup','sc','lc','qslc','wac','walc','apertura','clausura','cdc','trofeo','sarg','sint','pna','pbm','pcm','leinster','munster','challenge','liechtenstein','cofed','eflt','nlc','fat','ucl','uel','ecl','sce','ifc','lib','sud','recs','afcce','afcc2','afccl','acc'];
 /* Orden propio de trofeos para países concretos (Museo y cabina del club): solo reordena las claves que se
    indican; el resto sigue el orden global de cada vista. Japón: la Copa J. League va ANTES que la Supercopa. */
 const TROPHY_ORDER_CO={JP:['league','d2','cup','lc','sc'],ES:['league','d2','d3','d4','d5','cup','cofed','sc']};
@@ -20509,6 +20635,19 @@ function museumKeysOf(co){
   if(co==='EE')return['league','d2','d3','cup','sc'];
   /* Rusia: el Museo muestra la liga, la 1. Division, la Copa y la Supercopa. */
   if(co==='RU')return['league','d2','cup','sc'];
+  /* Nueva Zelanda: Northern/Central/Southern League (NZ2/NZ3/NZ4) se juegan, pero no cuentan como
+     trofeos de "verdad" en el museo (son ligas de clasificación regionales, no competiciones
+     nacionales reales) — solo se muestran la National League Championship, la Chatham Cup y la
+     Charity Cup. */
+  if(co==='NZ')return['league','cup','sc'];
+  /* Alemania: al añadir DE4-DE8 (los 5 grupos de la Regionalliga) como competiciones jugables,
+     el museo pasaba a enseñar también 'd5' (Oberliga), 'd6' y 'd7' — palmarés histórico de
+     categorías regionales amateur que ya existía en la base de datos pero que antes quedaba
+     oculto porque esas claves no estaban en los comps de Alemania. No son competiciones que se
+     jueguen en la partida (la 5ª categoría real alemana no está simulada), así que se excluyen del
+     museo; solo se muestran Bundesliga, 2. Bundesliga, 3. Liga, las cinco Regionalliga
+     (d4.1-d4.5, una por grupo, con su propio título), la Copa y la Supercopa. */
+  if(co==='DE')return['league','d2','d3','d4.1','d4.2','d4.3','d4.4','d4.5','cup','sc'];
   /* Países Bajos: Eredivisie + Keuken Kampioen Divisie + copa y supercopa (Tweede/Derde Divisie no son jugables). */
   if(co==='NL')return['league','d2','cup','sc'];
   const g=GROUPS.find(x=>x.id===co);
@@ -26614,6 +26753,301 @@ REAL_LOANS.push(['Abdoul Sawadogo','ZELP','SMED',1,'Rotación',['Abdoul Sawadogo
   Object.assign(CITY,{'Auckland':{ll:[174.76,-36.85]},'Honiara':{ll:[159.95,-9.43]},'Nouméa':{ll:[166.46,-22.28]},'Māhina':{ll:[-149.46,-17.49]},'Port Vila':{ll:[168.32,-17.73]},'Lae':{ll:[146.99,-6.73]},'Avarua':{ll:[-159.78,-21.21]}});
 })();
 
+const NZPOLY=[P(`173.117,-41.280 173.232,-41.285 173.336,-41.210 173.448,-41.151 173.563,-41.103 173.740,-40.988 173.783,-40.973 173.898,-40.950 173.948,-40.924 174.002,-40.917 173.952,-40.985 173.891,-41.007 173.880,-41.032 173.916,-41.070 173.862,-41.124 173.862,-41.191 173.797,-41.271 173.898,-41.240 173.934,-41.188 173.916,-41.158 173.959,-41.099 174.024,-41.071 173.999,-41.028 173.999,-40.993 174.082,-41.006 174.121,-41.006 174.154,-40.992 174.211,-40.985 174.226,-41.025 174.301,-41.019 174.272,-41.068 174.215,-41.125 174.200,-41.160 174.103,-41.217 174.038,-41.242 174.139,-41.249 174.283,-41.172 174.370,-41.104 174.366,-41.188 174.298,-41.264 174.236,-41.313 174.168,-41.327 174.103,-41.367 174.071,-41.429 174.074,-41.472 174.092,-41.505 174.161,-41.561 174.085,-41.670 174.172,-41.657 174.218,-41.677 174.283,-41.740 174.244,-41.813 174.215,-41.851 174.046,-42.004 173.974,-42.080 173.887,-42.130 173.891,-42.212 173.840,-42.271 173.588,-42.474 173.545,-42.518 173.347,-42.840 173.221,-42.976 173.149,-43.023 173.074,-43.061 172.890,-43.123 172.807,-43.198 172.717,-43.259 172.624,-43.273 172.627,-43.299 172.688,-43.314 172.735,-43.354 172.699,-43.399 172.631,-43.427 172.562,-43.436 172.526,-43.465 172.692,-43.445 172.739,-43.467 172.750,-43.518 172.768,-43.563 172.807,-43.622 172.948,-43.658 173.074,-43.675 173.099,-43.703 173.117,-43.797 173.095,-43.844 173.066,-43.875 173.023,-43.886 172.922,-43.891 172.818,-43.870 172.750,-43.813 172.555,-43.832 172.501,-43.844 172.476,-43.833 172.584,-43.773 172.526,-43.740 172.480,-43.726 172.429,-43.747 172.397,-43.778 172.386,-43.830 172.350,-43.860 172.296,-43.868 172.220,-43.825 172.145,-43.764 172.037,-43.702 172.051,-43.740 172.138,-43.833 172.181,-43.896 172.080,-43.946 171.979,-43.984 171.889,-44.007 171.810,-44.042 171.713,-44.097 171.659,-44.116 171.518,-44.118 171.443,-44.136 171.418,-44.208 171.364,-44.255 171.241,-44.264 171.284,-44.278 171.313,-44.302 171.230,-44.521 171.212,-44.613 171.198,-44.767 171.148,-44.912 171.000,-44.912 171.022,-44.938 171.133,-44.977 171.112,-45.040 170.989,-45.151 170.939,-45.217 170.888,-45.373 170.816,-45.519 170.701,-45.684 170.701,-45.714 170.741,-45.755 170.788,-45.792 170.791,-45.844 170.777,-45.872 170.723,-45.878 170.676,-45.896 170.420,-45.941 170.334,-45.991 170.266,-46.083 170.186,-46.161 169.920,-46.335 169.761,-46.479 169.729,-46.521 169.686,-46.552 169.344,-46.620 169.099,-46.630 168.966,-46.613 168.836,-46.578 168.768,-46.566 168.631,-46.587 168.573,-46.611 168.465,-46.588 168.383,-46.606 168.357,-46.588 168.325,-46.545 168.343,-46.490 168.321,-46.448 168.267,-46.418 168.231,-46.385 168.188,-46.363 168.077,-46.352 167.900,-46.368 167.843,-46.366 167.720,-46.227 167.681,-46.193 167.540,-46.149 167.490,-46.154 167.414,-46.229 167.367,-46.241 167.101,-46.250 166.831,-46.226 166.730,-46.198 166.712,-46.134 166.917,-45.957 166.856,-45.981 166.730,-46.052 166.651,-46.042 166.727,-45.964 166.734,-45.929 166.719,-45.889 166.611,-45.955 166.493,-45.964 166.478,-45.903 166.489,-45.832 166.514,-45.813 166.835,-45.774 166.953,-45.750 167.004,-45.712 166.809,-45.700 166.799,-45.646 166.824,-45.602 166.989,-45.531 166.871,-45.550 166.734,-45.543 166.745,-45.469 166.777,-45.410 166.921,-45.408 166.874,-45.368 166.871,-45.311 166.910,-45.307 167.051,-45.384 167.155,-45.411 167.112,-45.354 167.119,-45.318 167.144,-45.302 167.231,-45.290 167.205,-45.280 167.126,-45.266 167.033,-45.222 167.022,-45.177 167.025,-45.123 167.126,-45.050 167.187,-45.094 167.259,-45.082 167.205,-45.049 167.173,-44.997 167.195,-44.964 167.411,-44.828 167.465,-44.958 167.479,-44.915 167.483,-44.873 167.457,-44.839 167.461,-44.802 167.486,-44.771 167.576,-44.741 167.699,-44.641 167.789,-44.596 167.861,-44.625 167.907,-44.665 167.900,-44.625 167.868,-44.592 167.857,-44.500 168.019,-44.359 168.195,-44.224 168.368,-44.082 168.458,-44.031 168.653,-43.972 168.775,-43.997 168.807,-43.991 168.991,-43.891 169.067,-43.863 169.135,-43.899 169.178,-43.913 169.135,-43.820 169.171,-43.778 169.322,-43.702 169.517,-43.623 169.661,-43.590 169.769,-43.538 169.833,-43.537 169.823,-43.497 169.833,-43.458 169.891,-43.462 169.909,-43.446 169.859,-43.425 170.017,-43.349 170.104,-43.266 170.150,-43.247 170.190,-43.222 170.240,-43.163 170.302,-43.144 170.356,-43.153 170.395,-43.182 170.374,-43.134 170.302,-43.108 170.381,-43.066 170.460,-43.038 170.536,-43.059 170.611,-43.092 170.536,-43.040 170.525,-43.009 170.615,-42.972 170.665,-42.962 170.734,-43.030 170.726,-42.976 170.741,-42.927 170.842,-42.849 170.971,-42.719 171.011,-42.764 171.018,-42.818 171.011,-42.886 171.040,-42.861 171.047,-42.802 171.029,-42.696 171.191,-42.500 171.220,-42.479 171.256,-42.465 171.313,-42.460 171.295,-42.431 171.252,-42.401 171.295,-42.302 171.324,-42.189 171.360,-42.080 171.421,-41.972 171.486,-41.795 171.536,-41.757 171.673,-41.745 171.731,-41.719 171.832,-41.655 171.947,-41.538 172.012,-41.445 172.094,-41.202 172.141,-40.946 172.274,-40.759 172.469,-40.622 172.642,-40.518 172.710,-40.497 172.829,-40.490 172.944,-40.519 172.732,-40.544 172.710,-40.606 172.703,-40.667 172.728,-40.724 172.768,-40.773 172.868,-40.820 172.987,-40.848 173.041,-40.953 173.052,-41.078 173.070,-41.186 173.117,-41.280`),P(`173.916,-40.863 173.779,-40.922 173.786,-40.882 173.812,-40.794 173.873,-40.749 173.902,-40.747 173.963,-40.712 173.959,-40.787 173.916,-40.863`),P(`166.745,-45.656 166.741,-45.705 166.730,-45.729 166.694,-45.729 166.644,-45.724 166.593,-45.701 166.557,-45.708 166.532,-45.700 166.568,-45.644 166.687,-45.615 166.730,-45.639 166.745,-45.656`),P(`166.979,-45.179 167.022,-45.300 166.932,-45.276 166.892,-45.241 166.964,-45.181 166.979,-45.179`),P(`168.145,-46.863 168.145,-46.903 168.041,-46.887 168.044,-46.932 168.127,-46.957 168.156,-46.988 168.242,-46.979 168.260,-47.028 168.242,-47.069 168.185,-47.102 168.015,-47.118 167.904,-47.180 167.810,-47.170 167.785,-47.175 167.677,-47.243 167.555,-47.264 167.522,-47.259 167.540,-47.200 167.630,-47.142 167.630,-47.088 167.655,-47.045 167.742,-47.014 167.742,-46.957 167.799,-46.906 167.763,-46.797 167.785,-46.700 167.954,-46.694 168.145,-46.863`),P(`175.543,-36.280 175.550,-36.334 175.475,-36.315 175.446,-36.273 175.360,-36.232 175.345,-36.218 175.338,-36.134 175.381,-36.094 175.388,-36.077 175.410,-36.070 175.446,-36.115 175.514,-36.178 175.543,-36.280`),P(`173.268,-34.935 173.286,-34.980 173.340,-34.949 173.380,-34.897 173.448,-34.844 173.437,-34.928 173.473,-34.947 173.693,-35.006 173.740,-35.054 173.786,-35.068 173.812,-35.041 173.844,-35.027 173.923,-35.058 174.103,-35.143 174.118,-35.173 174.110,-35.216 174.118,-35.263 174.143,-35.299 174.204,-35.308 174.283,-35.254 174.319,-35.247 174.373,-35.325 174.395,-35.369 174.384,-35.367 174.420,-35.410 174.463,-35.454 174.542,-35.582 174.532,-35.627 174.510,-35.667 174.582,-35.785 174.535,-35.794 174.391,-35.773 174.395,-35.798 174.478,-35.884 174.550,-36.006 174.604,-36.080 174.802,-36.310 174.773,-36.391 174.776,-36.445 174.751,-36.490 174.820,-36.612 174.776,-36.650 174.748,-36.775 174.719,-36.796 174.722,-36.841 174.802,-36.853 174.848,-36.872 174.892,-36.909 174.917,-36.865 174.953,-36.853 175.046,-36.912 175.244,-36.971 175.298,-36.994 175.327,-37.040 175.345,-37.157 175.385,-37.207 175.460,-37.218 175.543,-37.202 175.568,-37.159 175.550,-37.046 175.493,-36.865 175.493,-36.806 175.500,-36.749 175.489,-36.690 175.457,-36.634 175.428,-36.593 175.385,-36.556 175.399,-36.501 175.460,-36.476 175.496,-36.523 175.529,-36.579 175.680,-36.747 175.774,-36.735 175.781,-36.804 175.842,-36.876 175.878,-36.957 175.921,-37.205 175.990,-37.436 176.116,-37.539 176.130,-37.587 176.054,-37.561 176.029,-37.577 176.036,-37.601 176.108,-37.645 176.191,-37.667 176.242,-37.664 176.292,-37.679 176.616,-37.830 176.771,-37.889 177.163,-37.987 177.275,-37.994 177.336,-37.990 177.455,-37.957 177.559,-37.898 177.649,-37.808 177.728,-37.705 177.811,-37.657 177.908,-37.617 177.959,-37.580 178.009,-37.554 178.272,-37.566 178.362,-37.619 178.477,-37.660 178.535,-37.691 178.517,-37.757 178.448,-37.855 178.394,-37.961 178.348,-38.200 178.315,-38.445 178.268,-38.551 178.182,-38.634 178.085,-38.693 177.977,-38.723 177.934,-38.860 177.912,-39.021 177.916,-39.063 177.952,-39.094 177.966,-39.143 177.908,-39.240 177.876,-39.226 177.829,-39.145 177.786,-39.112 177.656,-39.085 177.523,-39.073 177.408,-39.082 177.296,-39.115 177.127,-39.186 177.077,-39.223 177.030,-39.266 176.954,-39.367 176.936,-39.490 176.940,-39.556 176.965,-39.605 177.109,-39.674 176.969,-39.910 176.843,-40.158 176.771,-40.228 176.688,-40.294 176.612,-40.441 176.476,-40.570 176.386,-40.667 176.314,-40.769 176.252,-40.877 176.119,-41.030 176.062,-41.131 175.982,-41.214 175.838,-41.320 175.687,-41.412 175.446,-41.538 175.381,-41.580 175.309,-41.611 175.223,-41.575 175.205,-41.535 175.183,-41.448 175.165,-41.417 175.054,-41.391 174.906,-41.433 174.881,-41.424 174.874,-41.405 174.874,-41.278 174.899,-41.243 174.866,-41.223 174.830,-41.231 174.820,-41.262 174.841,-41.290 174.758,-41.325 174.668,-41.327 174.643,-41.313 174.636,-41.290 174.658,-41.252 174.686,-41.217 174.848,-41.059 175.018,-40.848 175.162,-40.622 175.201,-40.506 175.255,-40.289 175.212,-40.200 175.154,-40.115 175.010,-39.952 174.812,-39.860 174.686,-39.848 174.568,-39.813 174.456,-39.735 174.352,-39.643 174.150,-39.568 173.934,-39.509 173.812,-39.426 173.783,-39.375 173.765,-39.318 173.765,-39.266 173.783,-39.210 173.804,-39.169 173.844,-39.139 174.071,-39.032 174.312,-38.971 174.355,-38.973 174.398,-38.962 174.460,-38.926 174.568,-38.842 174.596,-38.785 174.618,-38.605 174.654,-38.428 174.715,-38.226 174.809,-38.099 174.841,-38.023 174.802,-37.896 174.838,-37.849 174.881,-37.820 174.928,-37.804 174.845,-37.685 174.751,-37.504 174.730,-37.448 174.744,-37.393 174.769,-37.339 174.708,-37.325 174.672,-37.273 174.586,-37.098 174.611,-37.070 174.661,-37.089 174.733,-37.216 174.748,-37.150 174.805,-37.110 174.863,-37.089 174.928,-37.086 174.784,-36.943 174.733,-36.950 174.668,-36.971 174.600,-36.985 174.535,-36.973 174.474,-36.942 174.445,-36.883 174.406,-36.768 174.380,-36.726 174.190,-36.492 174.247,-36.485 174.402,-36.601 174.431,-36.565 174.456,-36.511 174.445,-36.450 174.409,-36.405 174.355,-36.376 174.352,-36.324 174.395,-36.275 174.391,-36.240 174.305,-36.171 174.269,-36.164 174.251,-36.195 174.276,-36.244 174.254,-36.249 174.035,-36.122 173.970,-36.021 173.916,-35.909 173.909,-35.954 173.916,-36.018 174.002,-36.146 174.143,-36.289 174.168,-36.327 174.146,-36.377 174.096,-36.391 174.056,-36.360 173.992,-36.237 173.945,-36.176 173.412,-35.542 173.480,-35.459 173.585,-35.388 173.610,-35.357 173.628,-35.318 173.581,-35.313 173.542,-35.331 173.495,-35.362 173.455,-35.400 173.401,-35.482 173.376,-35.501 173.315,-35.443 173.290,-35.409 173.290,-35.367 173.275,-35.339 173.228,-35.331 173.160,-35.247 173.117,-35.206 173.189,-35.124 173.192,-35.016 173.117,-34.903 173.030,-34.799 172.861,-34.633 172.706,-34.456 172.876,-34.433 173.045,-34.430 172.966,-34.535 173.002,-34.596 173.056,-34.648 173.171,-34.806 173.182,-34.853 173.239,-34.898 173.268,-34.935`)];
+/* ===== Nueva Zelanda · National League Championship + regionales (Oceanía) =====
+   32 clubes reales (BeSoccer), banquillo 7 en todas. Estructura real fiel: 3 ligas regionales
+   jugables como divisiones normales (Northern = div1, 12 clubes; Central = div2, 10 clubes;
+   Southern = div3, 10 clubes), y ADEMÁS la National League Championship (NZ1) ya no es una
+   división: es una copa especial (como la OFC Pro League) con 3 grupos regionales REALES
+   (los mismos 32 clubes) que se juegan primero y, cuando el grupo más largo (Northern, 22
+   jornadas) termina, clasifican 11 equipos (4 de Northern + Auckland FC Reserves fijo, 3 de
+   Central + Wellington Phoenix Reserves fijo, 2 de Southern) a una mini-liga final a una vuelta;
+   el campeón de esa fase se lleva el trofeo y la plaza de la OFC Champions League. Así ningún
+   club se duplica (su div regional es su liga real; su participación en la fase de grupos de
+   NZ1 usa el mismo id, no un club aparte) y los tres regionales muestran su tamaño real.
+   Sin imagen real de trofeo disponible para ninguna: se usa el placeholder gris NOFOTO_TROPHY
+   en todas salvo la Chatham Cup. Polígono real del país (NZPOLY, Natural Earth) con Isla Norte/
+   Isla Sur separadas para que los clubes queden bien situados dentro de la silueta según su
+   ciudad real. */
+(function(){
+  Object.assign(COUNTRIES,{NZ:{name:'Nueva Zelanda',league:'National League Championship',divs:['Northern League','Central League','Southern League'],pin:[172.5,-41.5],polys:NZPOLY}});
+  if(!PLAYABLE.includes('NZ'))PLAYABLE.push('NZ');
+  if(!GROUPS.some(g=>g.id==='NZ'))GROUPS.push({id:'NZ',name:'Nueva Zelanda',comps:['NZ2','NZ3','NZ4','NZC','NZSC','NZ1']});
+  Object.assign(CUPNAME,{NZ:'Chatham Cup'});Object.assign(TROPHY_CUP,{NZ:'Chatham Cup'});
+  /* En la pantalla de elegir club, Northern/Central/Southern League aparecen anidadas bajo una
+     sola pestaña "National League Championship" (igual que la Primera/Segunda Federación en
+     España): al pulsarla se despliegan las 3 regionales como sub-pestañas, cada una con sus
+     clubes reales — no se fusionan en un único grupo, solo se agrupan visualmente bajo el nombre
+     de la competición nacional, que es la copa de 2 fases a la que en realidad clasifican. */
+  if(!DIV_GROUPS.NZ)DIV_GROUPS.NZ=[{label:'National League Championship',subs:[[1,'Northern League'],[2,'Central League'],[3,'Southern League']]}];
+  /* Charity Cup (NZF Charity Cup): supercopa real de Nueva Zelanda desde 2024, campeón de la National
+     League Championship vs campeón de la Chatham Cup, partido único al arrancar la temporada. 1ª temporada
+     real: Wellington Olympic (local) vs Christchurch United, vía FIXED_SC_S1.NZ. */
+  Object.assign(TROPHY_SC,{NZ:'Charity Cup'});
+  if(typeof OC_COUNTRIES!=='undefined')OC_COUNTRIES.add('NZ');
+  {const i=LOCKED_OC.findIndex(x=>x.id==='NZ');if(i>=0)LOCKED_OC.splice(i,1);}
+  /* BENCH_CD se indexa por co+div (NZ1=Northern,NZ2=Central,NZ3=Southern): coincide con la clave 'NZ1'
+     que también usa la copa National League Championship, pero son rutas de código distintas
+     (benchLimit lee BENCH_CD para partidos de liga; benchN() despacha por cup.key para partidos de copa). */
+  Object.assign(BENCH_CD,{NZ1:7,NZ2:7,NZ3:7});
+  Object.assign(TROPHY_IMG_CO,{NZ:{league:NOFOTO_TROPHY,d2:NOFOTO_TROPHY,d3:NOFOTO_TROPHY,d4:NOFOTO_TROPHY,cup:'https://cdn.resfu.com/img_data/competiciones/copa/1803.png?size=60x&lossy=1',sc:NOFOTO_TROPHY}});
+
+  const SEL_NZ2=[
+    ['AUCK','Auckland City FC','Auckland City','Auckland','#1c3f94','#f4f4f4',66,15308],
+    ['AUC2','Auckland FC Reserves','Auckland FC II','Auckland','#00285e','#f2b01c',52,166252],
+    ['AUNI','Auckland United','Auckland Utd','Auckland','#0a3a8a','#f4f4f4',48,137899],
+    ['BIRK','Birkenhead United','Birkenhead Utd','Auckland','#8b1a1a','#f4f4f4',50,64491],
+    ['EAST','Eastern Suburbs AFC','Eastern Suburbs','Auckland','#1a1a1a','#f4f4f4',50,64481],
+    ['BAYO','Bay Olympic','Bay Olympic','Auckland','#0a8a3d','#f4f4f4',44,86404],
+    ['ECBA','East Coast Bays','East Coast Bays','Auckland','#1c3f94','#f2d31b',42,64486],
+    ['FENC','Fencibles United','Fencibles Utd','Auckland','#8b1a1a','#f4f4f4',42,120965],
+    ['MANK','Manukau United','Manukau Utd','Auckland','#0a3a8a','#f2d31b',40,111180],
+    ['MELU','Melville United','Melville Utd','Hamilton','#1a1a1a','#f4f4f4',42,64483],
+    ['TAUR','Tauranga City United','Tauranga City','Tauranga','#d4192b','#f4f4f4',44,64484],
+    ['WSPR','Western Springs AFC','Western Springs','Auckland','#0a8a3d','#1a1a1a',42,101395]
+  ];
+  const LOG_SEL_NZ2={};
+  SEL_NZ2.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'NZ',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='NZ';c.div=1;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_NZ2[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_NZ2);Object.keys(LOG_SEL_NZ2).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_NZ2[id];});
+
+  const SEL_NZ3=[
+    ['NAPI','Napier City Rovers','Napier City','Napier','#1c3f94','#f2d31b',52,63409],
+    ['WOLY','Wellington Olympic','Wgtn Olympic','Wellington','#0a8a3d','#f4f4f4',48,64492],
+    ['MRAN','Miramar Rangers','Miramar Rangers','Wellington','#8b1a1a','#1a1a1a',46,65256],
+    ['WPHX','Wellington Phoenix II','Phoenix II','Wellington','#f4d41c','#1a1a1a',55,57478],
+    ['FCWE','FC Western','FC Western','Wellington','#1c3f94','#f4f4f4',42,142547],
+    ['ISLB','Island Bay United','Island Bay Utd','Wellington','#0a3a8a','#f2d31b',40,64495],
+    ['PETO','Petone','Petone','Lower Hutt','#f4d41c','#1a1a1a',42,64493],
+    ['UPHU','Upper Hutt City','Upper Hutt City','Upper Hutt','#8b1a1a','#f4f4f4',38,89166],
+    ['WATE','Waterside Karori','Waterside Karori','Wellington','#1a1a1a','#f2d31b',44,111185],
+    ['WSUB','Western Suburbs AFC','Western Suburbs','Wellington','#d4192b','#1a1a1a',40,64498]
+  ];
+  const LOG_SEL_NZ3={};
+  SEL_NZ3.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'NZ',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='NZ';c.div=2;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_NZ3[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_NZ3);Object.keys(LOG_SEL_NZ3).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_NZ3[id];});
+
+  const SEL_NZ4=[
+    ['CASH','Cashmere Technical','Cashmere Tech','Christchurch','#d4192b','#1a1a1a',50,64500],
+    ['FERR','Ferrymead Bays','Ferrymead Bays','Christchurch','#0a3a8a','#f4f4f4',46,64501],
+    ['CHRU','Christchurch United','Christchurch Utd','Christchurch','#0a3a8a','#f4f4f4',46,120976],
+    ['COAS','Coastal Spirit','Coastal Spirit','Christchurch','#0a8a3d','#f4f4f4',40,64503],
+    ['DUNE','Dunedin City Royals','Dunedin City','Dunedin','#f4d41c','#1a1a1a',42,151268],
+    ['NELS','Nelson Suburbs','Nelson Suburbs','Nelson','#1c3f94','#f4f4f4',40,101407],
+    ['NOMA','Nomads United','Nomads Utd','Invercargill','#8b1a1a','#f4f4f4',38,64504],
+    ['NORA','Northern AFC','Northern AFC','Dunedin','#1a1a1a','#f2d31b',40,101411],
+    ['SELW','Selwyn United','Selwyn Utd','Selwyn','#0a3a8a','#f4f4f4',38,111186],
+    ['WANA','Wanaka AFC','Wanaka','Wanaka','#0a8a3d','#1a1a1a',38,120958]
+  ];
+  const LOG_SEL_NZ4={};
+  SEL_NZ4.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'NZ',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='NZ';c.div=3;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_NZ4[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_NZ4);Object.keys(LOG_SEL_NZ4).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_NZ4[id];});
+
+  Object.assign(CITY,{'Auckland':{ll:[174.76,-36.85]},'Napier':{ll:[176.92,-39.49]},'Wellington':{ll:[174.78,-41.29]},'Christchurch':{ll:[172.64,-43.53]},'Hamilton':{ll:[175.28,-37.78]},'Tauranga':{ll:[176.17,-37.69]},'Lower Hutt':{ll:[174.9,-41.21]},'Upper Hutt':{ll:[175.07,-41.12]},'Dunedin':{ll:[170.5,-45.87]},'Nelson':{ll:[173.28,-41.27]},'Invercargill':{ll:[168.35,-46.41]},'Selwyn':{ll:[172.45,-43.63]},'Wanaka':{ll:[169.15,-44.7]}});
+})();
+
+/* ===== Alemania · Regionalliga (4ª división, 5 grupos regionales) =====
+   91 clubes reales repartidos en Nord/Nordost/Bayern/West/Südwest. Sin plantillas de
+   jugadores todavía (paso posterior aparte). Ligas cerradas (sin ascenso/descenso
+   modelado), banquillo 7. */
+(function(){
+  Object.assign(BENCH_CD,{DE4:7,DE5:7,DE6:7,DE7:7,DE8:7});
+  const SEL_DE4=[
+    ['ATDE','Atlas Delmenhorst','Atlas Delmenhorst','Delmenhorst','#000000','#ffcc00',40,85610],
+    ['BRSV','Bremer SV','Bremer SV','Bremen','#1c3f94','#ffffff',38,17078],
+    ['BKEM','BSV Kickers Emden','Kickers Emden','Emden','#1a1a1a','#ffffff',38,555],
+    ['DRAS','SV Drochtersen/Assel','Drochtersen/Assel','Drochtersen','#0a3a8a','#ffffff',42,17131],
+    ['EITV','Eimsbütteler TV','Eimsbütteler TV','Hamburgo','#1a1a1a','#ffffff',38,65532],
+    ['EINO','Eintracht Norderstedt','Eintracht Nord.','Norderstedt','#0a3a8a','#f2d31b',38,11809],
+    ['FSVS','FSV Schöningen','FSV Schöningen','Schöningen','#1c3f94','#ffffff',36,141679],
+    ['H96B','Hannover 96 II','Hannover 96 II','Hannover','#0a8a4a','#1a1a1a',50,5701],
+    ['HSV2','Hamburger SV II','Hamburger SV II','Hamburgo','#1c5aa6','#ffffff',46,5695],
+    ['HSCH','Hannoverscher SC','Hannoverscher SC','Hannover','#d4192b','#ffffff',36,89479],
+    ['PHLU','1. FC Phönix Lübeck','Phönix Lübeck','Lübeck','#1c3f94','#ffffff',38,85486],
+    ['SSVJ','SSV Jeddeloh','SSV Jeddeloh','Edewecht','#0a8a3d','#ffffff',36,17135],
+    ['STP2','FC St. Pauli II','St. Pauli II','Hamburgo','#5a3a22','#ffffff',46,5694],
+    ['TODE','SV Todesfelde','Todesfelde','Todesfelde','#d4192b','#1a1a1a',36,17126],
+    ['VFBL','VfB Lübeck','VfB Lübeck','Lübeck','#d4192b','#ffffff',40,2891],
+    ['VFBO','VfB Oldenburg','VfB Oldenburg','Oldenburg','#1c3f94','#f4f4f4',42,9719],
+    ['WEFL','SC Weiche Flensburg 08','Weiche Flensburg','Flensburg','#0a8a3d','#ffffff',42,9715],
+    ['WER2','Werder Bremen II','Werder Bremen II','Bremen','#1c9a3d','#ffffff',48,9713]
+  ];
+  const LOG_SEL_DE4={};
+  SEL_DE4.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'DE',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='DE';c.div=4;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_DE4[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_DE4);Object.keys(LOG_SEL_DE4).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_DE4[id];});
+
+  const SEL_DE5=[
+    ['VSGA','VSG Altglienicke','Altglienicke','Berlín','#1c3f94','#ffffff',42,17175],
+    ['BFCD','BFC Dynamo','BFC Dynamo','Berlín','#d4192b','#f4f4f4',44,11755],
+    ['BFCP','BFC Preussen','BFC Preussen','Berlín','#1a1a1a','#ffffff',36,83318],
+    ['BSGC','BSG Chemie Leipzig','Chemie Leipzig','Leipzig','#1a1a1a','#f2d31b',42,89524],
+    ['CHEM','Chemnitzer FC','Chemnitzer FC','Chemnitz','#1c3f94','#ffffff',40,4096],
+    ['ERZA','FC Erzgebirge Aue','Erzgebirge Aue','Aue-Bad Schlema','#1c3f94','#f4f4f4',44,1062],
+    ['CZJE','FC Carl Zeiss Jena','Carl Zeiss Jena','Jena','#1c3f94','#ffffff',40,1051],
+    ['GREI','Greifswalder FC','Greifswalder FC','Greifswald','#1a1a1a','#ffffff',36,83295],
+    ['HALL','Hallescher FC','Hallescher FC','Halle (Saale)','#1c3f94','#ffffff',46,5698],
+    ['HER2','Hertha BSC II','Hertha BSC II','Berlín','#0b5cad','#ffffff',44,5700],
+    ['LOKL','1. FC Lokomotive Leipzig','Lok Leipzig','Leipzig','#1c3f94','#f4f4f4',38,9745],
+    ['LUCK','FSV 63 Luckenwalde','Luckenwalde','Luckenwalde','#0a8a3d','#ffffff',36,17180],
+    ['MGD','1. FC Magdeburg II','Magdeburg II','Magdeburgo','#1c3f94','#f4f4f4',44,83275],
+    ['RWER','Rot-Weiss Erfurt','RW Erfurt','Erfurt','#1a1a1a','#d4192b',42,2917],
+    ['RSVE','RSV Eintracht','RSV Eintracht','Stahnsdorf','#0a3a8a','#ffffff',34,121520],
+    ['BABE','SV Babelsberg 03','Babelsberg 03','Potsdam','#1a1a1a','#d4192b',38,2906],
+    ['TASB','SV Tasmania Berlin','Tasmania Berlin','Berlín','#1c3f94','#ffffff',34,30921],
+    ['ZWIC','FSV Zwickau','FSV Zwickau','Zwickau','#d4192b','#ffffff',40,9746]
+  ];
+  const LOG_SEL_DE5={};
+  SEL_DE5.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'DE',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='DE';c.div=5;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_DE5[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_DE5);Object.keys(LOG_SEL_DE5).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_DE5[id];});
+
+  const SEL_DE6=[
+    ['M60','TSV 1860 München','1860 München','Múnich','#1c3f94','#f4f4f4',54,12],
+    ['AUBS','TSV Aubstadt','Aubstadt','Aubstadt','#1c3f94','#ffffff',40,61536],
+    ['BY2','Bayern München II','Bayern II','Múnich','#dc052d','#0066b2',58,1045],
+    ['BAYR','SpVgg Bayreuth','SpVgg Bayreuth','Bayreuth','#1a1a1a','#f2d31b',42,2893],
+    ['BUCH','TSV Buchbach','Buchbach','Buchbach','#1c3f94','#ffffff',38,9730],
+    ['ELTD','SC Eltersdorf','Eltersdorf','Erlangen','#0a8a3d','#ffffff',34,9742],
+    ['AUG2','FC Augsburg II','Augsburg II','Augsburgo','#d4192b','#0a8a3d',46,9737],
+    ['SGF2','Greuther Fürth II','Fürth II','Fürth','#f4f4f6','#0a8a4a',46,5679],
+    ['ILLE','FV Illertissen','Illertissen','Illertissen','#1c3f94','#ffffff',38,9741],
+    ['LDSB','TSV Landsberg','Landsberg','Landsberg am Lech','#1a1a1a','#d4192b',34,61546],
+    ['MEMM','FC Memmingen','Memmingen','Memmingen','#1c3f94','#ffffff',40,5678],
+    ['NUR2','1. FC Nürnberg II','Nürnberg II','Núremberg','#d4192b','#ffffff',48,5691],
+    ['SCHW','1. FC Schweinfurt 05','Schweinfurt 05','Schweinfurt','#d4192b','#1a1a1a',38,2978],
+    ['ANSB','SpVgg Ansbach','SpVgg Ansbach','Ansbach','#1c3f94','#ffffff',34,2983],
+    ['WABU','SV Wacker Burghausen','Wacker Burghausen','Burghausen','#1a1a1a','#f2d31b',40,9708],
+    ['SCHB','TSV Schwaben Augsburg','Schwaben Augsburg','Augsburgo','#1c3f94','#ffffff',36,85414],
+    ['UNTH','SpVgg Unterhaching','Unterhaching','Unterhaching','#d4192b','#1a1a1a',46,9703],
+    ['EICH','VfB Eichstätt','Eichstätt','Eichstätt','#0a8a3d','#ffffff',34,61551],
+    ['VILZ','DJK Vilzing','Vilzing','Cham','#1c3f94','#ffffff',34,61550]
+  ];
+  const LOG_SEL_DE6={};
+  SEL_DE6.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'DE',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='DE';c.div=6;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_DE6[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_DE6);Object.keys(LOG_SEL_DE6).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_DE6[id];});
+
+  const SEL_DE7=[
+    ['BVB2','Borussia Dortmund II','Dortmund II','Dortmund','#f2d31b','#1a1a1a',54,5670],
+    ['MGL2','Borussia Mönchengladbach II','Gladbach II','Mönchengladbach','#1c3f94','#1a1a1a',46,5661],
+    ['BEGL','SV Bergisch Gladbach 09','Bergisch Gladbach','Bergisch Gladbach','#1c3f94','#ffffff',34,9722],
+    ['BONN','Bonner SC','Bonner SC','Bonn','#1a1a1a','#ffffff',38,61588],
+    ['BOCH','1. FC Bocholt','Bocholt','Bocholt','#1c3f94','#ffffff',38,61576],
+    ['GUET','FC Gütersloh','Gütersloh','Gütersloh','#1a1a1a','#d4192b',36,2980],
+    ['HILD','VfB 03 Hilden','Hilden','Hilden','#1c3f94','#ffffff',34,61581],
+    ['KOE2','1. FC Köln II','Köln II','Colonia','#d4192b','#ffffff',48,5675],
+    ['PAD2','SC Paderborn 07 II','Paderborn II','Paderborn','#1c3f94','#ffffff',44,65734],
+    ['RODI','SV Rödinghausen','Rödinghausen','Rödinghausen','#1a1a1a','#ffffff',42,9272],
+    ['OBER','Rot-Weiß Oberhausen','RW Oberhausen','Oberhausen','#d4192b','#ffffff',44,4093],
+    ['S04B','FC Schalke 04 II','Schalke 04 II','Gelsenkirchen','#1c5aa6','#ffffff',48,5668],
+    ['SIEG','Sportfreunde Siegen','Sp. Siegen','Siegen','#1a1a1a','#d4192b',36,9725],
+    ['LOTT','Sportfreunde Lotte','Sp. Lotte','Lotte','#1c3f94','#ffffff',38,4339],
+    ['BOC2','VfL Bochum II','Bochum II','Bochum','#1c5aa6','#ffffff',44,5672],
+    ['WATT','SG Wattenscheid 09','Wattenscheid 09','Bochum','#0a3a8a','#f4f4f4',38,17063],
+    ['RHYN','SV Westfalia Rhynern','Westfalia Rhynern','Hamm','#1a1a1a','#ffffff',34,61605],
+    ['WIED','SC Wiedenbrück','Wiedenbrück','Rheda-Wiedenbrück','#1c3f94','#ffffff',36,5677]
+  ];
+  const LOG_SEL_DE7={};
+  SEL_DE7.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'DE',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='DE';c.div=7;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_DE7[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_DE7);Object.keys(LOG_SEL_DE7).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_DE7[id];});
+
+  const SEL_DE8=[
+    ['WALL','FC-Astoria Walldorf','Astoria Walldorf','Walldorf','#1c3f94','#ffffff',36,17188],
+    ['FULD','SG Barockstadt Fulda-Lehnerz','Barockstadt','Fulda','#1a1a1a','#d4192b',34,143506],
+    ['FRA2','Eintracht Frankfurt II','Eintracht Ffm II','Fráncfort','#e1000f','#1a1a1a',48,5662],
+    ['ETR','SV Eintracht Trier 05','Eintracht Trier','Trier','#005194','#FFD64A',42,5676],
+    ['HOM','FC 08 Homburg','Homburg','Homburg','#1c3f94','#ffffff',42,9710],
+    ['FREB','FSV Freiberg','FSV Freiberg','Freiberg am Neckar','#1a1a1a','#ffffff',34,17192],
+    ['FRI2','SC Freiburg II','Freiburg II','Freiburg im Breisgau','#d4192b','#ffffff',50,5686],
+    ['FSVF','FSV Frankfurt','FSV Frankfurt','Fráncfort','#d4192b','#1a1a1a',44,1175],
+    ['KASS','KSV Hessen Kassel','Hessen Kassel','Kassel','#1c3f94','#ffffff',40,5685],
+    ['KAI2','1. FC Kaiserslautern II','Kaiserslautern II','Kaiserslautern','#d4192b','#ffffff',48,5669],
+    ['KOF','Kickers Offenbach','Kickers Offenbach','Offenbach am Main','#d4192b','#ffffff',42,1458],
+    ['MAI2','1. FSV Mainz 05 II','Mainz 05 II','Maguncia','#d4192b','#1a1a1a',48,5674],
+    ['SNDH','SV Sandhausen','Sandhausen','Sandhausen','#1c3f94','#ffffff',46,2446],
+    ['ULM8','SSV Ulm 1846','SSV Ulm 1846','Ulm','#d4192b','#ffffff',50,9711],
+    ['SKI','Stuttgarter Kickers','Stuttgarter K','Stuttgart','#1c3f94','#ffffff',42,5680],
+    ['STEI','TSV Steinbach Haiger','Steinbach Haiger','Haiger','#1a1a1a','#ffffff',34,20267],
+    ['AALE','VfR Aalen','VfR Aalen','Aalen','#1c3f94','#ffffff',42,2688],
+    ['MANN','VfR Mannheim','VfR Mannheim','Mannheim','#1c3f94','#ffffff',36,17200]
+  ];
+  const LOG_SEL_DE8={};
+  SEL_DE8.forEach(([id,name,short,city,c1,c2,rep,crest])=>{
+    let c=CLUBBY[id];if(!c){c=K2(id,name,short,city,'DE',c1,c2,rep);CLUBBY[id]=c;}
+    c.name=name;c.short=short;c.city=city;c.co='DE';c.div=8;c.c1=c1;c.c2=c2;c.rep=rep;
+    if(!CLUBS.includes(c))CLUBS.push(c);
+    try{BASE_DIV[id]=1}catch(e){}
+    LOG_SEL_DE8[id]='https://cdn.resfu.com/img_data/equipos/'+crest+'.png?size=120x&lossy=1';
+  });
+  Object.assign(CLUB_LOGO,LOG_SEL_DE8);Object.keys(LOG_SEL_DE8).forEach(id=>{if(CLUBBY[id])CLUBBY[id].logo=LOG_SEL_DE8[id];});
+
+  Object.assign(CITY,{'Delmenhorst':{ll:[8.63,53.05]},'Emden':{ll:[7.21,53.37]},'Drochtersen':{ll:[9.32,53.69]},'Norderstedt':{ll:[10.01,53.69]},'Schöningen':{ll:[10.97,52.14]},'Edewecht':{ll:[8.0,53.13]},'Todesfelde':{ll:[10.27,53.91]},'Flensburg':{ll:[9.44,54.78]},'Aubstadt':{ll:[10.37,50.25]},'Erlangen':{ll:[11.0,49.6]},'Illertissen':{ll:[10.1,48.23]},'Landsberg am Lech':{ll:[10.88,48.05]},'Memmingen':{ll:[10.18,47.98]},'Ansbach':{ll:[10.58,49.3]},'Burghausen':{ll:[12.83,48.17]},'Cham':{ll:[12.66,49.22]},'Bergisch Gladbach':{ll:[7.13,50.99]},'Bonn':{ll:[7.1,50.74]},'Bocholt':{ll:[6.61,51.84]},'Gütersloh':{ll:[8.38,51.9]},'Hilden':{ll:[6.93,51.17]},'Rödinghausen':{ll:[8.46,52.26]},'Oberhausen':{ll:[6.86,51.47]},'Siegen':{ll:[8.02,50.88]},'Lotte':{ll:[7.9,52.33]},'Hamm':{ll:[7.82,51.68]},'Rheda-Wiedenbrück':{ll:[8.3,51.85]},'Walldorf':{ll:[8.64,49.3]},'Fulda':{ll:[9.68,50.55]},'Freiberg am Neckar':{ll:[9.23,48.93]},'Kassel':{ll:[9.5,51.31]},'Offenbach am Main':{ll:[8.77,50.1]},'Sandhausen':{ll:[8.67,49.35]},'Haiger':{ll:[8.21,50.74]},'Aalen':{ll:[10.09,48.84]},'Lübeck':{ll:[10.69,53.87]},'Chemnitz':{ll:[12.92,50.83]},'Jena':{ll:[11.59,50.93]},'Greifswald':{ll:[13.39,54.1]},'Halle (Saale)':{ll:[11.97,51.48]},'Erfurt':{ll:[11.03,50.98]},'Stahnsdorf':{ll:[13.2,52.38]},'Potsdam':{ll:[13.07,52.4]},'Zwickau':{ll:[12.49,50.72]},'Bayreuth':{ll:[11.58,49.95]},'Buchbach':{ll:[12.33,48.3]},'Schweinfurt':{ll:[10.23,50.05]},'Unterhaching':{ll:[11.62,48.06]},'Eichstätt':{ll:[11.19,48.89]},'Luckenwalde':{ll:[13.17,52.09]},'Trier':{ll:[6.64,49.76]},'Freiburg im Breisgau':{ll:[7.85,47.99]},'Kaiserslautern':{ll:[7.77,49.44]}});
+})();
+
+/* Palmarés histórico real (Wikipedia): 'league' = títulos de liga nacional (NSL 1970-2003 +
+   NZFC/ISPS Handa/National League 2004-2025) de los clubes que más la ganaron; 'cup' = títulos de
+   Chatham Cup (copa nacional desde 1923) de esos mismos clubes, verificados uno a uno. El resto de
+   clubes también pueden participar en la Chatham Cup dentro del juego (como en la realidad), pero
+   no se les ha cargado palmarés de copa por no tener verificado el historial completo de los
+   últimos 100 años club a club (quedan en 0; ampliable más adelante). */
+(function(){
+  const set=(id,o)=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})};
+  [['AUCK',{league:11,cup:1}],['EAST',{league:2,cup:6}],['NAPI',{league:4,cup:5}],['WOLY',{league:1,cup:3}],
+   ['MRAN',{league:2,cup:4}],['BIRK',{cup:2}],['CASH',{cup:4}],
+   ['AUNI',{}],['FERR',{}],['AUC2',{}],['WPHX',{}]
+  ].forEach(([id,o])=>set(id,o));
+})();
+/* Zonas de las 3 ligas regionales (divisiones normales, sin ascenso/descenso modelado: cada club
+   que clasifique a la fase de Campeonato de la National League Championship (NZ1) lo hace desde
+   la clasificación interna de la copa NZ1, no desde esta tabla de liga). */
+const ZONES_DE4=[['#9e9e9e','Regionalliga Nord']];
+const ZONES_DE5=[['#9e9e9e','Regionalliga Nordost']];
+const ZONES_DE6=[['#9e9e9e','Regionalliga Bayern']];
+const ZONES_DE7=[['#9e9e9e','Regionalliga West']];
+const ZONES_DE8=[['#9e9e9e','Regionalliga Südwest']];
+const ZONES_NZ2=[['#9e9e9e','Northern League']];
+const ZONES_NZ3=[['#9e9e9e','Central League']];
+const ZONES_NZ4=[['#9e9e9e','Southern League']];
+
 /* ===== Islas Salomón · Telekom S-League (Oceanía) =====
    10 clubes, 18 jornadas a doble vuelta, todos en Lawson Tama (Honiara); 1º a la OFC Champions League.
    Liga cerrada, sin descenso, banquillo 7. */
@@ -28974,6 +29408,20 @@ TF_DATA.forEach(([roman,region,rows],gi)=>{
    filial principal el que realmente es su B/C (no un filial asociado como Roda en el Villarreal). */
 /* Enlaces múltiples B/C: FAMILY solo guarda el filial principal, FAMILY_ALL conserva todos. */
 if(CLUBBY.EIBB&&CLUBBY.EIB){CLUBBY.EIBB.bTeam=1;if(!FAMILY.EIBB)FAMILY.EIBB='EIB';}
+/* Sincronización de filiales alemanes (se hace al final, después de que todos los K2 hayan creado sus clubes). */
+const DE_BTEAMS={
+  BVB2:'BVB',KSV2:'KIE',STU2:'VFB',HSV2:'HSV',STP2:'STP',WER2:'SVW',HER2:'BSC',MGD:'FCM',
+  AUG2:'FCA',NUR2:'FCN',SGF2:'SGF',BOC2:'BOC',KOE2:'KOE',MGL2:'BMG',PAD2:'SCP',S04B:'S04',
+  FRA2:'SGE',FRI2:'SCF',KAI2:'FCK',MAI2:'M05',HOF2:'TSG',VFB3:'VFB',BY2:'BAY',H96B:'H96'
+};
+Object.entries(DE_BTEAMS).forEach(([id,pid])=>{
+  const c=CLUBBY[id],pc=CLUBBY[pid];
+  if(!c||!pc)return;
+  c.bTeam=1;FAMILY[id]=pid;if(!FAMILY[pid])FAMILY[pid]=id;
+  if(id==='BVB2'){c.div=3;try{BASE_DIV[id]=3}catch(e){}}
+  if(id==='KSV2'){c.div=4;try{BASE_DIV[id]=4}catch(e){}}
+  if(id==='STU2'){c.div=4;try{BASE_DIV[id]=4}catch(e){}}
+});
 const FAMILY_ALL={};
 Object.keys(FAMILY).forEach(id=>{
   const c=CLUBBY[id];if(!c||!isB(id))return;
@@ -29364,6 +29812,121 @@ const FO_PAL={
   V07:{d2:3},ABAR:{d2:1},SKLA:{d2:3},SIS:{league:1},VBV:{league:1}
 };
 Object.entries(FO_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
+/* Región fija de cada club alemán: determina su grupo de Regionalliga si desciende desde 3. Liga. */
+const DE_RL_REGION={
+  KOE:'West',B04:'West',BAY:'Bayern',BVB:'West',BMG:'West',SGE:'Südwest',FCA:'Bayern',HSV:'Nord',M05:'Südwest',RBL:'Nordost',SCF:'Südwest',SCP:'West',S04:'West',ELV:'Südwest',TSG:'Südwest',FCU:'Nordost',VFB:'Südwest',SVW:'Nord',
+  FCH:'Südwest',FCK:'Südwest',FCM:'Nordost',FCN:'Bayern',DSC:'West',D98:'Südwest',SGD:'Nordost',EBS:'Nord',FCE:'Nordost',STP:'Nord',SGF:'Bayern',H96:'Nord',BSC:'Nordost',KIE:'Nord',KSC:'Südwest',BOC:'West',OSN:'Nord',WOB:'Nord',
+  FCS3:'Südwest',AAC3:'West',FCI3:'Bayern',FD3:'West',FKO3:'West',HRO3:'Nordost',MSV3:'West',PRE3:'West',RWE3:'West',VRL3:'West',SGS3:'Südwest',JAH3:'Bayern',MEP3:'Nord',WEH3:'Südwest',HOF2:'Südwest',HAV3:'Nord',VFB3:'Südwest',VIK3:'West',WAL3:'Südwest',WUE3:'Bayern',
+  BVB2:'West',KSV2:'Nord',STU2:'Südwest'
+};
+function setDeRegion(id,region){if(!region)return;if(CLUBBY[id])CLUBBY[id].region=region;CLUBS.forEach(c=>{if(c.id===id)c.region=region});}
+Object.keys(DE_RL_REGION).forEach(id=>setDeRegion(id,DE_RL_REGION[id]));
+[['DE4','Nord'],['DE5','Nordost'],['DE6','Bayern'],['DE7','West'],['DE8','Südwest']].forEach(([d,reg])=>{
+  CLUBS.filter(c=>c.co==='DE'&&c.div===Number(d.slice(2))).forEach(c=>setDeRegion(c.id,reg));
+});
+/* Las cinco Regionalliga deben conservar su división real al reiniciar la partida (antes BASE_DIV las
+   mandaba a 1 y, por tanto, no se simulaban). */
+CLUBS.filter(c=>c.co==='DE'&&c.div>=4&&c.div<=8).forEach(c=>{BASE_DIV[c.id]=c.div;if(CLUBBY[c.id])CLUBBY[c.id].div=c.div;});
+const DE_RL_DIV={Nord:4,Nordost:5,Bayern:6,West:7,Südwest:8};
+function deRegionOf(id){const c=CLUBBY[id]||CLUBS.find(x=>x.id===id);return c&&c.region||null}
+function deRegionDiv(region){return DE_RL_DIV[region]||4}
+/* Palmarés histórico de los cinco grupos de Regionalliga (2012/13-2024/25). */
+const DE_RL_HIST_CLUBS={
+  WOB2:['VfL Wolfsburg II','Wolfsburg II','Wolfsburgo'],NSTZ:['TSG Neustrelitz','Neustrelitz','Neustrelitz'],
+  VIBE:['Viktoria Berlin','Viktoria Berlin','Berlín'],M60B:['TSV 1860 München II','1860 München II','Múnich'],
+  VASB:['Viktoria Aschaffenburg','V. Aschaffenburg','Aschaffenburg']
+};
+Object.entries(DE_RL_HIST_CLUBS).forEach(([id,[name,short,city]])=>{
+  if(!CLUBBY[id]){const c=K2(id,name,short,city,'DE','#1c8f3f','#f4f4f4',34);c.logo='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';CLUBBY[id]=c;CLUB_LOGO[id]=c.logo;}
+});
+if(CLUBBY.WOB2&&CLUBBY.WOB){CLUBBY.WOB2.bTeam=1;FAMILY.WOB2='WOB';if(!FAMILY.WOB)FAMILY.WOB='WOB2';}
+if(CLUBBY.M60B&&CLUBBY.M60){CLUBBY.M60B.bTeam=1;FAMILY.M60B='M60';if(!FAMILY.M60)FAMILY.M60='M60B';}
+const DE_RL_PAL={
+  WOB2:{'d4.1':3},VFBL:{'d4.1':2},KIE:{'d4.1':1},WER2:{'d4.1':1},MEP3:{'d4.1':1},WEFL:{'d4.1':1},VFBO:{'d4.1':1},H96B:{'d4.1':1},HAV3:{'d4.1':1},
+  FCE:{'d4.2':3},LOKL:{'d4.2':2},RBL:{'d4.2':1},NSTZ:{'d4.2':1},FCM:{'d4.2':1},ZWIC:{'d4.2':1},CZJE:{'d4.2':1},CHEM:{'d4.2':1},VIBE:{'d4.2':1},BFCD:{'d4.2':1},
+  BY2:{'d4.3':2},WUE3:{'d4.3':2},UNTH:{'d4.3':2},M60B:{'d4.3':1},M60:{'d4.3':1},JAH3:{'d4.3':1},VASB:{'d4.3':1},BAYR:{'d4.3':1},SCHW:{'d4.3':1},
+  LOTT:{'d4.4':2},VIK3:{'d4.4':2},FKO3:{'d4.4':1},MGL2:{'d4.4':1},UER:{'d4.4':1},RODI:{'d4.4':1},BVB2:{'d4.4':1},RWE3:{'d4.4':1},PRE3:{'d4.4':1},AAC3:{'d4.4':1},MSV3:{'d4.4':1},
+  WAL3:{'d4.5':2},ELV:{'d4.5':2},KASS:{'d4.5':1},SGS3:{'d4.5':1},KOF:{'d4.5':1},FCS3:{'d4.5':1},FRI2:{'d4.5':1},ULM8:{'d4.5':1},VFB3:{'d4.5':1},HOF2:{'d4.5':1}
+};
+
+Object.entries(DE_RL_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
+
+/* Palmarés adicional de los clubes de Regionalliga Nord (5.ª/6.ª categoría). */
+const DE4_PAL={
+  PHLU:{'d5.3':2},ATDE:{'d5.4':1,'d6.36':3},BRSV:{'d5.13':5},BKEM:{'d5.15':2,'d5.4':2},EINO:{'d6.20':2},
+  STP2:{'d4.1':5,'d5.15':3},HSV2:{'d5.16':1},H96B:{'d4.1':1},HSCH:{'d5.4':1,'d6.26':3},
+  WEFL:{'d4.1':1},SSVJ:{'d5.4':1,'d6.12':1},DRAS:{'d5.4':1,'d6.11':1},VFBL:{'d4.1':4},
+  VFBO:{'d4.1':2,'d5.15':3,'d5.4':1},WER2:{'d4.1':1,'d5.15':2}
+};
+Object.entries(DE4_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
+/* Palmarés histórico adicional de Nordost y West (incluye títulos de DDR, copas y categorías regionales). */
+const DE_RL_PAL_EXTRA={
+  LOKL:{cup:1,fdgb:4,intertoto:1,'d4.2':2},
+  MGD:{'d4.2':1,'d5.11':1},
+  BFCD:{ddr:10,fdgb:2,dfvsc:1,'d4.2':1,'d5.7':1},
+  BFCP:{'d6.29':1},
+  BSGC:{'d5.11':2,'d6.27':1},
+  CHEM:{ddr:1,'d4.2':3},
+  CZJE:{ddr:3,fdgb:3,'d4.2':2,'d5.11':1},
+  ERZA:{ddr:4,fdgb:1,'d4.1':1},
+  LUCK:{'d6.6':1},
+  ZWIC:{ddr:1,fdgb:3,'d4.2':1,'d5.11':3,'d6.27':1},
+  GREI:{'d5.7':1,'d6.33':1},
+  HALL:{ddr:2,fdgb:2,'d4.1':1,'d5.11':1,'d6.34':2},
+  HER2:{'d4.2':4},
+  BABE:{'d5.7':2,'d4.1':1,'d6.6':1},
+  TASB:{'d5.7':2,'d6.29':2},
+  VSGA:{'d6.29':1},
+  BOCH:{'d5.5':1},
+  KOE2:{'d5.5':2},
+  BONN:{'d5.5':1,'d5.10':9,'d6.4':4},
+  BVB2:{'d4.4':3,'d5.2':3},
+  MGL2:{'d4.4':1,'d5.5':2,'d6.15':1},
+  GUET:{'d4.4':1},
+  S04B:{'d5.2':2,'d6.1':2},
+  OBER:{'d4.4':1,d3:1,'d5.5':4,'d6.15':1},
+  WIED:{'d5.2':2,'d6.1':1},
+  WATT:{d2:1,d3:1,'d5.2':1,'d6.1':1},
+  LOTT:{'d4.4':2,'d6.1':1,'d6.3':1},
+  SIEG:{'d5.2':2},
+  BEGL:{'d5.10':1},
+  RODI:{'d4.4':1,'d6.1':1},
+  RHYN:{'d6.1':1},
+  BOC2:{'d5.2':1,'d6.1':1,'d6.3':1}
+};
+Object.entries(DE_RL_PAL_EXTRA).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
+
+
+/* Palmarés histórico de Regionalliga Südwest y sus categorías inferiores. */
+const DE_RL_SW_PAL={
+  KAI2:{'d5.14':4,'d6.18':2},
+  MAI2:{'d5.14':2,'d6.18':1,'d6.37':1},
+  FRA2:{'d5.6':2},
+  HOM:{'d5.14':3},
+  WALL:{'d5.1':1,'d6.9':3},
+  FSVF:{'d5.6':1},
+  FREB:{'d5.1':1,'d6.17':3},
+  KASS:{'d5.6':5},
+  FRI2:{'d5.1':2},
+  FULD:{'d6.31':1},
+  ULM8:{d3:1,'d5.1':2},
+  ETR:{'d5.14':2},
+  SNDH:{d3:1,'d5.1':2},
+  STEI:{'d5.6':1,'d6.30':1},
+  AALE:{'d4.5':1},
+  MANN:{'d6.9':1}
+};
+Object.entries(DE_RL_SW_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
+/* Palmarés histórico de Regionalliga Bayern y categorías inferiores. */
+const DE_RL_BAY_PAL={
+  NUR2:{'d4.3':1,'d6.19':3},SCHW:{'d4.3':2,'d5.8':2},BY2:{'d4.3':2},
+  VILZ:{'d5.8':1,'d6.38':2},AUG2:{'d6.39':1},MEMM:{'d6.14':2},SGF2:{'d6.19':1,'d6.40':1},
+  ELTD:{'d5.9':2,'d6.40':1},ANSB:{'d5.8':1,'d6.19':1,'d6.7':2},
+  BAYR:{'d4.3':3,'d5.8':2},UNTH:{'d4.3':2,'d4.6':2},WABU:{'d5.9':1,'d6.14':2},
+  M60:{league:1,cup:2,'d4.3':1},AUBS:{'d5.8':1,'d6.41':2},BUCH:{'d6.14':1,'d6.42':1},
+  LDSB:{'d6.43':2,'d6.44':3},SCHB:{'d6.14':2,'d6.45':2},EICH:{'d5.8':2}
+};
+Object.entries(DE_RL_BAY_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
