@@ -2079,7 +2079,7 @@ Object.assign(COUNTRIES,{
   CN:{name:'China',league:'Chinese Super League',divs:['Chinese Super League'],pin:[104,35],polys:[CHINA,HAINAN]},
   IN:{name:'India',league:'Indian Super League',divs:['Indian Super League'],pin:[79,22],polys:[INDIA]}
 });
-function divName(co,d){if(fictOn())return fictLeague(co,d);if(co==='FO'&&d===2)return'1. deild';if(co==='BR'&&d===2)return'Brasileirão Série B';const C=COUNTRIES[co];const groups=DIV_GROUPS[co]||[];for(const grp of groups){const s=grp.subs.find(x=>x[0]===d);if(s)return grp.label+' ('+s[1]+')'}if(d===2)return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',GR:'Super League 2'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
+function divName(co,d){if(fictOn())return fictLeague(co,d);if(co==='FO'&&d===2)return'1. deild';if(co==='BR'&&d===2)return'Brasileirão Série B';if(co==='LV'&&d===2)return'Pirma Liga';if(co==='LV'&&d===3)return'Otra Liga';const C=COUNTRIES[co];const groups=DIV_GROUPS[co]||[];for(const grp of groups){const s=grp.subs.find(x=>x[0]===d);if(s)return grp.label+' ('+s[1]+')'}if(d===2)return{AD:'Segona Divisió',FR:'Ligue 2',AT:'2. Liga',BE:'Challenger Pro League',DK:'NordicBet Liga',NO:'OBOS-ligaen',PL:'Betclic 1 Liga',GR:'Super League 2'}[co]||(C&&C.divs[1])||'Categoría inferior';return (C&&C.divs[(d||1)-1])||'Categoría inferior'}
 function leagueClubs(co,d){d=d||1;if(!isLeagueEnabled(co,d))return [];const k=co+d;const frozen=state&&state.leagueTeams&&state.leagueTeams[k];
   let r=CLUBS.filter(c=>c.co===co&&c.div===d&&(!frozen||frozen.includes(c.id)));
   /* el club del usuario siempre pertenece a la división en la que compite (aunque ascienda o descienda de categoría) */
@@ -12298,11 +12298,12 @@ function mktMatch(p,f,from){
 function newGame(slot,clubId){
   famQueue=[];famAfter=null;
   resetDivs();
+  const modeNow=ui.modeChosen?(ui.gmode||'fict'):(DBMGR.active?'real':'fict');
   const club=CLUBBY[clubId],co=club.co,seed=ui.seed,teams={};
   BENCH_N=benchLimit(clubId);
   leagueClubs(co,club.div).forEach(c=>{
     const fp=FAMILY[c.id]&&CLUBBY[FAMILY[c.id]]?FAMILY[c.id]:null;
-    const own=(curMode()==='real'&&REAL_DB[c.id]&&REAL_DB[c.id].length);
+    const own=(modeNow==='real'&&REAL_DB[c.id]&&REAL_DB[c.id].length);
     const t={players:genSquad(!own&&fp?CLUBBY[fp]:c,seed),budget:budgetFor(c),formation:formFor(c.id),lineup:[]};
     t.lineup=bestXI(t);if(c.id===clubId)t.bench=autoBench(t);teams[c.id]=t;
   });
@@ -12311,7 +12312,7 @@ function newGame(slot,clubId){
   const leagueTeams=captureLeagueTeams();
   const arInit=(co==='AR')?arBuild(hashStr('ar|'+seed)):null;
   const mxInit=(co==='MX')?mxBuild(hashStr('mx|'+seed)):null;
-  state={v:1,slot,created:Date.now(),saved:Date.now(),seed,mode:ui.gmode||'fict',country:co,div:club.div,club:clubId,season:1,week:0,phase:'play',teams,
+  state={v:1,slot,created:Date.now(),saved:Date.now(),seed,mode:modeNow,country:co,div:club.div,club:clubId,season:1,week:0,phase:'play',teams,
     leagueConfig,leagueTeams,
     fixtures:arInit?arInit.fixtures:(mxInit?mxInit.fixtures:multiFixtures(co+club.div,ids,rng(seed^0x9e37))),table:emptyTable(ids),news:[],market:[],freeAgents:[],fin:null,loans:[],loansOut:[],
     mgrStints:[{club:clubId,from:1}],mgrLog:[],jobOffers:[],split:null,ageNorm:1,affiliations:[]};
@@ -12420,6 +12421,19 @@ function planPlayoffs(){
       const s1=poOrder(co,1),s2=poOrder(co,2),elig=s2.filter(id=>!isB(id));
       const up=elig.slice(0,2),down=s1.slice(-2);po.dir[co]={up,down};
       if(s1[13]&&elig[2])po.items.push({co:'BY',kind:'rel',seeds:[s1[13],elig[2]],alive:[s1[13],elig[2]],rounds:[],winner:null});
+      return;
+    }
+    if(co==='LV'){
+      /* Virslīga ↔ Pirma Liga: campeón de Pirma sube directo; el 2º juega a doble partido contra el 9º
+         de Virslīga. El 10º de Virslīga baja directo. En Pirma, bajan 13º y 14º; el 12º juega a doble
+         partido contra el 3º de la Otra Liga (pool oculto). Suben los dos primeros de la Otra Liga. */
+      const l1=poOrder('LV',1),l2=poOrder('LV',2);
+      const l2elig=l2.filter(id=>!isB(id));
+      const pool=CLUBS.filter(c=>c.co==='LV'&&c.div===3&&!isB(c.id)).sort((a,b)=>(b.rep||0)-(a.rep||0)||a.id.localeCompare(b.id));
+      po.dir.LV={up:l2elig.slice(0,1),down:l1.slice(-1)};
+      if(l1[8]&&l2elig[1])po.items.push({co:'LV',kind:'rel',seeds:[l1[8],l2elig[1]],alive:[l1[8],l2elig[1]],rounds:[],winner:null});
+      po.lv2={up:pool.slice(0,2).map(c=>c.id),down:l2.slice(-2)};
+      if(l2[11]&&pool[2])po.items.push({co:'LV2PO',kind:'rel',seeds:[l2[11],pool[2].id],alive:[l2[11],pool[2].id],rounds:[],winner:null});
       return;
     }
     if(co==='UA'){
@@ -12901,6 +12915,12 @@ function poFinish(){
     balanceUpDown(up,down);
     po.res[co]={up,down};
   });
+  const lv2=po.lv2;
+  if(lv2){
+    const it=po.items.find(x=>x.co==='LV2PO'),up=lv2.up.slice(),down=lv2.down.slice();
+    if(it&&it.winner&&it.winner!==it.seeds[0]){up.push(it.seeds[1]);down.push(it.seeds[0])}
+    po.res.LV2={up,down};
+  }
   const rf=po.rf;
   if(rf){
     po.items.filter(x=>x.kind==='rfpo'&&x.winner).forEach(x=>rf.up.push(x.winner));
@@ -13256,6 +13276,12 @@ function applyMoves(){
     (r.down||[]).forEach(id=>{state.divs[id]=2;const c=CLUBBY[id];if(c&&c.div===1)state.relegated[id]=1});
     news(`${flagHTML(co)} Ascienden a ${divName(co,1)}: ${(r.up||[]).map(cname).join(', ')}. Descienden a ${divName(co,2)}: ${(r.down||[]).map(cname).join(', ')}.`);
   });
+  const lv2=state.po&&state.po.res&&state.po.res.LV2;
+  if(lv2){
+    (lv2.up||[]).forEach(id=>{state.divs[id]=2;delete state.relegated[id]});
+    (lv2.down||[]).forEach(id=>{state.divs[id]=3;state.relegated[id]=1});
+    if((lv2.up&&lv2.up.length)||(lv2.down&&lv2.down.length))news(`${flagHTML('LV')} Ascienden a ${divName('LV',2)}: ${(lv2.up||[]).map(cname).join(', ')}. Descienden a ${divName('LV',3)}: ${(lv2.down||[]).map(cname).join(', ')}.`);
+  }
   /* Inglaterra: League One (div 3) ↔ Championship (div 2) */
   const en=state.po&&state.po.en;
   if(en){
@@ -14718,6 +14744,18 @@ function ensureState(){
     Object.values(state.squadArchive||{}).forEach(a=>(a||[]).forEach(fixPot));
     (state.academy||[]).forEach(fixPot);
     state.potNorm=1;
+  }
+  /* Partidas antiguas: sincroniza el POT de los clubes letones con la base actual sin bajar el que ya tuvieran. */
+  if(state.lvPotVersion!=='lv-pot-2026-1'){
+    for(const id in (state.teams||{})){
+      const c=CLUBBY[id];if(!c||c.co!=='LV'||!REAL_DB[id])continue;
+      const dbPot=new Map(REAL_DB[id].map(r=>[r[0],r[5]]));
+      (state.teams[id].players||[]).forEach(p=>{
+        if(!p.real)return;const v=dbPot.get(p.n);
+        if(v!=null)p.pot=Math.min(92,Math.max(p.ovr,v,p.pot||p.ovr));
+      });
+    }
+    state.lvPotVersion='lv-pot-2026-1';
   }
   BENCH_N=benchLimit(state.club);
 }
@@ -17526,6 +17564,11 @@ function initWorld(){
     if(ids.length>1)state.others[key]={fx:multiFixtures(key,ids,rng(hashStr(key+'|'+state.seed+'|'+state.season))),tb:emptyTable(ids),sc:{}};
   });
   gamePlayable().forEach(co=>{
+    if(co==='LV'){
+      const ids=LVC_TEAMS.filter(id=>CLUBBY[id]);
+      if(ids.length>=2){state.cups.LVC=cupInitLatvija();state.cups.LVC.et=true;}
+      return;
+    }
     if(co==='SB'){state.cups.SBC=cupInitSolomonCup();return;}
     if(co==='NZ'){state.cups.NZ1=cupInitNZChampionship();return;}
     if(co==='FO'){
@@ -17827,6 +17870,7 @@ function initWorld(){
       /* 1ª temporada en Andorra: Andorran Supercup Inter Escaldes vs Atlètic Escaldes (Inter local) */
       if(co==='AD'&&!state.prevSC&&state.cups.ADSC&&state.cups.ADSC.rounds[0])state.cups.ADSC.rounds[0].ties=[{h:'INE',a:'ESC'}];
       if(co==='BG'&&!state.prevSC&&state.cups.BGSC&&state.cups.BGSC.rounds[0])state.cups.BGSC.rounds[0].ties=[{h:'LEVS',a:'CSOF'}];
+      if(co==='LV'&&!state.prevSC&&state.cups.LVSC&&state.cups.LVSC.rounds[0])state.cups.LVSC.rounds[0].ties=[{h:'RIG',a:'AUDA'}];
       /* 1ª temporada en Rusia: Superkupa Rossii Zenit vs Spartak Moskva (Zenit local) */
       if(co==='RU'&&!state.prevSC&&state.cups.RUSC&&state.cups.RUSC.rounds[0])state.cups.RUSC.rounds[0].ties=[{h:'ZEN',a:'SPTM'}];
       if(co==='RO'&&!state.prevSC&&state.cups.ROSC&&state.cups.ROSC.rounds[0])state.cups.ROSC.rounds[0].ties=[{h:'UCJ',a:'UCRA'}];
@@ -18094,6 +18138,7 @@ function leagueData(key){
   if(!L)return{key,fx:[],tb:{},sc:{},mine:false};
   return{key,fx:L.fx,tb:L.tb,sc:L.sc,mine:false,split:L.split};
 }
+COUNTRIES.LV={name:'Letonia',league:'Virslīga',divs:['Virslīga','Pirma Liga'],pin:[24.6,56.9],polys:[LATVIA_L]};
 function leagueScorers(key){
   const by=(a,b)=>b.g-a.g||a.n.localeCompare(b.n);
   if(key===userKey()){const a=[];for(const id in state.teams)state.teams[id].players.forEach(p=>{if(p.g>0)a.push({n:shortName(p.n),c:id,g:p.g})});return a.sort(by)}
@@ -18108,7 +18153,7 @@ const EURO_SLOTS={
   PT:{ucl:2,uel:2,ecl:2},NL:{ucl:2,uel:2,ecl:2},BE:{ucl:2,uel:2,ecl:2},AT:{ucl:2,uel:2,ecl:2},TR:{ucl:2,uel:2,ecl:2},
   DK:{ucl:1,uel:2,ecl:2},NO:{ucl:1,uel:2,ecl:2},IE:{ucl:1,uel:2,ecl:2},SC:{ucl:1,uel:2,ecl:2},
   CH:{ucl:1,uel:2,ecl:2},BG:{ucl:1,uel:2,ecl:2},RU:{ucl:2,uel:1,ecl:1},NIR:{ucl:1,uel:0,ecl:0}
-};EURO_SLOTS.FO={ucl:1,uel:0,ecl:2};
+};EURO_SLOTS.FO={ucl:1,uel:0,ecl:2};EURO_SLOTS.LV={ucl:1,uel:0,ecl:2};
 
 function euroSlots(prevQual,comp,replaceSet){
   const out=[];
@@ -18174,7 +18219,7 @@ function qualifiersEL(){const s=new Set(euroSlots(state.qualEL,'uel',UEL_QUAL_RE
   /* Serbia: el campeón de la Kup Srbije va a la previa de la Europa League */
   if(state.cups&&state.cups.RSC&&state.cups.RSC.champ&&CLUBBY[state.cups.RSC.champ])s.add(state.cups.RSC.champ);
   return[...s]}
-function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_REPLACE));if(state.cups&&state.cups.EEC&&state.cups.EEC.champ&&CLUBBY[state.cups.EEC.champ])s.add(state.cups.EEC.champ);if(state.cups&&state.cups.FIC&&state.cups.FIC.champ&&CLUBBY[state.cups.FIC.champ])s.add(state.cups.FIC.champ);if(state.cups&&state.cups.FOC&&state.cups.FOC.champ&&CLUBBY[state.cups.FOC.champ])s.add(state.cups.FOC.champ);if(state.cups&&state.cups.NIRC&&state.cups.NIRC.champ&&CLUBBY[state.cups.NIRC.champ])s.add(state.cups.NIRC.champ);if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);if(state.smPoWinner&&CLUBBY[state.smPoWinner])s.add(state.smPoWinner);if(state.cups&&state.cups.SMC&&state.cups.SMC.champ&&CLUBBY[state.cups.SMC.champ])s.add(state.cups.SMC.champ);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);const trC=leagueData('TR1').tb?sortTable(leagueData('TR1').tb):[];if(trC[3])s.add(trC[3].id);
+function qualifiersEC(){const s=new Set(euroSlots(state.qualEC,'ecl',ECL_QUAL_REPLACE));const lvCup=state.cups&&state.cups.LVC;if(lvCup&&lvCup.champ&&CLUBBY[lvCup.champ]){const lt=leagueData('LV1'),ltb=lt&&lt.tb?sortTable(lt.tb).map(r=>r.id).filter(id=>!isB(id)):[];if(ltb.slice(0,3).includes(lvCup.champ)){if(ltb[3])s.add(ltb[3])}else s.add(lvCup.champ)}if(state.cups&&state.cups.EEC&&state.cups.EEC.champ&&CLUBBY[state.cups.EEC.champ])s.add(state.cups.EEC.champ);if(state.cups&&state.cups.FIC&&state.cups.FIC.champ&&CLUBBY[state.cups.FIC.champ])s.add(state.cups.FIC.champ);if(state.cups&&state.cups.FOC&&state.cups.FOC.champ&&CLUBBY[state.cups.FOC.champ])s.add(state.cups.FOC.champ);if(state.cups&&state.cups.NIRC&&state.cups.NIRC.champ&&CLUBBY[state.cups.NIRC.champ])s.add(state.cups.NIRC.champ);if(state.nlPoWinner&&CLUBBY[state.nlPoWinner])s.add(state.nlPoWinner);if(state.smPoWinner&&CLUBBY[state.smPoWinner])s.add(state.smPoWinner);if(state.cups&&state.cups.SMC&&state.cups.SMC.champ&&CLUBBY[state.cups.SMC.champ])s.add(state.cups.SMC.champ);const dk=dkOrder();if(dk[2])s.add(dk[2]);if(state.dkPoWinner&&CLUBBY[state.dkPoWinner])s.add(state.dkPoWinner);const ieT=leagueData('IE1').tb?sortTable(leagueData('IE1').tb):[];if(ieT[1])s.add(ieT[1].id);if(ieT[2])s.add(ieT[2].id);const chlic=state.cups&&state.cups.CHLIC;if(chlic&&chlic.champ&&CLUBBY[chlic.champ]&&!isB(chlic.champ))s.add(chlic.champ);const trC=leagueData('TR1').tb?sortTable(leagueData('TR1').tb):[];if(trC[3])s.add(trC[3].id);
   const ruC2=state.cups&&state.cups.RUC&&state.cups.RUC.champ;
   if(ruC2){const ruSt2=leagueData('RU1').tb?sortTable(leagueData('RU1').tb):[];const ruTop2b=[ruSt2[0]&&ruSt2[0].id,ruSt2[1]&&ruSt2[1].id];if(ruTop2b.includes(ruC2)&&ruSt2[4])s.add(ruSt2[4].id)}
   /* Bulgaria: 2º del Grupo Campeonato y ganador del play-off europeo (BGPO) van a la previa de la Conference */
@@ -18593,6 +18638,7 @@ function zoneColor(key,pos,total){
   if(co==='US'){if(pos<=8)return'#38D996';return'#BCBCBC'}
   if(co==='CA'){if(pos<=5)return'#38D996';return'#BCBCBC'}
   if(d==='1'){
+    if(co==='LV'){if(pos===1)return'#AAE139';if(pos<=3)return'#38D996';if(pos<=8)return'#BCBCBC';if(pos===9)return'#FCA6A1';return'#ED3B46'}
     if(co==='FO'){if(pos===1)return'#AAE139';if(pos<=3)return'#38D996';if(pos<=8)return'#BCBCBC';return'#ED3B46'}
     if(co==='AD'){   /* Primera Divisió (10): 1º campeón/previa UCL; 2º-3º previa Conference; 9º playoff; 10º baja */
       if(pos===1)return'#7cb342';
@@ -19147,7 +19193,7 @@ function leagueTable(key){
   const L=leagueData(key),st=sortTable(L.tb),n=st.length,d=keyCo(key)==='ES'?String(+keySuf(key)):String(key).slice(-1),isD2=d==='2',abbr=key==='FR1'||key==='PT1'||key==='ES5'||key==='ES6';let ep=0;
   const ZONES_ES5=[['#49CB2B','Ascenso'],['#38D996','Playoff Ascenso'],['#BCBCBC','Permanencia'],['#ED3B46','Descenso']];
   const esNum=keyCo(key)==='ES'?+keySuf(key):null;
-  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='FO'?ZONES_FO1:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='DE'&&d==='4'?ZONES_DE4:keyCo(key)==='DE'&&d==='5'?ZONES_DE5:keyCo(key)==='DE'&&d==='6'?ZONES_DE6:keyCo(key)==='DE'&&d==='7'?ZONES_DE7:keyCo(key)==='DE'&&d==='8'?ZONES_DE8:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FI'&&d==='1'?ZONES_FI1:keyCo(key)==='BY'&&d==='2'?ZONES_BY2:keyCo(key)==='BY'?ZONES_BY:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='UA'&&d==='2'?ZONES_UA2:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='SB'?ZONES_SB1:keyCo(key)==='NZ'&&d==='1'?ZONES_NZ2:keyCo(key)==='NZ'&&d==='2'?ZONES_NZ3:keyCo(key)==='NZ'&&d==='3'?ZONES_NZ4:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:(esNum&&esNum>=12?ZONES_TF:null)));
+  const allZones=keyCo(key)==='CA'?ZONES_CA:keyCo(key)==='US'?ZONES_US:keyCo(key)==='AU'&&d==='1'?ZONES_AU:keyCo(key)==='AD'&&d==='1'?ZONES_AD:keyCo(key)==='FO'?ZONES_FO1:keyCo(key)==='AD'&&d==='2'?ZONES_AD2:keyCo(key)==='SE'&&d==='1'?ZONES_SE1:keyCo(key)==='SE'&&d==='2'?ZONES_SE2:keyCo(key)==='SM'&&d==='1'?ZONES_SM:keyCo(key)==='PT'&&d==='1'?ZONES_PT1:keyCo(key)==='NL'&&d==='1'?ZONES_NL1:keyCo(key)==='NL'&&d==='2'?ZONES_NL2:keyCo(key)==='BE'&&d==='1'?ZONES_BE1:keyCo(key)==='NO'&&d==='1'?ZONES_NO1:keyCo(key)==='IE'&&d==='1'?ZONES_IE1:keyCo(key)==='DE'&&d==='3'?ZONES_DE3:keyCo(key)==='DE'&&d==='4'?ZONES_DE4:keyCo(key)==='DE'&&d==='5'?ZONES_DE5:keyCo(key)==='DE'&&d==='6'?ZONES_DE6:keyCo(key)==='DE'&&d==='7'?ZONES_DE7:keyCo(key)==='DE'&&d==='8'?ZONES_DE8:keyCo(key)==='EN'&&d==='3'?ZONES_EN3:keyCo(key)==='EN'&&d==='4'?ZONES_EN4:keyCo(key)==='EN'&&d==='5'?ZONES_EN5:keyCo(key)==='BE'&&d==='2'?ZONES_BE2:keyCo(key)==='FR'&&d==='2'?ZONES_FR2:keyCo(key)==='TR'&&d==='1'?ZONES_TR1:keyCo(key)==='RU'&&d==='1'?ZONES_RU1:keyCo(key)==='SA'&&d==='1'?ZONES_SA:keyCo(key)==='CN'&&d==='1'?ZONES_CN:keyCo(key)==='JP'&&d==='2'?ZONES_JP2:keyCo(key)==='JP'&&d==='1'?ZONES_JP1:keyCo(key)==='PL'&&d==='1'?ZONES_PL1:keyCo(key)==='PL'&&d==='3'?ZONES_PL3:keyCo(key)==='PL'&&['4','5','6','7'].includes(d)?ZONES_PL4:keyCo(key)==='PL'&&d==='2'?ZONES_PL2:keyCo(key)==='FI'&&d==='1'?ZONES_FI1:keyCo(key)==='BY'&&d==='2'?ZONES_BY2:keyCo(key)==='BY'?ZONES_BY:keyCo(key)==='MA'?ZONES_MA1:keyCo(key)==='UA'&&d==='2'?ZONES_UA2:keyCo(key)==='LV'?ZONES_LV1:keyCo(key)==='FJ'?ZONES_FJ:keyCo(key)==='SB'?ZONES_SB1:keyCo(key)==='NZ'&&d==='1'?ZONES_NZ2:keyCo(key)==='NZ'&&d==='2'?ZONES_NZ3:keyCo(key)==='NZ'&&d==='3'?ZONES_NZ4:keyCo(key)==='QA'?(d==='2'?ZONES_QA2:ZONES_QA1):d==='1'?ZONES_D1:d==='2'?ZONES_D2:(esNum&&(esNum===5||esNum===6)?ZONES_ES5:(esNum&&esNum>=7&&esNum<=11?ZONES_SFR:(esNum&&esNum>=12?ZONES_TF:null)));
   const isRel=c=>c==='#ef9a9a'||c==='#e53935';
   /* En Segunda los filiales no cuentan para las plazas de ascenso/playoff (por eso el contador ep los salta), pero la zona de descenso
      se marca por la posición REAL de la tabla: un filial en el 20º o 21º también está en descenso y no debe quedar en gris. */
@@ -20405,7 +20451,11 @@ function previewTeam(id){
     if(!ui.preview[id]){const t={players:squadFor(id),formation:formFor(id),lineup:[]};t.lineup=bestXI(t);ui.preview[id]=t}
     return ui.preview[id];
   }
-  if(!ui.preview[id]){const t={players:genSquad(CLUBBY[id],ui.seed),formation:formFor(id),lineup:[]};t.lineup=bestXI(t);ui.preview[id]=t}
+  if(!ui.preview[id]){
+    const real=curMode()==='real'&&REAL_DB[id]&&REAL_DB[id].length;
+    const players=real?realSquad(CLUBBY[id]):genSquad(CLUBBY[id],ui.seed);
+    const t={players,formation:formFor(id),lineup:[]};t.lineup=bestXI(t);ui.preview[id]=t;
+  }
   return ui.preview[id];
 }
 const POSFULL={GK:'Portero',DF:'Defensa',MD:'Centrocampista',FW:'Delantero'};
@@ -29931,6 +29981,162 @@ const DE_RL_BAY_PAL={
   LDSB:{'d6.43':2,'d6.44':3},SCHB:{'d6.14':2,'d6.45':2},EICH:{'d5.8':2}
 };
 Object.entries(DE_RL_BAY_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
+
+/* ===================== LETONIA — Virslīga ===================== */
+{const i=LOCKED.findIndex(x=>x.id==='LV');if(i>=0)LOCKED.splice(i,1);}
+PLAYABLE.push('LV');
+GROUPS.push({id:'LV',name:'Letonia',comps:['LV1','LV2','LVC','LVSC']});
+Object.assign(BENCH_CD,{LV1:7,LV2:7});
+Object.assign(MULTI_ROUND,{LV1:2});
+delete SC_SKIP.LV;
+Object.assign(CUPNAME,{LV:'LVBET Latvijas Kauss'});
+Object.assign(TROPHY_CUP,{LV:'LVBET Latvijas Kauss'});
+TROPHY_IMG_CO.LV={league:'https://cdn.resfu.com/img_data/competiciones/copa/371.png?size=120x&lossy=1',cup:'https://cdn.resfu.com/img_data/competiciones/copa/1700.png?size=120x&lossy=1',d2:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1',sc:'https://cdn.resfu.com/media/img/trophy_pic/cup_nofoto.png?size=120x&lossy=1'};
+const ZONES_LV1=[['#AAE139','Campeón (previa de Champions)'],['#38D996','Previa de Conference League'],['#BCBCBC','Permanencia'],['#FCA6A1','Play-off de permanencia'],['#ED3B46','Descenso a la 1. līga']];
+const LV_CLUB_DATA=[
+ ['RIG','Riga FC','Riga','Riga','#1a1a1a','#f2d31b',66,'Skonto stadions','4-2-3-1',3.5],
+ ['RFS','FK RFS','RFS','Riga','#0a2a5e','#f4f4f4',64,'LNK Sporta Parks','4-2-3-1',3.2],
+ ['LIEP','FK Liepāja','Liepāja','Liepāja','#1c3f94','#f4f4f4',58,'Daugavas stadions','4-2-3-1',1.8],
+ ['AUDA','FK Auda','Auda','Ķekava','#0a8a3d','#f4f4f4',52,'Skonto stadions','4-3-3',1.2],
+ ['DAUG','BFC Daugavpils','Daugavpils','Daugavpils','#f4841c','#1a1a1a',46,'Celtnieku stadions','4-2-3-1',0.9],
+ ['TUKU','FK Tukums 2000','Tukums 2000','Tukums','#1c3f94','#f2d31b',42,'Tukuma Pilsētas stadions','3-5-2',0.7],
+ ['JELG','FS Jelgava','Jelgava','Jelgava','#1c3f94','#f4f4f4',42,'Zemgales Olimpiskais centrs','4-4-2',0.65],
+ ['GROB','SK Grobiņa','Grobiņa','Grobiņa','#1c3f94','#f4f4f4',36,'Grobiņas stadions','4-4-2',0.5],
+ ['OGRE','Ogre United','Ogre Utd','Ogre','#0a8a3d','#f4f4f4',34,'Ogres stadions','4-4-2',0.45],
+ ['SNOV','SK Super Nova','Super Nova','Riga','#1c3f94','#f4f4f4',34,'Jāņa Skredeļa stadions','4-4-2',0.4]
+];
+LV_CLUB_DATA.forEach(([id,name,short,city,c1,c2,rep,stad,form,budget])=>{
+  let c=CLUBBY[id];
+  if(!c){c=K(id,name,short,city,'LV',c1,c2,rep,1);CLUBBY[id]=c;if(!CLUBS.includes(c))CLUBS.push(c)}
+  Object.assign(c,{name,short,city,co:'LV',c1,c2,rep,div:1});if(!CLUBS.includes(c))CLUBS.push(c);
+  c.logo='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';
+  CLUB_LOGO[id]=c.logo;BASE_DIV[id]=1;BUDGET[id]=budget;FORM_MAIN[id]=form;STADIUM[id]=stad;
+});
+if(CLUBBY.RIG)Object.assign(CLUBBY.RIG,{name:'Riga FC',short:'Riga',city:'Riga',rep:66,div:1});
+const LV_POOL_DATA=[
+ ['VALM','Valmiera FC','Valmiera','Valmiera','#1c8f3f','#f4f4f4',44,'Valmieras Olimpiskais centrs','4-3-3',0.5],
+ ['METTA','FK Metta','Metta','Riga','#0a3a8a','#f4f4f4',38,'Daugavas stadions','4-2-3-1',0.35],
+ ['VENTS','JFK Ventspils','Ventspils','Ventspils','#f2d31b','#1c3f94',37,'OC Ventspils rezerves laukums','4-4-2',0.3],
+ ['MARUP','FK Mārupe','Mārupe','Mārupe','#1c8f3f','#f4f4f4',35,'Jaunmārupes stadions','4-4-2',0.25],
+ ['REZE','Rēzekne FA','Rēzekne','Rēzekne','#d4192b','#1c3f94',34,'Sporta Aģentūras stadions','4-1-4-1',0.22],
+ ['RIG2','Riga FC II','Riga II','Riga','#1a1a1a','#f2d31b',33,'Mežaparks Sports Village','4-2-3-1',0.2],
+ ['RFS2','Rigas FS II','Rigas FS II','Riga','#0a2a5e','#f4f4f4',33,'LNK Sporta Parks','4-3-3',0.2],
+ ['ALBE','JDFS Alberts','JDFS Alberts','Upesciems','#1c3f94','#f4f4f4',32,'Upesciems pilsētas stadions','4-4-2',0.18],
+ ['SMIL','Smiltene BJSS','Smiltene','Smiltene','#0a8a3d','#f4f4f4',31,'Tepera stadions','4-4-2',0.15],
+ ['SKAN','Skanstes SK','Skanste','Riga','#1c3f94','#f4f4f4',31,'Hanzas vidusskolas laukums','4-1-4-1',0.15],
+ ['TUK2','FK Tukums 2000 II','Tukums II','Tukums','#1c3f94','#f2d31b',29,'Tukuma Pilsētas stadions','3-5-2',0.13],
+ ['SNO2','SK Super Nova II','SK Super Nova II','Riga','#1c3f94','#f4f4f4',28,'Jāņa Skredeļa stadions','4-4-2',0.12],
+ ['LEEVO','Leevon PPK','Leevon','Riga','#0a8a3d','#f4f4f4',28,'LNK Sporta Parks','4-2-3-1',0.12],
+ ['BEITA','Beitar/Riga Mariners','Beitar','Riga','#1c3f94','#f4f4f4',27,'Estadio municipal','4-4-2',0.1]
+];
+LV_POOL_DATA.forEach(([id,name,short,city,c1,c2,rep,stad,form,budget])=>{
+  let c=CLUBBY[id];
+  if(!c){c=K(id,name,short,city,'LV',c1,c2,rep,2);CLUBBY[id]=c;if(!CLUBS.includes(c))CLUBS.push(c)}
+  Object.assign(c,{name,short,city,co:'LV',c1,c2,rep,div:2});if(!CLUBS.includes(c))CLUBS.push(c);
+  if(['RIG2','RFS2','TUK2','SNO2'].includes(id))c.bTeam=1;
+  c.logo='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';
+  CLUB_LOGO[id]=c.logo;BASE_DIV[id]=2;BUDGET[id]=budget;FORM_MAIN[id]=form;STADIUM[id]=stad;
+});
+Object.entries({VALM:13244,METTA:13236,VENTS:156912,MARUP:121077,REZE:110693,RIG2:150952,RFS2:143451,ALBE:63000,SMIL:17926,SKAN:143060,TUK2:150954,SNO2:170411,LEEVO:163433,BEITA:163511}).forEach(([id,n])=>{
+  const u='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1';
+  if(CLUBBY[id]){CLUBBY[id].logo=u;CLUB_LOGO[id]=u;}
+});
+const LV3_POOL_DATA=[
+ ['SALA','Salaspils FC','Salaspils','Salaspils',22,'Salaspils stadions'],
+ ['VALK','Valkas SC','Valka','Valka',21,'Valkas stadions'],
+ ['AUD2','FK Auda II','Auda II','Ķekava',20,'Skonto stadions'],
+ ['DAU2','BFC Daugavpils II','Daugavpils II','Daugavpils',19,'Celtnieku stadions'],
+ ['JEL2','FS Jelgava II','Jelgava II','Jelgava',18,'Zemgales Olimpiskais centrs'],
+ ['LIE2','FK Liepāja II','Liepāja II','Liepāja',17,'Daugavas stadions']
+];
+LV3_POOL_DATA.forEach(([id,name,short,city,rep,stad])=>{
+  let c=CLUBBY[id];
+  if(!c){c=K(id,name,short,city,'LV','#1c8f3f','#f4f4f4',rep,3);CLUBBY[id]=c;if(!CLUBS.includes(c))CLUBS.push(c)}
+  Object.assign(c,{name,short,city,co:'LV',rep,div:3});
+  c.logo='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';
+  CLUB_LOGO[id]=c.logo;BASE_DIV[id]=3;BUDGET[id]=0.06;FORM_MAIN[id]='4-4-2';STADIUM[id]=stad;
+});
+Object.entries({DAUG:13269,AUDA:13254,LIEP:62938,RFS:13245,TUKU:13211,JELG:13234,GROB:64831,OGRE:151106,RIG:62999,SNOV:64832}).forEach(([id,n])=>{
+  const u='https://cdn.resfu.com/img_data/equipos/'+n+'.png?size=120x&lossy=1';
+  if(CLUBBY[id]){CLUBBY[id].logo=u;CLUB_LOGO[id]=u;}
+});
+Object.assign(CITY,{
+ 'Ventspils':{ll:[21.565,57.390]},'Upesciems':{ll:[24.300,57.150]},
+ 'Riga':{ll:[24.105,56.950]},'Liepāja':{ll:[21.011,56.505]},'Ķekava':{ll:[24.230,56.830]},
+ 'Daugavpils':{ll:[26.535,55.875]},'Tukums':{ll:[23.155,56.967]},'Jelgava':{ll:[23.716,56.651]},
+ 'Grobiņa':{ll:[21.167,56.583]},'Ogre':{ll:[24.600,56.817]},'Valmiera':{ll:[25.423,57.541]},
+ 'Salaspils':{ll:[24.365,56.861]},'Rēzekne':{ll:[27.330,56.510]},'Smiltene':{ll:[25.900,57.424]},
+ 'Valka':{ll:[26.010,57.775]},'Mārupe':{ll:[24.050,56.905]}
+});
+Object.assign(TROPHY_SC,{LV:'Latvijas Superkauss'});
+Object.assign(SC_WEEKS,{LV:[0]});
+Object.assign(SC_TEAMS,{LV:2});
+FIXED_SC_S1.LV=['RIG','AUDA'];
+/* Filiales letones: enlace bidireccional FAMILY/FAMILY_ALL y herencia de cantera. */
+const LV_FAMILY={RIG2:'RIG',RFS2:'RFS',TUK2:'TUKU',SNO2:'SNOV',AUD2:'AUDA',DAU2:'DAUG',JEL2:'JELG',LIE2:'LIEP',SKO2:'SKON',LMT2:'LMTL',VEN2:'VENTS'};
+Object.entries(LV_FAMILY).forEach(([id,p])=>{
+  if(!CLUBBY[id]||!CLUBBY[p])return;
+  CLUBBY[id].bTeam=1;FAMILY[id]=p;
+  if(!FAMILY[p])FAMILY[p]=id;
+  (FAMILY_ALL[p]=FAMILY_ALL[p]||[]).push(id);
+  FAM_PARENT[id]=p;
+});
+const LVC_TEAMS=LV_CLUB_DATA.map(x=>x[0]).concat(LV_POOL_DATA.map(x=>x[0]));
+function cupInitLatvija(){
+  const ids=LVC_TEAMS.filter(id=>CLUBBY[id]);
+  return cupInit('LVC','LVBET Latvijas Kauss',ids,[6,10,16,24,30]);
+}
+
+
+/* ===================== LETONIA — palmarés histórico ===================== */
+const LV_PAL={
+  SKON:{league:15,cup:8},
+  VENTS:{league:6,cup:7},
+  RIG:{league:4,cup:2,sc:2,d2:1},
+  RFS:{league:3,cup:3,sc:1},
+  LMTL:{league:2,cup:1},
+  SPAR:{league:2},
+  DGD:{league:1,cup:1,sc:1,d2:1},
+  LIEP:{league:1,cup:2},
+  VALM:{league:1,d2:1},
+  JELG:{cup:4,d2:2},
+  AUDA:{cup:2,d2:1},AUDR:{d2:1},
+  RAFJ:{cup:2},
+  OLR:{cup:1},
+  FKR:{cup:1},
+  METTA:{d2:1},
+  DAUG:{d2:2},
+  TUKU:{d2:1},
+  GROB:{d2:1},
+  OGRE:{d2:1},
+  SNOV:{d2:1},
+  DECV:{d2:1},GEMA:{d2:1},KVAD:{d2:1},JURN:{d2:1},VECR:{d2:1},RANT:{d2:1},
+  PFKR:{d2:1},LUDA:{d2:1},ZIBD:{d2:1},RKB:{d2:1},JURM:{d2:1},VEN2:{d2:1},
+  SKO2:{d2:1},OLIMP:{d2:1},VIND:{d2:1},LMT2:{d2:1},GULB:{d2:2},BABI:{d2:1},LOKD:{d2:1}
+};
+Object.entries(LV_PAL).forEach(([id,o])=>{const e=PALMARES[id]=PALMARES[id]||{};Object.keys(o).forEach(k=>{e[k]=o[k]})});
+const LV_HIST_CLUBS=[
+  ['SKON','Skonto Riga','Skonto','Riga'],['LMTL','Liepājas Metalurgs','Metalurgs','Liepāja'],
+  ['SPAR','Spartaks Jūrmala','Spartaks','Jūrmala'],['DGD','Daugava Daugavpils','Daugava','Daugavpils'],
+  ['OLR','Olimpija Rīga','Olimpija','Riga'],['FKR','FK Rīga','FK Rīga','Riga'],['AUDR','Auda Rīga (2001)','Auda 2001','Riga'],
+  ['RAFJ','RAF Jelgava','RAF Jelgava','Jelgava'],
+  ['DECV','Decemviri Rīga','Decemviri','Riga'],['GEMA','Gemma-RFS','Gemma-RFS','Riga'],
+  ['KVAD','FK Kvadrāts','Kvadrāts','Riga'],['JURN','FK Jūrnieks','Jūrnieks','Riga'],
+  ['VECR','Vecrīga Rīga','Vecrīga','Riga'],['RANT','Ranto/AVV','Ranto/AVV','Riga'],
+  ['PFKR','PFK Rīga','PFK Rīga','Riga'],['LUDA','LU-Daugava','LU-Daugava','Riga'],
+  ['ZIBD','Zibens-Zemessardze','Zibens','Daugavpils'],['RKB','RKB-Arma Rīga','RKB-Arma','Riga'],
+  ['JURM','FK Jūrmala','Jūrmala','Jūrmala'],['VEN2','FK Ventspils II','Ventspils II','Ventspils'],
+  ['SKO2','Skonto II','Skonto II','Riga'],['OLIMP','JFK Olimps Rīga','Olimps','Riga'],
+  ['VIND','FK Vindava Ventspils','Vindava','Ventspils'],['LMT2','Liepājas Metalurgs II','Metalurgs II','Liepāja'],
+  ['GULB','FB Gulbene 2005','Gulbene','Gulbene'],['BABI','SK Babīte','Babīte','Babīte'],
+  ['LOKD','FC Lokomotiv Daugavpils','Lokomotiv','Daugavpils']
+];
+LV_HIST_CLUBS.forEach(([id,name,short,city])=>{
+  if(CLUBBY[id])return;
+  const c=K(id,name,short,city,'LV','#1c8f3f','#f4f4f4',30,1);
+  c.logo='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';
+  CLUBBY[id]=c;CLUB_LOGO[id]=c.logo;BASE_DIV[id]=1;
+});
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
