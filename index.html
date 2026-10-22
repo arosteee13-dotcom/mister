@@ -1543,7 +1543,7 @@ function applyContent(data){
     if(data.attr&&typeof data.attr==='object'&&!Array.isArray(data.attr))Object.assign(REAL_ATTR,data.attr);
     if(data.foot&&typeof data.foot==='object'&&!Array.isArray(data.foot))Object.assign(REAL_FOOT,data.foot);
     if(data.photo&&typeof data.photo==='object'&&!Array.isArray(data.photo)){
-      const purl=v=>typeof v==='string'?(/^https?:/.test(v)?v:'https://cdn.resfu.com/img_data/players/medium/'+v+'.jpg?size=120x&lossy=1'):(v!=null?'https://cdn.resfu.com/img_data/players/medium/'+v+'.jpg?size=120x&lossy=1':null);
+      const purl=v=>typeof v==='string'?(/^(?:https?:|data:)/.test(v)?v:'https://cdn.resfu.com/img_data/players/medium/'+v+'.jpg?size=120x&lossy=1'):(v!=null?'https://cdn.resfu.com/img_data/players/medium/'+v+'.jpg?size=120x&lossy=1':null);
       Object.keys(data.photo).forEach(n=>{const i=data.photo[n];if(i&&typeof i==='object'&&!Array.isArray(i)){const o={};Object.keys(i).forEach(k=>{const u=purl(i[k]);if(u)o[k]=u});REAL_PHOTO[n]=o}else REAL_PHOTO[n]=purl(i)});
     }
     if(Array.isArray(data.loans))data.loans.forEach(l=>{if(Array.isArray(l)&&!REAL_LOANS.some(x=>x[0]===l[0]&&x[1]===l[1]&&x[2]===l[2]))REAL_LOANS.push(l)});
@@ -2886,6 +2886,7 @@ function dealTypeBetween(aId,bId){const a=CLUBBY[aId],b=CLUBBY[bId];return(a&&b&
    beneficios de juego ni cláusulas negociadas, solo sirven como contexto. clave = club grande (hub), valor = sus satélites */
 const REAL_AFFIL_HUBS={
   MCI:['GIR','PAL','TRO','LOM','NYCFC','BAHI','MCTO','BOLI','MELC','YOKO','SZPC','MUMC'],
+  GIR:['TF0505'],
   AVL:['RUS','VIT'],
   NFO:['OLY','RAVE'],
   BOU:['LOR','MOR'],
@@ -7235,12 +7236,58 @@ const ATTR_GK=['EST','PAR','SAQ','REF','COL'];
 const ATTR_OUT=['RIT','TIR','PAS','REG','DEF','FÍS'];
 const ATTR_NAME={EST:'Estirada',PAR:'Paradas',SAQ:'Saques',REF:'Reflejos',COL:'Colocación',RIT:'Ritmo',TIR:'Tiro',PAS:'Pase',REG:'Regate',DEF:'Defensa',FÍS:'Físico'};
 /* atributos de un jugador: los reales conocidos o generados a partir de su GRL y posición */
-function genAttrs(p){
+function genAttrsLegacy(p){
   const r=rng(hashStr('at'+p.id)),base=p.ovr,j=()=>(r()-.5)*9;
   if(p.pos==='GK'){const o={};ATTR_GK.forEach(k=>o[k]=clamp(Math.round(base+j()),30,99));return o}
   const bias={DF:{DEF:1.08,FÍS:1.05,RIT:.99,TIR:.86,PAS:.95,REG:.9},MD:{PAS:1.06,REG:1.02,RIT:1,DEF:.97,TIR:.97,FÍS:.97},FW:{RIT:1.05,TIR:1.05,REG:1.03,PAS:.99,DEF:.72,FÍS:.95}}[p.pos]||{};
   const o={};ATTR_OUT.forEach(k=>{o[k]=clamp(Math.round(base*(bias[k]||1)+j()),20,99)});return o;
 }
+/* Perfiles de atributos por posición específica. Las bandas se convierten en desviaciones respecto al GRL. */
+const ATTR_BANDS={Bajo:-12,'Bajo-Medio':-8,'Medio-Bajo':-4,Medio:0,'Medio-Alto':5,Alto:10};
+const POS_PROFILE={
+  POR:{EST:'Medio',PAR:'Alto',SAQ:'Medio',REF:'Alto',COL:'Medio-Alto'},
+  DFC:{RIT:'Bajo-Medio',TIR:'Bajo',PAS:'Bajo-Medio',REG:'Bajo',DEF:'Alto','FÍS':'Alto'},
+  LI:{RIT:'Alto',TIR:'Medio',PAS:'Medio',REG:'Medio-Alto',DEF:'Medio','FÍS':'Medio'},
+  LD:{RIT:'Alto',TIR:'Medio',PAS:'Medio',REG:'Medio-Alto',DEF:'Medio','FÍS':'Medio'},
+  MCD:{RIT:'Medio-Bajo',TIR:'Bajo-Medio',PAS:'Medio-Alto',REG:'Medio-Bajo',DEF:'Alto','FÍS':'Medio-Alto'},
+  MC:{RIT:'Medio',TIR:'Medio',PAS:'Alto',REG:'Medio-Bajo',DEF:'Medio','FÍS':'Medio'},
+  MCO:{RIT:'Medio-Alto',TIR:'Medio-Alto',PAS:'Alto',REG:'Medio-Alto',DEF:'Bajo','FÍS':'Bajo-Medio'},
+  MI:{RIT:'Alto',TIR:'Medio',PAS:'Medio',REG:'Medio-Alto',DEF:'Medio','FÍS':'Medio'},
+  MD:{RIT:'Alto',TIR:'Medio',PAS:'Medio',REG:'Medio-Alto',DEF:'Medio','FÍS':'Medio'},
+  EI:{RIT:'Alto',TIR:'Medio-Alto',PAS:'Medio',REG:'Alto',DEF:'Bajo','FÍS':'Bajo'},
+  ED:{RIT:'Alto',TIR:'Medio-Alto',PAS:'Medio',REG:'Alto',DEF:'Bajo','FÍS':'Bajo'},
+  DC:{RIT:'Medio',TIR:'Alto',PAS:'Bajo-Medio',REG:'Medio',DEF:'Bajo','FÍS':'Alto'}
+};
+const BIG5_LEAGUES=new Set(['ES','EN','IT','DE','FR']);
+function attrProfileExcluded(p){
+  const c=p&&p.cid&&CLUBBY[p.cid];
+  return !!(c&&BIG5_LEAGUES.has(c.co)&&(c.div||1)<=2);
+}
+function genAttrsProfile(p){
+  const r=rng(hashStr('at'+p.id)),base=p.ovr,j=()=>(r()-.5)*6;
+  const cap=base+(base>=80?6:5);
+  const finish=(raw,keys)=>{
+    const w=posAttrWeights(p);let wm=0,tw=0;
+    keys.forEach(k=>{wm+=(w[k]||0)*raw[k];tw+=w[k]||0});
+    if(!tw)wm=keys.reduce((a,k)=>a+raw[k],0)/keys.length;
+    else wm/=tw;
+    const o={};keys.forEach(k=>o[k]=clamp(Math.round(raw[k]+base-wm),20,Math.min(99,cap)));return o;
+  };
+  if(p.pos==='GK'){
+    const prof=POS_PROFILE.POR,raw={};
+    ATTR_GK.forEach(k=>raw[k]=base+ATTR_BANDS[prof[k]]+j());
+    return finish(raw,ATTR_GK);
+  }
+  const pp=ppOf(p),primary=pp[0]||'MC';
+  const acc={};ATTR_OUT.forEach(k=>acc[k]=0);
+  const add=(pos,w)=>{const prof=POS_PROFILE[pos];if(!prof)return;ATTR_OUT.forEach(k=>acc[k]+=ATTR_BANDS[prof[k]]*w)};
+  add(primary,1);pp.slice(1).forEach(pos=>add(pos,.25));
+  /* un DFC con MCD/MC secundario no tiene el pase tan limitado */
+  if(primary==='DFC'&&pp.some(x=>x==='MCD'||x==='MC'))acc.PAS=Math.max(acc.PAS,ATTR_BANDS.Medio);
+  const raw={};ATTR_OUT.forEach(k=>raw[k]=base+acc[k]+j());
+  return finish(raw,ATTR_OUT);
+}
+function genAttrs(p){return attrProfileExcluded(p)?genAttrsLegacy(p):genAttrsProfile(p)}
 function fixAt(p,at){if(!at)return genAttrs(p);const g=genAttrs(p),list=p.pos==='GK'?ATTR_GK:ATTR_OUT,o={};list.forEach(k=>{o[k]=at[k]!=null?at[k]:g[k]});return o}
 function attrsOf(p){if(p.at){if(p.at.SAL!=null)delete p.at.SAL;return p.at}p.at=fixAt(p,REAL_ATTR[p.n]);return p.at}
 /* Puntuaciones de juego a partir de los atributos (los porteros usan los suyos: paradas, reflejos, estirada, colocación).
@@ -7461,7 +7508,7 @@ function bumpVal(p,beforeOvr){
 }
 function mkPlayer(r,id,pos,ovr,age,co,used,clubId){
   const who=mkPerson(r,co,used,clubId),gap=age<=21?6+r()*8:age<=24?3+r()*6:age<=27?r()*3:age<=29?.5+r()*2:0;
-  const p={id,n:who[0],nat:who[1],pos,age,ovr,pot:clamp(Math.round(ovr+gap),ovr,96),en:100,inj:0,g:0,ap:0};
+  const p={id,n:who[0],nat:who[1],pos,age,ovr,pot:clamp(Math.round(ovr+gap),ovr,96),en:100,inj:0,g:0,ap:0,cid:clubId};
   p.val=calcVal(p);p.wage=Math.round(p.val*4);p.at=genAttrs(p);return p;
 }
 /* p.photo: normalmente REAL_PHOTO[nombre] es directamente la URL; si dos jugadores reales comparten nombre,
@@ -7517,7 +7564,7 @@ function realSquad(club){
     if(age>=RETIRE_AGE)return mkPlayer(gen,club.id+'r'+i,r[1],clamp(Math.round(repOf(club.id)-14+gen()*10),42,Math.max(80,Math.round(repOf(club.id)+4))),17+Math.floor(gen()*3),c0?c0.co:'ES',used,club.id);
     /* el GRL de la base de datos corresponde al año inicial (BASE_YEAR); cada temporada que pasa, el veterano pierde nivel */
     let ovr=r[4];const dba=BASE_YEAR-r[2];for(let a=dba+1;a<=age;a++)ovr-=realAgeDecline(a);ovr=clamp(ovr,20,95);
-    const p={id:club.id+'_'+i,n:r[0],nat:r[3],pos:r[1],age,ovr,pot:youngPotOf(age,ovr,r[5],potClubOf(club.id)+'_'+r[0]),en:100,inj:0,g:0,ap:0,real:1};
+    const p={id:club.id+'_'+i,n:r[0],nat:r[3],pos:r[1],age,ovr,pot:youngPotOf(age,ovr,r[5],potClubOf(club.id)+'_'+r[0]),en:100,inj:0,g:0,ap:0,real:1,cid:club.id};
     if(potClubOf(club.id)!==club.id&&age<=23&&!r[5])p.pot=Math.max(p.pot,acadPotFloor(club.id));
     p.val=r[6]!=null?r[6]:calcVal(p);
     p.wage=(club.div===5||club.div===6)?Math.max(r[7]||0,calcWage(p)):(r[7]!=null?r[7]:Math.round(p.val*4));
@@ -30219,6 +30266,34 @@ LV_HIST_CLUBS.forEach(([id,name,short,city])=>{
   c.logo='https://cdn.resfu.com/media/img/nofoto_equipo.png?size=120x&lossy=1';
   CLUBBY[id]=c;CLUB_LOGO[id]=c.logo;BASE_DIV[id]=1;
 });
+/* Bruno Fernandes (Manchester United): atributos corregidos desde la ficha del usuario. */
+Object.assign(REAL_ATTR,{'Bruno Fernandes':{RIT:67,TIR:87,PAS:91,REG:85,DEF:68,'FÍS':78}});
+/* Erling Haaland (Manchester City): atributos y pie corregidos desde la ficha del usuario. */
+Object.assign(REAL_ATTR,{'Erling Haaland':{RIT:87,TIR:91,PAS:69,REG:80,DEF:50,'FÍS':89}});
+REAL_FOOT['Erling Haaland']='I';
+/* Michael Olise (Bayern Múnich): atributos corregidos desde la ficha del usuario. */
+Object.assign(REAL_ATTR,{'Michael Olise':{RIT:83,TIR:79,PAS:87,REG:90,DEF:45,'FÍS':69}});
+/* Vitinha y Ousmane Dembélé (PSG): atributos y pie corregidos desde la ficha del usuario. */
+Object.assign(REAL_ATTR,{
+ 'Vitinha':{RIT:72,TIR:80,PAS:85,REG:90,DEF:72,'FÍS':73},
+ 'Ousmane Dembélé':{RIT:91,TIR:87,PAS:81,REG:90,DEF:55,'FÍS':74}
+});
+REAL_FOOT['Ousmane Dembélé']='I';
+/* Nuno Mendes, Willian Pacho y avatar de Rodri (FCB) corregidos desde la ficha del usuario. */
+Object.assign(REAL_ATTR,{
+ 'Nuno Mendes':{RIT:94,TIR:76,PAS:79,REG:86,DEF:83,'FÍS':82},
+ 'Willian Pacho':{RIT:80,TIR:34,PAS:56,REG:71,DEF:88,'FÍS':86}
+});
+REAL_FOOT['Nuno Mendes']='I';
+REAL_PHOTO['Rodri']={FCB:'https://cdn.resfu.com/img_data/players/medium/164286.jpg?size=120x&lossy=1',MIR:'https://cdn.resfu.com/img_data/players/medium/833675.jpg?size=120x&lossy=1'};
+/* Gabriel Magalhães (Arsenal): renombrado, foto y atributos corregidos. */
+if(typeof REAL_PHOTO!=='undefined')delete REAL_PHOTO['Gabriel'];
+Object.assign(REAL_ATTR,{'Gabriel Magalhães':{RIT:64,TIR:46,PAS:58,REG:65,DEF:90,'FÍS':84}});
+REAL_PHOTO['Gabriel Magalhães']='https://cdn.resfu.com/img_data/players/medium/325030.jpg?size=120x&lossy=1';
+REAL_FOOT['Gabriel Magalhães']='I';
+/* Khvicha Kvaratskhelia (PSG): atributos y condiciones corregidos desde la ficha del usuario. */
+Object.assign(REAL_ATTR,{'Khvicha Kvaratskhelia':{RIT:86,TIR:84,PAS:82,REG:89,DEF:58,'FÍS':82}});
+REAL_FOOT['Khvicha Kvaratskhelia']='D';
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
