@@ -4684,7 +4684,7 @@ const REAL_LOANS=[
   ['M. Izaguirre','JUVD','REC',1,'Rotación',['M. Izaguirre','MD',2003,'UY',47,47,0.247,1,'MC/MCD']],
   ['A. Monzon','LPAB','TAMA',1,'Rotación',['A. Monzon','DF',2007,'ES',42,42,0.008,0.5,'LI']],
   ['H. Castellano','LPAB','TAMA',1,'Rotación',['H. Castellano','DF',2007,'ES',35,42,0.001,0.4,'DFC']],
-  ['Adrián Medina','LPAB','TAMA',1,'Rotación',['Adrián Medina','FW',2006,'ES',37,46,0.017,0.5,'MP']],
+  ['Adrián Medina','LPAB','TAMA',1,'Rotación',['Adrián Medina','FW',2006,'ES',37,46,0.017,0.5,'MCO']],
   ['Antonio Hernández','LPAB','TAMA',1,'Rotación',['Antonio Hernández','FW',2005,'ES',37,44,0.005,0.6,'EI']],
   ['Mauro Costa','TENB','ZAM',1,'Rotación',['Mauro Costa','MD',2003,'ES',55,55,0.069,1,'MC']],
   ['Kavier Ortiz','ATAL','METRO',1,'Rotación',['Kavier Ortiz','FW',2002,'EC',60,60,0.396,1,'EI']],
@@ -30080,6 +30080,14 @@ Object.entries(LV_FAMILY).forEach(([id,p])=>{
   if(!FAMILY[p])FAMILY[p]=id;
   (FAMILY_ALL[p]=FAMILY_ALL[p]||[]).push(id);
   FAM_PARENT[id]=p;
+});
+/* Logos de los clubes activos de Letonia/Feroe que estaban con nofoto. */
+[['AUD2','AUDA'],['DAU2','DAUG'],['JEL2','JELG'],['LIE2','LIEP'],['B36R','B36'],['HBR','HB'],['KIR','KIK']].forEach(([id,p])=>{
+  if(CLUBBY[id]&&CLUBBY[p]&&CLUBBY[p].logo){CLUBBY[id].logo=CLUBBY[p].logo;CLUB_LOGO[id]=CLUBBY[p].logo;}
+});
+[['SALA','17924'],['VALK','85749'],['ROYN','61650']].forEach(([id,n])=>{
+  const u='https://cdn.resfu.com/img_data/escudos/medium/'+n+'.jpg?size=120x&lossy=1';
+  if(CLUBBY[id]){CLUBBY[id].logo=u;CLUB_LOGO[id]=u;}
 });
 const LVC_TEAMS=LV_CLUB_DATA.map(x=>x[0]).concat(LV_POOL_DATA.map(x=>x[0]));
 function cupInitLatvija(){
