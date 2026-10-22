@@ -14173,11 +14173,17 @@ function filialFor(id){
   return makeBTeam(id);
 }
 /* ============ FILIAL / JUVENILES ============ */
-function initFam(){filialFor(state.club);/* se asegura de que el filial exista (si no, se crea aquí mismo) antes de buscarlo, por si nunca se abrió la ficha del club */const ds=filialDescendants(state.club);state.fam=ds[0]&&CLUBBY[ds[0]]?{id:ds[0],players:genSquad(CLUBBY[ds[0]],state.seed)}:null;state.fam2=ds[1]&&CLUBBY[ds[1]]?{id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)}:null;state.loansOut=[]}
+function initFam(){filialFor(state.club);/* se asegura de que el filial exista (si no, se crea aquí mismo) antes de buscarlo, por si nunca se abrió la ficha del club */const ds=filialDescendants(state.club);state.fam=ds[0]&&CLUBBY[ds[0]]?{id:ds[0],players:genSquad(CLUBBY[ds[0]],state.seed)}:null;state.fam2=ds[1]&&CLUBBY[ds[1]]?{id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)}:null;syncFamTeam(state.fam);syncFamTeam(state.fam2);state.loansOut=[]}
 /* filiales gestionables del club del usuario (B, C...), con su plantilla real */
 const famList=()=>[state.fam,state.fam2].filter(Boolean);
 const famIds=()=>famList().map(f=>f.id);
 const famOf=id=>famList().find(f=>f.id===id);
+/* El filial puede ser también un equipo de una liga simulada: la plantilla debe ser la misma referencia. */
+function syncFamTeam(f){
+  if(!f||!state||!state.teams||!f.players)return;
+  const T=state.teams[f.id];
+  if(T&&T.players!==f.players){T.players=f.players;T.lineup=bestXI(T,T.formation);if(T.bench)T.bench=autoBench(T);}
+}
 /* ===================== instalaciones y academia (niveles 1-15) ===================== */
 const FAC_MAX=15,ACAD_EVERY=8;
 const FAC_NAME={train:'Instalaciones de entrenamiento',acad:'Academia de juveniles',zone:'Zona del club'};
@@ -14803,6 +14809,7 @@ function ensureState(){
     if(!state.fam2&&ds[1]&&CLUBBY[ds[1]])state.fam2={id:ds[1],players:genSquad(CLUBBY[ds[1]],state.seed)};
     if(state.fam&&state.teams[state.fam.id])state.teams[state.fam.id].players=state.fam.players;
   }
+  famList().forEach(syncFamTeam);
   if(!state.loansOut)state.loansOut=[];
   if(!state.loans)state.loans=[];
   if(!state.freeAgents)state.freeAgents=[];
@@ -14976,6 +14983,7 @@ function moveFamily(pid,toId){
     const t=famOf(toId)||famList()[0];if(!t)return'No tienes ningún filial con el que mover jugadores.';
     const err=canLeaveTeam(me().players,L.p,!isB(state.club));if(err)return err;
     me().players.splice(me().players.indexOf(L.p),1);t.players.push(L.p);
+    syncFamTeam(t);invalidateSquads([t.id,state.club]);
     L.p.list=false;L.p.offers=[];fixLineup(me());
     news(`Bajas a ${L.p.n} a ${cname(t.id)}.`);saveGame();return null;
   }
@@ -14983,6 +14991,7 @@ function moveFamily(pid,toId){
     const err=canLeaveTeam(L.fam.players,L.p,false);if(err)return err;
     if(!isB(state.club)&&me().players.length>=30)return'El primer equipo está completo (máximo 30).';
     L.fam.players.splice(L.fam.players.indexOf(L.p),1);me().players.push(L.p);
+    syncFamTeam(L.fam);invalidateSquads([L.fam.id,state.club]);
     L.p.list=false;L.p.offers=[];fixLineup(me());
     news(`Subes a ${L.p.n} al ${cname(state.club)} desde ${cname(L.fam.id)}.`);saveGame();return null;
   }
