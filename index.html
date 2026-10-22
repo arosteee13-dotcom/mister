@@ -30303,6 +30303,8 @@ REAL_FOOT['Gabriel Magalhães']='I';
 /* Khvicha Kvaratskhelia (PSG): atributos y condiciones corregidos desde la ficha del usuario. */
 Object.assign(REAL_ATTR,{'Khvicha Kvaratskhelia':{RIT:86,TIR:84,PAS:82,REG:89,DEF:58,'FÍS':82}});
 REAL_FOOT['Khvicha Kvaratskhelia']='D';
+/* Fran García: el del Betis conserva su foto; el Fran García del Badalona (TF0502) no tiene foto en BeSoccer. */
+REAL_PHOTO['Fran García']={BET:'https://cdn.resfu.com/img_data/players/medium/326549.jpg?size=120x&lossy=1'};
 CLUB_DEFAULTS=Object.fromEntries(Object.keys(CLUBBY).map(id=>{const c=CLUBBY[id];return[id,{name:c.name,short:c.short,city:c.city,rep:c.rep,stadium:c.stadium,logo:c.logo}]}));
 BUDGET_DEFAULTS=Object.assign({},BUDGET);
 /* ===== AGENTES LIBRES REALES (fichas sin club, disponibles en el mercado) =====
