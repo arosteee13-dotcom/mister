@@ -7703,8 +7703,10 @@ Object.assign(BUDGET,{BEIJ:6.5,CDRC:5.5,CQTL:1.2,DLYB:1.8,HENF:3.2,LNTR:1.1,QDHN
 /* China: Super League (estadios reales) */
 Object.assign(STADIUM,{BEIJ:'Workers Stadium',CDRC:'Dujiangyan Phoenix Stadium',CQTL:'Tonglianglong Stadium',DLYB:'Dalian Barracuda Bay Football Stadium',HENF:'Zhengzhou Hanghai Stadium',LNTR:'Shenyang Urban Construction University Stadium',QDHN:'Qingdao Guoxin Stadium',QDWC:'West Coast University City Sports Center Stadium',SDTS:'Jinan Olympic Sports Center Stadium',SHPO:'Pudong Football Stadium',SHSH:'Estadio de Hongkou',SZPC:"Bao'an Stadium",TJJM:'Tianjin Olympic Center Stadium',WHTT:'Hankou Cultural Sports Centre',YNYK:'Yuxi Plateau Sports Center Stadium',ZJFC:'Hangzhou Huanglong Stadium'});
 const budgetFor=c=>{
-  /* un filial con presupuesto explícito en BUDGET lo usa tal cual; si no, se deriva del primer equipo */
-  if(BUDGET[c.id]==null&&isB(c.id)){const pid=FAMILY[c.id],pb=pid&&CLUBBY[pid]?budgetFor(CLUBBY[pid]):8;return Math.max(.1,Math.round(pb*.02*100)/100)}
+  /* un filial con presupuesto explícito en BUDGET lo usa tal cual; si no, se deriva del primer equipo.
+     FAMILY[c.id] en un filial puede acabar apuntando a otro filial hermano en vez de al padre real
+     (ver famParent), así que se usa famParent cuando existe para no recursar en un ciclo. */
+  if(BUDGET[c.id]==null&&isB(c.id)){const pid=((typeof famParent==='function'?famParent(c.id):null)||FAMILY[c.id]);const pb=pid&&pid!==c.id&&CLUBBY[pid]?budgetFor(CLUBBY[pid]):8;return Math.max(.1,Math.round(pb*.02*100)/100)}
   const base=BASE_BUDGET(c),factor=Math.pow(1.1,repOf(c.id)-c.rep);
   return clamp(Math.round(base*factor*1000)/1000,.04,300);
 };
@@ -12357,7 +12359,13 @@ function newGame(slot,clubId){
   const club=CLUBBY[clubId],co=club.co,seed=ui.seed,teams={};
   BENCH_N=benchLimit(clubId);
   leagueClubs(co,club.div).forEach(c=>{
-    const fp=FAMILY[c.id]&&CLUBBY[FAMILY[c.id]]?FAMILY[c.id]:null;
+    /* FAMILY es bidireccional (primer equipo <-> filial), así que FAMILY[c.id] para un PRIMER EQUIPO
+       apunta a SU FILIAL, no a un padre con plantilla real: sustituir aquí la plantilla del primer
+       equipo por la de su filial (p. ej. el Atlético jugando con la plantilla del Atlético Madrileño)
+       era el bug real detrás de "me aparecen jugadores del primer equipo en el filial, mezclados":
+       en realidad era al revés, el primer equipo heredaba por error la plantilla del filial. Solo
+       tiene sentido este préstamo cuando "c" es, a su vez, un filial (isB) sin plantilla real propia. */
+    const fp=isB(c.id)&&FAMILY[c.id]&&CLUBBY[FAMILY[c.id]]?FAMILY[c.id]:null;
     const own=(modeNow==='real'&&REAL_DB[c.id]&&REAL_DB[c.id].length);
     const t={players:genSquad(!own&&fp?CLUBBY[fp]:c,seed),budget:budgetFor(c),formation:formFor(c.id),lineup:[]};
     t.lineup=bestXI(t);if(c.id===clubId)t.bench=autoBench(t);teams[c.id]=t;
@@ -14138,7 +14146,10 @@ const isB=id=>id==='RSB'||id==='CFO'||!!(CLUBBY[id]&&CLUBBY[id].bTeam);
 const FAM_SAME={LEVB:'TF0602',MALB:'TF0903',CADM:'TF1004'};   /* registros heredados del mismo filial */
 function famChildren(id){const out=new Set();for(const k in FAMILY)if(FAMILY[k]===id&&CLUBBY[k]&&isB(k))out.add(k);(FAMILY_ALL[id]||[]).forEach(k=>{if(CLUBBY[k]&&isB(k))out.add(k)});const by={};[...out].forEach(k=>{const ck=(FAM_SAME[k]&&out.has(FAM_SAME[k]))?FAM_SAME[k]:k;const n=normTxt(CLUBBY[ck]&&CLUBBY[ck].name||ck),old=by[n];if(!old||((CLUBBY[old].div||99)===3&&(CLUBBY[ck].div||99)!==3))by[n]=ck});return Object.values(by).sort((a,b)=>(CLUBBY[a].div||99)-(CLUBBY[b].div||99)||a.localeCompare(b))}
 /* cadena de filiales por debajo de un club, de más cercano a más lejano (B, C, ...) */
-function filialDescendants(id){const out=[],q=[id];while(q.length){const x=q.shift();for(const y of famChildren(x)){out.push(y);q.push(y)}}return out}
+/* BFS de filiales por debajo de "id"; "seen" evita bucle infinito si FAMILY forma un ciclo entre dos
+   filiales hermanos (p. ej. B<->C mal enlazados): sin esto, famChildren podía devolverlos uno al otro
+   indefinidamente y colgar la generación de partida para clubes con una cadena de filiales de 3 niveles. */
+function filialDescendants(id){const out=[],q=[id],seen=new Set([id]);while(q.length){const x=q.shift();for(const y of famChildren(x)){if(seen.has(y))continue;seen.add(y);out.push(y);q.push(y)}}return out}
 /* crea (si hace falta) el club B de un primer equipo "pid" y lo registra en CLUBBY/FAMILY; el filial siempre hereda el escudo del primer equipo salvo que ya tenga uno propio */
 /* nombre del filial según el país: sufijo B/II/2/U21/U23 o prefijo Jong (Países Bajos).
    Italia, Bélgica y México → U23; Dinamarca, Suiza, Argentina y los U21 ya existentes (Inglaterra,Irlanda) → U21;
@@ -15145,7 +15156,7 @@ function famAlert(title,msg,p,clubId){
   openSheet(`<h3>${esc(title)}</h3><p style="margin:0 0 12px">${msg}</p>${playerCard(p,clubId)}<div class="row-btns" style="margin-top:12px"><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`);
 }
 /* cadena de equipos por encima de un filial (filial inmediato, luego su matriz, ...) */
-function famAncestors(id){const out=[];let x=id;while(FAMILY[x]&&CLUBBY[FAMILY[x]]){x=FAMILY[x];out.push(x);if(!isB(x))break}return out}
+function famAncestors(id){const out=[],seen=new Set([id]);let x=id;while(FAMILY[x]&&CLUBBY[FAMILY[x]]&&!seen.has(FAMILY[x])){x=FAMILY[x];seen.add(x);out.push(x);if(!isB(x))break}return out}
 function famInteract(){
   if(!state||!isB(state.club))return;
   const anc=famAncestors(state.club);if(!anc.length)return;
