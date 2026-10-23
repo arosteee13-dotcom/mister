@@ -1180,6 +1180,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
         <button class="btn ghost big" data-act="museum">Museo</button>
         <button class="btn ghost big" data-act="db-manager">Importar base de datos</button>
         <button class="btn ghost big" data-act="dbedit-open">Editar base de datos</button>
+        <button class="btn ghost big" data-act="settings-open">Ajustes</button>
       </div>
       <p class="fine">Tus partidas se guardan en este navegador.</p>
     </div>
@@ -7587,7 +7588,7 @@ function genSquad(club,seed){
     /* algunos filiales con plantilla real propia (scrapeada aparte) comparten canteranos con el primer equipo
        en la vida real (double-registered); si el primer equipo también tiene plantilla real y ya lo incluye,
        se quita de aquí para no verlo duplicado en las dos plantillas del mismo club */
-    const parentId=isB(club.id)?FAMILY[club.id]:null;
+    const parentId=isB(club.id)?((typeof famParent==='function'?famParent(club.id):null)||FAMILY[club.id]):null;
     if(parentId&&REAL_DB[parentId]&&!club.noParentFilter){
       const parentNames=new Set(REAL_DB[parentId].map(x=>x[0]));
       return list.filter(p=>!parentNames.has(p.n));
@@ -7595,10 +7596,17 @@ function genSquad(club,seed){
     return list;
   }
   if(club.bTeam&&curMode()==='real')return[];   /* en modo real, los filiales sin plantilla real solo tienen los jugadores que se les asignen; en modo ficticio se les genera plantilla normal */
-  const r=rng(hashStr(club.id)^seed),used=new Set(),ovrs=[],pBase=repOf(potClubOf(club.id));
+  /* la MEDIA (ovr) de un filial debe reflejar su propia reputación (más baja que la del primer equipo),
+     no la del club al que pertenece: antes se usaba potClubOf(club.id) también para la media, lo que
+     inflaba a los canteranos ficticios al nivel del primer equipo (80+ de media con reputación del
+     Atlético, por ejemplo). El POTENCIAL sí debe tirar del primer equipo (ver acadPotFloor más abajo):
+     esa es la parte que de verdad depende de adónde puede llegar un canterano si promociona. */
+  const r=rng(hashStr(club.id)^seed),used=new Set(),ovrs=[],pBase=repOf(club.id);
   for(let i=0;i<22;i++)ovrs.push(clamp(Math.round(pBase+5-i*.95+(r()-.5)*6),42,94));
   const pos=shuffle(POS_PLAN.slice(),r);
-  return pos.map((ps,i)=>mkPlayer(r,club.id+i,ps,ovrs[i],isB(club.id)?Math.round(17+(r()+r())/2*5):Math.round(19+(r()+r()+r())/3*16),club.co,used,club.id));
+  const squad=pos.map((ps,i)=>mkPlayer(r,club.id+i,ps,ovrs[i],isB(club.id)?Math.round(17+(r()+r())/2*5):Math.round(19+(r()+r()+r())/3*16),club.co,used,club.id));
+  if(isB(club.id))squad.forEach(p=>{if(p.age<=23)p.pot=clamp(Math.max(p.pot,acadPotFloor(club.id)),p.ovr,96)});
+  return squad;
 }
 /* Recambio de las plantillas virtuales: los clubes fuera de tu liga (divisiones inferiores, otros países, filiales
    que no juegan contigo...) no pasan por el mercado ni la cantera como los rivales de tu división, así que al
@@ -13947,6 +13955,16 @@ function mgrHistoriaHTML(){
     return`<div class="hcard"><div class="hcard-h"><b>Temporada ${s}</b></div>${clubBlocks}</div>`;
   }).join('')}</div>`;
 }
+function settingsSheet(){
+  const mode=avatarMode();
+  const opt=(v,label,desc)=>`<button class="mg-wide" data-act="settings-avatar-pick" data-v="${v}" style="display:flex;align-items:center;justify-content:flex-start;gap:10px;text-align:left;height:auto;padding:10px 14px;${mode===v?'border-color:var(--acc,#6ee7b7)':''}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none">${mode===v?'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>':'<circle cx="12" cy="12" r="9"/>'}</svg><span style="display:flex;flex-direction:column;text-align:left"><b>${label}</b><small style="opacity:.7">${desc}</small></span></button>`;
+  openSheet(`<h3>Ajustes</h3><p>Avatares de jugadores ficticios (sin foto real).</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${opt('gen','Avatar generado','Cada jugador ficticio tiene una cara única (motor procedural).')}
+      ${opt('none','Sin avatar','Usa siempre la imagen genérica, como antes.')}
+    </div>
+    <button class="mg-wide" data-act="sheet-close" style="margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4Z"/></svg><span>Volver</span></button>`);
+}
 function mgrProfileSheet(){
   const stints=state.mgrStints||[];
   const rows=stints.map(s=>{
@@ -14150,7 +14168,10 @@ function makeBTeam(pid){
     const sh=pre?pre+' '+c.short:filialName(c,c.short);
     const b=K(bid,nm,sh,c.city,c.co,c.c1,c.c2,Math.max(40,repOf(pid)-7),(c.div||1)+1);
     b.bTeam=1;if(c.logo)b.logo=c.logo;
-    CLUBBY[bid]=b;FAMILY[pid]=bid;FAMILY[bid]=pid;
+    /* si "pid" ya es a su vez un filial (se está creando un C-team, filial de un B-team), no se debe
+       pisar su propio FAMILY[pid] -> su primer equipo real: solo se registra si no existía ya, para no
+       crear un ciclo B<->C que deje al B-team sin saber cuál es su primer equipo de verdad. */
+    CLUBBY[bid]=b;if(FAMILY[pid]==null)FAMILY[pid]=bid;FAMILY[bid]=pid;
   }else if(!CLUBBY[bid].logo&&c.logo){CLUBBY[bid].logo=c.logo}
   return bid;
 }
@@ -14198,14 +14219,16 @@ const FAC_SET={
   MER:{train:6,acad:5},GETX:{train:4,acad:4},BARA:{train:5,acad:5},BIL:{train:9,acad:10},CRI:{train:3,acad:3},EXT:{train:4,acad:4},LUG:{train:7,acad:6},CACE:{train:4,acad:4},CUL:{train:8,acad:7},FAB:{train:8,acad:9},MIR:{train:7,acad:6},PON:{train:8,acad:7},PONV:{train:6,acad:5},FER:{train:7,acad:6},AVIL:{train:4,acad:4},RUS:{train:5,acad:4},LOG:{train:6,acad:5},OUR:{train:4,acad:4},UNI:{train:5,acad:4},ZAM:{train:5,acad:4},
   AGU:{train:4,acad:4},ALC:{train:8,acad:7},ALG:{train:5,acad:4},ANQ:{train:5,acad:4},AMM:{train:9,acad:10},TRL:{train:4,acad:4},EUR:{train:5,acad:6},CTG:{train:8,acad:7},NAS:{train:8,acad:7},HER:{train:8,acad:7},HUE:{train:9,acad:8},TRM:{train:4,acad:3},RMJ:{train:7,acad:8},JAE:{train:5,acad:5},RMU:{train:8,acad:7},ZAR:{train:9,acad:10},RMC:{train:9,acad:10},IBI:{train:9,acad:6},STA:{train:5,acad:6},VILB:{train:9,acad:10}
 };
-function facLevels(id){
+function facLevels(id,_seen){
   /* instalaciones que dejaste tú en un club: se conservan aunque te vayas (no vuelven a depender solo de la reputación) */
   const sv=state&&state.facSaved&&state.facSaved[id];
   if(sv){const b=clamp(Math.round((repOf(id)-44)/3),1,FAC_MAX);
     return{train:clamp(sv.train,1,FAC_MAX),acad:clamp(sv.acad,1,FAC_MAX),zone:clamp(sv.zone!=null?sv.zone:b,1,FAC_MAX)};}
-  /* los filiales heredan la mitad (redondeada) de las instalaciones de su primer equipo, y siguen sus mejoras */
-  if(isB(id)){const pid=FAMILY[id];
-    if(pid&&CLUBBY[pid]){const pf=facLevels(pid);
+  /* los filiales heredan la mitad (redondeada) de las instalaciones de su primer equipo, y siguen sus mejoras.
+     _seen evita una recursión infinita si algún día aparece un ciclo en FAMILY (un filial que acaba
+     apuntando, directa o indirectamente, a sí mismo): en ese caso se corta y se trata como club normal. */
+  if(isB(id)&&!(_seen&&_seen.has(id))){const pid=(typeof famParent==='function'?famParent(id):null)||FAMILY[id];
+    if(pid&&pid!==id&&CLUBBY[pid]){const pf=facLevels(pid,(_seen||new Set()).add(id));
       const eff=k=>(state&&state.fac&&pid===state.club&&state.fac[k]!=null)?state.fac[k]:pf[k];
       return{train:Math.max(1,Math.round(eff('train')/2)),acad:Math.max(1,Math.round(eff('acad')/2)),zone:pf.zone};
     }
@@ -14218,7 +14241,7 @@ function facLevels(id){
 /* El POT de un jugador de un filial se estima con la cantera del PRIMER EQUIPO: el filial hereda la mitad de
    las instalaciones, pero el potencial real de sus jugadores lo marca el primer equipo (p. ej. la cantera del
    Ajax saca jugadores de POT alto aunque el Jong Ajax tenga peores instalaciones). */
-const potClubOf=id=>{const c=CLUBBY[id];if(c&&(c.bTeam||isB(id))){const pid=FAMILY[id];if(pid&&CLUBBY[pid])return pid}return id};
+const potClubOf=id=>{const c=CLUBBY[id];if(c&&(c.bTeam||isB(id))){const pid=(typeof famParent==='function'?famParent(id):null)||FAMILY[id];if(pid&&CLUBBY[pid])return pid}return id};
 function acadPotFloor(id){const pc=potClubOf(id),f=facLevels(pc);return clamp(Math.round(50+f.acad*1.6+(repOf(pc)-60)*.2),50,92)}
 const trainLevel=id=>state&&id===state.club&&state.fac?state.fac.train:facLevels(id).train;
 /* nivel de la zona del club (tienda, museo, entorno del estadio): sube el ingreso comercial semanal */
@@ -20615,9 +20638,252 @@ function cardHTML(id){
   <div class="cc-btns"><button class="btn ghost" data-act="cv-open">Ver más información</button><button class="btn primary" data-act="take">Tomar Control del Club</button></div>`;
 }
 const NOFOTO='https://cdn.resfu.com/media/img/nofoto_jugador.png?size=120x&lossy=1';
-function avatarHTML(p){
-  return`<img src="${esc(p.photo||NOFOTO)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${NOFOTO}'">`;
+const AV_SKIN=['#6b4423','#8a5a35','#9c6b42','#b07d4f','#c99162','#d9a36d','#e0ab77','#edc093','#f4d2a8','#f9e0bc','#faead0'];
+const AV_HAIRC=['#0d0a08','#1c130d','#2c1b11','#4a2e18','#6b4522','#8a5f32','#b5824a','#d9b071','#e8d6b8'];
+function avDark(hex,amt){const n=parseInt(hex.slice(1),16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  r=Math.max(0,Math.round(r*(1-amt)));g=Math.max(0,Math.round(g*(1-amt)));b=Math.max(0,Math.round(b*(1-amt)));
+  return'#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');}
+function avLight(hex,amt){const n=parseInt(hex.slice(1),16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  r=Math.min(255,Math.round(r+(255-r)*amt));g=Math.min(255,Math.round(g+(255-g)*amt));b=Math.min(255,Math.round(b+(255-b)*amt));
+  return'#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');}
+/* 0 ovalada, 1 redonda, 2 cuadrada, 3 alargada: cada una lleva su propio ancho de cráneo (ver
+   SHAPE_WSCALE) para que la diferencia se note en todo el contorno, no solo en la barbilla */
+const AV_JAW=[
+ 'C84,46 80,74 50,84 C20,74 16,46 16,46',
+ 'C84,46 82,64 50,70 C18,64 16,46 16,46',
+ 'L84,60 C84,70 78,76 50,78 C22,76 16,70 16,60 L16,46',
+ 'C84,46 78,82 50,94 C22,82 16,46 16,46'
+];
+const SHAPE_WSCALE=[.96,1.08,1.02,.82];
+function avHeadPath(shape){return`M16,46 C16,20 30,8 50,8 C70,8 84,20 84,46 ${AV_JAW[shape]} Z`;}
+function avPivot(sx,sy,px,py){return`translate(${px},${py}) scale(${sx},${sy}) translate(${-px},${-py})`;}
+function earsHTML(skinFill,skinD){
+  return`<path d="M15,39 C9,38 6,45 8,51 C10,58 17,59 19,52 C20,47 19,42 15,39 Z" fill="${skinFill}"/><path d="M14,44 Q18,48 14,53" fill="none" stroke="${skinD}" stroke-width="1" opacity=".55"/>
+  <path d="M85,39 C91,38 94,45 92,51 C90,58 83,59 81,52 C80,47 81,42 85,39 Z" fill="${skinFill}"/><path d="M86,44 Q82,48 86,53" fill="none" stroke="${skinD}" stroke-width="1" opacity=".55"/>`;
 }
+function avNeckBody(skinFill){return`<path d="M36,56 L36,80 C36,92 16,93 6,100 L94,100 C84,93 64,92 64,80 L64,56 Z" fill="${skinFill}"/>`;}
+function avBrowPath(side,style){
+  const x0=side<0?22:78,x1=side<0?42:58,my=30;
+  return[`M${x0},${my} Q${(x0+x1)/2},${my-1.5} ${x1},${my}`,
+    `M${x0},${my+1} Q${(x0+x1)/2},${my-3} ${x1},${my}`,
+    `M${x0},${my+2} Q${(x0+x1)/2},${my-4.5} ${x1},${my-1}`,
+    `M${x0},${my-1} L${x1},${my+1.5}`][style];
+}
+function avEyeHTML(side,style,iris){
+  const cx=side<0?38:62,ry=style===2?2.1:2.9,rx=5;
+  let lid='';
+  if(style===3)lid=`<path d="M${cx-rx},40 Q${cx},36 ${cx+rx},40" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1.1"/>`;
+  return`<ellipse cx="${cx}" cy="40" rx="${rx}" ry="${ry}" fill="#fff"/><circle cx="${cx}" cy="40" r="2.3" fill="${iris}"/><circle cx="${cx}" cy="40" r="1" fill="#0b0705"/><circle cx="${cx-0.8}" cy="39.1" r=".5" fill="#fff" opacity=".85"/><path d="M${cx-rx},40 Q${cx},${40-ry-1.6} ${cx+rx},40" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1.2"/>${lid}`;
+}
+function avNosePath(style,skinD){
+  const w=style===1?3.2:style===2?4.6:3.8;
+  return`<path d="M49,38 C48,44 ${50-w},52 ${50-w},55 Q50,58 ${50+w},55 C${50+w},52 52,44 51,38" fill="${skinD}" opacity=".55"/>`;
+}
+function avMouthPath(style,lip){
+  const w=[9,11,8,10.5][style],curve=[2.2,3.2,1.2,2.6][style];
+  return`<path d="M${50-w},61 Q50,${61+curve} ${50+w},61 Q50,${61+curve-1.4} ${50-w},61 Z" fill="${lip}"/>`;
+}
+/* 0 nada, 1 sombra de 2 días, 2 perilla corta, 3 barba corta cerrada, 4 barba completa poblada,
+   5 bigote fino, 6 chivera/mosca, 7 bigote tipo herradura, 8 candado (bigote+perilla unidos, sin
+   mejillas), 9 barba larga tupida. Las que cubren mejilla+mandíbula (1,3,4,9) son una única silueta
+   cerrada en forma de "U" (de patilla a patilla, bajando hasta la barbilla) rellena de un solo color,
+   sin recortes hacia dentro: nariz y boca se dibujan después, por encima. */
+function avBeardU(x0,x1,yTop,yChin,bulge){
+  return`M${x0},${yTop} C${x0-4},${yTop+bulge} ${x0+6},${yChin-bulge*.6} 50,${yChin} C${x1-6},${yChin-bulge*.6} ${x1+4},${yTop+bulge} ${x1},${yTop} C${x1-10},${yTop+bulge*.5} ${50+(x1-50)*.35},${yTop+bulge*.65} 50,${yTop+bulge*.65} C${50-(x1-50)*.35},${yTop+bulge*.65} ${x0+10},${yTop+bulge*.5} ${x0},${yTop} Z`;
+}
+/* vetas finas dentro de la barba (igual que el pelo, un degradado liso queda plano): un puñado de
+   trazos curvos, más claros y más oscuros alternados, siguiendo la caída del vello */
+function avBeardTexture(x0,x1,yTop,yChin,light,dark){
+  const n=5,out=[];
+  for(let i=0;i<n;i++){
+    const t=i/(n-1),x=x0+(x1-x0)*t,y1=yTop+6+Math.abs(t-.5)*10,y2=yChin-4-Math.abs(t-.5)*14;
+    out.push(`<path d="M${x},${y1} Q${x+(50-x)*.3},${(y1+y2)/2} ${50+(x-50)*.25},${y2}" fill="none" stroke="${i%2?dark:light}" stroke-width="1" opacity=".35" stroke-linecap="round"/>`);
+  }
+  return out.join('');
+}
+function avFacialHair(style,hairFill,hair){
+  const light=avLight(hair,.3),dark=avDark(hair,.35);
+  if(style===0)return'';
+  if(style===1)return`<path d="${avBeardU(23,77,47,79,22)}" fill="${hairFill}" opacity=".25"/>`;
+  if(style===2)return`<path d="M40,64 Q50,78 60,64 Q58,72 50,74 Q42,72 40,64 Z" fill="${hairFill}"/>`;
+  if(style===3)return`<path d="${avBeardU(23,77,47,79,22)}" fill="${hairFill}"/>${avBeardTexture(26,74,50,77,light,dark)}`;
+  if(style===4)return`<path d="${avBeardU(18,82,40,85,27)}" fill="${hairFill}"/>${avBeardTexture(20,80,43,82,light,dark)}`;
+  if(style===5)return`<path d="M40,58 Q50,56 60,58 Q58,61 50,61.5 Q42,61 40,58 Z" fill="${hairFill}"/>`;
+  if(style===6)return`<path d="M44,66 Q50,76 56,66 Q54,72 50,73 Q46,72 44,66 Z" fill="${hairFill}"/>`;
+  if(style===7)return`<path d="M40,58 Q50,56 60,58 Q58,61 50,61.5 Q42,61 40,58 Z" fill="${hairFill}"/><path d="M38,59 C34,64 32,70 34,74" fill="none" stroke="${hair}" stroke-width="3" stroke-linecap="round"/><path d="M62,59 C66,64 68,70 66,74" fill="none" stroke="${hair}" stroke-width="3" stroke-linecap="round"/>`;
+  if(style===8)return`<path d="M40,58 Q50,56 60,58 Q58,61 50,61.5 Q42,61 40,58 Z" fill="${hairFill}"/><path d="M45,62 Q50,76 55,62 Q53,70 50,71 Q47,70 45,62 Z" fill="${hairFill}"/>`;
+  if(style===9)return`<path d="${avBeardU(16,84,36,94,32)}" fill="${hairFill}"/>${avBeardTexture(19,81,39,90,light,dark)}`;
+  return'';
+}
+/* trazos de brillo/textura genéricos que se dibujan ENCIMA de cualquier silueta de pelo sólida, para
+   que no se quede plana: unas vetas más claras siguiendo la caída del peinado y una sombra fina en el
+   nacimiento, en vez de una sola mancha de color uniforme */
+function avHairShine(paths,light){
+  return paths.map(p=>`<path d="${p}" fill="none" stroke="${light}" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>`).join('');
+}
+function avHairBehind(style,hairFill,hair){
+  const light=avLight(hair,.3);
+  if(style===3)return`<g fill="${hairFill}"><circle cx="50" cy="32" r="32"/><circle cx="20" cy="38" r="11"/><circle cx="80" cy="38" r="11"/><circle cx="28" cy="16" r="10"/><circle cx="72" cy="16" r="10"/><circle cx="50" cy="6" r="11"/><circle cx="14" cy="54" r="8"/><circle cx="86" cy="54" r="8"/></g>`;
+  if(style===9)return`<ellipse cx="50" cy="4" rx="11" ry="9" fill="${hairFill}"/><path d="M42,3 Q50,-2 58,3" fill="none" stroke="${light}" stroke-width="1" opacity=".5"/>`;
+  if(style===10)return`<path d="M50,6 C30,6 16,20 16,40 L16,50 C24,46 24,36 30,32 C34,40 30,48 24,52 C34,54 40,46 42,38 C44,46 40,54 34,58 C44,58 50,48 50,38 C50,48 56,58 66,58 C60,54 56,46 58,38 C60,46 66,54 76,52 C70,48 66,40 70,32 C76,36 76,46 84,50 L84,40 C84,20 70,6 50,6 Z" fill="${hairFill}"/>`;
+  /* 14: rastas/trenzas recogidas hacia atrás, con relieve (línea clara a un lado de cada mechón para
+     que se note el volumen cilíndrico en vez de un simple trazo plano) */
+  if(style===14)return`<g fill="none" stroke-linecap="round"><g stroke="${hair}" stroke-width="7"><path d="M16,30 C13,42 15,54 11,66"/><path d="M19,22 C17,36 19,50 15,64"/><path d="M84,30 C87,42 85,54 89,66"/><path d="M81,22 C83,36 81,50 85,64"/></g><g stroke="${light}" stroke-width="1.6" opacity=".6"><path d="M16,30 C13,42 15,54 11,66"/><path d="M84,30 C87,42 85,54 89,66"/></g><g stroke="rgba(0,0,0,.3)" stroke-width="1.6"><path d="M20,24 C18,37 20,50 16,63"/><path d="M80,24 C82,37 80,50 84,63"/></g></g>`;
+  /* 18: coleta recogida: cola de caballo colgando por detrás de la nuca, con goma y una veta clara */
+  if(style===18)return`<path d="M48,14 C46,10 48,6 52,6 C56,6 58,10 56,14 C62,20 64,34 60,50 C58,58 52,60 48,56 C52,54 54,48 53,38 C52,28 49,20 48,14 Z" fill="${hairFill}"/><ellipse cx="52" cy="15" rx="4.5" ry="2.2" fill="${avDark(hair,.2)}"/><path d="M50,22 Q56,34 54,48" fill="none" stroke="${light}" stroke-width="1.1" opacity=".55"/>`;
+  return'';
+}
+function avHairFront(style,hairFill,hair){
+  const light=avLight(hair,.32);
+  if(style===0)return'';
+  if(style===1)return`<path d="M16,44 C16,20 30,8 50,8 C70,8 84,20 84,44 C83,37 79,33 73,34 C71,30 65,28 60,30 C57,27 52,26 48,28 C44,26 39,27 36,30 C31,28 25,30 23,34 C17,33 15,38 16,44 Z" fill="${hairFill}"/>${avHairShine(['M22,24 Q26,14 36,10','M64,10 Q74,14 78,24'],light)}`;
+  if(style===2)return`<path d="M16,44 C16,18 30,7 51,7 C72,7 85,19 84,42 C82,32 70,22 48,24 C34,25 20,30 18,42 Z" fill="${hairFill}"/><rect x="47" y="8" width="2" height="18" fill="${hair}" opacity=".5"/>${avHairShine(['M24,16 Q35,10 46,12','M55,11 Q68,13 76,22'],light)}`;
+  if(style===3)return'';
+  if(style===4)return`<path d="M14,46 C12,18 28,6 50,6 C72,6 88,18 86,46 C87,34 82,26 78,34 C80,22 70,14 62,20 C62,12 50,10 46,18 C40,10 28,16 30,26 C22,22 14,30 16,42 C13,40 12,42 14,46 Z" fill="${hairFill}"/>${avHairShine(['M20,30 Q26,18 36,14','M64,13 Q74,17 80,28'],light)}`;
+  if(style===5)return`<path d="M16,42 C16,18 30,8 50,8 C70,8 84,18 84,42 C82,30 72,16 50,16 C28,16 18,30 16,42 Z" fill="${hairFill}"/>${avHairShine(['M24,20 Q50,11 76,20'],light)}`;
+  if(style===6)return`<path d="M17,30 C21,16 33,8 50,8 C67,8 79,16 83,30 C78,20 67,15 50,15 C33,15 22,20 17,30 Z" fill="${hairFill}" opacity=".9"/>`;
+  if(style===7)return`<path d="M16,44 C16,20 30,8 50,8 C70,8 84,20 84,44 C84,34 74,28 50,28 C26,28 16,34 16,44 Z" fill="${hairFill}"/>${avHairShine(['M22,20 Q50,10 78,20'],light)}`;
+  if(style===8)return`<path d="M16,42 C16,18 30,8 50,8 C70,8 84,18 84,42 C80,36 74,38 72,32 C68,38 60,36 58,30 C54,37 46,37 42,30 C40,36 32,38 28,32 C26,38 20,36 16,42 Z" fill="${hairFill}"/>${avHairShine(['M30,15 Q34,22 31,28','M70,15 Q66,22 69,28'],light)}`;
+  if(style===9)return`<path d="M16,44 C16,20 30,8 50,8 C70,8 84,20 84,44 C84,32 70,24 50,24 C30,24 16,32 16,44 Z" fill="${hairFill}"/>${avHairShine(['M24,24 Q50,15 76,24'],light)}`;
+  /* 10: flequillo corto, silueta sólida que llega a la sien, con un par de mechones marcados */
+  if(style===10)return`<path d="M16,40 C16,18 30,7 50,7 C70,7 84,18 84,40 C84,32 80,26 72,22 C76,28 76,33 74,37 C68,26 58,22 50,22 C42,22 32,26 26,37 C24,33 24,28 28,22 C20,26 16,32 16,40 Z" fill="${hairFill}"/>${avHairShine(['M34,13 Q36,20 33,26','M50,10 Q51,17 50,23','M66,13 Q64,20 67,26'],light)}`;
+  /* 11: peinado lateral con fade: mechón barrido con 3-4 vetas marcadas en vez de una mancha lisa */
+  if(style===11)return`<path d="M16,42 C15,19 30,7 52,7 C70,7 83,16 84,32 C79,21 65,14 50,14 C62,18 73,26 73,36 C62,23 46,18 32,23 C44,19 56,22 61,29 C48,22 33,22 24,32 C19,36 17,39 16,42 Z" fill="${hairFill}"/>${avHairShine(['M30,16 Q46,10 62,15','M38,21 Q52,17 66,23','M45,27 Q56,25 68,30'],light)}<path d="M33,24 Q36,30 34,36" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1.1" stroke-linecap="round"/>`;
+  /* 12: flequillo despeinado tipo mop, con vetas que marcan cada mechón irregular */
+  if(style===12)return`<path d="M14,42 C12,16 28,6 50,6 C72,6 88,16 86,42 C85,30 79,35 76,27 C74,34 66,31 64,25 C63,33 56,31 54,26 C53,33 46,33 45,26 C44,32 37,31 36,25 C35,32 27,34 25,27 C23,35 15,30 14,42 Z" fill="${hairFill}"/>${avHairShine(['M24,16 Q30,11 38,13','M44,10 Q50,8 56,10','M62,13 Q70,11 76,16'],light)}`;
+  if(style===14)return`<path d="M16,42 C16,20 30,8 50,8 C70,8 84,20 84,42 C83,34 76,29 50,29 C24,29 17,34 16,42 Z" fill="${hairFill}"/>`;
+  /* 13: rizado corto con fade, silueta festoneada con sombras entre rizo y rizo para dar volumen;
+     el borde inferior se queda por encima de las cejas (y<=30) para no tapar los ojos */
+  if(style===13)return`<path d="M16,34 C16,15 30,5 50,5 C70,5 84,15 84,34 C82,29 80,31 77,27 C78,32 75,33 72,29 C74,33 70,34 67,31 C69,34 65,35 62,32 C64,35 59,36 56,33 C58,36 53,36 50,33 C47,36 42,36 44,33 C41,36 36,35 38,32 C35,35 31,34 33,31 C30,34 26,33 28,29 C25,33 22,31 23,27 C20,31 18,29 16,34 Z" fill="${hairFill}"/><g fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1" opacity=".6"><path d="M28,13 Q31,18 28,22"/><path d="M42,9 Q45,15 42,20"/><path d="M58,9 Q61,15 58,20"/><path d="M72,13 Q75,18 72,22"/></g>`;
+  /* 18: coleta recogida: delante peinado hacia atrás liso, detrás una coleta colgando con goma */
+  if(style===18)return`<path d="M16,42 C16,18 30,8 50,8 C70,8 84,18 84,42 C82,30 72,16 50,16 C28,16 18,30 16,42 Z" fill="${hairFill}"/>${avHairShine(['M24,20 Q50,11 76,20'],light)}`;
+  /* 19: pelo un poco más largo peinado hacia delante, sujeto con una cinta/diadema para que no
+     moleste en los ojos (no es un peinado corto con adorno: la cinta solo tiene sentido cuando hay
+     mechón/flequillo largo que recoger) */
+  if(style===19)return`<path d="M14,46 C12,18 28,6 50,6 C72,6 88,18 86,46 C87,34 82,26 78,34 C80,22 70,14 62,20 C62,12 50,10 46,18 C40,10 28,16 30,26 C22,22 14,30 16,42 C13,40 12,42 14,46 Z" fill="${hairFill}"/>${avHairShine(['M20,30 Q26,18 36,14','M64,13 Q74,17 80,28'],light)}<path d="M15,33 Q50,19 85,33 L85,27 Q50,14 15,27 Z" fill="#b5342a"/><path d="M15,33 Q50,19 85,33" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1"/>`;
+  /* 16: mohawk/cresta, sobresale por encima del contorno de la cabeza, con un degradado + veta central */
+  if(style===16)return`<path d="M40,18 C39,9 41,1 50,1 C59,1 61,9 60,18 C64,12 66,20 64,28 Q50,22 36,28 C34,20 36,12 40,18 Z" fill="${hairFill}"/><path d="M46,4 Q50,14 46,24" fill="none" stroke="${light}" stroke-width="1" opacity=".5"/><path d="M54,4 Q50,14 54,24" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1" opacity=".6"/>`;
+  /* 15: trenzas pegadas (cornrows): base sólida con líneas finas del tono de piel marcando las filas */
+  if(style===15){const base=`<path d="M16,44 C16,20 30,8 50,8 C70,8 84,20 84,44 C84,32 70,24 50,24 C30,24 16,32 16,44 Z" fill="${hairFill}"/>`;
+    const rows=[0,1,2,3].map(i=>`<path d="M${20+i*2},${40-i*5} Q50,${20-i*4} ${80-i*2},${40-i*5}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/><path d="M${20+i*2},${41-i*5} Q50,${21-i*4} ${80-i*2},${41-i*5}" fill="none" stroke="${light}" stroke-width=".6" opacity=".5"/>`).join('');
+    return base+rows;}
+  /* 17: trenzas/twists con raya rapada de diseño a un lado, con textura trenzada diagonal */
+  if(style===17)return`<path d="M16,42 C16,18 30,8 50,8 C70,8 84,18 84,42 C80,34 74,36 72,30 C68,36 60,34 58,28 C54,35 46,35 42,28 C40,34 32,36 28,30 C26,36 20,34 16,42 Z" fill="${hairFill}"/><g stroke="${light}" stroke-width=".8" opacity=".5"><path d="M24,24 L30,30"/><path d="M34,20 L40,26"/><path d="M46,18 L52,24"/><path d="M58,20 L64,26"/><path d="M68,24 L74,30"/></g><path d="M68,16 L80,28" stroke="#000" stroke-opacity=".55" stroke-width="1.6"/>`;
+  return'';
+}
+const AV_AFRICA=new Set('AO BF BI BJ BW CD CF CG CI CM CV DJ ER ET GA GH GM GN GQ GW KE KM LR LS MG ML MR MU MW MZ NA NE NG RW SC SD SL SN SO SS ST SZ TD TG TZ UG ZA ZM ZW'.split(' '));
+const AV_MED=new Set('DZ EG LY MA TN AE BH IL IQ IR JO KW LB OM PS QA SA SY TR YE AF BD BT IN LK MV NP PK BO BR CO CR CU DO EC SV GD GT GY HN HT JM MX NI PA PE PY SR TT UY VE VC LC KN DM BB AG BS BZ AW CW SX BQ FJ PF PG SB TO TV VU WS NC CK AR CL'.split(' '));
+const AV_ASIA=new Set('CN HK JP KR KP MN TW ID KH LA MM MY PH SG TH TL VN'.split(' '));
+/* resto de nacionalidades (Europa, Norteamérica, Oceanía...): predominantemente piel blanca, pero con
+   una pequeña proporción de minorías de piel oscura — más marcada en los países con más inmigración
+   de origen africano/caribeño (Francia, Alemania, Reino Unido, Países Bajos, Bélgica, Portugal,
+   Estados Unidos, Canadá...), y una proporción mínima de fondo en el resto */
+const AV_DIVERSE=new Set('GB FR DE NL BE PT US CA AU IE CH'.split(' '));
+function avSkinIdx(nat,seed){
+  const r=rng(hashStr('avsk'+seed))();
+  if(nat&&AV_AFRICA.has(nat))return r<.4?0:(r<.75?1:2);
+  if(nat&&AV_MED.has(nat))return 3+Math.floor(r*3);
+  if(nat&&AV_ASIA.has(nat))return 6+Math.floor(r*2);
+  const diverse=nat&&AV_DIVERSE.has(nat);
+  if(r<(diverse?.1:.03))return Math.floor(rng(hashStr('avsk2'+seed))()*3);
+  return 7+Math.floor(rng(hashStr('avsk3'+seed))()*4);
+}
+function avGradId(prefix,seed){return prefix+(hashStr(prefix+seed)>>>0).toString(36);}
+/* colores de pelo poco comunes pero reales: pelirrojo/zanahorio (natural, más frecuente en el norte
+   de Europa), rubio pollo y rosa chillón (ambos claramente teñidos, raros, pueden darse en cualquier
+   nacionalidad); el pelirrojo tiñe también barba/bigote porque ambos usan la misma variable "hair" */
+const AV_RED='#b33a1e',AV_BLEACH='#f0e26a',AV_PINK='#ff3fa0';
+const AV_REDHEAD_NAT=new Set('IE GB NL DE DK SE NO FI BE AT'.split(' '));
+function genFaceHTML(seed,nat,age){
+  seed=String(seed||'x');
+  const r=k=>rng(hashStr(k+seed))();
+  const skinIdx=avSkinIdx(nat,seed);
+  const skin=AV_SKIN[skinIdx],skinD=avDark(skin,.18),lip=avDark(skin,.25);
+  const shape=Math.floor(r('shape')*4);
+  /* el tipo de pelo (liso/ondulado/rizado) también se sesga por región: pelo afro muy predominante
+     en nacionalidades subsaharianas, ondulado/rizado frecuente en Magreb/Oriente Medio/Sur de Asia,
+     y el resto (Europa, América, Asia oriental...) con libertad total entre los 18 peinados */
+  /* el peinado 11 (lateral c/fade) queda descartado del catálogo seleccionable; se añaden 18 (coleta
+     recogida) y 19 (corto con diadema) en su lugar, de ahí esta lista de índices válidos en vez de un
+     simple rango 0..N */
+  const VALID_HSTYLES=[0,1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19];
+  const CURLY_STYLES=[3,13,14,15,17],WAVY_STYLES=[4,12,13,17];
+  let hstyle;
+  /* una piel muy oscura (tono 0-1) también sesga hacia rizado/afro aunque el país sea de la "zona
+     diversa" por defecto (minorías en Francia, Alemania, Reino Unido...), no solo en AV_AFRICA */
+  if((nat&&AV_AFRICA.has(nat)||skinIdx<=1)&&r('htex')<.72)hstyle=CURLY_STYLES[Math.floor(r('hpick')*CURLY_STYLES.length)];
+  else if(nat&&AV_MED.has(nat)&&r('htex')<.55)hstyle=WAVY_STYLES[Math.floor(r('hpick')*WAVY_STYLES.length)];
+  else hstyle=VALID_HSTYLES[Math.floor(r('hstyle')*VALID_HSTYLES.length)];
+  /* color de pelo: la paleta natural de siempre, salvo una pequeña tirada aparte para los tres colores
+     poco comunes — pelirrojo (natural, solo con piel clara/media, más probable en países nórdicos/
+     británicos) y rubio pollo / rosa chillón (ambos tinte, solo del cabello: nadie se tiñe la barba
+     a juego, así que esos dos casos guardan aparte el color NATURAL para usarlo solo en la barba) */
+  const rare=r('hrare'),redCh=(nat&&AV_REDHEAD_NAT.has(nat))?.09:.02;
+  let naturalHair=AV_HAIRC[Math.floor(r('hc')*((hstyle===3||hstyle===14)?6:AV_HAIRC.length))];
+  let hair=naturalHair,dyed=false;
+  if(skinIdx>=4&&rare<redCh){hair=AV_RED;naturalHair=AV_RED;}
+  else if(rare<redCh+.015){hair=AV_BLEACH;dyed=true;}
+  else if(rare<redCh+.015+.01){hair=AV_PINK;dyed=true;}
+  if(age&&age>=34&&r('grey')<(age>=40?.3:.12)){
+    const grey=r('grey2')<.5?'#9b9b9b':'#c7c7c7';naturalHair=grey;if(!dyed)hair=grey;
+  }
+  /* la barba es opcional e independiente de la nacionalidad: solo depende de la edad (los más jóvenes
+     casi nunca la llevan) y del azar, igual para cualquier país */
+  const bstyle=age&&age<20?(r('b')<.85?0:1):Math.floor(r('bstyle')*10);
+  const browStyle=Math.floor(r('brow')*4);
+  const eyeStyle=Math.floor(r('eye')*4);
+  const noseStyle=Math.floor(r('nose')*3);
+  const mouthStyle=Math.floor(r('mouth')*4);
+  const irises=['#2b1a10','#3b2415','#1a1410','#4a3420','#2e4a3a','#355a7a'];
+  const iris=irises[Math.floor(r('iris')*(nat&&(AV_AFRICA.has(nat)||AV_MED.has(nat)||AV_ASIA.has(nat))?4:irises.length))];
+  /* degradados: el pelo y la piel con un leve volumen (claro arriba/un lado, oscuro abajo) en vez de
+     una mancha de color plana — cada avatar usa un id de degradado propio para no chocar con otros
+     avatares de la misma página */
+  const hg=avGradId('hg',seed),sg=avGradId('sg',seed),bg=avGradId('bg',seed);
+  const defs=`<defs>
+    <linearGradient id="${hg}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${avLight(hair,.22)}"/><stop offset=".5" stop-color="${hair}"/><stop offset="1" stop-color="${avDark(hair,.3)}"/>
+    </linearGradient>
+    <linearGradient id="${bg}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${avLight(naturalHair,.22)}"/><stop offset=".5" stop-color="${naturalHair}"/><stop offset="1" stop-color="${avDark(naturalHair,.3)}"/>
+    </linearGradient>
+    <linearGradient id="${sg}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="${avLight(skin,.12)}"/><stop offset=".55" stop-color="${skin}"/><stop offset="1" stop-color="${avDark(skin,.1)}"/>
+    </linearGradient>
+  </defs>`;
+  const hairFill=`url(#${hg})`,skinFill=`url(#${sg})`,beardFill=`url(#${bg})`;
+  /* la cabeza (orejas, cráneo, pelo y barba) se escala en horizontal según la forma de cara elegida,
+     para que el peinado y la barba se adapten de verdad al ancho de esa forma y no solo el óvalo
+     interior; ojos/nariz/boca/cejas quedan fuera del grupo para no deformarse */
+  const wscale=SHAPE_WSCALE[shape],headGroup=avPivot(wscale,1,50,46);
+  return`<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    ${defs}
+    <g transform="${headGroup}">
+      ${avHairBehind(hstyle,hairFill,hair)}
+      ${avNeckBody(skinFill)}
+      ${earsHTML(skinFill,skinD)}
+      <path d="${avHeadPath(shape)}" fill="${skinFill}"/>
+      ${avFacialHair(bstyle,beardFill,naturalHair)}
+    </g>
+    ${avNosePath(noseStyle,skinD)}
+    ${avMouthPath(mouthStyle,lip)}
+    ${avEyeHTML(-1,eyeStyle,iris)}${avEyeHTML(1,eyeStyle,iris)}
+    <path d="${avBrowPath(-1,browStyle)}" fill="none" stroke="${naturalHair}" stroke-width="2.1" stroke-linecap="round"/>
+    <path d="${avBrowPath(1,browStyle)}" fill="none" stroke="${naturalHair}" stroke-width="2.1" stroke-linecap="round"/>
+    <g transform="${headGroup}">${avHairFront(hstyle,hairFill,hair)}</g>
+  </svg>`;
+}
+/* ajuste global (persiste entre partidas vía Store): si el usuario desactiva los avatares generados
+   para jugadores ficticios, se usa la imagen gris genérica de siempre en vez del motor de caras */
+function avatarMode(){try{return(typeof Store!=='undefined'&&Store.get('mister.avatarMode'))||'gen'}catch(e){return'gen'}}
+function avatarHTML(p){
+  if(p.photo)return`<img src="${esc(p.photo)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${NOFOTO}'">`;
+  if(avatarMode()==='none')return`<img src="${NOFOTO}" alt="" loading="lazy">`;
+  return genFaceHTML(p.id||p.n,p.nat,p.age);
+}
+
+
+
 function playerCard(p,clubId,opts){
   opts=opts||{};
   const mk=opts.mkt,mc=mk?CLUBBY[mk.from]:null;
@@ -21532,7 +21798,11 @@ function filialAncestors(id){const out=[];let cur=id;while(isB(cur)){const p=FAM
 /* cesiones que afectan a un club: pre-partida (REAL_LOANS) o durante la partida (state) */
 function previewLoans(id){
   const out=[],inn=[];
-  if(!state){
+  /* antes de empezar la partida (!state), solo tiene sentido mostrar las cesiones reales del mundo
+     real si el modo elegido es "Base de datos (jugadores reales)"; en modo "Jugadores ficticios" no
+     hay ninguna cesión que mostrar todavía (se generarán durante la partida), así que se deja vacío
+     en vez de tirar siempre de REAL_LOANS sin mirar qué modo se ha elegido */
+  if(!state&&curMode()==='real'){
     (REAL_LOANS||[]).forEach(([name,from,to,share,role,ext],li)=>{
       if(from!==id&&to!==id)return;
       let p=(REAL_DB[from]?realSquad(CLUBBY[from]):[]).find(x=>x.n===name);
@@ -21543,7 +21813,7 @@ function previewLoans(id){
       if(to===id){const H=(REAL_DB[to]?realSquad(CLUBBY[to]):[]).find(x=>x.n===name);if(H)p=H;}
       (from===id?out:inn).push({p,from,to,share,role});
     });
-  }else{
+  }else if(state){
     (state.loans||[]).forEach(l=>{if(l.from===id)out.push(l);else if(l.to===id)inn.push(l)});
     if(state.club===id||famOf(id)){
       (state.loansOut||[]).forEach(l=>{if((l.from||state.club)===id)out.push({p:l.p,from:id,to:l.to,share:l.share,role:l.role})});
@@ -22138,7 +22408,7 @@ squad(){
 tactics(){
   const t=me();if(!t.bench)t.bench=autoBench(t);const sl=FORMS[t.formation],lbl=FORM_LBL[t.formation],xi=xiPlayers(t);
   const lines='<svg viewBox="0 0 100 133" preserveAspectRatio="none" fill="none" stroke="rgba(233,238,233,.13)" stroke-width=".5" aria-hidden="true"><rect x="3" y="3" width="94" height="127" rx="1"/><path d="M3 66.5h94"/><circle cx="50" cy="66.5" r="10"/><rect x="26" y="3" width="48" height="18"/><rect x="26" y="112" width="48" height="18"/><rect x="38" y="3" width="24" height="7"/><rect x="38" y="123" width="24" height="7"/></svg>';
-  const tokAv=p=>`<img src="${esc(p.photo||NOFOTO)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${NOFOTO}'">`;
+  const tokAv=p=>avatarHTML(p);
   const token=(p,label,attrs,cls,style)=>{
     const st=(p.inj>0?injuryBadge(p):'')+(p.sus>0?suspensionBadge(p):'');
     return`<div class="pp ${cls}"${style?` style="${style}"`:''}><div class="pp-c"><div class="pp-l"><b class="g" style="color:${ratingColor(p.ovr)}">${p.ovr}</b><b style="color:${posCol(label)}">${label}</b>${(()=>{const pen=Math.round((1-fitOf(p,label))*100);return pen>0?`<small class="oop" title="Fuera de sus posiciones: rinde un ${pen} % menos">-${pen}%</small>`:''})()}<small>${FOOT_S[footOf(p)]}</small></div><button class="pc" ${attrs} style="--rc:${ratingColor(p.ovr)}" aria-label="${esc(p.n)}">${tokAv(p)}</button>${st?`<div class="pp-r"><span class="pst">${st}</span></div>`:''}<button class="pi" data-act="pl" data-id="${p.id}" aria-label="Ver ficha de ${esc(p.n)}">i</button></div><span class="pn">${esc(lastName(p.n))}</span><span class="stam" title="Estamina ${Math.round(p.en)}%"><i style="width:${Math.round(p.en)}%;background:${stamColor(p.en)}"></i></span></div>`;
@@ -23102,6 +23372,8 @@ const H={
   uclrv(t){const key=t.dataset.k,total=state.cups[key].league.fx.length;ui.rvs=ui.rvs||{};ui.rvs[key+'_L']=clamp(uclLeagueRv(key)+(+t.dataset.d),0,total-1);renderGame()},
   menu(){const impBtn=state&&state.customClub?'<button class="mg-tile" data-act="imp-players-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M4 19h16"/></svg><span>Importar</span></button>':'';openSheet(`<h3>Menú</h3><p>Tu partida se guarda sola después de cada jornada.</p><div class="menu-grid"><button class="mg-tile" data-act="mgr-profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg><span>Perfil</span></button><button class="mg-tile primary" data-act="save-now"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg><span>Guardar</span></button><button class="mg-tile" data-act="export-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg><span>Exportar</span></button>${impBtn}<button class="mg-tile" data-act="exit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M13 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg><span>Salir</span></button></div><button class="mg-wide" data-act="sheet-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4Z"/></svg><span>Seguir jugando</span></button>`)},
   'mgr-profile'(){mgrProfileSheet()},
+  'settings-open'(){settingsSheet()},
+  'settings-avatar-pick'(t){try{Store.set('mister.avatarMode',t.dataset.v)}catch(e){}settingsSheet()},
   'save-now'(){saveGame();closeSheet();toast('Partida guardada')},
   exit(){saveGame();closeSheet();state=null;resetClubOverrides();resetDivs();go('title')},
   'sheet-close'(){closeSheet()},
