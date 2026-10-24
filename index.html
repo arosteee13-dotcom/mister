@@ -14057,20 +14057,20 @@ function sellPlayer(id){
 }
 /* liberar: rescindes el contrato pagando una indemnización (10 % del valor) y el jugador queda como agente libre */
 function releasePlayer(id){
-  const t=me(),p=t.players.find(x=>x.id===id);if(!p)return'No encontrado';
+  const L=locate(id);if(!L||(L.where!=='mine'&&L.where!=='fam'))return'No encontrado';
+  const p=L.p,isFirst=L.where==='mine',t=isFirst?me():L.fam,players=t.players;
   if(p.loanIn)return'No puedes liberar a un jugador cedido.';
-  if(t.players.length<=16)return'Necesitas al menos 16 jugadores.';
-  if(p.pos==='GK'&&t.players.filter(x=>x.pos==='GK').length<=2)return'Necesitas al menos 2 porteros.';
+  const err=canLeaveTeam(players,p,isFirst&&!isB(state.club));if(err)return err;
   const cost=r1(p.val*.1);
-  if(t.budget<cost)return`No tienes presupuesto para la indemnización (${fmtM(cost)}).`;
-  t.budget=r1(t.budget-cost);ensureFinTotal().transferOut+=cost;
-  t.players=t.players.filter(x=>x.id!==id);
+  if(isFirst&&t.budget<cost)return`No tienes presupuesto para la indemnización (${fmtM(cost)}).`;
+  if(isFirst){t.budget=r1(t.budget-cost);ensureFinTotal().transferOut+=cost}
+  t.players=t.players.filter(x=>x.id!==id);if(!isFirst)syncFamTeam(t);
   ['tr','list','loanList','offers','loanOffers','from','price','tries','blk','role','note'].forEach(k=>delete p[k]);
   Object.assign(p,{free:1,price:0,en:100,inj:0,g:0,ap:0});
   p.blockSign=state.season;   /* no puedes volver a ficharlo hasta la temporada siguiente */
   (state.freeAgents=state.freeAgents||[]).push(p);
-  fixLineup(t);
-  news(`Liberas a ${p.n}: pagas ${fmtM(cost)} de indemnización y queda libre.`);saveGame();return null;
+  if(isFirst)fixLineup(t);else invalidateSquads([t.id]);
+  news(isFirst?`Liberas a ${p.n}: pagas ${fmtM(cost)} de indemnización y queda libre.`:`Liberas a ${p.n} (${cname(t.id)}): queda libre.`);saveGame();return null;
 }
 /* ===================== contratos y renovaciones =====================
    Cada jugador tiene p.cy = temporadas de contrato que le quedan. Al terminar la temporada baja 1; al expirar, su
@@ -15215,21 +15215,23 @@ function sendDownYouth(parentId,mine){
 }
 /* lista de traspasos y ofertas */
 function toggleList(pid){
-  const L=locate(pid);if(!L||L.where!=='mine'||L.p.loanIn)return'No se puede poner en venta a este jugador.';
+  const L=locate(pid);if(!L||(L.where!=='mine'&&L.where!=='fam')||L.p.loanIn)return'No se puede poner en venta a este jugador.';
   L.p.list=!L.p.list;if(!L.p.list)L.p.offers=[];
   news(L.p.list?`Ofreces a ${L.p.n} a otros clubes.`:`Retiras a ${L.p.n} del mercado de traspasos.`);
   if(L.p.list){genOfferFor(L.p,true);genOfferFor(L.p,true)}
   saveGame();return null;
 }
-function offerFind(pid,oid){const L=locate(pid);if(!L||L.where!=='mine')return null;const o=(L.p.offers||[]).find(x=>x.id===oid);return o?{p:L.p,o}:null}
+function offerFind(pid,oid){const L=locate(pid);if(!L||(L.where!=='mine'&&L.where!=='fam'))return null;const o=(L.p.offers||[]).find(x=>x.id===oid);return o?{p:L.p,o,where:L.where,fam:L.fam}:null}
 function acceptOffer(pid,oid){
-  const f=offerFind(pid,oid);if(!f)return'La oferta ya no está disponible.';
-  const t=me(),err=canLeaveTeam(t.players,f.p,!isB(state.club));if(err)return err;
-  t.players.splice(t.players.indexOf(f.p),1);t.budget=r1(t.budget+f.o.amt);fixLineup(t);
-  ensureFinTotal().transferIn+=f.o.amt;
-  (f.p.career=f.p.career||[]).push({s:state.season,ev:'out',from:state.club,to:f.o.from,fee:f.o.amt});
-  receiveTransfer(f.p,f.o.from,f.o.amt);
-  news(`Vendes a ${f.p.n} al ${cname(f.o.from)} por ${fmtM(f.o.amt)}.`);saveGame();return null;
+  const L=locate(pid);if(!L||(L.where!=='mine'&&L.where!=='fam'))return'La oferta ya no está disponible.';
+  const p=L.p,o=(p.offers||[]).find(x=>x.id===oid);if(!o)return'La oferta ya no está disponible.';
+  const isFirst=L.where==='mine',t=isFirst?me():L.fam;
+  const err=canLeaveTeam(t.players,p,isFirst&&!isB(state.club));if(err)return err;
+  t.players.splice(t.players.indexOf(p),1);if(isFirst){t.budget=r1(t.budget+o.amt);ensureFinTotal().transferIn+=o.amt}else syncFamTeam(t);
+  if(isFirst)fixLineup(t);else invalidateSquads([t.id]);
+  (p.career=p.career||[]).push({s:state.season,ev:'out',from:isFirst?state.club:t.id,to:o.from,fee:o.amt});
+  receiveTransfer(p,o.from,o.amt);
+  news(`Vendes a ${p.n}${isFirst?'':` (${cname(t.id)})`} al ${cname(o.from)} por ${fmtM(o.amt)}.`);saveGame();return null;
 }
 /* el jugador que vendes pasa a la plantilla del club que lo ficha: si está en tu liga, a su equipo; si no, se guarda para que aparezca en su plantilla */
 function receiveTransfer(p,toId,amt){
@@ -22109,10 +22111,10 @@ function pmActions(f){
     return back+`<div class="subh" style="margin-top:6px">Ceder a otro club</div><p class="pm-note">Se marcha hasta final de temporada y vuelve después. El club receptor asume su sueldo. Estos clubes lo quieren para jugar.</p>`+(ui.pm.cands||[]).map(x=>`<button class="act-b" data-act="pm-loan-to" data-to="${x.club.id}"><span class="act-c">${crestHTML(x.club,30)}<span>${esc(x.club.name)}<small>${esc(divName(x.club.co,x.club.div))}</small><small>Le prometen: ${roleChip(x.role)}</small></span></span></button>`).join('');
   }
   if(ui.pm.sub==='release'){
-    const cost=r1(p.val*.1);
+    const cost=r1(p.val*.1),isFirst=f.ctx==='mine';
     return back+`<div class="subh" style="margin-top:6px">Liberar jugador</div>
-    <p class="pm-note">¿Seguro que quieres liberar a <b>${esc(p.n)}</b>? Saldrá de tu plantilla y quedará como <b>agente libre</b>. Para rescindir su contrato debes pagarle una indemnización de <b>${fmtM(cost)}</b> (10 % de su valor de mercado).</p>
-    <div class="row-btns"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn danger" data-act="pm-rel-go">Sí, liberar y pagar ${fmtM(cost)}</button></div>`;
+    <p class="pm-note">¿Seguro que quieres liberar a <b>${esc(p.n)}</b>? Saldrá de tu plantilla y quedará como <b>agente libre</b>.${isFirst?` Para rescindir su contrato debes pagarle una indemnización de <b>${fmtM(cost)}</b> (10 % de su valor de mercado).`:''}</p>
+    <div class="row-btns"><button class="btn ghost" data-act="pm-back">Cancelar</button><button class="btn danger" data-act="pm-rel-go">${isFirst?`Sí, liberar y pagar ${fmtM(cost)}`:'Sí, liberar'}</button></div>`;
   }
   if(ui.pm.sub==='renew'){
     const asking=Math.max(1,Math.round(p.wage)),thr=renewThreshold(p);
@@ -22129,7 +22131,7 @@ function pmActions(f){
   }
   let h=back+'<div class="subh" style="margin-top:6px">Acciones</div>';
   let acts=[];
-  if(f.ctx==='mine'&&!p.loanIn){
+  if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn){
     acts.push(actIco('pm-list',ICO_ACT_TRANSFER,p.list?'Retirar oferta de traspaso':'Ofrecer traspaso',p.list?'Dejarás de recibir ofertas por este jugador':'Los clubes te enviarán ofertas: podrás aceptar, rechazar o hacer contraoferta',null,(p.offers||[]).length>0));
   }
   if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn){
@@ -22139,8 +22141,8 @@ function pmActions(f){
   if((f.ctx==='mine'||f.ctx==='fam'||(f.ctx==='loan'&&ownOut))&&(!p.loanIn||ownOut)&&p.cy!=null){
     acts.push(actIco('pm-renew',ICO_ACT_RENEW,'Renovar contrato',`Contrato: ${contractTxt(p)}${contractDue(p)?' · ¡expira al terminar la temporada!':''}. Ofrécele un sueldo y una duración (1-5 años).`,null,contractDue(p)));
   }
-  if(f.ctx==='mine'&&!p.loanIn){
-    acts.push(actIco('pm-rel',ICO_ACT_RELEASE,'Liberar',`Rescindes su contrato y queda como agente libre. Pagas una indemnización del 10 % de su valor (${fmtM(r1(p.val*.1))}).`));
+  if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn){
+    acts.push(actIco('pm-rel',ICO_ACT_RELEASE,'Liberar',f.ctx==='mine'?`Rescindes su contrato y queda como agente libre. Pagas una indemnización del 10 % de su valor (${fmtM(r1(p.val*.1))}).`:'Rescindes su contrato y queda como agente libre.'));
   }
   if(f.ctx==='mine'&&p.loanIn)h+=`<p class="pm-note">Cedido por ${esc(cname(p.loanIn.from))} hasta final de temporada. No se puede vender ni ceder.</p>`;
   if(f.ctx==='loan')acts.push(actIco('pm-recall',ICO_ACT_RECALL,'Recuperar de la cesión','Vuelve ahora a su plantilla'));
@@ -22151,7 +22153,7 @@ function pmActions(f){
     famList().forEach(fm=>{acts.push(actIco('pm-move',ICO_ACT_DOWN,`Bajar a ${cname(fm.id)}`,`Pasa a la plantilla de ${cname(fm.id)}. Entre equipos vinculados no hay compra ni venta.`,`data-fam="${fm.id}"`))});
   }
   if(acts.length)h+=`<div class="act-ico-row">${acts.join('')}</div>`;
-  if(f.ctx==='mine'&&!p.loanIn){
+  if((f.ctx==='mine'||f.ctx==='fam')&&!p.loanIn){
     const offs=p.offers||[];
     h+=`<div class="subh">Ofertas recibidas</div>`;
     h+=offs.length?offs.map(o=>offerHTML(p,o)).join(''):!p.list?'<p class="pm-note">Pulsa «Ofrecer traspaso» para recibir ofertas.</p>':'<p class="pm-note">Todavía no hay ofertas. Irán llegando al terminar cada jornada.</p>';
