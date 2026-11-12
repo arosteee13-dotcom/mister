@@ -13888,10 +13888,19 @@ const slotStars=(p,code)=>pStarsOf(slotRating(p,code),undefined,null);
 const posRatingOf=(p,code)=>{const L=ROLES_POS[code]||[];return L.length?roleRating(p,code,roleOf(p,code)):slotRating(p,code)};
 const posStarOf=(p,code)=>pStarsOf(posRatingOf(p,code),undefined,null);
 /* hoja de un hueco del once: atributos clave del puesto y la plantilla ordenada de mejor a peor encaje */
+/* rol del hueco: el que elige el usuario en la hoja o, si no, el que ya hace el jugador que lo ocupa (todos los candidatos se valoran con ESE rol) */
+function slotRoleOf(i){
+  const m=me(),code=FORMS[m.formation][i][3],L=ROLES_POS[code]||[];if(!L.length)return null;
+  if(ui.slotRole&&ui.slotRole.i===i){const r=L.find(x=>x.id===ui.slotRole.r);if(r)return r}
+  const cp=m.players.find(x=>x.id===m.lineup[i]);
+  return cp?roleOf(cp,code):L[0];
+}
 function slotSheetHTML(i){
-  const m=me(),sl=FORMS[m.formation],code=sl[i][3],keys=POS_STYLE_DEFAULT[code]||[];
+  const m=me(),sl=FORMS[m.formation],code=sl[i][3],role=slotRoleOf(i),keys=role?role.k:(POS_STYLE_DEFAULT[code]||[]);
   const cur=m.lineup[i],inXI=new Set(m.lineup.filter(Boolean)),inBn=new Set(m.bench||[]);
-  const list=m.players.map(p=>({p,r:posRatingOf(p,code),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.r-a.r);
+  const rate=p=>role?roleRating(p,code,role):slotRating(p,code);
+  const list=m.players.map(p=>({p,r:rate(p),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.r-a.r);
+  const chips=(ROLES_POS[code]||[]).length>1?`<div class="seg pills">${ROLES_POS[code].map(r=>`<button class="${role&&r.id===role.id?'on':''}" data-act="slot-role" data-i="${i}" data-r="${r.id}">${esc(r.n)}</button>`).join('')}</div>`:'';
   const nm=k=>FM_NAME[k]||k;
   const at=p=>{const a=attrsOf(p);return keys.map(k=>{const v=a&&a[k];return `<span class="sp-a"><em>${esc(nm(k))}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')};
   const rows=list.map(({p,r,u})=>{
@@ -13899,11 +13908,11 @@ function slotSheetHTML(i){
     const st=u?(p.inj>0?'Lesionado':'Sancionado'):where;
     return `<div class="sp-row${p.id===cur?' cur':''}${u?' un':''}" data-act="slot-set" data-id="${p.id}" data-i="${i}" role="button" tabindex="0">
       <span class="sp-av">${avatarHTML(p)}</span>
-      <span class="sp-main"><span class="sp-top"><b class="sp-name" data-act="pl" data-id="${p.id}" data-slot="${i}">${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(posStarOf(p,code),'pc-star')}</span></span>
+      <span class="sp-main"><span class="sp-top"><b class="sp-name" data-act="pl" data-id="${p.id}" data-slot="${i}">${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(pStarsOf(r,undefined,null),'pc-star')}</span></span>
       <span class="sp-sub">${posChip(p)}<small>${p.age}a. · ${st}</small></span>
       <span class="sp-attrs">${at(p)}</span></span></div>`}).join('');
   return `<h3>${SLOT_NAME[code]||code} <small class="muted-s">${code}</small></h3>
-  <p class="muted-s">Atributos clave: ${keys.map(k=>esc(nm(k))).join(', ')||'—'}. Las estrellas son el encaje de cada jugador en este puesto.</p>
+  ${chips}<p class="muted-s">${role?`<b>${esc(role.n)}</b> · `:''}Atributos clave: ${keys.map(k=>esc(nm(k))).join(', ')||'—'}. Las estrellas son el encaje de cada jugador en este puesto con este rol.</p>
   <div class="sp-list">${rows}</div>
   <div class="row-btns">${cur?'<button class="btn ghost" data-act="pl" data-id="'+cur+'">Ver ficha</button>':''}${cur?'<button class="btn ghost" data-act="slot-clear" data-i="'+i+'">Dejar vacío</button>':''}<button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`;
 }
@@ -26782,11 +26791,13 @@ const H={
   'role-open'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;if(!me().lineup[i]){openSheet(slotSheetHTML(i));return}ui.sel=null;openSheet(roleSheetHTML(i))},
   'pos-pick'(t){const f=pmFind();if(!f)return;ui.posSel={id:f.p.id,code:t.dataset.p};renderPM()},
   'role-set'(t){const m=me(),i=+t.dataset.i,code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);if(!p)return;(p.prl=p.prl||{})[code]=t.dataset.r;saveGame();openSheet(roleSheetHTML(i))},
-  'slot-pick'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;ui.sel=null;openSheet(slotSheetHTML(i))},
+  'slot-pick'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;ui.sel=null;ui.slotRole=null;openSheet(slotSheetHTML(i))},
+  'slot-role'(t){const i=+t.dataset.i;ui.slotRole={i,r:t.dataset.r};openSheet(slotSheetHTML(i))},
   'slot-set'(t){
     const m=me(),i=+t.dataset.i,id=t.dataset.id,p=m.players.find(x=>x.id===id);if(!p)return;
     if(unav(p)){toast('Ese jugador no está disponible');return}
     const prev=m.lineup[i];if(prev===id){closeSheet();return}
+    const role=slotRoleOf(i),code=FORMS[m.formation][i][3];if(role)(p.prl=p.prl||{})[code]=role.id;   /* el jugador pasa a jugar ese rol */
     const from=m.lineup.indexOf(id),bi=(m.bench||[]).indexOf(id);
     m.xiOpen=true;
     if(from>=0){m.lineup[from]=prev||null}
