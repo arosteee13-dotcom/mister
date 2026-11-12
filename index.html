@@ -26794,7 +26794,7 @@ const H={
   'sel-x'(){ui.sel=null;renderGame()},
   'role-open'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;if(!me().lineup[i]){openSheet(slotSheetHTML(i));return}ui.sel=null;openSheet(roleSheetHTML(i))},
   'pos-pick'(t){const f=pmFind();if(!f)return;ui.posSel={id:f.p.id,code:t.dataset.p};renderPM()},
-  'role-set'(t){const m=me(),i=+t.dataset.i,code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);if(!p)return;(p.prl=p.prl||{})[code]=t.dataset.r;saveGame();openSheet(roleSheetHTML(i))},
+  'role-set'(t){const m=me(),i=+t.dataset.i,code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);if(!p)return;(p.prl=p.prl||{})[code]=t.dataset.r;saveGame();renderGame();openSheet(roleSheetHTML(i))},
   'slot-pick'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;ui.sel=null;ui.slotRole=null;openSheet(slotSheetHTML(i))},
   'slot-role'(t){const i=+t.dataset.i;ui.slotRole={i,r:t.dataset.r};openSheet(slotSheetHTML(i))},
   'slot-set'(t){
