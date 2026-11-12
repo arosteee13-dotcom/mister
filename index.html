@@ -14418,18 +14418,25 @@ const signBlock=p=>{
 };
 const mktPrice=p=>Math.round(p.val*(1.05+rng(hashStr('pr'+p.id+'|'+state.seed))()*.3)*10)/10;
 /* siempre se recorren todos los clubes del juego (con o sin filtros), así aparecen absolutamente todos los jugadores y se pagina entre todos */
+/* sin buscador ni país/liga/equipo elegidos, el mercado se centra en tu zona: tu liga y las divisiones contiguas del mismo país */
+const mktLocal=f=>!f.q&&f.country==='ALL'&&f.league==='ALL'&&f.team==='ALL';
 function mktEntries(f){
   const out=[],wk=mktWk(),fams=new Set(famIds());
+  const myC=CLUBBY[state.club]||{},local=mktLocal(f)&&!!myC.co;
+  /* partida de jugadores reales, 1ª temporada: no salen los rellenos generados de clubes con plantilla incompleta */
+  const realOnly=curMode()==='real'&&state.season<=1;
   if(!f.freeOnly)
   CLUBS.forEach(c=>{
     if(!gameClub(c))return;
     if((f.country!=='ALL'&&c.co!==f.country)||c.id===state.club||fams.has(c.id))return;
     if(f.league!=='ALL'&&c.co+(c.div||1)!==f.league)return;
     if(f.team!=='ALL'&&c.id!==f.team)return;
+    if(local&&(c.co!==myC.co||Math.abs((c.div||1)-(myC.div||1))>1))return;
     const sq=squadFor(c.id);if(sq.length<=18)return;
     const gks=sq.filter(x=>x.pos==='GK').length;
     sq.forEach(p=>{
       if(p.loanIn||(p.blk||0)>wk||(p.pos==='GK'&&gks<=2))return;
+      if(realOnly&&!p.real)return;
       if(!mktMatch(p,f,c.id))return;
       out.push({p,from:c.id,price:(p.from===c.id&&p.price!=null)?p.price:mktPrice(p)});
     });
@@ -23242,7 +23249,7 @@ function cardHTML(id){
   const c=CLUBBY[id],t=previewTeam(id),top=[...t.players].sort((a,b)=>b.ovr-a.ovr).slice(0,3),rep=xiAvgOvr(t),fl=facLevels(id);top.forEach(pfOf);
   return`<div class="cc-head">${crestFlagHTML(c,54)}<div><h3>${esc(c.name)}</h3><div class="muted-s">${esc(c.city)}, ${esc(countryNameOf(c))}</div><div class="cc-row"><span class="cc-div">${flagHTML(natOfClub(c))} ${esc(divName(c.co,c.div))}</span>${isB(id)&&FAMILY[id]&&CLUBBY[FAMILY[id]]?`<span class="cc-div" data-act="club-view" data-club="${FAMILY[id]}" style="cursor:pointer">Filial de ${esc(CLUBBY[FAMILY[id]].name)}</span>`:''}${modeChip(id)}</div></div><button class="cc-x" data-act="card-close" aria-label="Cerrar">${xIcon}</button></div>
   <div class="defs sm"><div><i>Estadio</i><b>${esc(stadiumOf(id))}<small class="cc-sub">${fmtCap(capacityOf(id))} espectadores</small></b></div><div><i>Presupuesto</i><b>${fmtM(budgetFor(c))}</b></div><div><i>Objetivo de la directiva</i><b class="cc-obj">${targetIcon}<span>${esc(objective(id))}</span></b></div><div><i>Reputación</i><b>${starsFracHTML(rep)}${repDeltaHTML(id)}</b></div><div><i>Instalaciones de entrenamiento</i><b>Nivel ${fl.train}</b></div><div><i>Academia de juveniles</i><b>Nivel ${fl.acad}</b></div></div>
-  <div class="cc-players">${top.map(p=>`<button class="cc-p" data-act="pl" data-id="${p.id}" data-club="${id}"><span class="cc-ph">${avatarHTML(p)}</span><b>${esc(shortName(p.n))}</b><span class="cc-pp">${ppOf(p)[0]}</span><span class="cc-stars5" style="--p:${Math.round(pStarsOf(p.ovr)/5*100)}%">★★★★★</span></button>`).join('')}</div>
+  <div class="cc-players">${top.map(p=>`<button class="cc-p" data-act="pl" data-id="${p.id}" data-club="${id}"><span class="cc-ph">${avatarHTML(p)}</span><b>${esc(shortName(p.n))}</b><span class="cc-pp">${ppOf(p)[0]}</span><span class="cc-stars5" style="--p:${Math.round(pStarsOf(p.ovr,id,p.val)/5*100)}%">★★★★★</span></button>`).join('')}</div>
   <div class="cc-btns"><button class="btn primary" data-act="take">Tomar Control del Club</button><button class="cc-more" data-act="cv-open">${infoIcon}<span>Ver más información</span></button></div>`;
 }
 const NOFOTO='https://cdn.resfu.com/media/img/nofoto_jugador.png?size=120x&lossy=1';
@@ -23506,12 +23513,12 @@ function playerCard(p,clubId,opts){
   const mor=!mk&&state&&clubId===state.club?`<span class="pc-mor" title="Moral ${Math.round(morOf(p))}%">${moraleFaceHTML(p)}</span>`:'';
   const mainP=ppOf(p)[0],posChips=[mainP].concat(knownPositions(p).filter(x=>x!==mainP)).map((x,k)=>{const c=posCol(x);return `<span class="pc-pos${k===0?' main':''}" style="color:${c};background:${c}24">${x}</span>`}).join('');
   return`<button class="pcard${opts.starter?' starter':''}${hasOffer?' has-offer':''}${due?' has-renew':''}${lock?' locked':''}" data-act="${mk?'mkt-pl':'pl'}" data-id="${p.id}" data-club="${clubId}"${mk?` data-from="${mk.from||''}"${mk.free?' data-free="1"':''}`:''}>
-    <div class="pc-av">${(p.loanIn&&!p.famDown)||due?`<div class="pc-flags">${p.loanIn&&!p.famDown?'<span class="tag ced">CED</span>':''}${due?'<span class="tag ren">Renovar</span>':''}</div>`:''}<div class="pc-photo" style="--pc1:${club.c1||'#1d2a24'};--pc2:${club.c2||'#0b1210'}">${avatarHTML(p)}</div></div>
+    <div class="pc-av">${(p.loanIn&&!p.famDown)||due?`<div class="pc-flags">${p.loanIn&&!p.famDown?'<span class="tag ced">CED</span>':''}${due?'<span class="tag ren">Renovar</span>':''}</div>`:''}<div class="pc-photo">${avatarHTML(p)}</div></div>
     <div class="pc-main"><div class="pc-name"><span>${esc(nm)}</span>${opts.starter?'<i class="tt" title="Titular"></i>':''}${status?`<i class="pc-status ${status[0]}" title="${esc(status[1])}"></i>`:''}</div>
       <div class="pc-meta"><span class="pc-age">${p.age}a.</span>${posChips}</div>
       <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${mk?(mk.free?'Libre · '+fmtW(p.wage):'Pide '+fmtM(mk.price)):fmtW(p.wage)}</span>${mor}</div></div>
     <div class="pc-right">
-      <div class="pc-quality"><div><small>Calidad</small><div class="pc-stars">${starsHTML(pStarsOf(p.ovr),'pc-star')}</div></div><div><small>Potencial</small><div class="pc-stars">${starsHTML(pStarsOf(pot),'pc-star')}</div></div></div>
+      <div class="pc-quality"><div><small>Calidad</small><div class="pc-stars">${starsHTML(pStarsOf(p.ovr,clubId,p.val),'pc-star')}</div></div><div><small>Potencial</small><div class="pc-stars">${starsHTML(pStarsOf(pot,clubId,p.val),'pc-star')}</div></div></div>
       <div class="pc-foot"><div class="pc-role">${mk?(mk.free?(lock?'<span class="pc-club lib">No está interesado</span>':'<span class="pc-club lib">Agente libre</span>'):`<span class="pc-club">${mc?crestHTML(mc,16):''}<span>${esc(mc?mc.short:cname(mk.from))}</span></span>`):roleChip(role)}</div>
       <div class="pc-nat">${flagHTML(nat)} <span>${esc(NATNAME[nat]||'')}</span></div></div></div></button>`;
 }
@@ -24757,7 +24764,25 @@ function pmPositions(f){
 }
 /* ---------- estrellas (0,5 a 5) de calidad actual y potencial ---------- */
 const STAR_PATH='M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z';
-const pStarsOf=v=>clamp(Math.round(((v-35)/55*5)*2)/2,.5,5);
+/* estrellas RELATIVAS a la división del club del jugador (como en Football Manager): el jugador medio de la división vale 3 estrellas y cada 5 puntos de GRL suman o restan una; además el valor de mercado fija un suelo (starValFloor). Un 52 es 4★ en una 4ª división y 0,5★ en una 1ª. Sin club/división conocidos, escala absoluta. */
+const _starRef={k:'',m:new Map()};
+function starRef(clubId){
+  const c=clubId&&typeof CLUBBY!=='undefined'?CLUBBY[clubId]:null;
+  if(!c||!c.co)return 0;
+  const k=typeof state!=='undefined'&&state?state.season+':'+state.week:'';
+  if(_starRef.k!==k){_starRef.k=k;_starRef.m.clear()}
+  const key=c.co+'|'+(c.div||1);
+  if(!_starRef.m.has(key)){let v=0;try{v=divAvgOvr(c.co,c.div||1)}catch(e){}_starRef.m.set(key,v)}
+  const r=_starRef.m.get(key);return r>=30?r:0;   /* división vacía o sin plantillas reales: escala absoluta */
+}
+/* suelo por valor de mercado (M€): el valor es una señal independiente de calidad; un jugador de 15 M€ no puede quedarse en media estrella */
+const starValFloor=val=>val>=100?4.5:val>=70?4:val>=40?3.5:val>=20?3:val>=10?2.5:val>=5?2:val>=2?1.5:val>=.8?1:.5;
+function pStarsOf(v,clubId,val){
+  const ref=starRef(clubId===undefined&&typeof state!=='undefined'&&state?state.club:clubId);
+  let st=!ref?(v-35)/55*5:3+(v-(ref-3))/5;   /* el 3★ es el jugador medio de la división (algo por debajo del once tipo); 5 GRL por estrella */
+  if(val!=null)st=Math.max(st,starValFloor(val));
+  return clamp(Math.round(st*2)/2,.5,5);
+}
 function starsHTML(n,cls){
   let out='';
   for(let i=1;i<=5;i++){
@@ -24788,7 +24813,7 @@ function pmInfo(f){
   const estCol=p.inj>0||p.sus>0?'var(--bad)':p.disc>=3?'var(--amber)':'var(--accent)';
   const cell=(l,v,cls)=>`<div class="pf-c${cls?' '+cls:''}"><small>${l}</small><b>${v}</b></div>`,legs=legStrengthHTML(p);
   const capClub=f.club||(f.ctx==='market'?p.from:null),intl=rGet(REAL_CAPS,'CAPS',p)||(isLaLigaClub(capClub)?{caps:0,goals:0}:null),intlHTML=intl?`<div class="subh">Internacional</div><div class="pf-grid three"><div class="pf-c"><small>Selección</small><b>${flagHTML(nat)} ${esc(NATNAME[nat]||nat)}</b></div><div class="pf-c"><small>Partidos</small><b>${intl.caps}</b></div><div class="pf-c"><small>Goles</small><b>${intl.goals}</b></div></div>`:'';
-  return`<div class="pf-stars"><div><small>Calidad actual</small>${starsHTML(pStarsOf(p.ovr))}</div><div><small>Potencial</small>${starsHTML(pStarsOf(pot),'pot')}</div></div>
+  return`<div class="pf-stars"><div><small>Calidad actual</small>${starsHTML(pStarsOf(p.ovr,capClub||undefined,p.val))}</div><div><small>Potencial</small>${starsHTML(pStarsOf(pot,capClub||undefined,p.val),'pot')}</div></div>
   <div class="subh">Datos</div><div class="pf-grid">${cell('Edad',p.age+' años')}${cell('Altura',heightOf(p)+' cm')}${cell('Peso',weightOf(p)+' kg')}${cell('Nacionalidad',flagHTML(nat)+' '+esc(NATNAME[nat]||nat||'—'),'pf-c-long')}${cell('Pie',footOf(p))}${cell('Forma',Number.isFinite(p.fm)?p.fm.toFixed(1):'—')}</div>${legs}${intlHTML}
   ${pmContract(f)}
   ${own?`<div class="subh">Estado</div><div class="pf-grid three"><div class="pf-c"><small>Energía</small><b style="color:${enCol}">${Math.round(p.en)}%</b></div><div class="pf-c"><small>Moral</small><b style="color:${morCol}">${Math.round(morVal)}%</b></div><div class="pf-c"><small>Estado</small><b style="color:${estCol}">${estado}</b></div></div>`:''}`;
@@ -25093,7 +25118,8 @@ function mktResHTML(){
   const active=['pos','nat','age','val','ovr','country','league','team'].filter(k=>f[k]!=='ALL').length;
   const rows=page.map(({p,from,price,free,locked})=>playerCard(p,from,{mkt:{from,price,free,locked}})).join('');
   const pg=pages>1?`<div class="mkt-pg"><button class="btn ghost sm" data-act="mkt-page" data-d="-1" aria-label="Página anterior" ${f.page<=0?'disabled':''}>Anterior</button><span>Pág. ${f.page+1} de ${pages}</span><button class="btn ghost sm" data-act="mkt-page" data-d="1" aria-label="Página siguiente" ${f.page>=pages-1?'disabled':''}>Siguiente</button></div>`:'';
-  const rule=BASQUE_ONLY.has(state.club)?`<p class="muted-s" style="margin:8px 0 0">${esc(cname(state.club))} solo ficha jugadores con nombre o apellido vasco.</p>`:'';
+  const myC=CLUBBY[state.club]||{},zone=mktLocal(f)&&myC.co&&!f.freeOnly?`<p class="muted-s" style="margin:8px 0 0">Mostrando tu zona: ${esc(divName(myC.co,myC.div||1))} y divisiones contiguas. Usa el buscador o los filtros de país y liga para ver todos.</p>`:'';
+  const rule=zone+(BASQUE_ONLY.has(state.club)?`<p class="muted-s" style="margin:8px 0 0">${esc(cname(state.club))} solo ficha jugadores con nombre o apellido vasco.</p>`:'');
   return`${rule}<div class="mkt-tools"><button class="btn ghost sm" data-act="mkt-open">Filtros${active?` (${active})`:''}</button><button class="btn ${f.freeOnly?'primary':'ghost'} sm" data-act="mkt-free">Agentes libres</button>${pg}</div>
   <p class="mkt-count">${list.length} jugador${list.length!==1?'es':''}</p>
   ${page.length?`<div class="pcs">${rows}</div>`:`<div class="card"><p class="muted-s">${f.q?'No hay jugadores que cumplan la búsqueda y los filtros.':'No hay jugadores que cumplan esos filtros.'}</p></div>`}`;
