@@ -13965,14 +13965,15 @@ function caOf(p,code){
   return clamp(Math.round(f[0]+f[1]*caPts(p,code)),1,200);
 }
 /* hoja de roles del jugador en su posición: estrellas por rol y atributos que pide el rol elegido */
-function roleSheetHTML(i){
-  const m=me(),code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);
-  if(!p)return slotSheetHTML(i);
+function roleSheetHTML(i,live){
+  const m=me(),form=live?ui.ltDraft.formation:m.formation,lid=live?ui.ltDraft.lineup[i]:m.lineup[i],code=FORMS[form][i][3];
+  const pool=live?(LIVE.userSide==='h'?LIVE.H:LIVE.A).players:m.players,p=pool.find(x=>x.id===lid);
+  if(!p)return live?'':slotSheetHTML(i);
   const L=ROLES_POS[code]||[],cur=roleOf(p,code),a=attrsOf(p);
   const rows=L.map(r=>({r,v:roleRating(p,code,r)})).sort((x,y)=>y.v-x.v).map(({r,v})=>{
     const on=r.id===cur.id,st=starsHTML(roleStarOf(p,code,r),'pc-star');
     const det=on?`<span class="rl-d">${esc(r.d)}</span><span class="rl-at">${r.k.map(k=>{const v=a&&a[k];return `<span><em>${esc(FM_NAME[k]||k)}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')}</span>`:'';
-    return `<button class="rl-row${on?' on':''}" data-act="role-set" data-i="${i}" data-r="${r.id}"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span>${det}</button>`;
+    return `<button class="rl-row${on?' on':''}" data-act="${live?'lrole-set':'role-set'}" data-i="${i}" data-r="${r.id}"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span>${det}</button>`;
   }).join('');
   return `<h3>${esc(cardName(p.n))} <small class="muted-s">${SLOT_NAME[code]||code}</small></h3><p class="muted-s">Elige el rol: destaca los atributos que más pesan y cambia sus estrellas.</p><div class="rl-list">${rows}</div>
   <div class="row-btns"><button class="btn ghost" data-act="pl" data-id="${p.id}">Ver ficha</button><button class="btn ghost" data-act="sheet-close">Cerrar</button></div>`;
@@ -13985,8 +13986,8 @@ function tacticsView(o){
   const token=(p,label,attrs,cls,style,slotI)=>{
     const st=o.liveInfo?'':(p.inj>0?injuryBadge(p):'')+(p.sus>0?suspensionBadge(p):'');
     const en=Math.round(p.en==null?100:p.en),ec=stamColor(p.en);
-    const rab=o.slotAct&&slotI!=null&&sl[slotI]?roleAbOf(p,sl[slotI][3]):'';
-    return`<div class="pp ${cls}"${style?` style="${style}"`:''}><div class="pp-card"><div class="pp-top"><span class="pp-en" style="color:${ec}" title="Energía ${en}%">${heart}<b>${en}%</b></span><button class="pc" ${attrs} style="--rc:${ratingColor(p.ovr)}" aria-label="${esc(p.n)}">${tokAv(p)}</button><span class="pp-mcol">${o.slotAct&&slotI!=null?`<button class="pp-arrow" data-act="slot-pick" data-i="${slotI}" aria-label="Elegir jugador en ${label}" title="Elegir jugador en ${label}">▾</button>`:''}<span class="pp-mor" title="Moral ${Math.round(morOf(p))}%">${moraleFaceHTML(p)}</span></span></div>${o.slotAct&&slotI!=null?`<button class="pp-pos" style="background:${posCol(label)};color:#07100b" data-act="role-open" data-i="${slotI}" aria-label="Rol de ${esc(p.n)} en ${label}">${label}${rab?`<i class="pp-sep"></i><b class="pp-ab">${rab}</b>`:''}</button>`:`<div class="pp-pos" style="background:${posCol(label)};color:#07100b">${label}</div>`}<div class="pp-stars" title="${slotI!=null?'Encaje en el puesto con su rol':'Calidad actual'}">${starsHTML(slotI!=null?posStarsRoleOf(p,label):pStarsOf(p.ovr,undefined,p.val),"pc-star")}</div><button class="pp-name" ${o.slotAct&&slotI!=null?`data-act="pl" data-id="${p.id}" data-slot="${slotI}" aria-label="Ver ficha de ${esc(p.n)}"`:`data-act="pl" data-id="${p.id}" aria-label="Ver ficha de ${esc(p.n)}"`} title="${esc(p.n)}"><i>i</i><span>${esc(p.n)}</span></button>${st?`<span class="pp-st">${st}</span>`:''}${o.liveInfo?o.liveInfo(p):''}</div></div>`;
+    const rab=(o.slotAct||o.roleAct)&&slotI!=null&&sl[slotI]?roleAbOf(p,sl[slotI][3]):'';
+    return`<div class="pp ${cls}"${style?` style="${style}"`:''}><div class="pp-card"><div class="pp-top"><span class="pp-en" style="color:${ec}" title="Energía ${en}%">${heart}<b>${en}%</b></span><button class="pc" ${attrs} style="--rc:${ratingColor(p.ovr)}" aria-label="${esc(p.n)}">${tokAv(p)}</button><span class="pp-mcol">${o.slotAct&&slotI!=null?`<button class="pp-arrow" data-act="slot-pick" data-i="${slotI}" aria-label="Elegir jugador en ${label}" title="Elegir jugador en ${label}">▾</button>`:''}<span class="pp-mor" title="Moral ${Math.round(morOf(p))}%">${moraleFaceHTML(p)}</span></span></div>${(o.slotAct||o.roleAct)&&slotI!=null?`<button class="pp-pos" style="background:${posCol(label)};color:#07100b" data-act="${o.roleAct||'role-open'}" data-i="${slotI}" aria-label="Rol de ${esc(p.n)} en ${label}">${label}${rab?`<i class="pp-sep"></i><b class="pp-ab">${rab}</b>`:''}</button>`:`<div class="pp-pos" style="background:${posCol(label)};color:#07100b">${label}</div>`}<div class="pp-stars" title="${slotI!=null?'Encaje en el puesto con su rol':'Calidad actual'}">${starsHTML(slotI!=null?posStarsRoleOf(p,label):pStarsOf(p.ovr,undefined,p.val),"pc-star")}</div><button class="pp-name" ${o.slotAct&&slotI!=null?`data-act="pl" data-id="${p.id}" data-slot="${slotI}" aria-label="Ver ficha de ${esc(p.n)}"`:`data-act="pl" data-id="${p.id}" aria-label="Ver ficha de ${esc(p.n)}"`} title="${esc(p.n)}"><i>i</i><span>${esc(p.n)}</span></button>${st?`<span class="pp-st">${st}</span>`:''}${o.liveInfo?o.liveInfo(p):''}</div></div>`;
   };
   const sy=styleEffect(t),SY=STYLES[sy.id],chosen=t.style&&STYLES[t.style]?t.style:'auto';
   const styleDrop=`<div class="fdrop"><button class="fbtn" data-act="${o.styleAct}" aria-haspopup="dialog">Sistema <em>${chosen==='auto'?'Automático':SY.n}</em></button></div>`;
@@ -14034,7 +14035,7 @@ function renderLiveTactics(){
   const holes=d.lineup.some(x=>!x);
   const hint=holes&&!ui.lsel?'Juegas con un jugador menos: toca un jugador y luego el hueco para moverlo y decidir qué zona queda sin cubrir.':ui.lsel?'Ahora toca otro jugador: del campo para intercambiarlos de sitio, o del banquillo para hacer el cambio.':'Toca un jugador del campo y después uno del banquillo. Los cambios se confirman al pulsar la flecha de volver; hasta entonces puedes deshacerlos.';
   el.innerHTML=`<div class="talk-head"><button class="btn ghost icon-only" data-act="ltac-close" aria-label="Confirmar y volver al partido" title="Confirmar y volver al partido">${backIcon}</button><div><h2>Táctica en directo</h2><small>Minuto ${LIVE.min}' · cambios ${used}/5 · partido en pausa</small></div></div>
-  <div class="live-body talk-body">${tacticsView({t:{...T,formation:d.formation},xi,lineup:d.lineup,sel:ui.lsel,act:'ltok',formAct:'lformation-menu',styleAct:'style-open',auto:false,subs:subs.concat(gone),dim:new Set(gone.map(p=>p.id)),res:null,emptySlot,liveInfo,subsSub:`${subs.length} disponibles${gone.length?' · '+gone.length+' ya no pueden volver':''}`})}<p class="hint">${hint}</p></div>`;
+  <div class="live-body talk-body">${tacticsView({t:{...T,formation:d.formation},xi,lineup:d.lineup,sel:ui.lsel,act:'ltok',roleAct:'lrole-open',formAct:'lformation-menu',styleAct:'style-open',auto:false,subs:subs.concat(gone),dim:new Set(gone.map(p=>p.id)),res:null,emptySlot,liveInfo,subsSub:`${subs.length} disponibles${gone.length?' · '+gone.length+' ya no pueden volver':''}`})}<p class="hint">${hint}</p></div>`;
   const nb=el.querySelector('.talk-body');if(nb)nb.scrollTop=top;
 }
 function openLiveTactics(){
@@ -26795,6 +26796,13 @@ const H={
   'role-open'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;if(!me().lineup[i]){openSheet(slotSheetHTML(i));return}ui.sel=null;openSheet(roleSheetHTML(i))},
   'pos-pick'(t){const f=pmFind();if(!f)return;ui.posSel={id:f.p.id,code:t.dataset.p};renderPM()},
   'role-set'(t){const m=me(),i=+t.dataset.i,code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);if(!p)return;(p.prl=p.prl||{})[code]=t.dataset.r;saveGame();renderGame();openSheet(roleSheetHTML(i))},
+  'lrole-open'(t){const i=+t.dataset.i;if(!ui.ltDraft||!ui.ltDraft.lineup[i])return;ui.lsel=null;openSheet(roleSheetHTML(i,true))},
+  'lrole-set'(t){
+    const i=+t.dataset.i,d=ui.ltDraft,code=FORMS[d.formation][i][3],id=d.lineup[i];if(!id)return;
+    const T=LIVE.userSide==='h'?LIVE.H:LIVE.A,set=p=>{if(p)(p.prl=p.prl||{})[code]=t.dataset.r};
+    set(T.players.find(x=>x.id===id));set(me().players.find(x=>x.id===id));   /* en el equipo guardado también, para que el rol siga tras el partido */
+    saveGame();renderLiveTactics();openSheet(roleSheetHTML(i,true));
+  },
   'slot-pick'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;ui.sel=null;ui.slotRole=null;openSheet(slotSheetHTML(i))},
   'slot-role'(t){const i=+t.dataset.i;ui.slotRole={i,r:t.dataset.r};openSheet(slotSheetHTML(i))},
   'slot-set'(t){
