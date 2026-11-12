@@ -1146,6 +1146,8 @@ button.offer-h:hover b{color:var(--accent)}
 .pp-mcol{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none}
 .pp-arrow{width:15px;height:13px;padding:0;border:1px solid var(--line2);border-radius:5px;background:rgba(7,16,11,.85);color:var(--accent);font:700 9px/1 var(--ui);display:grid;place-items:center;cursor:pointer}
 .pp-arrow:hover{border-color:var(--accent)}
+.pp-sep{display:inline-block;width:1px;height:.9em;background:currentColor;opacity:.55;margin:0 .35em;vertical-align:middle}
+.pp-ab{font-weight:800;letter-spacing:.02em}
 .pp-mor svg{display:block;width:16px;height:16px}
 .slots5 .pp-mor{left:calc(100% + 1px);bottom:2px;width:13px;height:13px}
 .slots5 .pp-mor .mor-face,.slots5 .pp-mor svg{width:13px;height:13px}
@@ -13894,6 +13896,9 @@ ROLES_POS.MC=[R('mc','Centrocampista','Trabaja en las dos áreas.',['PAS','ENT',
 ROLES_POS.MCO=[R('mco','Mediapunta','Busca espacios entre líneas.',['DES','PAS','TEC','REG','SER']),R('eng','Enganche','Crea juego desde su zona.',['VIS','PAS','TEC','DEC','REG']),R('sdl','Segundo delantero','Se suma al remate.',['REM','DES','ACE','SER','ANT'])];
 ROLES_POS.DC=[R('dc','Delantero','Remata y define.',['REM','SER','DES','PTO','ACE']),R('ari','Ariete','Gana duelos y juego aéreo.',['CAB','FUE','SLT','REM','VAL']),R('dap','Delantero de apoyo','Conecta con el medio.',['PAS','TRA','TEC','VIS','PTO']),R('caz','Cazagoles','Vive dentro del área.',['DES','ANT','REM','SER','VEL'])];
 const roleOf=(p,code)=>{const L=ROLES_POS[code]||[],id=p.prl&&p.prl[code];return L.find(r=>r.id===id)||L[0]};
+/* abreviatura de cada rol para la tarjeta del campo */
+const ROLE_AB={por:'POR',lib:'LIB',sal:'SAL',dfc:'CEN',sdp:'SAP',stp:'STO',cob:'COB',lat:'LAT',lof:'LOF',lin:'LIN',car:'CAR',cdf:'CDF',ban:'BAN',int:'INT',iof:'IOF',ext:'EXT',exi:'EXI',dba:'DBA',anc:'ANC',mcd:'MCD',reg:'REG',mc:'MC',b2b:'B2B',org:'ORG',mco:'MCO',eng:'ENG',sdl:'SDL',dc:'DC',ari:'ARI',dap:'DAP',caz:'CAZ'};
+const roleAbOf=(p,code)=>{const r=roleOf(p,code);return r?(ROLE_AB[r.id]||r.id.toUpperCase()):''};
 function roleRating(p,code,r){
   const a=attrsOf(p),base=slotRating(p,code);
   const vals=r.k.map(k=>a&&typeof a[k]==='number'?a[k]:null).filter(v=>v!=null);
@@ -13907,8 +13912,8 @@ function roleSheetHTML(i){
   const m=me(),code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);
   if(!p)return slotSheetHTML(i);
   const L=ROLES_POS[code]||[],cur=roleOf(p,code),a=attrsOf(p);
-  const rows=L.map(r=>{
-    const on=r.id===cur.id,st=starsHTML(pStarsOf(roleRating(p,code,r),undefined,null),'pc-star');
+  const rows=L.map(r=>({r,v:roleRating(p,code,r)})).sort((x,y)=>y.v-x.v).map(({r,v})=>{
+    const on=r.id===cur.id,st=starsHTML(pStarsOf(v,undefined,null),'pc-star');
     const det=on?`<span class="rl-d">${esc(r.d)}</span><span class="rl-at">${r.k.map(k=>{const v=a&&a[k];return `<span><em>${esc(FM_NAME[k]||k)}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')}</span>`:'';
     return `<button class="rl-row${on?' on':''}" data-act="role-set" data-i="${i}" data-r="${r.id}"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span>${det}</button>`;
   }).join('');
@@ -13923,7 +13928,8 @@ function tacticsView(o){
   const token=(p,label,attrs,cls,style,slotI)=>{
     const st=o.liveInfo?'':(p.inj>0?injuryBadge(p):'')+(p.sus>0?suspensionBadge(p):'');
     const en=Math.round(p.en==null?100:p.en),ec=stamColor(p.en);
-    return`<div class="pp ${cls}"${style?` style="${style}"`:''}><div class="pp-card"><div class="pp-top"><span class="pp-en" style="color:${ec}" title="Energía ${en}%">${heart}<b>${en}%</b></span><button class="pc" ${attrs} style="--rc:${ratingColor(p.ovr)}" aria-label="${esc(p.n)}">${tokAv(p)}</button><span class="pp-mcol">${o.slotAct&&slotI!=null?`<button class="pp-arrow" data-act="slot-pick" data-i="${slotI}" aria-label="Elegir jugador en ${label}" title="Elegir jugador en ${label}">▾</button>`:''}<span class="pp-mor" title="Moral ${Math.round(morOf(p))}%">${moraleFaceHTML(p)}</span></span></div>${o.slotAct&&slotI!=null?`<button class="pp-pos" style="background:${posCol(label)};color:#07100b" data-act="role-open" data-i="${slotI}" aria-label="Rol de ${esc(p.n)} en ${label}">${label}</button>`:`<div class="pp-pos" style="background:${posCol(label)};color:#07100b">${label}</div>`}<div class="pp-stars" title="Calidad actual">${starsHTML(pStarsOf(p.ovr,undefined,p.val),"pc-star")}</div><button class="pp-name" ${o.slotAct&&slotI!=null?`data-act="pl" data-id="${p.id}" data-slot="${slotI}" aria-label="Ver ficha de ${esc(p.n)}"`:`data-act="pl" data-id="${p.id}" aria-label="Ver ficha de ${esc(p.n)}"`} title="${esc(p.n)}"><i>i</i><span>${esc(p.n)}</span></button>${st?`<span class="pp-st">${st}</span>`:''}${o.liveInfo?o.liveInfo(p):''}</div></div>`;
+    const rab=o.slotAct&&slotI!=null&&sl[slotI]?roleAbOf(p,sl[slotI][3]):'';
+    return`<div class="pp ${cls}"${style?` style="${style}"`:''}><div class="pp-card"><div class="pp-top"><span class="pp-en" style="color:${ec}" title="Energía ${en}%">${heart}<b>${en}%</b></span><button class="pc" ${attrs} style="--rc:${ratingColor(p.ovr)}" aria-label="${esc(p.n)}">${tokAv(p)}</button><span class="pp-mcol">${o.slotAct&&slotI!=null?`<button class="pp-arrow" data-act="slot-pick" data-i="${slotI}" aria-label="Elegir jugador en ${label}" title="Elegir jugador en ${label}">▾</button>`:''}<span class="pp-mor" title="Moral ${Math.round(morOf(p))}%">${moraleFaceHTML(p)}</span></span></div>${o.slotAct&&slotI!=null?`<button class="pp-pos" style="background:${posCol(label)};color:#07100b" data-act="role-open" data-i="${slotI}" aria-label="Rol de ${esc(p.n)} en ${label}">${label}${rab?`<i class="pp-sep"></i><b class="pp-ab">${rab}</b>`:''}</button>`:`<div class="pp-pos" style="background:${posCol(label)};color:#07100b">${label}</div>`}<div class="pp-stars" title="Calidad actual">${starsHTML(pStarsOf(p.ovr,undefined,p.val),"pc-star")}</div><button class="pp-name" ${o.slotAct&&slotI!=null?`data-act="pl" data-id="${p.id}" data-slot="${slotI}" aria-label="Ver ficha de ${esc(p.n)}"`:`data-act="pl" data-id="${p.id}" aria-label="Ver ficha de ${esc(p.n)}"`} title="${esc(p.n)}"><i>i</i><span>${esc(p.n)}</span></button>${st?`<span class="pp-st">${st}</span>`:''}${o.liveInfo?o.liveInfo(p):''}</div></div>`;
   };
   const sy=styleEffect(t),SY=STYLES[sy.id],chosen=t.style&&STYLES[t.style]?t.style:'auto';
   const styleDrop=`<div class="fdrop"><button class="fbtn" data-act="${o.styleAct}" aria-haspopup="dialog">Sistema <em>${chosen==='auto'?'Automático':SY.n}</em></button></div>`;
