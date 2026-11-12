@@ -8437,6 +8437,32 @@ function shiftOvr(p,d){
   if(p.at&&p._aOff!=null)p.ovr=clamp(Math.round(attrOverall(p)+p._aOff),20,95);
   return p.ovr-o;
 }
+/* ===== decadencia por edad a nivel de atributo (capa 5): los físicos veloces caen primero, los mentales de lectura suben con la experiencia ===== */
+const AGE_DECAY=[
+  {k:['ACE','VEL','AGI'],from:28,steps:[[28,.4],[30,.8],[33,1.3]]},
+  {k:['RES','SLT','EQU'],from:30,steps:[[30,.3],[33,.6],[35,1]]},
+  {k:['FUE'],from:31,steps:[[31,.2],[33,.5]]},
+  {k:['CAB','CEN','PTO','ENT','MAR','PAS','REG','REM','TEC','TLE','FAL','PEN','COR','SLA','TLB'],from:33,steps:[[33,.15]]},
+  {k:['ANT','POS','DEC','VIS','CON'],until:31,gain:.3},
+  {k:['LID','DET'],until:33,gain:.2}
+];
+function ageDecayAttrs(p){
+  if(!p.at||!isFMat(p.at))return false;
+  if(p.ageSeed==null)p.ageSeed=Math.round((Math.random()*3-1.5)*10)/10;   /* ±1,5 años: no todos envejecen a la vez */
+  const ea=(p.age||27)+p.ageSeed-(p.pos==='GK'?3:0);
+  if(!p.a0)p.a0=Object.assign({},p.at);
+  if(p._aOff==null)p._aOff=p.ovr-attrOverall(p);
+  p.ac=p.ac||{};
+  AGE_DECAY.forEach(g=>{
+    let d=0;
+    if(g.steps){if(ea>=g.from)g.steps.forEach(st=>{if(ea>=st[0])d=-st[1]})}
+    else if(ea<=g.until)d=g.gain;
+    if(!d)return;
+    g.k.forEach(k=>{if(typeof p.at[k]!=='number')return;const v=d+(p.ac[k]||0),iv=Math.trunc(v);p.ac[k]=v-iv;p.at[k]=clamp(p.at[k]+iv,1,20)});
+  });
+  p.ovr=clamp(Math.round(attrOverall(p)+p._aOff),20,95);
+  return true;
+}
 const atv=(a,k,p)=>a&&a[k]!=null?a[k]:p.ovr;
 function gkScore(p){const a=compOf(p);return atv(a,'PAR',p)*.3+atv(a,'REF',p)*.3+atv(a,'EST',p)*.2+atv(a,'COL',p)*.2}
 function atkScore(p){if(p.pos==='GK')return p.ovr*.5;const a=compOf(p);return atv(a,'TIR',p)*.30+atv(a,'REG',p)*.25+atv(a,'RIT',p)*.20+atv(a,'PAS',p)*.25}
@@ -16117,7 +16143,7 @@ function newSeason(){
         if(id===state.club){retired.push(Object.assign({},p,{cs:clubCareerStats(p,id)}));return null;}
         return mkPlayer(r,`${id}y${state.season}_${Math.floor(r()*1e6)}`,p.pos,clamp(Math.round(repOf(id)-14+r()*8),40,Math.max(80,Math.round(repOf(id)+4))),17+Math.floor(r()*3),club.co,used,id);
       }
-      (p.hist=p.hist||[]).push({s:state.season,ap:p.ap,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'',yc:p.yc||0,rc:p.rc||0,tm:teamStats(p),loan:!!p._loanSeason});delete p._loanSeason;if(p.hist.length>HIST_MAX)p.hist=p.hist.slice(-HIST_MAX);const base=p.o0!=null?p.o0:old;shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
+      (p.hist=p.hist||[]).push({s:state.season,ap:p.ap,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'',yc:p.yc||0,rc:p.rc||0,tm:teamStats(p),loan:!!p._loanSeason});delete p._loanSeason;if(p.hist.length>HIST_MAX)p.hist=p.hist.slice(-HIST_MAX);const base=p.o0!=null?p.o0:old;if(!(a>=28&&ageDecayAttrs(p)))shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
       /* revisión anual del potencial: los ojeadores ajustan su estimación según el rendimiento real frente a un techo oculto (potReal), fijado al nacer con más varianza que el POT visible */
       {const prevPot=revisePot(p,old,a,r);
       if(id===state.club&&Math.abs(p.pot-prevPot)>=4)news(`Los ojeadores revisan ${p.pot>prevPot?'al alza':'a la baja'} el potencial de ${p.n}: ahora POT ${p.pot}.`);}
@@ -17821,7 +17847,7 @@ function ageUp(p,r){
   if(a>=33&&(a>=RETIRE_AGE||r()<retireChance(a,(p.ap||0)>=10)))return null;   /* se retira */
   const d=-(a>=34?2:a>=32?1:0);   /* los veteranos pierden GRL cada temporada */
   (p.hist=p.hist||[]).push({s:state.season,ap:p.ap,g:p.g||0,ge:p.ge||0,sv:p.sv,as:p.as||0,rt:(p.ap||0)?((p.rt||0)/p.ap).toFixed(2).replace('.',','):'',yc:p.yc||0,rc:p.rc||0,tm:teamStats(p),loan:!!p._loanSeason});delete p._loanSeason;if(p.hist.length>HIST_MAX)p.hist=p.hist.slice(-HIST_MAX);
-  const base=p.o0!=null?p.o0:old;shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
+  const base=p.o0!=null?p.o0:old;if(!(a>=28&&ageDecayAttrs(p)))shiftOvr(p,d);p.dl=p.ovr-base;p.o0=p.ovr;closeAttrSeason(p);
   const prevPot=revisePot(p,old,a,r);
   if(Math.abs(p.pot-prevPot)>=4)news(`Los ojeadores revisan ${p.pot>prevPot?'al alza':'a la baja'} el potencial de ${p.n}: ahora POT ${p.pot}.`);
   Object.assign(p,{en:100,inj:0,g:0,ge:0,sv:0,ap:0,as:0,yc:0,rc:0,sus:0,rt:0,st:{},stD:{},offers:[]});bumpVal(p,old);p.val=Math.max(.2,Math.round(p.val*(AGE_VAL(p.age)/AGE_VAL(p.age-1))*10)/10);p.wage=Math.max(.5,Math.round(p.val*4));return p;
