@@ -24936,7 +24936,8 @@ function posMapDiagram(p){
   const lines='<g fill="none" stroke="rgba(247,251,248,.86)" stroke-width="1.25" stroke-linejoin="round"><rect x="3" y="3" width="174" height="94" rx="1"/><path d="M90 3v94"/><circle cx="90" cy="50" r="10"/><rect x="3" y="24" width="24" height="52"/><rect x="153" y="24" width="24" height="52"/><rect x="3" y="37" width="9" height="26"/><rect x="168" y="37" width="9" height="26"/><circle cx="90" cy="50" r=".9" fill="rgba(247,251,248,.9)" stroke="none"/><path d="M0 43h3v14H0M180 43h-3v14h3"/></g>';
   const pts=Object.keys(POSMAP).map(code=>{
     const[x,y]=POSMAP[code],lv=posLevel(fam[code]||0),mainCode=code===main;
-    return`<circle cx="${x}" cy="${y}" r="${mainCode?7.4:6.3}" style="fill:${lv.c}"><title>${esc(POS_FULL[code]||code)} · ${lv.l} (${fam[code]||0}/20)</title></circle>${mainCode?`<circle cx="${x}" cy="${y}" r="8.7" fill="none" stroke="#f7fbf8" stroke-width="1.4"/>`:''}`;
+    const selC=(ui.posSel&&ui.posSel.id===p.id?ui.posSel.code:main)===code;
+    return`<g data-act="pos-pick" data-p="${code}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="11" fill="transparent"/><circle cx="${x}" cy="${y}" r="${mainCode?7.4:6.3}" style="fill:${lv.c}"><title>${esc(POS_FULL[code]||code)} · ${lv.l} (${fam[code]||0}/20)</title></circle>${mainCode?`<circle cx="${x}" cy="${y}" r="8.7" fill="none" stroke="#f7fbf8" stroke-width="1.4"/>`:''}${selC?`<circle cx="${x}" cy="${y}" r="10.4" fill="none" stroke="#fde68a" stroke-width="1" stroke-dasharray="2 1.5"/>`:''}</g>`;
   }).join('');
   return`<svg viewBox="0 0 180 100" aria-label="Campo con las posiciones"><rect x="3" y="3" width="174" height="94" rx="1" fill="#1d5a44"/>${lines}${pts}</svg>`;
 }
@@ -24961,7 +24962,20 @@ function pmPositions(f){
   }).join('');
   return`<div class="sy-pitch pos-pitch">${posMapDiagram(p)}</div>
   <div class="pos-top-h"><span>Roles</span><small>${own?'Toca una para hacerla principal':'Posiciones que domina'}</small></div>
-  <div class="pos-rows">${rows||'<span class="muted-s">—</span>'}</div>`;
+  <div class="pos-rows">${rows||'<span class="muted-s">—</span>'}</div>
+  ${posRolesHTML(p,main)}`;
+}
+/* roles de la posición tocada en el campo (por defecto la principal). Con nivel competente (10/20) o más: estrellas, de más a menos. Por debajo: nombres de roles con estrellas vacías. */
+function posRolesHTML(p,dflt){
+  const sel=ui.posSel&&ui.posSel.id===p.id?ui.posSel.code:dflt,L=ROLES_POS[sel]||[];
+  const pf=pfOf(p),fam=pf[sel]||0,lv=posLevel(fam),comp=fam>=10;
+  const rows=L.map(r=>({r,v:comp?roleRating(p,sel,r):0}));
+  if(comp)rows.sort((x,y)=>y.v-x.v);
+  const html=rows.map(({r,v})=>{
+    const st=comp?starsHTML(pStarsOf(v,undefined,null),'pc-star'):starsHTML(0,'pc-star');
+    return `<div class="pos-row"><span class="pr-n"><b>${esc(r.n)}</b></span><span class="pr-s">${st}</span></div>`;
+  }).join('');
+  return `<div class="pos-top-h"><span>${esc(POS_FULL[sel]||sel)}</span><small>${lv.l} (${fam}/20)</small></div><div class="pos-rows">${html||'<span class="muted-s">—</span>'}</div>`;
 }
 /* ---------- estrellas (0,5 a 5) de calidad actual y potencial ---------- */
 const STAR_PATH='M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z';
@@ -26686,6 +26700,7 @@ const H={
   'to-rs'(){const m=me();m.bench=m.bench.filter(id=>id!==ui.sel);ui.sel=null;saveGame();renderGame()},
   'sel-x'(){ui.sel=null;renderGame()},
   'role-open'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;if(!me().lineup[i]){openSheet(slotSheetHTML(i));return}ui.sel=null;openSheet(roleSheetHTML(i))},
+  'pos-pick'(t){const f=pmFind();if(!f)return;ui.posSel={id:f.p.id,code:t.dataset.p};renderPM()},
   'role-set'(t){const m=me(),i=+t.dataset.i,code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);if(!p)return;(p.prl=p.prl||{})[code]=t.dataset.r;saveGame();openSheet(roleSheetHTML(i))},
   'slot-pick'(t){const i=+t.dataset.i;if(!FORMS[me().formation][i])return;ui.sel=null;openSheet(slotSheetHTML(i))},
   'slot-set'(t){
