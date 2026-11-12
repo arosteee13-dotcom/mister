@@ -24969,11 +24969,13 @@ function pmPositions(f){
 function posRolesHTML(p,dflt){
   const sel=ui.posSel&&ui.posSel.id===p.id?ui.posSel.code:dflt,L=ROLES_POS[sel]||[];
   const pf=pfOf(p),fam=pf[sel]||0,lv=posLevel(fam),comp=fam>=10;
+  const a=attrsOf(p),nm=k=>FM_NAME[k]||k;
   const rows=L.map(r=>({r,v:comp?roleRating(p,sel,r):0}));
   if(comp)rows.sort((x,y)=>y.v-x.v);
   const html=rows.map(({r,v})=>{
     const st=comp?starsHTML(pStarsOf(v,undefined,null),'pc-star'):starsHTML(0,'pc-star');
-    return `<div class="pos-row"><span class="pr-n"><b>${esc(r.n)}</b></span><span class="pr-s">${st}</span></div>`;
+    const attrs=r.k.map(k=>{const x=a&&a[k];return `<span class="pr-a"><em>${esc(nm(k))}</em><b style="color:${x?fmColor(x):'var(--dim)'}">${x==null?'-':x}</b></span>`}).join('');
+    return `<div class="pos-row"><span class="pr-n"><b>${esc(r.n)}</b><i>${esc(r.d)}</i></span><span class="pr-s">${st}</span><span class="pr-at">${attrs}</span></div>`;
   }).join('');
   return `<div class="pos-top-h"><span>${esc(POS_FULL[sel]||sel)}</span><small>${lv.l} (${fam}/20)</small></div><div class="pos-rows">${html||'<span class="muted-s">—</span>'}</div>`;
 }
