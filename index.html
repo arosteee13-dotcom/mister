@@ -25003,7 +25003,12 @@ function starRef(clubId){
   if(_starRef.k!==k){_starRef.k=k;_starRef.m.clear()}
   const key=c.co+'|'+(c.div||1);
   if(!_starRef.m.has(key)){let v=0;try{v=divAvgOvr(c.co,c.div||1)}catch(e){}_starRef.m.set(key,v)}
-  const r=_starRef.m.get(key);return r>=30?r:0;   /* división vacía o sin plantillas reales: escala absoluta */
+  const dv=_starRef.m.get(key);if(!(dv>=30))return 0;   /* división vacía o sin plantillas reales: escala absoluta */
+  /* referencia mezclada: 50 % nivel de la división + 50 % nivel del once del propio club (un buen jugador en un equipo flojo luce más, y al revés) */
+  const ck='c|'+clubId;
+  if(!_starRef.m.has(ck)){let x=0;try{x=xiAvgOvr(previewTeam(clubId))}catch(e){}_starRef.m.set(ck,x)}
+  const cx=_starRef.m.get(ck);
+  return cx>=30?Math.round(dv*.5+cx*.5):dv;
 }
 /* suelo por valor de mercado (M€): el valor es una señal independiente de calidad; un jugador de 15 M€ no puede quedarse en media estrella */
 const starValFloor=val=>val>=100?4.5:val>=70?4:val>=40?3.5:val>=20?3:val>=10?2.5:val>=5?2:val>=2?1.5:val>=.8?1:.5;
