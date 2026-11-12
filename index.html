@@ -13887,6 +13887,8 @@ const slotStars=(p,code)=>pStarsOf(slotRating(p,code),undefined,null);
 /* valor y estrellas del jugador en un puesto con el rol que tiene asignado (el mismo que muestra su hoja) */
 const posRatingOf=(p,code)=>{const L=ROLES_POS[code]||[];return L.length?roleRating(p,code,roleOf(p,code)):slotRating(p,code)};
 const posStarOf=(p,code)=>pStarsOf(posRatingOf(p,code),undefined,null);
+/* ÚNICA fuente de las estrellas de un jugador en una posición con un rol: la misma en el listado, la hoja de roles y el perfil. Sin competencia en la posición (familiaridad < 10) no hay estrellas. */
+const roleStarOf=(p,code,r)=>(pfOf(p)[code]||0)>=10?pStarsOf(roleRating(p,code,r),undefined,null):0;
 /* hoja de un hueco del once: atributos clave del puesto y la plantilla ordenada de mejor a peor encaje */
 /* rol del hueco: el que elige el usuario en la hoja o, si no, el que ya hace el jugador que lo ocupa (todos los candidatos se valoran con ESE rol) */
 function slotRoleOf(i){
@@ -13898,17 +13900,17 @@ function slotRoleOf(i){
 function slotSheetHTML(i){
   const m=me(),sl=FORMS[m.formation],code=sl[i][3],role=slotRoleOf(i),keys=role?role.k:(POS_STYLE_DEFAULT[code]||[]);
   const cur=m.lineup[i],inXI=new Set(m.lineup.filter(Boolean)),inBn=new Set(m.bench||[]);
-  const rate=p=>role?roleRating(p,code,role):slotRating(p,code);
-  const list=m.players.map(p=>({p,r:rate(p),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.r-a.r);
+  const rate=p=>role?roleRating(p,code,role):slotRating(p,code),starOf=p=>role?roleStarOf(p,code,role):pStarsOf(slotRating(p,code),undefined,null);
+  const list=m.players.map(p=>({p,r:rate(p),st:starOf(p),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.st-a.st||b.r-a.r);
   const chips=(ROLES_POS[code]||[]).length>1?`<div class="seg pills">${ROLES_POS[code].map(r=>`<button class="${role&&r.id===role.id?'on':''}" data-act="slot-role" data-i="${i}" data-r="${r.id}">${esc(r.n)}</button>`).join('')}</div>`:'';
   const nm=k=>FM_NAME[k]||k;
   const at=p=>{const a=attrsOf(p);return keys.map(k=>{const v=a&&a[k];return `<span class="sp-a"><em>${esc(nm(k))}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')};
-  const rows=list.map(({p,r,u})=>{
+  const rows=list.map(({p,r,st:stars,u})=>{
     const where=p.id===cur?'En este puesto':inXI.has(p.id)?'En el once':inBn.has(p.id)?'Convocado':'Reserva';
     const st=u?(p.inj>0?'Lesionado':'Sancionado'):where;
     return `<div class="sp-row${p.id===cur?' cur':''}${u?' un':''}" data-act="slot-set" data-id="${p.id}" data-i="${i}" role="button" tabindex="0">
       <span class="sp-av">${avatarHTML(p)}</span>
-      <span class="sp-main"><span class="sp-top"><b class="sp-name" data-act="pl" data-id="${p.id}" data-slot="${i}">${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(pStarsOf(r,undefined,null),'pc-star')}</span></span>
+      <span class="sp-main"><span class="sp-top"><b class="sp-name" data-act="pl" data-id="${p.id}" data-slot="${i}">${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(stars,'pc-star')}</span></span>
       <span class="sp-sub">${posChip(p)}<small>${p.age}a. · ${st}</small></span>
       <span class="sp-attrs">${at(p)}</span></span></div>`}).join('');
   return `<h3>${SLOT_NAME[code]||code} <small class="muted-s">${code}</small></h3>
@@ -13966,7 +13968,7 @@ function roleSheetHTML(i){
   if(!p)return slotSheetHTML(i);
   const L=ROLES_POS[code]||[],cur=roleOf(p,code),a=attrsOf(p);
   const rows=L.map(r=>({r,v:roleRating(p,code,r)})).sort((x,y)=>y.v-x.v).map(({r,v})=>{
-    const on=r.id===cur.id,st=starsHTML(pStarsOf(v,undefined,null),'pc-star');
+    const on=r.id===cur.id,st=starsHTML(roleStarOf(p,code,r),'pc-star');
     const det=on?`<span class="rl-d">${esc(r.d)}</span><span class="rl-at">${r.k.map(k=>{const v=a&&a[k];return `<span><em>${esc(FM_NAME[k]||k)}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')}</span>`:'';
     return `<button class="rl-row${on?' on':''}" data-act="role-set" data-i="${i}" data-r="${r.id}"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span>${det}</button>`;
   }).join('');
@@ -25039,7 +25041,7 @@ function posRolesHTML(p,dflt){
   const rows=L.map(r=>({r,v:comp?roleRating(p,sel,r):0}));
   if(comp)rows.sort((x,y)=>y.v-x.v);
   const html=rows.map(({r,v})=>{
-    const st=comp?starsHTML(pStarsOf(v,undefined,null),'pc-star'):starsHTML(0,'pc-star');
+    const st=starsHTML(roleStarOf(p,sel,r),'pc-star');
     const attrs=r.k.map(k=>{const x=a&&a[k];return `<span><em>${esc(nm(k))}</em><b style="color:${x?fmColor(x):'var(--dim)'}">${x==null?'-':x}</b></span>`}).join('');
     return `<div class="rl-row"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span><span class="rl-d">${esc(r.d)}</span><span class="rl-at">${attrs}</span></div>`;
   }).join('');
