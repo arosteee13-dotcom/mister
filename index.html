@@ -13887,7 +13887,7 @@ const ROLES_POS={
  LI:null,LD:null,CAI:null,CAD:null,MCD:null,MC:null,MCO:null,MI:null,MD:null,EI:null,ED:null,DC:null
 };
 const _LAT=[R('lat','Lateral','Equilibrado entre defender y subir.',['MAR','ENT','VEL','RES','POS']),R('lof','Lateral ofensivo','Sube hasta línea de fondo y centra.',['CEN','VEL','RES','REG','ACE']),R('lin','Lateral interior','Se mete al centro a construir.',['PAS','TEC','POS','TRA','ENT'])];
-const _CAR=[R('car','Carrilero','Recorre toda la banda.',['CEN','VEL','RES','REG','SAC']),R('cdf','Carrilero defensivo','Prioriza cerrar su banda.',['ENT','MAR','RES','SAC','POS'])];
+const _CAR=[R('car','Carrilero','Recorre la banda, centra y crea desde fuera.',['PAS','VIS','TEC','REG','SAC']),R('cai','Carrilero interior','Se mete por dentro desde la banda para rematar y asociarse.',['DES','REM','TEC','PAS','VIS'])];
 const _INT=[R('ban','Mediocentro de banda','Abre el juego y centra.',['CEN','PAS','RES','SAC','TRA']),R('int','Interior','Llega al área desde dentro.',['PAS','SAC','TRA','RES','DES']),R('iof','Interior ofensivo','Se une al ataque y regatea.',['DES','TEC','REG','REM','ACE'])];
 const _EXT=[R('ext','Extremo','Gana la línea de fondo y centra.',['CEN','REG','VEL','ACE','AGI']),R('exi','Extremo interior','Corta hacia dentro y remata.',['REG','REM','TEC','DES','ACE']),R('dba','Delantero de banda','Ataca el área desde la banda.',['REG','REM','VEL','DES','SER'])];
 ROLES_POS.LI=ROLES_POS.LD=_LAT;ROLES_POS.CAI=ROLES_POS.CAD=_CAR;ROLES_POS.MI=ROLES_POS.MD=_INT;ROLES_POS.EI=ROLES_POS.ED=_EXT;
@@ -13897,7 +13897,7 @@ ROLES_POS.MCO=[R('mco','Mediapunta','Busca espacios entre líneas.',['DES','PAS'
 ROLES_POS.DC=[R('dc','Delantero','Remata y define.',['REM','SER','DES','PTO','ACE']),R('ari','Ariete','Gana duelos y juego aéreo.',['CAB','FUE','SLT','REM','VAL']),R('dap','Delantero de apoyo','Conecta con el medio.',['PAS','TRA','TEC','VIS','PTO']),R('caz','Cazagoles','Vive dentro del área.',['DES','ANT','REM','SER','VEL'])];
 const roleOf=(p,code)=>{const L=ROLES_POS[code]||[],id=p.prl&&p.prl[code];return L.find(r=>r.id===id)||L[0]};
 /* abreviatura de cada rol para la tarjeta del campo */
-const ROLE_AB={por:'POR',lib:'LIB',dfc:'CEN',sdp:'SAP',stp:'STO',cob:'COB',lat:'LAT',lof:'LOF',lin:'LIN',car:'CAR',cdf:'CDF',ban:'BAN',int:'INT',iof:'IOF',ext:'EXT',exi:'EXI',dba:'DBA',anc:'ANC',mcd:'MCD',reg:'REG',mc:'MC',b2b:'B2B',org:'ORG',mco:'MCO',eng:'ENG',sdl:'SDL',dc:'DC',ari:'ARI',dap:'DAP',caz:'CAZ'};
+const ROLE_AB={por:'POR',lib:'LIB',dfc:'CEN',sdp:'SAP',stp:'STO',cob:'COB',lat:'LAT',lof:'LOF',lin:'LIN',car:'CAR',cai:'CIN',ban:'BAN',int:'INT',iof:'IOF',ext:'EXT',exi:'EXI',dba:'DBA',anc:'ANC',mcd:'MCD',reg:'REG',mc:'MC',b2b:'B2B',org:'ORG',mco:'MCO',eng:'ENG',sdl:'SDL',dc:'DC',ari:'ARI',dap:'DAP',caz:'CAZ'};
 const roleAbOf=(p,code)=>{const r=roleOf(p,code);return r?(ROLE_AB[r.id]||r.id.toUpperCase()):''};
 function roleRating(p,code,r){
   const a=attrsOf(p),base=slotRating(p,code);
