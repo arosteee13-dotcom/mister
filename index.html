@@ -1275,7 +1275,7 @@ button.pp-pos{display:block;width:100%;border:0;cursor:pointer;font-family:inher
 .subtabs.six{grid-template-columns:repeat(6,1fr);margin:14px 0 4px;gap:2px;padding:3px}
 .subtabs.six button{height:36px}.subtabs.six button svg{width:18px;height:18px}
 .stars{display:inline-flex;gap:3px;margin-top:4px}
-.star{width:24px;height:24px}.star .st-bg{fill:rgba(220,240,228,.1)}.star .st-fg{fill:#f5b942}
+.star{width:24px;height:24px}.star .st-bg{fill:rgba(220,240,228,.1)}.star .st-fg{fill:#f5b942}.star .st-pt{fill:rgba(245,185,66,.28)}.pf-stars.one{grid-template-columns:1fr}.pc-q1{grid-column:1/-1}
 .pf-stars{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 4px 4px}
 .pf-stars small,.pf-c small,.pf-k small{display:block;font:600 10.5px var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .pf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pf-grid.three{grid-template-columns:repeat(3,1fr)}
@@ -23775,7 +23775,7 @@ function playerCard(p,clubId,opts){
       <div class="pc-meta"><span class="pc-age">${p.age}a.</span>${posChips}</div>
       <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${mk?(mk.free?'Libre · '+fmtW(p.wage):'Pide '+fmtM(mk.price)):fmtW(p.wage)}</span>${mor}</div></div>
     <div class="pc-right">
-      <div class="pc-quality"><div><small>Calidad</small><div class="pc-stars">${starsHTML(pStarsOf(p.ovr,clubId,p.val),'pc-star')}</div></div><div><small>Potencial</small><div class="pc-stars">${starsHTML(pStarsOf(pot,clubId,p.val),'pc-star')}</div></div></div>
+      <div class="pc-quality"><div class="pc-q1"><small>Calidad · potencial</small><div class="pc-stars">${starsPotHTML(pStarsOf(p.ovr,clubId,p.val),pStarsPotOf(p,clubId,p.val))}</div></div></div>
       <div class="pc-foot"><div class="pc-role">${mk?(mk.free?(lock?'<span class="pc-club lib">No está interesado</span>':'<span class="pc-club lib">Agente libre</span>'):`<span class="pc-club">${mc?crestHTML(mc,16):''}<span>${esc(mc?mc.short:cname(mk.from))}</span></span>`):roleChip(role)}</div>
       <div class="pc-nat">${flagHTML(nat)} <span>${esc(NATNAME[nat]||'')}</span></div></div></div></button>`;
 }
@@ -25058,9 +25058,24 @@ function starRef(clubId){
 const starValFloor=val=>val>=100?4.5:val>=70?4:val>=40?3.5:val>=20?3:val>=10?2.5:val>=5?2:val>=2?1.5:val>=.8?1:.5;
 function pStarsOf(v,clubId,val){
   const ref=starRef(clubId===undefined&&typeof state!=='undefined'&&state?state.club:clubId);
-  let st=!ref?(v-35)/55*5:3+(v-(ref-3))/5;   /* el 3★ es el jugador medio de la división (algo por debajo del once tipo); 5 GRL por estrella */
+  const abs=(v-35)/11;   /* escala absoluta (GRL 35→0, 90→5) */
+  let st=!ref?abs:.85*(3+(v-(ref-3))/5)+.15*abs;   /* relativa al contexto, con un 15 % de escala absoluta para que una liga floja no regale 5★ */   /* el 3★ es el jugador medio de la división (algo por debajo del once tipo); 5 GRL por estrella */
   if(val!=null)st=Math.max(st,starValFloor(val));
   return clamp(Math.round(st*2)/2,.5,5);
+}
+/* potencial visible: el margen (POT-GRL) solo cuenta mientras le queda crecimiento (100 % hasta los 21, 0 % a los 28); nunca baja de la calidad actual */
+function pStarsPotOf(p,clubId,val){
+  const pot=Math.max(p.pot||p.ovr,p.ovr),rest=clamp((28-(p.age||27))/7,0,1);
+  return Math.max(pStarsOf(p.ovr+(pot-p.ovr)*rest,clubId,val),pStarsOf(p.ovr,clubId,val));
+}
+/* fila única: estrellas rellenas = calidad actual; en contorno = hasta el potencial */
+function starsPotHTML(cur,pot){
+  let out='';
+  for(let i=1;i<=5;i++){
+    const f=n=>n>=i?1:n>=i-.5?.5:0,id='sp'+Math.random().toString(36).slice(2,8);
+    out+=`<svg viewBox="0 0 24 24" class="star"><defs><clipPath id="${id}c"><rect x="0" y="0" width="${f(cur)*24}" height="24"/></clipPath><clipPath id="${id}p"><rect x="0" y="0" width="${f(pot)*24}" height="24"/></clipPath></defs><path d="${STAR_PATH}" class="st-bg"/><path d="${STAR_PATH}" class="st-pt" clip-path="url(#${id}p)"/><path d="${STAR_PATH}" class="st-fg" clip-path="url(#${id}c)"/></svg>`;
+  }
+  return`<span class="stars" title="Actual ${cur} · potencial ${pot} de 5">${out}</span>`;
 }
 function starsHTML(n,cls){
   let out='';
@@ -25092,7 +25107,7 @@ function pmInfo(f){
   const estCol=p.inj>0||p.sus>0?'var(--bad)':p.disc>=3?'var(--amber)':'var(--accent)';
   const cell=(l,v,cls)=>`<div class="pf-c${cls?' '+cls:''}"><small>${l}</small><b>${v}</b></div>`,legs=legStrengthHTML(p);
   const capClub=f.club||(f.ctx==='market'?p.from:null),intl=rGet(REAL_CAPS,'CAPS',p)||(isLaLigaClub(capClub)?{caps:0,goals:0}:null),intlHTML=intl?`<div class="subh">Internacional</div><div class="pf-grid three"><div class="pf-c"><small>Selección</small><b>${flagHTML(nat)} ${esc(NATNAME[nat]||nat)}</b></div><div class="pf-c"><small>Partidos</small><b>${intl.caps}</b></div><div class="pf-c"><small>Goles</small><b>${intl.goals}</b></div></div>`:'';
-  return`<div class="pf-stars"><div><small>Calidad actual</small>${starsHTML(pStarsOf(p.ovr,capClub||undefined,p.val))}</div><div><small>Potencial</small>${starsHTML(pStarsOf(pot,capClub||undefined,p.val),'pot')}</div></div>
+  return`<div class="pf-stars one"><div><small>Calidad actual · potencial</small>${starsPotHTML(pStarsOf(p.ovr,capClub||undefined,p.val),pStarsPotOf(p,capClub||undefined,p.val))}</div></div>
   <div class="subh">Datos</div><div class="pf-grid">${cell('Edad',p.age+' años')}${cell('Altura',heightOf(p)+' cm')}${cell('Peso',weightOf(p)+' kg')}${cell('Nacionalidad',flagHTML(nat)+' '+esc(NATNAME[nat]||nat||'—'),'pf-c-long')}${cell('Pie',footOf(p))}${cell('Forma',Number.isFinite(p.fm)?p.fm.toFixed(1):'—')}</div>${legs}${intlHTML}
   ${pmContract(f)}
   ${own?`<div class="subh">Estado</div><div class="pf-grid three"><div class="pf-c"><small>Energía</small><b style="color:${enCol}">${Math.round(p.en)}%</b></div><div class="pf-c"><small>Moral</small><b style="color:${morCol}">${Math.round(morVal)}%</b></div><div class="pf-c"><small>Estado</small><b style="color:${estCol}">${estado}</b></div></div>`:''}`;
