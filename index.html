@@ -8395,7 +8395,9 @@ function posAttrWeights(p){
 }
 /* media ponderada de sus atributos: es lo que debe reflejar el GRL */
 function attrOverall(p){
-  if(!p.at)return p.ovr;const at=compOf(p);
+  if(!p.at)return p.ovr;
+  if(isFMat(p.at)){const ca=caOf(p);if(ca>0)return 35+ca*.35}   /* GRL a partir de la CA (presupuesto de atributos con costes por rol) */
+  const at=compOf(p);
   const w=posAttrWeights(p),keys=p.pos==='GK'?ATTR_GK:ATTR_OUT;let s=0,tw=0;
   keys.forEach(a=>{if(typeof at[a]==='number'){s+=(w[a]||0)*at[a];tw+=(w[a]||0)}});
   return tw?s/tw:p.ovr;
@@ -13906,6 +13908,22 @@ function roleRating(p,code,r){
   const ref=(POS_STYLE_DEFAULT[code]||[]).map(k=>a&&typeof a[k]==='number'?a[k]:null).filter(v=>v!=null);
   const m=vals.reduce((x,y)=>x+y,0)/vals.length,m0=ref.length?ref.reduce((x,y)=>x+y,0)/ref.length:m;
   return base+(m-m0)*2.5;
+}
+/* ===== CA (calidad actual 1-200) por presupuesto de atributos: cada punto cuesta según el rol (matriz de pesos) ===== */
+const CA_GRP={fis:['ACE','AGI','SLT','EQU','FUE','FFN','RES','VEL'],tof:['CEN','PTO','REG','REM','TEC','TLE','FAL','PEN','COR','SLA','TLB','PAS'],tde:['ENT','MAR','CAB'],men:['AGR','ANT','POS','CON','DEC','DES','DET','TRA','LID','SAC','SER','TAL','VAL','VIS'],por:['ALC','BLO','COM','EXC','PUN','MAN','REF','SAL','LAN','PAT','UCU']};
+const CA_MULT={def:{fis:1,tof:.5,tde:2,men:1.2,por:0},cre:{fis:.9,tof:1.6,tde:.8,men:1.5,por:0},atk:{fis:1.2,tof:2,tde:.5,men:1,por:0},gk:{fis:.6,tof:.3,tde:.5,men:1.5,por:2}};
+const CA_CLASS={POR:'gk',DFC:'def',LI:'def',LD:'def',CAI:'cre',CAD:'cre',MCD:'cre',MC:'cre',MI:'cre',MD:'cre',MCO:'cre',EI:'atk',ED:'atk',DC:'atk'};
+/* calibrado contra el GRL de la base real: CA = CA_FIT[clase][0] + CA_FIT[clase][1]*puntos */
+const CA_FIT={def:[-38.2,5.06],cre:[-37.9,5.2],atk:[-32,5.03],gk:[-51.6,6.18]};
+function caPts(p,code){
+  const a=attrsOf(p),cls=CA_CLASS[code]||'cre',M=CA_MULT[cls];let pts=0,n=0;
+  Object.keys(CA_GRP).forEach(g=>{if(!M[g])return;CA_GRP[g].forEach(k=>{if(typeof a[k]==='number'){pts+=M[g]*Math.pow(a[k]-1,1.3);n+=M[g]}})});
+  return n?pts/n:0;
+}
+function caOf(p,code){
+  code=code||(p.pos==='GK'?'POR':ppOf(p)[0]);
+  const f=CA_FIT[CA_CLASS[code]||'cre'];
+  return clamp(Math.round(f[0]+f[1]*caPts(p,code)),1,200);
 }
 /* hoja de roles del jugador en su posición: estrellas por rol y atributos que pide el rol elegido */
 function roleSheetHTML(i){
@@ -25003,7 +25021,12 @@ function starRef(clubId){
   if(_starRef.k!==k){_starRef.k=k;_starRef.m.clear()}
   const key=c.co+'|'+(c.div||1);
   if(!_starRef.m.has(key)){let v=0;try{v=divAvgOvr(c.co,c.div||1)}catch(e){}_starRef.m.set(key,v)}
-  const r=_starRef.m.get(key);return r>=30?r:0;   /* división vacía o sin plantillas reales: escala absoluta */
+  const dv=_starRef.m.get(key);if(!(dv>=30))return 0;   /* división vacía o sin plantillas reales: escala absoluta */
+  /* referencia mezclada: 50 % nivel de la división + 50 % nivel del once del propio club (un buen jugador en un equipo flojo luce más, y al revés) */
+  const ck='c|'+clubId;
+  if(!_starRef.m.has(ck)){let x=0;try{x=xiAvgOvr(previewTeam(clubId))}catch(e){}_starRef.m.set(ck,x)}
+  const cx=_starRef.m.get(ck);
+  return cx>=30?Math.round(dv*.5+cx*.5):dv;
 }
 /* suelo por valor de mercado (M€): el valor es una señal independiente de calidad; un jugador de 15 M€ no puede quedarse en media estrella */
 const starValFloor=val=>val>=100?4.5:val>=70?4:val>=40?3.5:val>=20?3:val>=10?2.5:val>=5?2:val>=2?1.5:val>=.8?1:.5;
