@@ -679,6 +679,8 @@ button.foc.sel{opacity:1;background:var(--accent-soft);color:var(--accent);box-s
 .pm-name{font:700 23px/1.12 var(--display);letter-spacing:-.025em;margin:14px 0 0}
 .pm-name span{display:block}
 .pm-top{display:flex;align-items:center;gap:14px;margin-top:14px}
+.pm-head-r{display:flex;align-items:center;gap:8px;flex:none}
+.pm-list-btn{padding:6px 12px;font-size:13px}
 .pm-top .pm-name{margin:0;min-width:0}
 .pm-photo{width:64px;height:64px;flex:none;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,#1d2a24,#0b1210);border:1px solid var(--line2)}
 .pm-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -13850,21 +13852,24 @@ function slotRating(p,code){
   return base*fitOf(p,code);
 }
 const slotStars=(p,code)=>pStarsOf(slotRating(p,code),undefined,null);
+/* valor y estrellas del jugador en un puesto con el rol que tiene asignado (el mismo que muestra su hoja) */
+const posRatingOf=(p,code)=>{const L=ROLES_POS[code]||[];return L.length?roleRating(p,code,roleOf(p,code)):slotRating(p,code)};
+const posStarOf=(p,code)=>pStarsOf(posRatingOf(p,code),undefined,null);
 /* hoja de un hueco del once: atributos clave del puesto y la plantilla ordenada de mejor a peor encaje */
 function slotSheetHTML(i){
   const m=me(),sl=FORMS[m.formation],code=sl[i][3],keys=POS_STYLE_DEFAULT[code]||[];
   const cur=m.lineup[i],inXI=new Set(m.lineup.filter(Boolean)),inBn=new Set(m.bench||[]);
-  const list=m.players.map(p=>({p,r:slotRating(p,code),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.r-a.r);
+  const list=m.players.map(p=>({p,r:posRatingOf(p,code),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.r-a.r);
   const nm=k=>FM_NAME[k]||k;
   const at=p=>{const a=attrsOf(p);return keys.map(k=>{const v=a&&a[k];return `<span class="sp-a"><em>${esc(nm(k))}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')};
   const rows=list.map(({p,r,u})=>{
     const where=p.id===cur?'En este puesto':inXI.has(p.id)?'En el once':inBn.has(p.id)?'Convocado':'Reserva';
     const st=u?(p.inj>0?'Lesionado':'Sancionado'):where;
-    return `<button class="sp-row${p.id===cur?' cur':''}${u?' un':''}" data-act="slot-set" data-id="${p.id}" data-i="${i}">
+    return `<div class="sp-row${p.id===cur?' cur':''}${u?' un':''}" data-act="slot-set" data-id="${p.id}" data-i="${i}" role="button" tabindex="0">
       <span class="sp-av">${avatarHTML(p)}</span>
-      <span class="sp-main"><span class="sp-top"><b>${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(slotStars(p,code),'pc-star')}</span></span>
+      <span class="sp-main"><span class="sp-top"><b class="sp-name" data-act="pl" data-id="${p.id}" data-slot="${i}">${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(posStarOf(p,code),'pc-star')}</span></span>
       <span class="sp-sub">${posChip(p)}<small>${p.age}a. · ${st}</small></span>
-      <span class="sp-attrs">${at(p)}</span></span></button>`}).join('');
+      <span class="sp-attrs">${at(p)}</span></span></div>`}).join('');
   return `<h3>${SLOT_NAME[code]||code} <small class="muted-s">${code}</small></h3>
   <p class="muted-s">Atributos clave: ${keys.map(k=>esc(nm(k))).join(', ')||'—'}. Las estrellas son el encaje de cada jugador en este puesto.</p>
   <div class="sp-list">${rows}</div>
@@ -24774,7 +24779,7 @@ function pmFind(){
   return null;
 }
 function openPlayer(id,clubId,view){ui.pm={id,club:clubId||null,view:view||'info',sub:null,cnt:null};renderPM();$('#pm').classList.add('open')}
-function closePlayer(){ui.pm=null;$('#pm').classList.remove('open')}
+function closePlayer(){ui.pm=null;ui.pmSlot=null;$('#pm').classList.remove('open')}
 function posChips(f){
   const p=f.p,pp=ppOf(p),own=(f.ctx==='mine'||f.ctx==='fam')&&pp.length>1;
   return pp.map((l,i)=>{const c=posCol(l),st=`color:${c};${i===0?'background:'+c+'2e':''}`;return own?`<button class="posc${i===0?' main':''}" data-act="set-main" data-p="${l}" style="${st}">${l}</button>`:`<span class="posc${i===0?' main':''}" style="${st}">${l}</span>`}).join('');
@@ -24957,7 +24962,7 @@ function pmPositions(f){
   const rows=strong.map(k=>{
     const lv=posLevel(pf[k]),isMain=k===main;
     const attrs=(POS_STYLE_DEFAULT[k]||[]).map(x=>{const v=at&&at[x];return`<span class="pr-a"><em>${esc(nm(x))}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('');
-    const inner=`<span class="pr-c" style="color:${lv.c};background:${lv.c}${isMain?'38':'14'}">${k}</span><span class="pr-n"><b>${esc(POS_FULL[k]||k)}</b>${isMain?'<i>Principal</i>':''}</span><span class="pr-s">${starsHTML(slotStars(p,k),'pc-star')}</span><span class="pr-at">${attrs}</span>`;
+    const inner=`<span class="pr-c" style="color:${lv.c};background:${lv.c}${isMain?'38':'14'}">${k}</span><span class="pr-n"><b>${esc(POS_FULL[k]||k)}</b>${isMain?'<i>Principal</i>':''}</span><span class="pr-s">${starsHTML(posStarOf(p,k),'pc-star')}</span><span class="pr-at">${attrs}</span>`;
     return own&&!isMain?`<button class="pos-row" data-act="set-main" data-p="${k}" title="Toca para hacerla principal">${inner}</button>`:`<div class="pos-row${isMain?' main':''}">${inner}</div>`;
   }).join('');
   return`<div class="sy-pitch pos-pitch">${posMapDiagram(p)}</div>
@@ -25191,7 +25196,7 @@ function renderPM(){
   const role=pmRole(f),p=f.p,v=ui.pm.view,canAct=!!state&&f.ctx!=='other'&&f.ctx!=='market'&&f.ctx!=='academy',nOff=((p.offers||[]).length?1:0)+((p.loanOffers||[]).length?1:0)+(contractDue(p)?1:0);
   const sur=surname(p.n),given=p.n.slice(0,p.n.length-sur.length).trim();
   const nmHTML=given?`<span>${esc(given)}</span><span>${esc(sur)}</span>`:`<span>${esc(p.n)}</span>`;
-  const head=`<div class="pm-head">${posChip(p)}<div class="pm-tags">${roleChip(role)}${f.ctx==='market'?`<span class="tag">${esc(p.free?'Agente libre':cname(p.from))}</span>`:tagsHTML(p)}</div><button class="cc-x" data-act="pm-close" aria-label="Cerrar">${xIcon}</button></div><div class="pm-top"><div class="pm-photo">${avatarHTML(p)}</div><h3 class="pm-name">${nmHTML}</h3></div>`;
+  const head=`<div class="pm-head">${posChip(p)}<div class="pm-tags">${roleChip(role)}${f.ctx==='market'?`<span class="tag">${esc(p.free?'Agente libre':cname(p.from))}</span>`:tagsHTML(p)}</div><div class="pm-head-r">${ui.pmSlot!=null?'<button class="btn ghost pm-list-btn" data-act="pm-to-list">Listado</button>':''}<button class="cc-x" data-act="pm-close" aria-label="Cerrar">${xIcon}</button></div></div><div class="pm-top"><div class="pm-photo">${avatarHTML(p)}</div><h3 class="pm-name">${nmHTML}</h3></div>`;
   const tabs=`<div class="subtabs six">${PM_TABS.map(([k,ic,l])=>`<button class="${v===k?'on':''}" data-act="pm-tab" data-v="${k}" aria-label="${l}" title="${l}">${ic}</button>`).join('')}</div>`;
   const PM_VIEWS={attr:pmAttrs,stats:pmStats,hist:pmHistoria,mgmt:pmMgmt,pos:pmPositions};
   const showTabs=v!=='neg'&&v!=='act';
@@ -26444,8 +26449,9 @@ const H={
   'act-info'(t){openInfo(t.dataset.title,`<p>${esc(t.dataset.desc)}</p>`)},
   'cv-close'(){closeCV()},
   'ip-close'(){closeInfo()},
-  pl(t){openPlayer(t.dataset.id,t.dataset.club)},
+  pl(t){const s=t.dataset.slot;ui.pmSlot=s!=null?+s:null;openPlayer(t.dataset.id,t.dataset.club)},
   'pm-close'(){closePlayer()},
+  'pm-to-list'(){const i=ui.pmSlot;closePlayer();if(i!=null&&FORMS[me().formation][i])openSheet(slotSheetHTML(i))},
   'pl-act'(t){openPlayer(t.dataset.id,null,'act')},
   'pm-tab'(t){ui.pm.view=t.dataset.v;renderPM()},
   'pm-attr-sub'(t){ui.pm.attrSub=t.dataset.k;renderPM()},
