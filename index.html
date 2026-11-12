@@ -8395,7 +8395,9 @@ function posAttrWeights(p){
 }
 /* media ponderada de sus atributos: es lo que debe reflejar el GRL */
 function attrOverall(p){
-  if(!p.at)return p.ovr;const at=compOf(p);
+  if(!p.at)return p.ovr;
+  if(isFMat(p.at)){const ca=caOf(p);if(ca>0)return 35+ca*.35}   /* GRL a partir de la CA (presupuesto de atributos con costes por rol) */
+  const at=compOf(p);
   const w=posAttrWeights(p),keys=p.pos==='GK'?ATTR_GK:ATTR_OUT;let s=0,tw=0;
   keys.forEach(a=>{if(typeof at[a]==='number'){s+=(w[a]||0)*at[a];tw+=(w[a]||0)}});
   return tw?s/tw:p.ovr;
