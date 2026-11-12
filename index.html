@@ -23775,7 +23775,7 @@ function playerCard(p,clubId,opts){
       <div class="pc-meta"><span class="pc-age">${p.age}a.</span>${posChips}</div>
       <div class="pc-fin"><span>${fmtV(p.val)}</span><span>${mk?(mk.free?'Libre · '+fmtW(p.wage):'Pide '+fmtM(mk.price)):fmtW(p.wage)}</span>${mor}</div></div>
     <div class="pc-right">
-      <div class="pc-quality"><div class="pc-q1"><small>Calidad · potencial</small><div class="pc-stars">${starsPotHTML(pStarsOf(p.ovr,clubId,p.val),pStarsPotOf(p,clubId,p.val))}</div></div></div>
+      <div class="pc-quality"><div><small>Calidad</small><div class="pc-stars">${starsHTML(pStarsOf(p.ovr,clubId,p.val),'pc-star')}</div></div><div><small>Potencial</small><div class="pc-stars">${starsHTML(pStarsPotOf(p,clubId,p.val),'pc-star')}</div></div></div>
       <div class="pc-foot"><div class="pc-role">${mk?(mk.free?(lock?'<span class="pc-club lib">No está interesado</span>':'<span class="pc-club lib">Agente libre</span>'):`<span class="pc-club">${mc?crestHTML(mc,16):''}<span>${esc(mc?mc.short:cname(mk.from))}</span></span>`):roleChip(role)}</div>
       <div class="pc-nat">${flagHTML(nat)} <span>${esc(NATNAME[nat]||'')}</span></div></div></div></button>`;
 }
@@ -25107,7 +25107,7 @@ function pmInfo(f){
   const estCol=p.inj>0||p.sus>0?'var(--bad)':p.disc>=3?'var(--amber)':'var(--accent)';
   const cell=(l,v,cls)=>`<div class="pf-c${cls?' '+cls:''}"><small>${l}</small><b>${v}</b></div>`,legs=legStrengthHTML(p);
   const capClub=f.club||(f.ctx==='market'?p.from:null),intl=rGet(REAL_CAPS,'CAPS',p)||(isLaLigaClub(capClub)?{caps:0,goals:0}:null),intlHTML=intl?`<div class="subh">Internacional</div><div class="pf-grid three"><div class="pf-c"><small>Selección</small><b>${flagHTML(nat)} ${esc(NATNAME[nat]||nat)}</b></div><div class="pf-c"><small>Partidos</small><b>${intl.caps}</b></div><div class="pf-c"><small>Goles</small><b>${intl.goals}</b></div></div>`:'';
-  return`<div class="pf-stars one"><div><small>Calidad actual · potencial</small>${starsPotHTML(pStarsOf(p.ovr,capClub||undefined,p.val),pStarsPotOf(p,capClub||undefined,p.val))}</div></div>
+  return`<div class="pf-stars"><div><small>Calidad actual</small>${starsHTML(pStarsOf(p.ovr,capClub||undefined,p.val))}</div><div><small>Potencial</small>${starsHTML(pStarsPotOf(p,capClub||undefined,p.val),'pot')}</div></div>
   <div class="subh">Datos</div><div class="pf-grid">${cell('Edad',p.age+' años')}${cell('Altura',heightOf(p)+' cm')}${cell('Peso',weightOf(p)+' kg')}${cell('Nacionalidad',flagHTML(nat)+' '+esc(NATNAME[nat]||nat||'—'),'pf-c-long')}${cell('Pie',footOf(p))}${cell('Forma',Number.isFinite(p.fm)?p.fm.toFixed(1):'—')}</div>${legs}${intlHTML}
   ${pmContract(f)}
   ${own?`<div class="subh">Estado</div><div class="pf-grid three"><div class="pf-c"><small>Energía</small><b style="color:${enCol}">${Math.round(p.en)}%</b></div><div class="pf-c"><small>Moral</small><b style="color:${morCol}">${Math.round(morVal)}%</b></div><div class="pf-c"><small>Estado</small><b style="color:${estCol}">${estado}</b></div></div>`:''}`;
