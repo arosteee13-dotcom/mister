@@ -679,6 +679,8 @@ button.foc.sel{opacity:1;background:var(--accent-soft);color:var(--accent);box-s
 .pm-name{font:700 23px/1.12 var(--display);letter-spacing:-.025em;margin:14px 0 0}
 .pm-name span{display:block}
 .pm-top{display:flex;align-items:center;gap:14px;margin-top:14px}
+.pm-head-r{display:flex;align-items:center;gap:8px;flex:none}
+.pm-list-btn{padding:6px 12px;font-size:13px}
 .pm-top .pm-name{margin:0;min-width:0}
 .pm-photo{width:64px;height:64px;flex:none;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,#1d2a24,#0b1210);border:1px solid var(--line2)}
 .pm-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -1085,9 +1087,8 @@ button.offer-h:hover b{color:var(--accent)}
 /* la cara de moral va dentro de la cabecera, no fuera de la tarjeta (se montaba sobre el vecino) */
 .pitch .pp-mor{position:static;left:auto;bottom:auto;width:min(16px,4.6cqw);height:min(16px,4.6cqw);transform:none;justify-self:center}
 .pitch .pp-mor svg,.pitch .pp-mor .mor-face{width:100%;height:100%}
-/* vista compacta del campo: tarjeta más estrecha, sin cara de moral (sigue en la ficha) y nombre más pequeño */
+/* vista compacta del campo: tarjeta más estrecha y nombre más pequeño (la cara de moral se mantiene) */
 .pitch .pp-card{width:min(66px,17.5cqw)}
-.pitch .pp-mor{display:none}
 .pitch .pp-name{padding:2px 2px 3px}
 .pitch .pp-name i{display:none}
 .pitch .pp-name span{font-size:clamp(6.5px,2cqw,8px);-webkit-line-clamp:2}
@@ -1142,6 +1143,11 @@ button.offer-h:hover b{color:var(--accent)}
 .pp-r .inj-badge svg{width:12px;height:12px}
 .pp-mor{position:absolute;left:calc(100% + 2px);bottom:3px;width:16px;height:16px;display:grid;place-items:center;pointer-events:none;z-index:3;filter:drop-shadow(0 1px 2px rgba(0,0,0,.65))}
 .pp-mor .mor-face{display:grid;place-items:center;width:16px;height:16px}
+.pp-mcol{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none}
+.pp-arrow{width:15px;height:13px;padding:0;border:1px solid var(--line2);border-radius:5px;background:rgba(7,16,11,.85);color:var(--accent);font:700 9px/1 var(--ui);display:grid;place-items:center;cursor:pointer}
+.pp-arrow:hover{border-color:var(--accent)}
+.pp-sep{display:inline-block;width:1px;height:.9em;background:currentColor;opacity:.55;margin:0 .35em;vertical-align:middle}
+.pp-ab{font-weight:800;letter-spacing:.02em}
 .pp-mor svg{display:block;width:16px;height:16px}
 .slots5 .pp-mor{left:calc(100% + 1px);bottom:2px;width:13px;height:13px}
 .slots5 .pp-mor .mor-face,.slots5 .pp-mor svg{width:13px;height:13px}
@@ -13850,21 +13856,24 @@ function slotRating(p,code){
   return base*fitOf(p,code);
 }
 const slotStars=(p,code)=>pStarsOf(slotRating(p,code),undefined,null);
+/* valor y estrellas del jugador en un puesto con el rol que tiene asignado (el mismo que muestra su hoja) */
+const posRatingOf=(p,code)=>{const L=ROLES_POS[code]||[];return L.length?roleRating(p,code,roleOf(p,code)):slotRating(p,code)};
+const posStarOf=(p,code)=>pStarsOf(posRatingOf(p,code),undefined,null);
 /* hoja de un hueco del once: atributos clave del puesto y la plantilla ordenada de mejor a peor encaje */
 function slotSheetHTML(i){
   const m=me(),sl=FORMS[m.formation],code=sl[i][3],keys=POS_STYLE_DEFAULT[code]||[];
   const cur=m.lineup[i],inXI=new Set(m.lineup.filter(Boolean)),inBn=new Set(m.bench||[]);
-  const list=m.players.map(p=>({p,r:slotRating(p,code),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.r-a.r);
+  const list=m.players.map(p=>({p,r:posRatingOf(p,code),u:!!unav(p)})).sort((a,b)=>(a.u-b.u)||b.r-a.r);
   const nm=k=>FM_NAME[k]||k;
   const at=p=>{const a=attrsOf(p);return keys.map(k=>{const v=a&&a[k];return `<span class="sp-a"><em>${esc(nm(k))}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')};
   const rows=list.map(({p,r,u})=>{
     const where=p.id===cur?'En este puesto':inXI.has(p.id)?'En el once':inBn.has(p.id)?'Convocado':'Reserva';
     const st=u?(p.inj>0?'Lesionado':'Sancionado'):where;
-    return `<button class="sp-row${p.id===cur?' cur':''}${u?' un':''}" data-act="slot-set" data-id="${p.id}" data-i="${i}">
+    return `<div class="sp-row${p.id===cur?' cur':''}${u?' un':''}" data-act="slot-set" data-id="${p.id}" data-i="${i}" role="button" tabindex="0">
       <span class="sp-av">${avatarHTML(p)}</span>
-      <span class="sp-main"><span class="sp-top"><b>${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(slotStars(p,code),'pc-star')}</span></span>
+      <span class="sp-main"><span class="sp-top"><b class="sp-name" data-act="pl" data-id="${p.id}" data-slot="${i}">${esc(cardName(p.n))}</b><span class="sp-st">${starsHTML(posStarOf(p,code),'pc-star')}</span></span>
       <span class="sp-sub">${posChip(p)}<small>${p.age}a. · ${st}</small></span>
-      <span class="sp-attrs">${at(p)}</span></span></button>`}).join('');
+      <span class="sp-attrs">${at(p)}</span></span></div>`}).join('');
   return `<h3>${SLOT_NAME[code]||code} <small class="muted-s">${code}</small></h3>
   <p class="muted-s">Atributos clave: ${keys.map(k=>esc(nm(k))).join(', ')||'—'}. Las estrellas son el encaje de cada jugador en este puesto.</p>
   <div class="sp-list">${rows}</div>
@@ -13873,20 +13882,23 @@ function slotSheetHTML(i){
 /* ===== ROLES por posición (al estilo FM): cada rol destaca unos atributos ===== */
 const R=(id,n,d,k)=>({id,n,d,k});
 const ROLES_POS={
- POR:[R('por','Portero','Para y despeja lo básico.',['REF','BLO','MAN','COM','POS']),R('lib','Portero líbero','Sale del área y juega con los pies.',['REF','SAL','PAS','DEC','ANT']),R('sal','Portero de salidas','Domina el área y el juego aéreo.',['ALC','MAN','SAL','COM','REF'])],
- DFC:[R('dfc','Central','Defiende su zona sin riesgos.',['MAR','ENT','CAB','POS','FUE']),R('sdp','Central con salida','Saca el balón jugado desde atrás.',['PAS','TEC','PTO','MAR','POS']),R('stp','Stopper','Sale a cortar al delantero.',['ENT','AGR','VAL','CAB','FUE']),R('cob','Central de cobertura','Se queda atrás y corrige.',['ANT','POS','VEL','MAR','CON'])],
+ POR:[R('por','Portero','Para y despeja lo básico.',['REF','BLO','MAN','COM','POS']),R('lib','Portero líbero','Sale del área y juega con los pies.',['PAS','TEC','VIS','DEC','REF'])],
+ DFC:[R('sdp','Central con salida','Saca el balón jugado desde atrás.',['PAS','TEC','PTO','MAR','POS']),R('stp','Stopper','Sale a cortar al delantero.',['ENT','AGR','VAL','CAB','FUE']),R('cob','Central de cobertura','Se queda atrás y corrige.',['ANT','POS','VEL','MAR','CON'])],
  LI:null,LD:null,CAI:null,CAD:null,MCD:null,MC:null,MCO:null,MI:null,MD:null,EI:null,ED:null,DC:null
 };
 const _LAT=[R('lat','Lateral','Equilibrado entre defender y subir.',['MAR','ENT','VEL','RES','POS']),R('lof','Lateral ofensivo','Sube hasta línea de fondo y centra.',['CEN','VEL','RES','REG','ACE']),R('lin','Lateral interior','Se mete al centro a construir.',['PAS','TEC','POS','TRA','ENT'])];
-const _CAR=[R('car','Carrilero','Recorre toda la banda.',['CEN','VEL','RES','REG','SAC']),R('cdf','Carrilero defensivo','Prioriza cerrar su banda.',['ENT','MAR','RES','SAC','POS'])];
+const _CAR=[R('car','Carrilero','Recorre la banda, centra y crea desde fuera.',['PAS','VIS','TEC','REG','SAC']),R('cai','Carrilero interior','Se mete por dentro desde la banda para rematar y asociarse.',['DES','REM','TEC','PAS','VIS'])];
 const _INT=[R('ban','Mediocentro de banda','Abre el juego y centra.',['CEN','PAS','RES','SAC','TRA']),R('int','Interior','Llega al área desde dentro.',['PAS','SAC','TRA','RES','DES']),R('iof','Interior ofensivo','Se une al ataque y regatea.',['DES','TEC','REG','REM','ACE'])];
-const _EXT=[R('ext','Extremo','Gana la línea de fondo y centra.',['CEN','REG','VEL','ACE','AGI']),R('exi','Extremo interior','Corta hacia dentro y remata.',['REG','REM','TEC','DES','ACE']),R('dba','Delantero de banda','Ataca el área desde la banda.',['REG','REM','VEL','DES','SER'])];
+const _EXT=[R('ext','Extremo','Gana la línea de fondo y centra.',['CEN','REG','VEL','ACE','AGI']),R('exi','Extremo interior','Corta hacia dentro y remata.',['REG','REM','TEC','DES','ACE']),R('cre','Extremo creativo','Se asocia en ataque y crea desde la banda.',['PAS','VIS','TEC','TRA','DES']),R('dba','Delantero de banda','Busca el gol desde la banda, dentro del área.',['REM','DES','VEL','SER','ANT'])];
 ROLES_POS.LI=ROLES_POS.LD=_LAT;ROLES_POS.CAI=ROLES_POS.CAD=_CAR;ROLES_POS.MI=ROLES_POS.MD=_INT;ROLES_POS.EI=ROLES_POS.ED=_EXT;
-ROLES_POS.MCD=[R('anc','Ancla','Protege a la defensa sin moverse.',['POS','MAR','ANT','ENT','SAC']),R('mcd','Mediocentro defensivo','Recupera y distribuye.',['ENT','MAR','PAS','SAC','TRA']),R('reg','Regista','Dirige el juego desde atrás.',['PAS','VIS','TEC','DEC','SER'])];
-ROLES_POS.MC=[R('mc','Centrocampista','Trabaja en las dos áreas.',['PAS','ENT','TRA','SAC','RES']),R('b2b','Box to box','Llega de área a área.',['RES','SAC','DES','PAS','FUE']),R('org','Organizador','Marca el ritmo del equipo.',['PAS','VIS','DEC','TEC','SER'])];
-ROLES_POS.MCO=[R('mco','Mediapunta','Busca espacios entre líneas.',['DES','PAS','TEC','REG','SER']),R('eng','Enganche','Crea juego desde su zona.',['VIS','PAS','TEC','DEC','REG']),R('sdl','Segundo delantero','Se suma al remate.',['REM','DES','ACE','SER','ANT'])];
-ROLES_POS.DC=[R('dc','Delantero','Remata y define.',['REM','SER','DES','PTO','ACE']),R('ari','Ariete','Gana duelos y juego aéreo.',['CAB','FUE','SLT','REM','VAL']),R('dap','Delantero de apoyo','Conecta con el medio.',['PAS','TRA','TEC','VIS','PTO']),R('caz','Cazagoles','Vive dentro del área.',['DES','ANT','REM','SER','VEL'])];
+ROLES_POS.MCD=[R('anc','Ancla','Protege a la defensa sin moverse.',['POS','MAR','ANT','ENT','SAC']),R('mcd','Mediocentro recuperador','Recupera el balón y lo reparte.',['ENT','MAR','PAS','SAC','TRA']),R('reg','Mediocentro organizador','Dirige el juego desde atrás.',['PAS','VIS','TEC','DEC','SER'])];
+ROLES_POS.MC=[R('mc','Centrocampista','Trabaja en las dos áreas.',['PAS','ENT','TRA','SAC','RES']),R('b2b','Box to box','Llega de área a área.',['RES','SAC','DES','PAS','FUE']),R('org','Organizador','Marca el ritmo del equipo.',['PAS','VIS','DEC','TEC','SER']),R('mez','Mezzala','Se mete entre líneas y llega al área para rematar.',['DES','REM','TEC','VIS','PAS'])];
+ROLES_POS.MCO=[R('mco','Mediapunta','Busca espacios entre líneas.',['DES','PAS','TEC','REG','SER']),R('sdl','Segundo delantero','Se suma al remate.',['REM','DES','ACE','SER','ANT'])];
+ROLES_POS.DC=[R('dc','Delantero móvil','Se mueve por todo el frente y busca espacios.',['DES','REM','ACE','TEC','SER']),R('ari','Delantero boya','Recibe de espaldas, aguanta el balón y juega para sus compañeros.',['FUE','VAL','PTO','PAS','CAB']),R('dap','Falso nueve','Baja a conectar con el medio.',['PAS','TRA','TEC','VIS','PTO']),R('caz','Cazagoles','Vive dentro del área.',['DES','ANT','REM','SER','VEL'])];
 const roleOf=(p,code)=>{const L=ROLES_POS[code]||[],id=p.prl&&p.prl[code];return L.find(r=>r.id===id)||L[0]};
+/* abreviatura de cada rol para la tarjeta del campo */
+const ROLE_AB={por:'POR',lib:'LIB',dfc:'CEN',sdp:'SAP',stp:'STO',cob:'COB',lat:'LAT',lof:'LOF',lin:'LIN',car:'CAR',cai:'CIN',ban:'BAN',int:'INT',iof:'IOF',ext:'EXT',exi:'EXI',cre:'CRE',dba:'DBA',anc:'ANC',mcd:'REC',reg:'MOR',mc:'MC',b2b:'B2B',org:'ORG',mez:'MEZ',mco:'MCO',sdl:'SDL',dc:'MOV',ari:'BOY',dap:'FN9',caz:'CAZ'};
+const roleAbOf=(p,code)=>{const r=roleOf(p,code);return r?(ROLE_AB[r.id]||r.id.toUpperCase()):''};
 function roleRating(p,code,r){
   const a=attrsOf(p),base=slotRating(p,code);
   const vals=r.k.map(k=>a&&typeof a[k]==='number'?a[k]:null).filter(v=>v!=null);
@@ -13900,8 +13912,8 @@ function roleSheetHTML(i){
   const m=me(),code=FORMS[m.formation][i][3],p=m.players.find(x=>x.id===m.lineup[i]);
   if(!p)return slotSheetHTML(i);
   const L=ROLES_POS[code]||[],cur=roleOf(p,code),a=attrsOf(p);
-  const rows=L.map(r=>{
-    const on=r.id===cur.id,st=starsHTML(pStarsOf(roleRating(p,code,r),undefined,null),'pc-star');
+  const rows=L.map(r=>({r,v:roleRating(p,code,r)})).sort((x,y)=>y.v-x.v).map(({r,v})=>{
+    const on=r.id===cur.id,st=starsHTML(pStarsOf(v,undefined,null),'pc-star');
     const det=on?`<span class="rl-d">${esc(r.d)}</span><span class="rl-at">${r.k.map(k=>{const v=a&&a[k];return `<span><em>${esc(FM_NAME[k]||k)}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('')}</span>`:'';
     return `<button class="rl-row${on?' on':''}" data-act="role-set" data-i="${i}" data-r="${r.id}"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span>${det}</button>`;
   }).join('');
@@ -13916,7 +13928,8 @@ function tacticsView(o){
   const token=(p,label,attrs,cls,style,slotI)=>{
     const st=o.liveInfo?'':(p.inj>0?injuryBadge(p):'')+(p.sus>0?suspensionBadge(p):'');
     const en=Math.round(p.en==null?100:p.en),ec=stamColor(p.en);
-    return`<div class="pp ${cls}"${style?` style="${style}"`:''}><div class="pp-card"><div class="pp-top"><span class="pp-en" style="color:${ec}" title="Energía ${en}%">${heart}<b>${en}%</b></span><button class="pc" ${attrs} style="--rc:${ratingColor(p.ovr)}" aria-label="${esc(p.n)}">${tokAv(p)}</button><span class="pp-mor" title="Moral ${Math.round(morOf(p))}%">${moraleFaceHTML(p)}</span></div>${o.slotAct&&slotI!=null?`<button class="pp-pos" style="background:${posCol(label)};color:#07100b" data-act="role-open" data-i="${slotI}" aria-label="Rol de ${esc(p.n)} en ${label}">${label}</button>`:`<div class="pp-pos" style="background:${posCol(label)};color:#07100b">${label}</div>`}<div class="pp-stars" title="Calidad actual">${starsHTML(pStarsOf(p.ovr,undefined,p.val),"pc-star")}</div><button class="pp-name" ${o.slotAct&&slotI!=null?`data-act="slot-pick" data-i="${slotI}" aria-label="Cambiar a ${esc(p.n)}"`:`data-act="pl" data-id="${p.id}" aria-label="Ver ficha de ${esc(p.n)}"`} title="${esc(p.n)}"><i>i</i><span>${esc(p.n)}</span></button>${st?`<span class="pp-st">${st}</span>`:''}${o.liveInfo?o.liveInfo(p):''}</div></div>`;
+    const rab=o.slotAct&&slotI!=null&&sl[slotI]?roleAbOf(p,sl[slotI][3]):'';
+    return`<div class="pp ${cls}"${style?` style="${style}"`:''}><div class="pp-card"><div class="pp-top"><span class="pp-en" style="color:${ec}" title="Energía ${en}%">${heart}<b>${en}%</b></span><button class="pc" ${attrs} style="--rc:${ratingColor(p.ovr)}" aria-label="${esc(p.n)}">${tokAv(p)}</button><span class="pp-mcol">${o.slotAct&&slotI!=null?`<button class="pp-arrow" data-act="slot-pick" data-i="${slotI}" aria-label="Elegir jugador en ${label}" title="Elegir jugador en ${label}">▾</button>`:''}<span class="pp-mor" title="Moral ${Math.round(morOf(p))}%">${moraleFaceHTML(p)}</span></span></div>${o.slotAct&&slotI!=null?`<button class="pp-pos" style="background:${posCol(label)};color:#07100b" data-act="role-open" data-i="${slotI}" aria-label="Rol de ${esc(p.n)} en ${label}">${label}${rab?`<i class="pp-sep"></i><b class="pp-ab">${rab}</b>`:''}</button>`:`<div class="pp-pos" style="background:${posCol(label)};color:#07100b">${label}</div>`}<div class="pp-stars" title="Calidad actual">${starsHTML(pStarsOf(p.ovr,undefined,p.val),"pc-star")}</div><button class="pp-name" ${o.slotAct&&slotI!=null?`data-act="pl" data-id="${p.id}" data-slot="${slotI}" aria-label="Ver ficha de ${esc(p.n)}"`:`data-act="pl" data-id="${p.id}" aria-label="Ver ficha de ${esc(p.n)}"`} title="${esc(p.n)}"><i>i</i><span>${esc(p.n)}</span></button>${st?`<span class="pp-st">${st}</span>`:''}${o.liveInfo?o.liveInfo(p):''}</div></div>`;
   };
   const sy=styleEffect(t),SY=STYLES[sy.id],chosen=t.style&&STYLES[t.style]?t.style:'auto';
   const styleDrop=`<div class="fdrop"><button class="fbtn" data-act="${o.styleAct}" aria-haspopup="dialog">Sistema <em>${chosen==='auto'?'Automático':SY.n}</em></button></div>`;
@@ -24774,7 +24787,7 @@ function pmFind(){
   return null;
 }
 function openPlayer(id,clubId,view){ui.pm={id,club:clubId||null,view:view||'info',sub:null,cnt:null};renderPM();$('#pm').classList.add('open')}
-function closePlayer(){ui.pm=null;$('#pm').classList.remove('open')}
+function closePlayer(){ui.pm=null;ui.pmSlot=null;$('#pm').classList.remove('open')}
 function posChips(f){
   const p=f.p,pp=ppOf(p),own=(f.ctx==='mine'||f.ctx==='fam')&&pp.length>1;
   return pp.map((l,i)=>{const c=posCol(l),st=`color:${c};${i===0?'background:'+c+'2e':''}`;return own?`<button class="posc${i===0?' main':''}" data-act="set-main" data-p="${l}" style="${st}">${l}</button>`:`<span class="posc${i===0?' main':''}" style="${st}">${l}</span>`}).join('');
@@ -24957,7 +24970,7 @@ function pmPositions(f){
   const rows=strong.map(k=>{
     const lv=posLevel(pf[k]),isMain=k===main;
     const attrs=(POS_STYLE_DEFAULT[k]||[]).map(x=>{const v=at&&at[x];return`<span class="pr-a"><em>${esc(nm(x))}</em><b style="color:${v?fmColor(v):'var(--dim)'}">${v==null?'-':v}</b></span>`}).join('');
-    const inner=`<span class="pr-c" style="color:${lv.c};background:${lv.c}${isMain?'38':'14'}">${k}</span><span class="pr-n"><b>${esc(POS_FULL[k]||k)}</b>${isMain?'<i>Principal</i>':''}</span><span class="pr-s">${starsHTML(slotStars(p,k),'pc-star')}</span><span class="pr-at">${attrs}</span>`;
+    const inner=`<span class="pr-c" style="color:${lv.c};background:${lv.c}${isMain?'38':'14'}">${k}</span><span class="pr-n"><b>${esc(POS_FULL[k]||k)}</b>${isMain?'<i>Principal</i>':''}</span><span class="pr-s">${starsHTML(posStarOf(p,k),'pc-star')}</span><span class="pr-at">${attrs}</span>`;
     return own&&!isMain?`<button class="pos-row" data-act="set-main" data-p="${k}" title="Toca para hacerla principal">${inner}</button>`:`<div class="pos-row${isMain?' main':''}">${inner}</div>`;
   }).join('');
   return`<div class="sy-pitch pos-pitch">${posMapDiagram(p)}</div>
@@ -24969,13 +24982,15 @@ function pmPositions(f){
 function posRolesHTML(p,dflt){
   const sel=ui.posSel&&ui.posSel.id===p.id?ui.posSel.code:dflt,L=ROLES_POS[sel]||[];
   const pf=pfOf(p),fam=pf[sel]||0,lv=posLevel(fam),comp=fam>=10;
+  const a=attrsOf(p),nm=k=>FM_NAME[k]||k;
   const rows=L.map(r=>({r,v:comp?roleRating(p,sel,r):0}));
   if(comp)rows.sort((x,y)=>y.v-x.v);
   const html=rows.map(({r,v})=>{
     const st=comp?starsHTML(pStarsOf(v,undefined,null),'pc-star'):starsHTML(0,'pc-star');
-    return `<div class="pos-row"><span class="pr-n"><b>${esc(r.n)}</b></span><span class="pr-s">${st}</span></div>`;
+    const attrs=r.k.map(k=>{const x=a&&a[k];return `<span><em>${esc(nm(k))}</em><b style="color:${x?fmColor(x):'var(--dim)'}">${x==null?'-':x}</b></span>`}).join('');
+    return `<div class="rl-row"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span><span class="rl-d">${esc(r.d)}</span><span class="rl-at">${attrs}</span></div>`;
   }).join('');
-  return `<div class="pos-top-h"><span>${esc(POS_FULL[sel]||sel)}</span><small>${lv.l} (${fam}/20)</small></div><div class="pos-rows">${html||'<span class="muted-s">—</span>'}</div>`;
+  return `<div class="pos-top-h"><span>${esc(POS_FULL[sel]||sel)}</span><small>${lv.l} (${fam}/20)</small></div><div class="rl-list">${html||'<span class="muted-s">—</span>'}</div>`;
 }
 /* ---------- estrellas (0,5 a 5) de calidad actual y potencial ---------- */
 const STAR_PATH='M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z';
@@ -25189,7 +25204,7 @@ function renderPM(){
   const role=pmRole(f),p=f.p,v=ui.pm.view,canAct=!!state&&f.ctx!=='other'&&f.ctx!=='market'&&f.ctx!=='academy',nOff=((p.offers||[]).length?1:0)+((p.loanOffers||[]).length?1:0)+(contractDue(p)?1:0);
   const sur=surname(p.n),given=p.n.slice(0,p.n.length-sur.length).trim();
   const nmHTML=given?`<span>${esc(given)}</span><span>${esc(sur)}</span>`:`<span>${esc(p.n)}</span>`;
-  const head=`<div class="pm-head">${posChip(p)}<div class="pm-tags">${roleChip(role)}${f.ctx==='market'?`<span class="tag">${esc(p.free?'Agente libre':cname(p.from))}</span>`:tagsHTML(p)}</div><button class="cc-x" data-act="pm-close" aria-label="Cerrar">${xIcon}</button></div><div class="pm-top"><div class="pm-photo">${avatarHTML(p)}</div><h3 class="pm-name">${nmHTML}</h3></div>`;
+  const head=`<div class="pm-head">${posChip(p)}<div class="pm-tags">${roleChip(role)}${f.ctx==='market'?`<span class="tag">${esc(p.free?'Agente libre':cname(p.from))}</span>`:tagsHTML(p)}</div><div class="pm-head-r">${ui.pmSlot!=null?'<button class="btn ghost pm-list-btn" data-act="pm-to-list">Listado</button>':''}<button class="cc-x" data-act="pm-close" aria-label="Cerrar">${xIcon}</button></div></div><div class="pm-top"><div class="pm-photo">${avatarHTML(p)}</div><h3 class="pm-name">${nmHTML}</h3></div>`;
   const tabs=`<div class="subtabs six">${PM_TABS.map(([k,ic,l])=>`<button class="${v===k?'on':''}" data-act="pm-tab" data-v="${k}" aria-label="${l}" title="${l}">${ic}</button>`).join('')}</div>`;
   const PM_VIEWS={attr:pmAttrs,stats:pmStats,hist:pmHistoria,mgmt:pmMgmt,pos:pmPositions};
   const showTabs=v!=='neg'&&v!=='act';
@@ -26442,8 +26457,9 @@ const H={
   'act-info'(t){openInfo(t.dataset.title,`<p>${esc(t.dataset.desc)}</p>`)},
   'cv-close'(){closeCV()},
   'ip-close'(){closeInfo()},
-  pl(t){openPlayer(t.dataset.id,t.dataset.club)},
+  pl(t){const s=t.dataset.slot;ui.pmSlot=s!=null?+s:null;if(ui.pmSlot!=null)$('#sheet').classList.remove('open');openPlayer(t.dataset.id,t.dataset.club)},
   'pm-close'(){closePlayer()},
+  'pm-to-list'(){const i=ui.pmSlot;closePlayer();if(i!=null&&FORMS[me().formation][i])openSheet(slotSheetHTML(i))},
   'pl-act'(t){openPlayer(t.dataset.id,null,'act')},
   'pm-tab'(t){ui.pm.view=t.dataset.v;renderPM()},
   'pm-attr-sub'(t){ui.pm.attrSub=t.dataset.k;renderPM()},
