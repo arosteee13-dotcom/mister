@@ -13882,7 +13882,7 @@ function slotSheetHTML(i){
 /* ===== ROLES por posición (al estilo FM): cada rol destaca unos atributos ===== */
 const R=(id,n,d,k)=>({id,n,d,k});
 const ROLES_POS={
- POR:[R('por','Portero','Para y despeja lo básico.',['REF','BLO','MAN','COM','POS']),R('lib','Portero líbero','Sale del área y juega con los pies.',['REF','SAL','PAS','DEC','ANT']),R('sal','Portero de salidas','Domina el área y el juego aéreo.',['ALC','MAN','SAL','COM','REF'])],
+ POR:[R('por','Portero','Para y despeja lo básico.',['REF','BLO','MAN','COM','POS']),R('toq','Portero con toque de pies','Construye desde atrás con el balón en los pies.',['PAS','TEC','VIS','DEC','REF']),R('lib','Portero líbero','Sale del área y juega con los pies.',['REF','SAL','PAS','DEC','ANT']),R('sal','Portero de salidas','Domina el área y el juego aéreo.',['ALC','MAN','SAL','COM','REF'])],
  DFC:[R('dfc','Central','Defiende su zona sin riesgos.',['MAR','ENT','CAB','POS','FUE']),R('sdp','Central con salida','Saca el balón jugado desde atrás.',['PAS','TEC','PTO','MAR','POS']),R('stp','Stopper','Sale a cortar al delantero.',['ENT','AGR','VAL','CAB','FUE']),R('cob','Central de cobertura','Se queda atrás y corrige.',['ANT','POS','VEL','MAR','CON'])],
  LI:null,LD:null,CAI:null,CAD:null,MCD:null,MC:null,MCO:null,MI:null,MD:null,EI:null,ED:null,DC:null
 };
@@ -13897,7 +13897,7 @@ ROLES_POS.MCO=[R('mco','Mediapunta','Busca espacios entre líneas.',['DES','PAS'
 ROLES_POS.DC=[R('dc','Delantero','Remata y define.',['REM','SER','DES','PTO','ACE']),R('ari','Ariete','Gana duelos y juego aéreo.',['CAB','FUE','SLT','REM','VAL']),R('dap','Delantero de apoyo','Conecta con el medio.',['PAS','TRA','TEC','VIS','PTO']),R('caz','Cazagoles','Vive dentro del área.',['DES','ANT','REM','SER','VEL'])];
 const roleOf=(p,code)=>{const L=ROLES_POS[code]||[],id=p.prl&&p.prl[code];return L.find(r=>r.id===id)||L[0]};
 /* abreviatura de cada rol para la tarjeta del campo */
-const ROLE_AB={por:'POR',lib:'LIB',sal:'SAL',dfc:'CEN',sdp:'SAP',stp:'STO',cob:'COB',lat:'LAT',lof:'LOF',lin:'LIN',car:'CAR',cdf:'CDF',ban:'BAN',int:'INT',iof:'IOF',ext:'EXT',exi:'EXI',dba:'DBA',anc:'ANC',mcd:'MCD',reg:'REG',mc:'MC',b2b:'B2B',org:'ORG',mco:'MCO',eng:'ENG',sdl:'SDL',dc:'DC',ari:'ARI',dap:'DAP',caz:'CAZ'};
+const ROLE_AB={por:'POR',toq:'TOQ',lib:'LIB',sal:'SAL',dfc:'CEN',sdp:'SAP',stp:'STO',cob:'COB',lat:'LAT',lof:'LOF',lin:'LIN',car:'CAR',cdf:'CDF',ban:'BAN',int:'INT',iof:'IOF',ext:'EXT',exi:'EXI',dba:'DBA',anc:'ANC',mcd:'MCD',reg:'REG',mc:'MC',b2b:'B2B',org:'ORG',mco:'MCO',eng:'ENG',sdl:'SDL',dc:'DC',ari:'ARI',dap:'DAP',caz:'CAZ'};
 const roleAbOf=(p,code)=>{const r=roleOf(p,code);return r?(ROLE_AB[r.id]||r.id.toUpperCase()):''};
 function roleRating(p,code,r){
   const a=attrsOf(p),base=slotRating(p,code);
