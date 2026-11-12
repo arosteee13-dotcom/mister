@@ -24987,10 +24987,10 @@ function posRolesHTML(p,dflt){
   if(comp)rows.sort((x,y)=>y.v-x.v);
   const html=rows.map(({r,v})=>{
     const st=comp?starsHTML(pStarsOf(v,undefined,null),'pc-star'):starsHTML(0,'pc-star');
-    const attrs=r.k.map(k=>{const x=a&&a[k];return `<span class="pr-a"><em>${esc(nm(k))}</em><b style="color:${x?fmColor(x):'var(--dim)'}">${x==null?'-':x}</b></span>`}).join('');
-    return `<div class="pos-row"><span class="pr-n"><b>${esc(r.n)}</b><i>${esc(r.d)}</i></span><span class="pr-s">${st}</span><span class="pr-at">${attrs}</span></div>`;
+    const attrs=r.k.map(k=>{const x=a&&a[k];return `<span><em>${esc(nm(k))}</em><b style="color:${x?fmColor(x):'var(--dim)'}">${x==null?'-':x}</b></span>`}).join('');
+    return `<div class="rl-row"><span class="rl-top"><span class="rl-rd"></span><b>${esc(r.n)}</b><span class="rl-st">${st}</span></span><span class="rl-d">${esc(r.d)}</span><span class="rl-at">${attrs}</span></div>`;
   }).join('');
-  return `<div class="pos-top-h"><span>${esc(POS_FULL[sel]||sel)}</span><small>${lv.l} (${fam}/20)</small></div><div class="pos-rows">${html||'<span class="muted-s">—</span>'}</div>`;
+  return `<div class="pos-top-h"><span>${esc(POS_FULL[sel]||sel)}</span><small>${lv.l} (${fam}/20)</small></div><div class="rl-list">${html||'<span class="muted-s">—</span>'}</div>`;
 }
 /* ---------- estrellas (0,5 a 5) de calidad actual y potencial ---------- */
 const STAR_PATH='M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z';
