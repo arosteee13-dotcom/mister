@@ -26449,7 +26449,7 @@ const H={
   'act-info'(t){openInfo(t.dataset.title,`<p>${esc(t.dataset.desc)}</p>`)},
   'cv-close'(){closeCV()},
   'ip-close'(){closeInfo()},
-  pl(t){const s=t.dataset.slot;ui.pmSlot=s!=null?+s:null;openPlayer(t.dataset.id,t.dataset.club)},
+  pl(t){const s=t.dataset.slot;ui.pmSlot=s!=null?+s:null;if(ui.pmSlot!=null)$('#sheet').classList.remove('open');openPlayer(t.dataset.id,t.dataset.club)},
   'pm-close'(){closePlayer()},
   'pm-to-list'(){const i=ui.pmSlot;closePlayer();if(i!=null&&FORMS[me().formation][i])openSheet(slotSheetHTML(i))},
   'pl-act'(t){openPlayer(t.dataset.id,null,'act')},
