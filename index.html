@@ -17182,7 +17182,8 @@ function positionTick(){
     /* jugar partidos mientras entrena acelera el aprendizaje */
     if(p.tr.ap0==null)p.tr.ap0=p.ap||0;
     const played=(p.ap||0)-p.tr.ap0;
-    if(played>0){p.tr.left=Math.max(1,p.tr.left-Math.min(2,played));p.tr.ap0=p.ap||0}
+    /* como en FM, un partido suelto en un puesto que no domina no le da familiaridad: solo ayuda cuando ya es Competente (10+) */
+    if(played>0){if((pfOf(p)[p.tr.pos]||0)>=10)p.tr.left=Math.max(1,p.tr.left-1);p.tr.ap0=p.ap||0}
     const from=p.tr.from!=null?p.tr.from:(pfOf(p)[p.tr.pos]||1);
     p.tr.left--;
     if(p.tr.left<=0){
