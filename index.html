@@ -1693,7 +1693,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
 @keyframes sl-rot{to{transform:rotate(360deg)}}
 #action-loader{position:fixed;inset:0;z-index:9990;display:flex;align-items:center;justify-content:center;background:rgba(11,19,16,.35);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease .15s,visibility .18s ease .15s}
 #action-loader.show{opacity:1;visibility:visible}
-#action-loader .sl-spin{width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,.22);border-top-color:#fff;animation:sl-rot .8s linear infinite}
+#action-loader{transition:opacity .12s ease,visibility .12s ease}#action-loader .al-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 26px;border-radius:18px;background:var(--bg2,#14211b);border:1px solid var(--line,rgba(220,240,228,.14));box-shadow:0 12px 40px rgba(0,0,0,.45);text-align:center;max-width:78vw}#action-loader .al-card b{font:700 15px var(--ui)}#action-loader .al-card small{font:500 12px var(--ui);color:var(--muted)}#action-loader .sl-spin{width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,.22);border-top-color:#fff;animation:sl-rot .8s linear infinite}
 
 /* ===== partido en directo ===== */
 .live{position:fixed;inset:0;z-index:120;display:none;flex-direction:column;background:radial-gradient(120% 80% at 50% 0%,#12241a,#080d0b 70%);color:var(--text);overflow:hidden}
@@ -1856,7 +1856,7 @@ details.rd,.rd{padding:12px 0;border-top:1px solid var(--line)}
   <div class="boot-word"><b>Míster</b><small>MANAGER</small></div>
 </div>
 <div id="season-loader"><div class="sl-spin"></div><div class="sl-txt">Preparando temporada…</div></div>
-<div id="action-loader"><div class="sl-spin"></div></div>
+<div id="action-loader"><div class="al-card"><div class="sl-spin"></div><b>Simulando jornada…</b><small>Calculando resultados y actualizando datos</small></div></div>
 <div id="app">
   <div class="ambient"></div>
   <!-- Portada -->
@@ -26673,7 +26673,9 @@ const H={
     if(preTalkGate('play'))return;
     const al=document.getElementById('action-loader');
     if(al)al.classList.add('show');
-    setTimeout(()=>{
+    const t0=Date.now();
+    /* dos fotogramas para que el modal llegue a pintarse antes del cálculo pesado */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{
     try{
       flushWorld();
       const bad=lineupIssues(me());
@@ -26706,9 +26708,11 @@ const H={
       try{renderGame()}catch(e){}
       try{toast('No se pudo jugar el partido. Vuelve a intentarlo. ('+errText(err).slice(0,120)+')')}catch(e){}
     }finally{
-      if(al)al.classList.remove('show');
+      /* se queda visible al menos 600 ms para que no parpadee */
+      const left=Math.max(0,600-(Date.now()-t0));
+      setTimeout(()=>{if(al)al.classList.remove('show')},left);
     }
-    },0);
+    },0)));
   },
   'talk-open'(){ui.talkThen=null;talkSheet()},
   'talk-close'(){ui.talkThen=null;closeTalkPage()},
