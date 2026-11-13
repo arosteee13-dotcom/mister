@@ -18521,6 +18521,11 @@ function applyModeNames(){
   if(!fictOn())return;
   CLUB_REAL={};STAD_REAL={};
   Object.keys(CLUBBY).forEach(id=>{const c=CLUBBY[id];CLUB_REAL[id]={n:c.name,s:c.short};const w=fictWord(id,'n');c.name=(((c.city||'').trim()||c.name)+' '+w).trim();c.short=w.slice(0,3).toUpperCase();});
+  /* siglas únicas: si dos clubes comparten las tres primeras letras, el segundo toma otras letras de su palabra */
+  {const used=new Set();Object.keys(CLUBBY).forEach(id=>{const c=CLUBBY[id],w=fictWord(id,'n').toUpperCase().replace(/[^A-ZÁÉÍÓÚÑÜ]/g,'');let sh=c.short;
+    if(used.has(sh)){const cand=[];for(let i=1;i<w.length;i++)for(let j=i+1;j<w.length;j++)cand.push(w[0]+w[i]+w[j]);const cc=((c.city||'').toUpperCase().replace(/[^A-ZÁÉÍÓÚÑÜ]/g,''));if(cc.length>=2)for(let i=1;i<cc.length;i++)cand.push(w[0]+cc[0]+cc[i]);sh=cand.find(x=>!used.has(x))||sh;
+      for(let n=2;used.has(sh);n++)sh=sh.slice(0,2)+n}
+    used.add(sh);c.short=sh;})}
   Object.keys(STADIUM).forEach(id=>{STAD_REAL[id]=STADIUM[id];STADIUM[id]='Estadio '+fictWord(id,'s')+(CLUBBY[id]?' '+CLUBBY[id].short:'')});
   FICT_APPLIED=true;
 }
@@ -25334,7 +25339,10 @@ function takeControl(){
   const id=ui.club;if(!id)return;
   closePlayer();closeCV();
   resetClubOverrides();   /* por si quedó algún club personalizado de otra partida cargada antes en esta misma pestaña */
-  newGame(ui.slot,id);saveGame();closeCard();
+  newGame(ui.slot,id);
+  /* el once y el banquillo llegan ya hechos: antes la pizarra aparecía vacía y había que pulsar «Once automático» */
+  try{const m=me();if(!m.lineup||m.lineup.filter(Boolean).length<11){m.lineup=bestXIOpt(m,m.formation);m.bench=autoBench(m)}}catch(e){console.error(e)}
+  saveGame();closeCard();
   ui.tab='home';ui.sel=null;ui.rv=null;ui.mkt=mktDefault();ui.cc=null;ui.cco=null;ui.ct='table';ui.rvs={};ui.crd={};ui.sq=null;ui.sqv='info';
   renderGame();go('game');toast(`Ya eres el míster de ${CLUBBY[id].name}`);
 }
@@ -25966,7 +25974,7 @@ function roundSheet(res){
   <div class="score"><div class="tm">${crestHTML(hc,52)}<span>${esc(hc.name)}</span></div><div class="sc">${mine.hg} - ${mine.ag}</div><div class="tm">${crestHTML(ac,52)}<span>${esc(ac.name)}</span></div></div>
   <div class="verdict ${cls}">${txt}</div>
   <div class="scorers"><div>${sc('h')}</div><div class="r">${sc('a')}</div></div>
-  <p style="text-align:center">Ahora eres ${after}º${rankDeltaHTML(diff)}.</p></div>
+  <p style="text-align:center">Ahora eres ${after}º${r===0?'':rankDeltaHTML(diff)}.</p></div>
   <div class="res-scroll">${matchReportHTML(mine.rp,hc,ac,state.teams[mine.h],state.teams[mine.a])}${cupsHtml}
   <div class="subh">Resto de la jornada</div>${others}</div>
   <div class="row-btns"><button class="btn primary" data-act="round-ok">Continuar</button></div>`);
