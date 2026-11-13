@@ -17182,7 +17182,8 @@ function positionTick(){
     /* jugar partidos mientras entrena acelera el aprendizaje */
     if(p.tr.ap0==null)p.tr.ap0=p.ap||0;
     const played=(p.ap||0)-p.tr.ap0;
-    if(played>0){p.tr.left=Math.max(1,p.tr.left-Math.min(2,played));p.tr.ap0=p.ap||0}
+    /* como en FM, un partido suelto en un puesto que no domina no le da familiaridad: solo ayuda cuando ya es Competente (10+) */
+    if(played>0){if((pfOf(p)[p.tr.pos]||0)>=10)p.tr.left=Math.max(1,p.tr.left-1);p.tr.ap0=p.ap||0}
     const from=p.tr.from!=null?p.tr.from:(pfOf(p)[p.tr.pos]||1);
     p.tr.left--;
     if(p.tr.left<=0){
@@ -17896,8 +17897,10 @@ function roleAt(p,clubId){
 }
 const tierOf=r=>isStarterRole(r)?'top':(r==='Rotación'||r==='Joven promesa')?'mid':'low';
 /* elige un club: casi siempre uno donde tendría protagonismo, a veces uno donde rotaría */
-function pickClub(p,exclude,targetRep,tight){
+function pickClub(p,exclude,targetRep,tight,win){
   let cand=CLUBS.filter(c=>gameClub(c)&&c.id!==state.club&&c.id!==FAMILY[state.club]&&!exclude.includes(c.id)&&canJoin(c.id,p));
+  /* ventana de nivel: si hay clubes dentro, se descartan los que quedan demasiado lejos de la calidad del jugador */
+  if(win){const near=cand.filter(c=>Math.abs(repOf(c.id)-targetRep)<=win);if(near.length)cand=near}
   /* geografía: casi siempre llaman clubes de tu propio país; solo de vez en cuando llega una oferta del extranjero */
   {const myCo=(CLUBBY[state.club]||{}).co,dom=cand.filter(c=>c.co===myCo),ext=cand.filter(c=>c.co!==myCo);
    const useDom=dom.length&&(!ext.length||Math.random()<.88);
@@ -18059,7 +18062,7 @@ function genOfferFor(p,force){
       /* aunque no lo pongas transferible, de vez en cuando llega una oferta real por un jugador que interesa */
       if(p.offers.length>=1||(!force&&Math.random()>=surpriseOfferChance(p)))return;
     }
-    const b=pickClub(p,p.offers.map(o=>o.from),p.ovr+6),c=b.club;
+    const b=pickClub(p,p.offers.map(o=>o.from),p.ovr+6,14,16),c=b.club;
     let wish=Math.max(.1,r1(p.val*(.78+Math.random()*.34)*OFFER_F[b.role]));
     const aff=affiliationWith(c.id);
     if(aff&&aff.dir==='down'&&aff.buyDiscount&&affEligibleRole(p.role||roleAt(p,state.club)))wish=Math.min(wish,r1(p.val*.5));
@@ -18090,7 +18093,7 @@ function genLoanOfferFor(p,force){
       const rr=roleAt(p,state.club);
       if(p.loanOffers.length>=1||!(isLowRole(rr)||rr==='Rotación')||(!force&&Math.random()>=surpriseLoanChance(p)))return;
     }
-    const b=pickClub(p,p.loanOffers.map(o=>o.to),p.ovr-4,16);
+    const b=pickClub(p,p.loanOffers.map(o=>o.to),p.ovr-4,7,10);
     const affL=affiliationWith(b.club.id),loanFreeAff=affL&&affL.dir==='down'&&affL.loanFree;
     const sh0=loanFreeAff?0:[.5,.6,.7,.8,.9,1][Math.floor(Math.random()*6)];
     /* share = parte del sueldo que paga el club; max = lo máximo que aceptaría pagar (oculto) */
