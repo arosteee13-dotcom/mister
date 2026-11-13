@@ -25585,7 +25585,8 @@ function legendSync(){
   if(!state||!state.club)return;
   try{
     const cid=state.club,L=(state.legends=state.legends||{}),store=(L[cid]=L[cid]||{});
-    const ps=me().players.filter(p=>!p.loanIn).concat((state.loansOut||[]).map(l=>l.p));
+    /* los cedidos a otro club NO se actualizan: sus partidos y goles allí no son con tu equipo (conservan lo anterior a la cesión) */
+    const ps=me().players.filter(p=>!p.loanIn);
     ps.forEach(p=>{
       const cs=clubCareerStats(p,cid),ti=allTrophiesOf(p).filter(t=>t.club===cid&&!t.indiv).length;
       const rec={id:p.id,n:p.n,pos:ppOf(p)[0],ap:cs.ap,g:cs.g,as:cs.as,seasons:cs.seasons,titles:ti};
